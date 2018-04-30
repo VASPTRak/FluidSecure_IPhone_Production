@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="13240" systemVersion="" minimumToolsVersion="Xcode 7.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
+    <entity name="TransactionID" representedClassName="TransactionID" syncable="YES">
+        <attribute name="isactive" optional="YES" attributeType="String" defaultValueString="false" syncable="YES"/>
+        <attribute name="transactionid" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Wifidetails" representedClassName=".Wifidetails" isAbstract="YES" syncable="YES">
+        <attribute name="hoseID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="hoseNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="password" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="siteAddress" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="siteID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="siteName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="siteno" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="wifiSSID" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="TransactionID" positionX="-63" positionY="54" width="128" height="75"/>
+        <element name="Wifidetails" positionX="-63" positionY="-18" width="128" height="180"/>
+    </elements>
+</model>

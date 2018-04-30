@@ -1,0 +1,814 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		DA0BA0751D8971E00050831C /* commanfunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0BA0741D8971E00050831C /* commanfunction.swift */; };
+		DA30BEB21F739E9F00004336 /* TransactionID+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = DA30BEAF1F739E9F00004336 /* TransactionID+CoreDataClass.m */; };
+		DA30BEB31F739E9F00004336 /* TransactionID+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = DA30BEB11F739E9F00004336 /* TransactionID+CoreDataProperties.m */; };
+		DA30BEB51F739ED000004336 /* Transactionid.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA30BEB41F739ED000004336 /* Transactionid.swift */; };
+		DA30BEB71F739F9600004336 /* transid.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA30BEB61F739F9600004336 /* transid.swift */; };
+		DA434DA51F692FEC00FF83E1 /* PreauthVehicleVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA434DA41F692FEC00FF83E1 /* PreauthVehicleVC.swift */; };
+		DA434DA71F69309200FF83E1 /* PreauthOdometrVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA434DA61F69309200FF83E1 /* PreauthOdometrVC.swift */; };
+		DA434DA91F693EB100FF83E1 /* PreauthVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA434DA81F693EB100FF83E1 /* PreauthVC.swift */; };
+		DA497B2D1CEC841F0058E218 /* RegisterTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA497B2C1CEC841F0058E218 /* RegisterTableViewController.swift */; };
+		DA4BAF8F1CAD0652002A5C63 /* FuelquantityVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4BAF8E1CAD0652002A5C63 /* FuelquantityVC.swift */; };
+		DA4BAF961CAD3334002A5C63 /* Button-Blue.png in Resources */ = {isa = PBXBuildFile; fileRef = DA4BAF901CAD3334002A5C63 /* Button-Blue.png */; };
+		DA4BAF971CAD3334002A5C63 /* Button-White.png in Resources */ = {isa = PBXBuildFile; fileRef = DA4BAF911CAD3334002A5C63 /* Button-White.png */; };
+		DA4BAF981CAD3334002A5C63 /* Button-Yellow.png in Resources */ = {isa = PBXBuildFile; fileRef = DA4BAF921CAD3334002A5C63 /* Button-Yellow.png */; };
+		DA4BAF991CAD3334002A5C63 /* Table-F.png in Resources */ = {isa = PBXBuildFile; fileRef = DA4BAF931CAD3334002A5C63 /* Table-F.png */; };
+		DA4BAF9A1CAD3334002A5C63 /* Table-H1.png in Resources */ = {isa = PBXBuildFile; fileRef = DA4BAF941CAD3334002A5C63 /* Table-H1.png */; };
+		DA4BAF9B1CAD3334002A5C63 /* Table-H2.png in Resources */ = {isa = PBXBuildFile; fileRef = DA4BAF951CAD3334002A5C63 /* Table-H2.png */; };
+		DA4BAF9D1CAD47C7002A5C63 /* Vehicaldetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4BAF9C1CAD47C7002A5C63 /* Vehicaldetails.swift */; };
+		DA4F24911DB8D872005D3BEB /* user1.bin in Resources */ = {isa = PBXBuildFile; fileRef = DA4F24901DB8D872005D3BEB /* user1.bin */; };
+		DA5770121F66BA410098103A /* PreauthStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DA5770111F66BA410098103A /* PreauthStoryboard.storyboard */; };
+		DA5BE0381CAA4FCF003155A8 /* OdometerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5BE0371CAA4FCF003155A8 /* OdometerVC.swift */; };
+		DA5BE03A1CAAB578003155A8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5BE0391CAAB578003155A8 /* Reachability.swift */; };
+		DA5DB9821CF8249A00C9A90E /* Wifidetails+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5DB9801CF8249A00C9A90E /* Wifidetails+CoreDataProperties.swift */; };
+		DA5DB9831CF8249A00C9A90E /* Wifidetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5DB9811CF8249A00C9A90E /* Wifidetails.swift */; };
+		DA6019391E94FB2800AB6E22 /* button-24.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DA6019381E94FB2800AB6E22 /* button-24.mp3 */; };
+		DA62068E1D4235D80008344D /* _refresh.png in Resources */ = {isa = PBXBuildFile; fileRef = DA62068D1D4235D80008344D /* _refresh.png */; };
+		DA6282761CF2CCF60057D1CF /* Webservices.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA6282751CF2CCF60057D1CF /* Webservices.swift */; };
+		DA62827B1CF2CD770057D1CF /* Fuelsecure.m in Sources */ = {isa = PBXBuildFile; fileRef = DA62827A1CF2CD770057D1CF /* Fuelsecure.m */; };
+		DA71DA661CA9078500AD06DD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA71DA651CA9078500AD06DD /* AppDelegate.swift */; };
+		DA71DA681CA9078500AD06DD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA71DA671CA9078500AD06DD /* ViewController.swift */; };
+		DA71DA6B1CA9078500AD06DD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DA71DA691CA9078500AD06DD /* Main.storyboard */; };
+		DA71DA6E1CA9078500AD06DD /* FuelSecuer.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DA71DA6C1CA9078500AD06DD /* FuelSecuer.xcdatamodeld */; };
+		DA71DA701CA9078500AD06DD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DA71DA6F1CA9078500AD06DD /* Assets.xcassets */; };
+		DA71DA731CA9078500AD06DD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DA71DA711CA9078500AD06DD /* LaunchScreen.storyboard */; };
+		DA71DA7E1CA9078500AD06DD /* FuelSecuerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA71DA7D1CA9078500AD06DD /* FuelSecuerTests.swift */; };
+		DA71DA891CA9078500AD06DD /* FuelSecuerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA71DA881CA9078500AD06DD /* FuelSecuerUITests.swift */; };
+		DA71DAA91CA93CD400AD06DD /* VehiclenoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA71DAA81CA93CD400AD06DD /* VehiclenoVC.swift */; };
+		DA7A40A81F7633AF00D889D6 /* Transaction_id.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7A40A71F7633AF00D889D6 /* Transaction_id.swift */; };
+		DA9444631F7398E1006F9804 /* PreauthFuelquantity.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9444621F7398E1006F9804 /* PreauthFuelquantity.swift */; };
+		DA9F948A1F14F42E00BFE62B /* checkbox-checked.png in Resources */ = {isa = PBXBuildFile; fileRef = DA9F94881F14F42E00BFE62B /* checkbox-checked.png */; };
+		DA9F948B1F14F42E00BFE62B /* checkbox-unchecked.png in Resources */ = {isa = PBXBuildFile; fileRef = DA9F94891F14F42E00BFE62B /* checkbox-unchecked.png */; };
+		DA9F948D1F14FF9200BFE62B /* WiFI.png in Resources */ = {isa = PBXBuildFile; fileRef = DA9F948C1F14FF9200BFE62B /* WiFI.png */; };
+		DAAB03591ED6EEF300065848 /* Selectwifi.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAAB03581ED6EEF300065848 /* Selectwifi.swift */; };
+		DAC3E4981E1D20F60012E65F /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAC3E4971E1D20F60012E65F /* LoginViewController.swift */; };
+		DACD13461E924F6D002784CC /* fuel_secure_lock.png in Resources */ = {isa = PBXBuildFile; fileRef = DACD13451E924F6D002784CC /* fuel_secure_lock.png */; };
+		DAE2E4411F0678C1004A9480 /* HourViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE2E4401F0678C1004A9480 /* HourViewController.swift */; };
+		DAE2E4431F0678EC004A9480 /* DeptViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE2E4421F0678EC004A9480 /* DeptViewController.swift */; };
+		DAE2E4451F067914004A9480 /* PinViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE2E4441F067914004A9480 /* PinViewController.swift */; };
+		DAE2E4471F067925004A9480 /* OtherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE2E4461F067925004A9480 /* OtherViewController.swift */; };
+		DAEC17291F4ECC0300714D1A /* Button-Green.png in Resources */ = {isa = PBXBuildFile; fileRef = DAEC17281F4ECC0300714D1A /* Button-Green.png */; };
+		DAF9DFA41EEFCD5A00D70BD0 /* LaunchScreenvc.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF9DFA31EEFCD5A00D70BD0 /* LaunchScreenvc.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		DA71DA7A1CA9078500AD06DD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DA71DA5A1CA9078500AD06DD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DA71DA611CA9078500AD06DD;
+			remoteInfo = FuelSecuer;
+		};
+		DA71DA851CA9078500AD06DD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DA71DA5A1CA9078500AD06DD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DA71DA611CA9078500AD06DD;
+			remoteInfo = FuelSecuer;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		DA71DAA51CA9339B00AD06DD /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		DA0BA0741D8971E00050831C /* commanfunction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = commanfunction.swift; sourceTree = "<group>"; };
+		DA30BEAE1F739E9F00004336 /* TransactionID+CoreDataClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TransactionID+CoreDataClass.h"; sourceTree = "<group>"; };
+		DA30BEAF1F739E9F00004336 /* TransactionID+CoreDataClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "TransactionID+CoreDataClass.m"; sourceTree = "<group>"; };
+		DA30BEB01F739E9F00004336 /* TransactionID+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TransactionID+CoreDataProperties.h"; sourceTree = "<group>"; };
+		DA30BEB11F739E9F00004336 /* TransactionID+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "TransactionID+CoreDataProperties.m"; sourceTree = "<group>"; };
+		DA30BEB41F739ED000004336 /* Transactionid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transactionid.swift; sourceTree = "<group>"; };
+		DA30BEB61F739F9600004336 /* transid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = transid.swift; sourceTree = "<group>"; };
+		DA30BEB81F73FE8D00004336 /* FuelSecure.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FuelSecure.entitlements; sourceTree = SOURCE_ROOT; };
+		DA434DA41F692FEC00FF83E1 /* PreauthVehicleVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreauthVehicleVC.swift; sourceTree = "<group>"; };
+		DA434DA61F69309200FF83E1 /* PreauthOdometrVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreauthOdometrVC.swift; sourceTree = "<group>"; };
+		DA434DA81F693EB100FF83E1 /* PreauthVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreauthVC.swift; sourceTree = "<group>"; };
+		DA497B2C1CEC841F0058E218 /* RegisterTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterTableViewController.swift; sourceTree = "<group>"; };
+		DA4BAF8E1CAD0652002A5C63 /* FuelquantityVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FuelquantityVC.swift; sourceTree = "<group>"; };
+		DA4BAF901CAD3334002A5C63 /* Button-Blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Button-Blue.png"; path = "Assets.xcassets/Button-Blue.png"; sourceTree = "<group>"; };
+		DA4BAF911CAD3334002A5C63 /* Button-White.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Button-White.png"; path = "Assets.xcassets/Button-White.png"; sourceTree = "<group>"; };
+		DA4BAF921CAD3334002A5C63 /* Button-Yellow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Button-Yellow.png"; path = "Assets.xcassets/Button-Yellow.png"; sourceTree = "<group>"; };
+		DA4BAF931CAD3334002A5C63 /* Table-F.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Table-F.png"; path = "Assets.xcassets/Table-F.png"; sourceTree = "<group>"; };
+		DA4BAF941CAD3334002A5C63 /* Table-H1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Table-H1.png"; path = "Assets.xcassets/Table-H1.png"; sourceTree = "<group>"; };
+		DA4BAF951CAD3334002A5C63 /* Table-H2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Table-H2.png"; path = "Assets.xcassets/Table-H2.png"; sourceTree = "<group>"; };
+		DA4BAF9C1CAD47C7002A5C63 /* Vehicaldetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vehicaldetails.swift; sourceTree = "<group>"; };
+		DA4F24901DB8D872005D3BEB /* user1.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = user1.bin; sourceTree = "<group>"; };
+		DA5770111F66BA410098103A /* PreauthStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = PreauthStoryboard.storyboard; sourceTree = "<group>"; };
+		DA5BE0371CAA4FCF003155A8 /* OdometerVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OdometerVC.swift; sourceTree = "<group>"; };
+		DA5BE0391CAAB578003155A8 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		DA5DB9801CF8249A00C9A90E /* Wifidetails+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Wifidetails+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		DA5DB9811CF8249A00C9A90E /* Wifidetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Wifidetails.swift; sourceTree = "<group>"; };
+		DA6019381E94FB2800AB6E22 /* button-24.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "button-24.mp3"; path = "FuelSecuer/button-24.mp3"; sourceTree = "<group>"; };
+		DA62068D1D4235D80008344D /* _refresh.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = _refresh.png; sourceTree = "<group>"; };
+		DA6282751CF2CCF60057D1CF /* Webservices.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Webservices.swift; sourceTree = "<group>"; };
+		DA6282781CF2CD770057D1CF /* FuelSecuer-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FuelSecuer-Bridging-Header.h"; sourceTree = "<group>"; };
+		DA6282791CF2CD770057D1CF /* Fuelsecure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fuelsecure.h; sourceTree = "<group>"; };
+		DA62827A1CF2CD770057D1CF /* Fuelsecure.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Fuelsecure.m; sourceTree = "<group>"; };
+		DA71DA621CA9078500AD06DD /* FuelSecure.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FuelSecure.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DA71DA651CA9078500AD06DD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		DA71DA671CA9078500AD06DD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		DA71DA6A1CA9078500AD06DD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		DA71DA6D1CA9078500AD06DD /* FuelSecuer.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FuelSecuer.xcdatamodel; sourceTree = "<group>"; };
+		DA71DA6F1CA9078500AD06DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		DA71DA721CA9078500AD06DD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		DA71DA741CA9078500AD06DD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DA71DA791CA9078500AD06DD /* FuelSecure.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FuelSecure.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DA71DA7D1CA9078500AD06DD /* FuelSecuerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FuelSecuerTests.swift; sourceTree = "<group>"; };
+		DA71DA7F1CA9078500AD06DD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DA71DA841CA9078500AD06DD /* FuelSecure.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FuelSecure.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DA71DA881CA9078500AD06DD /* FuelSecuerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FuelSecuerUITests.swift; sourceTree = "<group>"; };
+		DA71DA8A1CA9078500AD06DD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DA71DAA81CA93CD400AD06DD /* VehiclenoVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VehiclenoVC.swift; sourceTree = "<group>"; };
+		DA7A40A71F7633AF00D889D6 /* Transaction_id.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transaction_id.swift; sourceTree = "<group>"; };
+		DA9444621F7398E1006F9804 /* PreauthFuelquantity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreauthFuelquantity.swift; sourceTree = "<group>"; };
+		DA9F94881F14F42E00BFE62B /* checkbox-checked.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "checkbox-checked.png"; sourceTree = "<group>"; };
+		DA9F94891F14F42E00BFE62B /* checkbox-unchecked.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "checkbox-unchecked.png"; sourceTree = "<group>"; };
+		DA9F948C1F14FF9200BFE62B /* WiFI.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = WiFI.png; sourceTree = "<group>"; };
+		DAAB03581ED6EEF300065848 /* Selectwifi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Selectwifi.swift; sourceTree = "<group>"; };
+		DAC3E4971E1D20F60012E65F /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		DACD13451E924F6D002784CC /* fuel_secure_lock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fuel_secure_lock.png; path = FuelSecuer/Assets.xcassets/fuel_secure_lock.png; sourceTree = "<group>"; };
+		DAE2E4401F0678C1004A9480 /* HourViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HourViewController.swift; sourceTree = "<group>"; };
+		DAE2E4421F0678EC004A9480 /* DeptViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeptViewController.swift; sourceTree = "<group>"; };
+		DAE2E4441F067914004A9480 /* PinViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PinViewController.swift; sourceTree = "<group>"; };
+		DAE2E4461F067925004A9480 /* OtherViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OtherViewController.swift; sourceTree = "<group>"; };
+		DAEC17281F4ECC0300714D1A /* Button-Green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Button-Green.png"; path = "Assets.xcassets/Button-Green.png"; sourceTree = "<group>"; };
+		DAF9DFA31EEFCD5A00D70BD0 /* LaunchScreenvc.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LaunchScreenvc.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DA71DA5F1CA9078500AD06DD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DA71DA761CA9078500AD06DD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DA71DA811CA9078500AD06DD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		DA71DA591CA9078500AD06DD = {
+			isa = PBXGroup;
+			children = (
+				DA30BEB61F739F9600004336 /* transid.swift */,
+				DA30BEB41F739ED000004336 /* Transactionid.swift */,
+				DA30BEAE1F739E9F00004336 /* TransactionID+CoreDataClass.h */,
+				DA30BEAF1F739E9F00004336 /* TransactionID+CoreDataClass.m */,
+				DA30BEB01F739E9F00004336 /* TransactionID+CoreDataProperties.h */,
+				DA30BEB11F739E9F00004336 /* TransactionID+CoreDataProperties.m */,
+				DAE2E4461F067925004A9480 /* OtherViewController.swift */,
+				DAE2E4441F067914004A9480 /* PinViewController.swift */,
+				DAE2E4421F0678EC004A9480 /* DeptViewController.swift */,
+				DAE2E4401F0678C1004A9480 /* HourViewController.swift */,
+				DAF9DFA31EEFCD5A00D70BD0 /* LaunchScreenvc.swift */,
+				DAAB03581ED6EEF300065848 /* Selectwifi.swift */,
+				DA6019381E94FB2800AB6E22 /* button-24.mp3 */,
+				DACD13451E924F6D002784CC /* fuel_secure_lock.png */,
+				DA4F24901DB8D872005D3BEB /* user1.bin */,
+				DA5DB9801CF8249A00C9A90E /* Wifidetails+CoreDataProperties.swift */,
+				DA5DB9811CF8249A00C9A90E /* Wifidetails.swift */,
+				DA71DA641CA9078500AD06DD /* FuelSecure */,
+				DA71DA7C1CA9078500AD06DD /* FuelSecuerTests */,
+				DA71DA871CA9078500AD06DD /* FuelSecuerUITests */,
+				DA71DA631CA9078500AD06DD /* Products */,
+				DAA9164820860130006A5F27 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		DA71DA631CA9078500AD06DD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DA71DA621CA9078500AD06DD /* FuelSecure.app */,
+				DA71DA791CA9078500AD06DD /* FuelSecure.xctest */,
+				DA71DA841CA9078500AD06DD /* FuelSecure.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DA71DA641CA9078500AD06DD /* FuelSecure */ = {
+			isa = PBXGroup;
+			children = (
+				DA30BEB81F73FE8D00004336 /* FuelSecure.entitlements */,
+				DAEC17281F4ECC0300714D1A /* Button-Green.png */,
+				DA9F948C1F14FF9200BFE62B /* WiFI.png */,
+				DA9F94881F14F42E00BFE62B /* checkbox-checked.png */,
+				DA9F94891F14F42E00BFE62B /* checkbox-unchecked.png */,
+				DA62068D1D4235D80008344D /* _refresh.png */,
+				DA6282781CF2CD770057D1CF /* FuelSecuer-Bridging-Header.h */,
+				DA6282791CF2CD770057D1CF /* Fuelsecure.h */,
+				DA62827A1CF2CD770057D1CF /* Fuelsecure.m */,
+				DA4BAF901CAD3334002A5C63 /* Button-Blue.png */,
+				DA4BAF911CAD3334002A5C63 /* Button-White.png */,
+				DA4BAF921CAD3334002A5C63 /* Button-Yellow.png */,
+				DA4BAF931CAD3334002A5C63 /* Table-F.png */,
+				DA4BAF941CAD3334002A5C63 /* Table-H1.png */,
+				DA4BAF951CAD3334002A5C63 /* Table-H2.png */,
+				DA71DA651CA9078500AD06DD /* AppDelegate.swift */,
+				DA71DA671CA9078500AD06DD /* ViewController.swift */,
+				DA71DA691CA9078500AD06DD /* Main.storyboard */,
+				DAC3E4971E1D20F60012E65F /* LoginViewController.swift */,
+				DA71DAA81CA93CD400AD06DD /* VehiclenoVC.swift */,
+				DA71DA6F1CA9078500AD06DD /* Assets.xcassets */,
+				DA71DA711CA9078500AD06DD /* LaunchScreen.storyboard */,
+				DA71DA741CA9078500AD06DD /* Info.plist */,
+				DA71DA6C1CA9078500AD06DD /* FuelSecuer.xcdatamodeld */,
+				DA5BE0371CAA4FCF003155A8 /* OdometerVC.swift */,
+				DA5BE0391CAAB578003155A8 /* Reachability.swift */,
+				DA4BAF8E1CAD0652002A5C63 /* FuelquantityVC.swift */,
+				DA4BAF9C1CAD47C7002A5C63 /* Vehicaldetails.swift */,
+				DA497B2C1CEC841F0058E218 /* RegisterTableViewController.swift */,
+				DA6282751CF2CCF60057D1CF /* Webservices.swift */,
+				DA0BA0741D8971E00050831C /* commanfunction.swift */,
+				DA5770111F66BA410098103A /* PreauthStoryboard.storyboard */,
+				DA434DA81F693EB100FF83E1 /* PreauthVC.swift */,
+				DA434DA41F692FEC00FF83E1 /* PreauthVehicleVC.swift */,
+				DA434DA61F69309200FF83E1 /* PreauthOdometrVC.swift */,
+				DA9444621F7398E1006F9804 /* PreauthFuelquantity.swift */,
+				DA7A40A71F7633AF00D889D6 /* Transaction_id.swift */,
+			);
+			name = FuelSecure;
+			path = FuelSecuer;
+			sourceTree = "<group>";
+		};
+		DA71DA7C1CA9078500AD06DD /* FuelSecuerTests */ = {
+			isa = PBXGroup;
+			children = (
+				DA71DA7D1CA9078500AD06DD /* FuelSecuerTests.swift */,
+				DA71DA7F1CA9078500AD06DD /* Info.plist */,
+			);
+			path = FuelSecuerTests;
+			sourceTree = "<group>";
+		};
+		DA71DA871CA9078500AD06DD /* FuelSecuerUITests */ = {
+			isa = PBXGroup;
+			children = (
+				DA71DA881CA9078500AD06DD /* FuelSecuerUITests.swift */,
+				DA71DA8A1CA9078500AD06DD /* Info.plist */,
+			);
+			path = FuelSecuerUITests;
+			sourceTree = "<group>";
+		};
+		DAA9164820860130006A5F27 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		DA71DA611CA9078500AD06DD /* FuelSecure */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DA71DA8D1CA9078500AD06DD /* Build configuration list for PBXNativeTarget "FuelSecure" */;
+			buildPhases = (
+				DA71DA5E1CA9078500AD06DD /* Sources */,
+				DA71DA5F1CA9078500AD06DD /* Frameworks */,
+				DA71DA601CA9078500AD06DD /* Resources */,
+				DA71DAA51CA9339B00AD06DD /* Embed App Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FuelSecure;
+			productName = FuelSecuer;
+			productReference = DA71DA621CA9078500AD06DD /* FuelSecure.app */;
+			productType = "com.apple.product-type.application";
+		};
+		DA71DA781CA9078500AD06DD /* FuelSecureTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DA71DA901CA9078500AD06DD /* Build configuration list for PBXNativeTarget "FuelSecureTests" */;
+			buildPhases = (
+				DA71DA751CA9078500AD06DD /* Sources */,
+				DA71DA761CA9078500AD06DD /* Frameworks */,
+				DA71DA771CA9078500AD06DD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DA71DA7B1CA9078500AD06DD /* PBXTargetDependency */,
+			);
+			name = FuelSecureTests;
+			productName = FuelSecuerTests;
+			productReference = DA71DA791CA9078500AD06DD /* FuelSecure.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		DA71DA831CA9078500AD06DD /* FuelSecureUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DA71DA931CA9078500AD06DD /* Build configuration list for PBXNativeTarget "FuelSecureUITests" */;
+			buildPhases = (
+				DA71DA801CA9078500AD06DD /* Sources */,
+				DA71DA811CA9078500AD06DD /* Frameworks */,
+				DA71DA821CA9078500AD06DD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DA71DA861CA9078500AD06DD /* PBXTargetDependency */,
+			);
+			name = FuelSecureUITests;
+			productName = FuelSecuerUITests;
+			productReference = DA71DA841CA9078500AD06DD /* FuelSecure.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DA71DA5A1CA9078500AD06DD /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0730;
+				LastUpgradeCheck = 0900;
+				ORGANIZATIONNAME = VASP;
+				TargetAttributes = {
+					DA71DA611CA9078500AD06DD = {
+						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = LY75MT5XE6;
+						LastSwiftMigration = 0800;
+						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 0;
+							};
+							com.apple.WAC = {
+								enabled = 0;
+							};
+						};
+					};
+					DA71DA781CA9078500AD06DD = {
+						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = 398Q9X5345;
+						LastSwiftMigration = 0800;
+						TestTargetID = DA71DA611CA9078500AD06DD;
+					};
+					DA71DA831CA9078500AD06DD = {
+						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = 398Q9X5345;
+						LastSwiftMigration = 0800;
+						TestTargetID = DA71DA611CA9078500AD06DD;
+					};
+				};
+			};
+			buildConfigurationList = DA71DA5D1CA9078500AD06DD /* Build configuration list for PBXProject "FuelSecure" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = DA71DA591CA9078500AD06DD;
+			productRefGroup = DA71DA631CA9078500AD06DD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DA71DA611CA9078500AD06DD /* FuelSecure */,
+				DA71DA781CA9078500AD06DD /* FuelSecureTests */,
+				DA71DA831CA9078500AD06DD /* FuelSecureUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		DA71DA601CA9078500AD06DD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DA9F948D1F14FF9200BFE62B /* WiFI.png in Resources */,
+				DAEC17291F4ECC0300714D1A /* Button-Green.png in Resources */,
+				DA4BAF981CAD3334002A5C63 /* Button-Yellow.png in Resources */,
+				DA9F948A1F14F42E00BFE62B /* checkbox-checked.png in Resources */,
+				DA71DA731CA9078500AD06DD /* LaunchScreen.storyboard in Resources */,
+				DACD13461E924F6D002784CC /* fuel_secure_lock.png in Resources */,
+				DA5770121F66BA410098103A /* PreauthStoryboard.storyboard in Resources */,
+				DA4BAF991CAD3334002A5C63 /* Table-F.png in Resources */,
+				DA71DA701CA9078500AD06DD /* Assets.xcassets in Resources */,
+				DA4BAF9B1CAD3334002A5C63 /* Table-H2.png in Resources */,
+				DA4BAF971CAD3334002A5C63 /* Button-White.png in Resources */,
+				DA71DA6B1CA9078500AD06DD /* Main.storyboard in Resources */,
+				DA4BAF961CAD3334002A5C63 /* Button-Blue.png in Resources */,
+				DA4BAF9A1CAD3334002A5C63 /* Table-H1.png in Resources */,
+				DA6019391E94FB2800AB6E22 /* button-24.mp3 in Resources */,
+				DA4F24911DB8D872005D3BEB /* user1.bin in Resources */,
+				DA62068E1D4235D80008344D /* _refresh.png in Resources */,
+				DA9F948B1F14F42E00BFE62B /* checkbox-unchecked.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DA71DA771CA9078500AD06DD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DA71DA821CA9078500AD06DD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DA71DA5E1CA9078500AD06DD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DA71DA681CA9078500AD06DD /* ViewController.swift in Sources */,
+				DAE2E4471F067925004A9480 /* OtherViewController.swift in Sources */,
+				DAE2E4411F0678C1004A9480 /* HourViewController.swift in Sources */,
+				DAE2E4451F067914004A9480 /* PinViewController.swift in Sources */,
+				DA30BEB21F739E9F00004336 /* TransactionID+CoreDataClass.m in Sources */,
+				DA434DA91F693EB100FF83E1 /* PreauthVC.swift in Sources */,
+				DAAB03591ED6EEF300065848 /* Selectwifi.swift in Sources */,
+				DA434DA71F69309200FF83E1 /* PreauthOdometrVC.swift in Sources */,
+				DAE2E4431F0678EC004A9480 /* DeptViewController.swift in Sources */,
+				DA30BEB71F739F9600004336 /* transid.swift in Sources */,
+				DA62827B1CF2CD770057D1CF /* Fuelsecure.m in Sources */,
+				DA5DB9831CF8249A00C9A90E /* Wifidetails.swift in Sources */,
+				DA4BAF9D1CAD47C7002A5C63 /* Vehicaldetails.swift in Sources */,
+				DA9444631F7398E1006F9804 /* PreauthFuelquantity.swift in Sources */,
+				DA71DA6E1CA9078500AD06DD /* FuelSecuer.xcdatamodeld in Sources */,
+				DA7A40A81F7633AF00D889D6 /* Transaction_id.swift in Sources */,
+				DA434DA51F692FEC00FF83E1 /* PreauthVehicleVC.swift in Sources */,
+				DA6282761CF2CCF60057D1CF /* Webservices.swift in Sources */,
+				DA5DB9821CF8249A00C9A90E /* Wifidetails+CoreDataProperties.swift in Sources */,
+				DA5BE03A1CAAB578003155A8 /* Reachability.swift in Sources */,
+				DA30BEB31F739E9F00004336 /* TransactionID+CoreDataProperties.m in Sources */,
+				DA5BE0381CAA4FCF003155A8 /* OdometerVC.swift in Sources */,
+				DA0BA0751D8971E00050831C /* commanfunction.swift in Sources */,
+				DA71DAA91CA93CD400AD06DD /* VehiclenoVC.swift in Sources */,
+				DA30BEB51F739ED000004336 /* Transactionid.swift in Sources */,
+				DAF9DFA41EEFCD5A00D70BD0 /* LaunchScreenvc.swift in Sources */,
+				DAC3E4981E1D20F60012E65F /* LoginViewController.swift in Sources */,
+				DA71DA661CA9078500AD06DD /* AppDelegate.swift in Sources */,
+				DA497B2D1CEC841F0058E218 /* RegisterTableViewController.swift in Sources */,
+				DA4BAF8F1CAD0652002A5C63 /* FuelquantityVC.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DA71DA751CA9078500AD06DD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DA71DA7E1CA9078500AD06DD /* FuelSecuerTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DA71DA801CA9078500AD06DD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DA71DA891CA9078500AD06DD /* FuelSecuerUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DA71DA7B1CA9078500AD06DD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DA71DA611CA9078500AD06DD /* FuelSecure */;
+			targetProxy = DA71DA7A1CA9078500AD06DD /* PBXContainerItemProxy */;
+		};
+		DA71DA861CA9078500AD06DD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DA71DA611CA9078500AD06DD /* FuelSecure */;
+			targetProxy = DA71DA851CA9078500AD06DD /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		DA71DA691CA9078500AD06DD /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DA71DA6A1CA9078500AD06DD /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		DA71DA711CA9078500AD06DD /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DA71DA721CA9078500AD06DD /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		DA71DA8B1CA9078500AD06DD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 398Q9X5345;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_PKGINFO_FILE = YES;
+				INFOPLIST_FILE = FuelSecuer/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRIVATE_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/PrivateHeaders";
+				PRODUCT_BUNDLE_IDENTIFIER = com.VASPLLP.FuelSecuer;
+				PRODUCT_NAME = FuelSecure;
+				PROVISIONING_PROFILE = "84212641-680f-49d3-9e59-cc9fcf7c42a0";
+				PROVISIONING_PROFILE_SPECIFIER = "XC:*";
+				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers";
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DA71DA8C1CA9078500AD06DD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 398Q9X5345;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_PKGINFO_FILE = YES;
+				INFOPLIST_FILE = FuelSecuer/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRIVATE_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/PrivateHeaders";
+				PRODUCT_BUNDLE_IDENTIFIER = com.VASPLLP.FuelSecuer;
+				PRODUCT_NAME = FuelSecure;
+				PROVISIONING_PROFILE = "84212641-680f-49d3-9e59-cc9fcf7c42a0";
+				PROVISIONING_PROFILE_SPECIFIER = "XC:*";
+				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers";
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		DA71DA8E1CA9078500AD06DD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
+				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = LY75MT5XE6;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = FuelSecuer/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.Trakengg.Fluidsecure;
+				PRODUCT_NAME = FuelSecure;
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "FuelSecuer/FuelSecuer-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		DA71DA8F1CA9078500AD06DD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
+				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = LY75MT5XE6;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = FuelSecuer/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.Trakengg.Fluidsecure;
+				PRODUCT_NAME = FuelSecure;
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "FuelSecuer/FuelSecuer-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+		DA71DA911CA9078500AD06DD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = FuelSecuerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.VASPLLP.FuelSecuerTests;
+				PRODUCT_NAME = FuelSecure;
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FuelSecure.app/FuelSecure";
+			};
+			name = Debug;
+		};
+		DA71DA921CA9078500AD06DD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = FuelSecuerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.VASPLLP.FuelSecuerTests;
+				PRODUCT_NAME = FuelSecure;
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FuelSecure.app/FuelSecure";
+			};
+			name = Release;
+		};
+		DA71DA941CA9078500AD06DD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = FuelSecuerUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.VASPLLP.FuelSecuerUITests;
+				PRODUCT_NAME = FuelSecure;
+				SWIFT_VERSION = 3.0;
+				TEST_TARGET_NAME = FuelSecuer;
+				USES_XCTRUNNER = YES;
+			};
+			name = Debug;
+		};
+		DA71DA951CA9078500AD06DD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = FuelSecuerUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.VASPLLP.FuelSecuerUITests;
+				PRODUCT_NAME = FuelSecure;
+				SWIFT_VERSION = 3.0;
+				TEST_TARGET_NAME = FuelSecuer;
+				USES_XCTRUNNER = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		DA71DA5D1CA9078500AD06DD /* Build configuration list for PBXProject "FuelSecure" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DA71DA8B1CA9078500AD06DD /* Debug */,
+				DA71DA8C1CA9078500AD06DD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DA71DA8D1CA9078500AD06DD /* Build configuration list for PBXNativeTarget "FuelSecure" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DA71DA8E1CA9078500AD06DD /* Debug */,
+				DA71DA8F1CA9078500AD06DD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DA71DA901CA9078500AD06DD /* Build configuration list for PBXNativeTarget "FuelSecureTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DA71DA911CA9078500AD06DD /* Debug */,
+				DA71DA921CA9078500AD06DD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DA71DA931CA9078500AD06DD /* Build configuration list for PBXNativeTarget "FuelSecureUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DA71DA941CA9078500AD06DD /* Debug */,
+				DA71DA951CA9078500AD06DD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		DA71DA6C1CA9078500AD06DD /* FuelSecuer.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				DA71DA6D1CA9078500AD06DD /* FuelSecuer.xcdatamodel */,
+			);
+			currentVersion = DA71DA6D1CA9078500AD06DD /* FuelSecuer.xcdatamodel */;
+			path = FuelSecuer.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = DA71DA5A1CA9078500AD06DD /* Project object */;
+}
