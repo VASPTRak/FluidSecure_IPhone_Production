@@ -152,9 +152,9 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
             if(Vehicaldetails.sharedInstance.reachblevia == "wificonn")
             {
                 self.navigationItem.title = "Error"
-                self.navigationController?.navigationBar.barTintColor = UIColor.blue
-                self.navigationController?.navigationBar.tintColor = UIColor.blue
-                self.navigationController!.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.blue]
+//                self.navigationController?.navigationBar.barTintColor = UIColor.blue
+//                self.navigationController?.navigationBar.tintColor = UIColor.blue
+//                self.navigationController!.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.blue]
 
                 scrollview.isHidden = true
                 version.isHidden = false

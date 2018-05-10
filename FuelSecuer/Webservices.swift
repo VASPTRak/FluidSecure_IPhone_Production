@@ -27,7 +27,7 @@ class Webservices:NSObject {
 
         request.httpMethod = "POST"
         request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
-        let bodyData = "Authenticate:I:" + "\(lat),\(long),versionno.1.15.10"
+        let bodyData = "Authenticate:I:" + "\(lat),\(long),versionno.1.15.13"
         print(bodyData)
         request.httpBody = bodyData.data(using: String.Encoding.utf8)
         //request.timeoutInterval = 4
@@ -65,7 +65,7 @@ class Webservices:NSObject {
 
         request.httpMethod = "POST"
         request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
-        let bodyData = "Authenticate:I:" + "\(lat!),\(long!),versionno.1.15.10"
+        let bodyData = "Authenticate:I:" + "\(lat!),\(long!),versionno.1.15.13"
         print(bodyData)
         request.httpBody = bodyData.data(using: String.Encoding.utf8)
         //request.timeoutInterval = 4
@@ -204,6 +204,7 @@ class Webservices:NSObject {
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
         print(string)
         request.httpMethod = "POST"
+        request.timeoutInterval = 10
         request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
         let bodyData = "{\"TransactionId\":\"\(TransactionId)\",\"Status\":\"\(Status)\"}"//
         print(bodyData)
@@ -420,7 +421,7 @@ class Webservices:NSObject {
         request.httpMethod = "POST"
 
         request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
-        let bodyData = "{\"IMEIUDID\":\"\(uuid!)\",\"VehicleNumber\":\"\(vehicle_no)\",\"OdoMeter\":\"\(Odometer)\",\"WifiSSId\":\"\(wifiSSID)\",\"SiteId\":\"\(siteid)\",\"DepartmentNumber\":\"\(isdept)\",\"PersonnelPIN\":\"\(isPPin)\",\"Other\":\"\(isother)\",\"Hours\":\"\(hour)\",\"CurrentLat\":\"\(Vehicaldetails.sharedInstance.Lat)\",\"CurrentLng\":\"\(Vehicaldetails.sharedInstance.Long)\",\"RequestFrom\":\"I\",\"versionno\":\"1.15.10\"}"//
+        let bodyData = "{\"IMEIUDID\":\"\(uuid!)\",\"VehicleNumber\":\"\(vehicle_no)\",\"OdoMeter\":\"\(Odometer)\",\"WifiSSId\":\"\(wifiSSID)\",\"SiteId\":\"\(siteid)\",\"DepartmentNumber\":\"\(isdept)\",\"PersonnelPIN\":\"\(isPPin)\",\"Other\":\"\(isother)\",\"Hours\":\"\(hour)\",\"CurrentLat\":\"\(Vehicaldetails.sharedInstance.Lat)\",\"CurrentLng\":\"\(Vehicaldetails.sharedInstance.Long)\",\"RequestFrom\":\"I\",\"versionno\":\"1.15.13\"}"//
         print(bodyData)
         request.httpBody = bodyData.data(using: String.Encoding.utf8)
         request.timeoutInterval = 10
@@ -641,7 +642,7 @@ class Webservices:NSObject {
                 // "\(self.reply)"
             } else {
                 print(error!)
-                self.reply = "-1" + "#" + "\(error!)"
+                self.reply = "-1"// + "#" + "\(error!)"
             }
             semaphore.signal()
         }//)
@@ -723,6 +724,7 @@ class Webservices:NSObject {
      func getrelay() -> String {
         let Url:String = "http://192.168.4.1:80/config?command=relay"
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
+        request.timeoutInterval = 15
 
         request.httpMethod = "GET"
         //let session = URLSession.shared
@@ -919,6 +921,7 @@ class Webservices:NSObject {
        let Url:String = "http://192.168.4.1:80/client?command=pulsar"
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string:Url)!)
         request.httpMethod = "GET"
+        request.timeoutInterval = 10
 
         //let session = URLSession.shared
         let semaphore = DispatchSemaphore(value: 0)

@@ -107,7 +107,10 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
     var total_count:Int = 0
     var Last_Count:String!
     var ifstartpulsar_status:Int = 0
-     var stopdelaytime:Bool = false
+    var stopdelaytime:Bool = false
+    var timer_noConnection_withlink = Timer()
+    var timer_quantityless_thanprevious = Timer()
+    var ResponceMessageUpload:String = ""
    
     //Network variables
     var inStream : InputStream?
@@ -626,8 +629,8 @@ func gotostart(){
         let fuelquantity = (Double(lastpulsarcount))!/(PulseRatio as NSString).doubleValue
         if(fuelquantity == 0.0 || lasttransID == "-1"){}
         else{
-            let bodyData = "{\"TransactionId\":\(lasttransID),\"FuelQuantity\":\((fuelquantity)),\"Pulses\":\"\(lastpulsarcount)\",\"TransactionFrom\":\"I\",\"versionno\":\"1.15.10\"}"
-        let jsonstring: String = bodyData
+            let bodyData = "{\"TransactionId\":\(lasttransID),\"FuelQuantity\":\((fuelquantity)),\"Pulses\":\"\(lastpulsarcount)\",\"TransactionFrom\":\"I\",\"versionno\":\"1.15.13\"}"
+        //let jsonstring: String = bodyData
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "ddMMyyyyhhmmss"
             let dtt1: String = dateFormatter.string(from: NSDate() as Date)
@@ -728,7 +731,7 @@ func gotostart(){
                 print("pulsarlastquantity" + defaultTimeZoneStr1)
 
                 let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
-                _ = self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "1")
+                _ = self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "1")/////
                 let defaultTimeZoneStr = formatter.string(from: Date());
                 print("before getlastTrans_ID" + defaultTimeZoneStr)
                 self.cf.delay(0.5){
@@ -751,7 +754,7 @@ func gotostart(){
                         print("before settransaction_IDtoFS" + defaultTimeZoneStr)
                         self.cf.delay(0.5){
 
-                     self.settransaction_IDtoFS()   ///Set the Current Transaction ID to FS link.
+                    self.settransaction_IDtoFS()   ///Set the Current Transaction ID to FS link.
                     let defaultTimeZoneStr1 = formatter.string(from: Date());
                     print("settransaction_IDtoFS" + defaultTimeZoneStr1)
 
@@ -783,7 +786,7 @@ func gotostart(){
                     self.string = ""
                     self.inStream?.close()
                     self.outStream?.close()
-                   self.cf.delay(0.5){
+                    self.cf.delay(0.5){
                         let defaultTimeZoneStr2 = formatter.string(from: Date());
                         print("before setpulsartcp" + defaultTimeZoneStr2)
                     var setpulsar = self.setpulsartcp()
@@ -892,11 +895,11 @@ func gotostart(){
                             self.start.isHidden = true
                             self.Stop.isHidden = false  ///show stop button 7-8sec
                             self.string = ""
-                            self.displaytime.text = ""
+
                             self.btnBeginFueling()
                             let defaultTimeZoneStr = formatter.string(from: Date());
                             print("Get Pulsar" + defaultTimeZoneStr)
-
+                                    self.displaytime.text = ""
                            // self.beginfuel.hidden = true
                         }
 //                        else
@@ -1034,7 +1037,7 @@ func gotostart(){
         let message  = message
         var messageMutableString = NSMutableAttributedString()
         messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.black, range: NSRange(location:0,length:message.characters.count))
+        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.black, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
 
         // Action.
@@ -1067,7 +1070,7 @@ func gotostart(){
         let message  = message
         var messageMutableString = NSMutableAttributedString()
         messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.black, range: NSRange(location:0,length:message.characters.count))
+        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.black, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
         // Action.
         let action = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil)
@@ -1086,7 +1089,7 @@ func gotostart(){
         let message  = message
         var messageMutableString = NSMutableAttributedString()
         messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.black, range: NSRange(location:0,length:message.characters.count))
+        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.black, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
 
         // Action.
@@ -1162,7 +1165,7 @@ func gotostart(){
         wait.isHidden = false
         waitactivity.isHidden = false
         waitactivity.startAnimating()
-         self.timer.invalidate()
+        self.timer.invalidate()
         string = ""
         cf.delay(0.5){
             self.timer.invalidate()
@@ -1172,7 +1175,7 @@ func gotostart(){
                 self.stoprelay()
 
             }else {
-            var setrelayd = self.setralay0tcp()   //
+            var setrelayd = self.setralay0tcp()
             self.cf.delay(0.5){
 
             if(setrelayd == ""){
@@ -1468,6 +1471,9 @@ func gotostart(){
 
         //Fuelanother.hidden = false
                                 //    beginfuel.hidden = true
+        self.timer.invalidate()
+        timer_noConnection_withlink.invalidate()
+        timer_quantityless_thanprevious.invalidate()
                     let SSID:String = cf.getSSID()
                     print(SSID)
                     print(Vehicaldetails.sharedInstance.SSId)
@@ -1487,7 +1493,16 @@ func gotostart(){
                                 self.getuser()
                              }else{}
                             self.cf.delay(4){
-                            if(self.fuelquantity == nil){}
+                            if(self.fuelquantity == nil){
+//                                self.cf.delay(10){
+//                                    Vehicaldetails.sharedInstance.gohome = true
+//                                    self.timerview.invalidate()
+//                                    let appDel = UIApplication.shared.delegate! as! AppDelegate
+//                                    self.web.sentlog(func_name: "stoprelay function")
+//                                    appDel.start()
+//                                }
+                                self.error400(message: "No Quantity received. Transaction ended.")
+                            }
                             else{
                             if(self.fuelquantity > 0){
                                 self.wait.isHidden = true
@@ -1555,7 +1570,16 @@ func gotostart(){
                                 self.getuser()
                             }else{}
                             self.cf.delay(4){
-                            if(self.fuelquantity == nil){}
+                            if(self.fuelquantity == nil){
+//                                self.cf.delay(10){
+//                                    Vehicaldetails.sharedInstance.gohome = true
+//                                    self.timerview.invalidate()
+//                                    let appDel = UIApplication.shared.delegate! as! AppDelegate
+//                                    self.web.sentlog(func_name: "stoprelay function")
+//                                    appDel.start()
+//                                }
+                                self.error400(message: "No Quantity received. Transaction ended.")
+                            }
                             else{
                                 if(self.fuelquantity > 0){
                                         self.wait.isHidden = true
@@ -1650,7 +1674,7 @@ func gotostart(){
 
         print(Wifyssid)
         print(Odomtr)
-        let bodyData = "{\"TransactionId\":\(TransactionId),\"FuelQuantity\":\((fuelQuantity)),\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"versionno\":\"1.15.10\"}"
+        let bodyData = "{\"TransactionId\":\(TransactionId),\"FuelQuantity\":\((fuelQuantity)),\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"versionno\":\"1.15.13\"}"
 
         //"{\"PersonId\":\(PersonId),\"SiteId\":\(siteid),\"VehicleId\":\(VehicleId),\"CurrentOdometer\":\(Odomtr),\"FuelQuantity\":\((fuelQuantity)),\"DepartmentNumber\":\"\(deptno)\",\"Other\":\"\(other)\",\"PersonnelPIN\":\"\(PPinno)\",\"FuelTypeId\":\(FuelTypeId),\"WifiSSId\":\"\(Wifyssid)\",\"PhoneNumber\":\"\(PhoneNumber)\",\"TransactionDate\":\"\(dtt)\",\"TransactionFrom\":\"I\",\"Hours\":\"\(hour)\",\"VehicleNumber\":\"\(Vehicaldetails.sharedInstance.vehicleno)\",\"CurrentLat\":\"\(sourcelat)\",\"CurrentLng\":\"\(sourcelong)\"}"
 
@@ -1750,6 +1774,10 @@ func gotostart(){
                         if(JData != "")
                         {
                             Upload(jsonstring: JData,filename: filename,siteName:siteName)
+                            if(ResponceMessageUpload == "success"){
+                                self.notify(site: siteName)
+                            }
+
                             return "true"
                         }
                     }
@@ -1791,6 +1819,10 @@ func gotostart(){
                         if(JData != "")
                         {
                             Upload(jsonstring: JData,filename: filename,siteName:siteName)
+                            if(ResponceMessageUpload == "success"){
+                                self.notify(site: siteName)
+
+                            }
                         }
                         }
                         
@@ -1843,12 +1875,12 @@ func gotostart(){
                 print(self.sysdata)
 
                 _ = self.sysdata.value(forKey: "ResponceText") as! NSString
-                //self.notify(site: siteName)
+
 
                 //self.web.UpgradeTransactionStatus(Status: "2")
-                let ResponceMessage = self.sysdata.value(forKey: "ResponceMessage") as! NSString
+                self.ResponceMessageUpload = (self.sysdata.value(forKey: "ResponceMessage") as! NSString) as String
 
-                if(ResponceMessage == "success"){
+                if(self.ResponceMessageUpload == "success"){
                    self.cf.DeleteReportTextFile(fileName: filename, writeText: "")
                 }
 
@@ -1910,7 +1942,17 @@ func gotostart(){
 //                    self.getuser()
 //                }else{}
                 self.cf.delay(4){
-                    if(self.fuelquantity == nil){}
+                    if(self.fuelquantity == nil){
+//                        self.cf.delay(10){
+//                            Vehicaldetails.sharedInstance.gohome = true
+//                            self.timerview.invalidate()
+//                            let appDel = UIApplication.shared.delegate! as! AppDelegate
+//                            self.web.sentlog(func_name: "stoprelay function")
+//                            appDel.start()
+//                        }
+                        self.error400(message: "No Quantity received. Transaction ended.")
+
+                    }
                     else{
                         if(self.fuelquantity > 0){
                             self.wait.isHidden = true
@@ -2001,8 +2043,12 @@ func gotostart(){
 //
 //        task.resume()
 //         _ = semaphore.wait(timeout: DispatchTime.now())
-        if(self.reply1 == nil){}
+        if(self.reply1 == nil || self.reply1 == "-1")
+        {
+            timer_noConnection_withlink = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(FuelquantityVC.stoprelay), userInfo: nil, repeats: false)
+        }
         else{
+            timer_noConnection_withlink.invalidate()
                     let data1 = self.reply1.data(using: String.Encoding.utf8)!
             do{
                 self.sysdata1 = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
@@ -2035,9 +2081,14 @@ func gotostart(){
                     if (self.tpulse.text! == (counts as String) as String){
 
                    }
+                    if(Last_Count == nil){
+                        Last_Count = "0.0"
 
+                    }
+                    if(counts.doubleValue >= (Last_Count as NSString).doubleValue)
+                    {
+                    timer_quantityless_thanprevious.invalidate()
                     self.Last_Count = counts as String?
-
                     let v = self.quantity.count
                     let fuelQuan = self.calculate_fuelquantity(quantitycount: Int(counts as String)!)
                     let y = Double(round(100*fuelQuan)/100)
@@ -2111,7 +2162,44 @@ func gotostart(){
                         self.stopButtontapped()
                     }
                 }
+                        }
+
+                        }
+                    }
+                    else{
+                        timer_quantityless_thanprevious.invalidate()
+                        timer_quantityless_thanprevious = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(FuelquantityVC.stoprelay), userInfo: nil, repeats: false)
+                            print("lower qty. than the prior one.")
+                        }
                 }
+                else{
+
+                    let v = self.quantity.count
+                    let fuelQuan = self.calculate_fuelquantity(quantitycount: Int(counts as String)!)
+                    let y = Double(round(100*fuelQuan)/100)
+                    self.tquantity.text = "\(y)"// + "Gallon"
+
+                    self.tpulse.text = (counts as String) as String
+                    self.quantity.append("\(y) ")
+
+                    print(self.tquantity.text!, "\(y)" ,self.tquantity.text!,y,Vehicaldetails.sharedInstance.PulserStopTime)
+                    let defaultTimeZoneStr1 = dateFormatter.string(from: Date());
+                    print("Inside loop GetPulser" + defaultTimeZoneStr1)
+                    if(v >= 2){
+                        if(self.self.quantity[v-1] == self.quantity[v-2]){// + "Gallon"){
+                            self.total_count += 1
+                            if(self.total_count == 3){
+                                self.timer.invalidate()
+                                self.cf.delay((Vehicaldetails.sharedInstance.PulserStopTime as NSString).doubleValue){
+
+                                    _ = self.setralay0tcp()
+                                    _ = self.setpulsar0tcp()
+                                    self.displaytime.text = "app autostop because pulsecount getting is same."
+                                    self.Stop.isHidden = true
+                                    self.stoprelay()
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -2212,7 +2300,7 @@ func gotostart(){
                 //print(String(data: data, encoding: String.Encoding.utf8)!)
                 print(data)
                 self.replydata = data as NSData//NSString(data: data, encoding:NSUTF8StringEncoding)as! String
-                self.lable.text = "Download Completed .bin File"
+               // self.lable.text = "Download Completed .bin File"
             } else {
                 print(error!)
                 //self.replydata = "-1"
@@ -2284,7 +2372,7 @@ func gotostart(){
         inStream?.open()
         outStream?.open()
 
-        buffer = [UInt8](repeating: 0, count: 1024)
+        buffer = [UInt8](repeating: 0, count: 4096)
     }
 
     func stream(_ aStream: Stream, handle eventCode: Stream.Event) {

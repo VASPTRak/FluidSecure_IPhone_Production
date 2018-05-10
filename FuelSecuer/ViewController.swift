@@ -175,9 +175,9 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             if(Vehicaldetails.sharedInstance.reachblevia == "wificonn")
             {
                 self.navigationItem.title = "Error"
-                self.navigationController?.navigationBar.barTintColor = UIColor.blue
-                self.navigationController?.navigationBar.tintColor = UIColor.blue
-                self.navigationController!.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.blue]
+//                self.navigationController?.navigationBar.barTintColor = UIColor.blue
+//                self.navigationController?.navigationBar.tintColor = UIColor.blue
+//                self.navigationController!.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.blue]
 
                 scrollview.isHidden = true
                 version.isHidden = false
@@ -602,7 +602,9 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                }
                                else{
                                     let reply = self.web.sendSiteID()
-
+                            if(reply == "-1"){
+                               showAlert(message: "Please check your internet connection and try again later.")
+                            }else{
                             let data1:NSData = reply.data(using: String.Encoding.utf8)! as NSData
                             do{
                                 sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
@@ -620,8 +622,9 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                      print("ssID Match")
                                      self.performSegue(withIdentifier: "GO", sender: self)
                                    }
+                            }
                     }
-            }
+              }
         }
 
     @IBAction func refreshButtontappd(sender: AnyObject) {

@@ -25,6 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func beginBackgroundUpdateTask() {
         self.backgroundUpdateTask = UIApplication.shared.beginBackgroundTask(expirationHandler: {
+            //print(var backgroundTimeRemaining: TimeInterval { get })
             self.endBackgroundUpdateTask()
         })
     }
@@ -257,10 +258,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
     }
 
-    func applicationDidEnterBackground(_ application: UIApplication) {
-
-       // doBackgroundTask()
-                // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
+    func applicationDidEnterBackground(_ application: UIApplication)
+    {
+//        cf.delay(0.1){
+//            self.doBackgroundTask()
+//        }// Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     }
 

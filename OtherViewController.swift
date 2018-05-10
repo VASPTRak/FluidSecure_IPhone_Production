@@ -18,6 +18,7 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
         var sysdata:NSDictionary!
         var cf = Commanfunction()
         var IsSavebuttontapped : Bool = false
+        var countfailauth:Int = 0
 
         override func viewDidLoad() {
             super.viewDidLoad()
@@ -162,6 +163,7 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
             let other = Other.text
             let deptno = ""
             let pin = ""
+            countfailauth += 1
             let vehicle_no = Vehicaldetails.sharedInstance.vehicleno
             let data = web.vehicleAuth(vehicle_no: vehicle_no,Odometer:odometer!,isdept:deptno,isppin:pin,isother:other!)
             let Split = data.components(separatedBy: "#")
@@ -169,12 +171,22 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
             let error = Split[1]
             if (reply == "-1")
             {
-                 showAlert(message: "\(error) \n Please try again later" )
+                if(countfailauth>2)
+                {
+                    showAlert(message: "Please wait momentarily check your internet connection & try again.")//"\(error) \n Please try again later")
+
+                }else{
+
+                    self.senddata()
+
+                }
+                 //showAlert(message: "\(error) \n Please try again later" )
                 stoptimergotostart.invalidate()
                 viewWillAppear(true)
             }
             else
             {
+                countfailauth = 0
                 let data1:Data = reply.data(using: String.Encoding.utf8)! 
                 do{
                     sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary

@@ -17,6 +17,7 @@ class PinViewController: UIViewController,UITextFieldDelegate {
         var sysdata:NSDictionary!
         var cf = Commanfunction()
         var IsSavebuttontapped : Bool = false
+        var countfailauth:Int = 0
 
         override func viewDidLoad() {
             super.viewDidLoad()
@@ -153,18 +154,28 @@ class PinViewController: UIViewController,UITextFieldDelegate {
             let isppin = Pin.text
             let deptno = ""
             let vehicle_no = Vehicaldetails.sharedInstance.vehicleno
+             countfailauth += 1
             let data = web.vehicleAuth(vehicle_no: vehicle_no,Odometer:odometer!,isdept:deptno,isppin:isppin!,isother:other)
             let Split = data.components(separatedBy: "#")
             let reply = Split[0] 
             let error = Split[1]
             if (reply == "-1")
             {
-              showAlert(message: "\(error) \n Please try again later" )
+                if(countfailauth>2)
+                {
+                    showAlert(message: "Please wait momentarily check your internet connection & try again.")//"\(error) \n Please try again later")
+
+                }else{
+
+                    self.senddata(other:other)
+
+                }
+              //showAlert(message: "\(error) \n Please try again later" )
                 stoptimergotostart.invalidate()
                 viewWillAppear(true)
             }
             else
-            {
+            {   countfailauth = 0
                 let data1:Data = reply.data(using: String.Encoding.utf8)! 
                 do{
                     sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary

@@ -49,8 +49,10 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
     var stoptimergotostart:Timer = Timer()
     var buttontype:String!
     var button = UIButton(type: UIButtonType.custom)
-    let doneButton:UIButton = UIButton (frame: CGRect(x: 150, y: 150, width: 50, height: 44));
+    let doneButton:UIButton = UIButton (frame: CGRect(x: 150, y: 150, width: 50, height: 44))
     let doneButton1:UIButton = UIButton (frame: CGRect(x: 150, y: 150, width: 50, height: 44))
+    var countfailauth:Int = 0
+    var counthourauth:Int = 0
  
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -322,7 +324,7 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
         let odom = "0"
         let odometer = Int(odom)
         let vehicle_no = Vehicleno.text
-
+        countfailauth += 1
         let data = web.vehicleAuth(vehicle_no: vehicle_no!,Odometer:odometer!,isdept:deptno,isppin:ppin,isother:other)
           let Split = data.components(separatedBy: "#")
         let reply = Split[0]
@@ -330,10 +332,21 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
         if (reply == "-1")
         {//self.performSegueWithIdentifier("fcount", sender: self)
           // confs.setralay0sleep()// web.sleep()//confs.Recvhold()
-            showAlert(message: "\(error) \n Please try again later" )
+            if(countfailauth>2)
+            {
+                showAlert(message: "Please wait momentarily check your internet connection & try again.")//"\(error) \n Please try again later")
+
+
+            }else{
+
+                self.senddata(deptno: deptno,ppin:ppin,other:other)
+
+            }
+            //showAlert(message: "\(error) \n Please try again later" )
         }
         else
         {
+            countfailauth = 0
             let data1:Data = reply.data(using: String.Encoding.utf8)!
             do{
                 sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
@@ -535,6 +548,139 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
 //        return switchControl
 //    }
 
+    func getodometer(){
+        if(odo == "False"){
+
+            let odom = "0"
+            _ = Int(odom)
+            let vehicle_no = Vehicleno.text
+            Vehicaldetails.sharedInstance.vehicleno = vehicle_no!
+            let data = web.checkhour_odometer(vehicle_no!)
+             counthourauth += 1
+            //let data = web.vehicleAuth(vehicle_no!,Odometer:odometer!)
+            let Split = data.components(separatedBy: "#")
+            let reply = Split[0]
+            let error = Split[1]
+            if (reply == "-1")
+            {//self.performSegueWithIdentifier("fcount", sender: self)
+                //confs.setralay0sleep() //web.sleep()//confs.Recvhold()
+                if(counthourauth>2)
+                {
+                    showAlert(message: "Please wait momentarily check your internet connection & try again.")//"\(error) \n Please try again later")
+
+
+                }else{
+
+                    getodometer()//self.senddata(deptno: deptno,ppin:ppin,other:other)
+
+                }
+                showAlert(message: "Please wait momentarily & try again.")//"\(error) \n Please try again later" )
+
+                stoptimergotostart.invalidate()
+                viewWillAppear(true)
+            }
+            else
+            {
+                 counthourauth = 0
+                let data1:Data = reply.data(using: String.Encoding.utf8)!
+                do{
+                    sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                }catch let error as NSError {
+                    print ("Error: \(error.domain)")
+                }
+
+                print(sysdata)
+                //defaults.removeObjectForKey("SSID")
+
+                let ResponceMessage = sysdata.value(forKey: "ResponceMessage") as! NSString
+                let ResponceText = sysdata.value(forKey: "ResponceText") as! NSString
+                if(ResponceMessage == "success"){
+                    let IsHoursRequire = sysdata.value(forKey: "IsHoursRequire") as! NSString
+                    let IsOdoMeterRequire = sysdata.value(forKey: "IsOdoMeterRequire") as! NSString
+
+                    let CheckOdometerReasonable = sysdata.value(forKey: "CheckOdometerReasonable") as! NSString
+                    let OdometerReasonabilityConditions = sysdata.value(forKey: "OdometerReasonabilityConditions") as! NSString
+                    let PreviousOdo = sysdata.value(forKey: "PreviousOdo") as! NSString
+                    let OdoLimit = sysdata.value(forKey: "OdoLimit") as! NSString
+
+                    Vehicaldetails.sharedInstance.odometerreq = IsOdoMeterRequire as String
+                    Vehicaldetails.sharedInstance.IsHoursrequirs = IsHoursRequire as String
+                    Vehicaldetails.sharedInstance.CheckOdometerReasonable = CheckOdometerReasonable as String
+                    Vehicaldetails.sharedInstance.OdometerReasonabilityConditions = OdometerReasonabilityConditions as String
+                    Vehicaldetails.sharedInstance.PreviousOdo = Int(PreviousOdo as String)!
+                    Vehicaldetails.sharedInstance.OdoLimit = Int(OdoLimit as String)!
+                    let isdept = Vehicaldetails.sharedInstance.IsDepartmentRequire
+                    let isPPin = Vehicaldetails.sharedInstance.IsPersonnelPINRequire
+                    let isother = Vehicaldetails.sharedInstance.IsOtherRequire
+
+
+                    if (IsOdoMeterRequire == "True"){
+
+                        print(self.odo)
+                        stoptimergotostart.invalidate()
+                        self.performSegue(withIdentifier: "odometer", sender: self)
+                    }
+                    else{
+
+                        if (IsHoursRequire == "True"){
+                            self.performSegue(withIdentifier: "hours", sender: self)
+                        }
+                        else{
+                            Vehicaldetails.sharedInstance.hours = ""
+
+                            if(isdept == "True"){
+                                stoptimergotostart.invalidate()
+                                self.performSegue(withIdentifier: "dept", sender: self)
+                            }
+                            else{
+                                if(isPPin == "True"){
+                                    stoptimergotostart.invalidate()
+                                    self.performSegue(withIdentifier: "pin", sender: self)
+                                }
+                                else{
+                                    if(isother == "True"){
+                                        stoptimergotostart.invalidate()
+                                        self.performSegue(withIdentifier: "other", sender: self)
+                                    }
+                                    else{
+                                        let deptno = ""
+                                        let ppin = ""
+                                        let other = ""
+                                        Vehicaldetails.sharedInstance.deptno = ""
+                                        Vehicaldetails.sharedInstance.Personalpinno = ""
+                                        Vehicaldetails.sharedInstance.Other = ""
+                                        Vehicaldetails.sharedInstance.Odometerno = "0"
+                                        self.senddata(deptno: deptno,ppin:ppin,other:other)
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+                else {
+
+                    if(ResponceMessage == "fail")
+                    {
+                        showAlert(message: "\(ResponceText)")
+                        stoptimergotostart.invalidate()
+                        viewWillAppear(true)
+                    }
+                }
+            }
+            Vehicaldetails.sharedInstance.Odometerno = odom
+            // self.performSegueWithIdentifier("Vgo", sender: self)
+            Vehicaldetails.sharedInstance.Odometerno = odom
+            // self.performSegueWithIdentifier("Vgo", sender: self)
+        }
+        else if(odo == "True"){
+            stoptimergotostart.invalidate()
+            self.performSegue(withIdentifier: "odometer", sender: self)
+            NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        }
+    }
+
+
 
 
     @IBAction func saveBtntapped(sender: AnyObject) {
@@ -548,124 +694,127 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
                 viewWillAppear(true)
             }
         else{
-                if(odo == "False"){
-
-                        let odom = "0"
-                        _ = Int(odom)
-                        let vehicle_no = Vehicleno.text
-                        Vehicaldetails.sharedInstance.vehicleno = vehicle_no!
-                    let data = web.checkhour_odometer(vehicle_no!)
-                        //let data = web.vehicleAuth(vehicle_no!,Odometer:odometer!)
-                          let Split = data.components(separatedBy: "#")
-                        let reply = Split[0]
-                        let error = Split[1]
-                        if (reply == "-1")
-                        {//self.performSegueWithIdentifier("fcount", sender: self)
-                            //confs.setralay0sleep() //web.sleep()//confs.Recvhold()
-                            showAlert(message: "\(error) \n Please try again later" )
-
-                            stoptimergotostart.invalidate()
-                             viewWillAppear(true)
-                        }
-                        else
-                        {
-                            let data1:Data = reply.data(using: String.Encoding.utf8)!
-                            do{
-                                sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
-                            }catch let error as NSError {
-                                print ("Error: \(error.domain)")
-                            }
-
-                            print(sysdata)
-                            //defaults.removeObjectForKey("SSID")
-
-                            let ResponceMessage = sysdata.value(forKey: "ResponceMessage") as! NSString
-                            let ResponceText = sysdata.value(forKey: "ResponceText") as! NSString
-                            if(ResponceMessage == "success"){
-                                let IsHoursRequire = sysdata.value(forKey: "IsHoursRequire") as! NSString
-                                let IsOdoMeterRequire = sysdata.value(forKey: "IsOdoMeterRequire") as! NSString
-
-                                let CheckOdometerReasonable = sysdata.value(forKey: "CheckOdometerReasonable") as! NSString
-                                let OdometerReasonabilityConditions = sysdata.value(forKey: "OdometerReasonabilityConditions") as! NSString
-                                let PreviousOdo = sysdata.value(forKey: "PreviousOdo") as! NSString
-                                let OdoLimit = sysdata.value(forKey: "OdoLimit") as! NSString
-
-                                Vehicaldetails.sharedInstance.odometerreq = IsOdoMeterRequire as String
-                                Vehicaldetails.sharedInstance.IsHoursrequirs = IsHoursRequire as String
-                                Vehicaldetails.sharedInstance.CheckOdometerReasonable = CheckOdometerReasonable as String
-                                Vehicaldetails.sharedInstance.OdometerReasonabilityConditions = OdometerReasonabilityConditions as String
-                                Vehicaldetails.sharedInstance.PreviousOdo = Int(PreviousOdo as String)!
-                                Vehicaldetails.sharedInstance.OdoLimit = Int(OdoLimit as String)!
-                                let isdept = Vehicaldetails.sharedInstance.IsDepartmentRequire
-                                let isPPin = Vehicaldetails.sharedInstance.IsPersonnelPINRequire
-                                let isother = Vehicaldetails.sharedInstance.IsOtherRequire
-
-
-                                    if (IsOdoMeterRequire == "True"){
-
-                                        print(self.odo)
-                                        stoptimergotostart.invalidate()
-                                        self.performSegue(withIdentifier: "odometer", sender: self)
-                                    }
-                                    else{
-                                        
-                                        if (IsHoursRequire == "True"){
-                                            self.performSegue(withIdentifier: "hours", sender: self)
-                                        }
-                                        else{
-                                            Vehicaldetails.sharedInstance.hours = ""
-
-                                        if(isdept == "True"){
-                                            stoptimergotostart.invalidate()
-                                            self.performSegue(withIdentifier: "dept", sender: self)
-                                        }
-                                        else{
-                                            if(isPPin == "True"){
-                                                stoptimergotostart.invalidate()
-                                                self.performSegue(withIdentifier: "pin", sender: self)
-                                            }
-                                            else{
-                                             if(isother == "True"){
-                                                stoptimergotostart.invalidate()
-                                                self.performSegue(withIdentifier: "other", sender: self)
-                                             }
-                                             else{
-                                                let deptno = ""
-                                                let ppin = ""
-                                                let other = ""
-                                                Vehicaldetails.sharedInstance.deptno = ""
-                                                Vehicaldetails.sharedInstance.Personalpinno = ""
-                                                Vehicaldetails.sharedInstance.Other = ""
-                                                Vehicaldetails.sharedInstance.Odometerno = "0"
-                                                self.senddata(deptno: deptno,ppin:ppin,other:other)
-                                                }
-                                            }
-                                        }
-
-                                    }
-                                }
-                             }
-                            else {
-
-                                if(ResponceMessage == "fail")
-                                {
-                                    showAlert(message: "\(ResponceText)")
-                                    stoptimergotostart.invalidate()
-                                    viewWillAppear(true)
-                                }
-                            }
-                        }
-                        Vehicaldetails.sharedInstance.Odometerno = odom
-                        // self.performSegueWithIdentifier("Vgo", sender: self)
-                    Vehicaldetails.sharedInstance.Odometerno = odom
-                   // self.performSegueWithIdentifier("Vgo", sender: self)
-                }
-                else if(odo == "True"){
-                    stoptimergotostart.invalidate()
-                    self.performSegue(withIdentifier: "odometer", sender: self)
-                    NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-                }
-        }
+                getodometer()
+//                if(odo == "False"){
+//
+//                        let odom = "0"
+//                        _ = Int(odom)
+//                        let vehicle_no = Vehicleno.text
+//                        Vehicaldetails.sharedInstance.vehicleno = vehicle_no!
+//                    let data = web.checkhour_odometer(vehicle_no!)
+//                        //let data = web.vehicleAuth(vehicle_no!,Odometer:odometer!)
+//                          let Split = data.components(separatedBy: "#")
+//                        let reply = Split[0]
+//                        let error = Split[1]
+//                        if (reply == "-1")
+//                        {//self.performSegueWithIdentifier("fcount", sender: self)
+//                            //confs.setralay0sleep() //web.sleep()//confs.Recvhold()
+//
+//                            showAlert(message: "Please wait momentarily & try again.")//"\(error) \n Please try again later" )
+//
+//                            stoptimergotostart.invalidate()
+//                             viewWillAppear(true)
+//                        }
+//                        else
+//                        {
+//                            let data1:Data = reply.data(using: String.Encoding.utf8)!
+//                            do{
+//                                sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+//                            }catch let error as NSError {
+//                                print ("Error: \(error.domain)")
+//                            }
+//
+//                            print(sysdata)
+//                            //defaults.removeObjectForKey("SSID")
+//
+//                            let ResponceMessage = sysdata.value(forKey: "ResponceMessage") as! NSString
+//                            let ResponceText = sysdata.value(forKey: "ResponceText") as! NSString
+//                            if(ResponceMessage == "success"){
+//                                let IsHoursRequire = sysdata.value(forKey: "IsHoursRequire") as! NSString
+//                                let IsOdoMeterRequire = sysdata.value(forKey: "IsOdoMeterRequire") as! NSString
+//
+//                                let CheckOdometerReasonable = sysdata.value(forKey: "CheckOdometerReasonable") as! NSString
+//                                let OdometerReasonabilityConditions = sysdata.value(forKey: "OdometerReasonabilityConditions") as! NSString
+//                                let PreviousOdo = sysdata.value(forKey: "PreviousOdo") as! NSString
+//                                let OdoLimit = sysdata.value(forKey: "OdoLimit") as! NSString
+//
+//                                Vehicaldetails.sharedInstance.odometerreq = IsOdoMeterRequire as String
+//                                Vehicaldetails.sharedInstance.IsHoursrequirs = IsHoursRequire as String
+//                                Vehicaldetails.sharedInstance.CheckOdometerReasonable = CheckOdometerReasonable as String
+//                                Vehicaldetails.sharedInstance.OdometerReasonabilityConditions = OdometerReasonabilityConditions as String
+//                                Vehicaldetails.sharedInstance.PreviousOdo = Int(PreviousOdo as String)!
+//                                Vehicaldetails.sharedInstance.OdoLimit = Int(OdoLimit as String)!
+//                                let isdept = Vehicaldetails.sharedInstance.IsDepartmentRequire
+//                                let isPPin = Vehicaldetails.sharedInstance.IsPersonnelPINRequire
+//                                let isother = Vehicaldetails.sharedInstance.IsOtherRequire
+//
+//
+//                                    if (IsOdoMeterRequire == "True"){
+//
+//                                        print(self.odo)
+//                                        stoptimergotostart.invalidate()
+//                                        self.performSegue(withIdentifier: "odometer", sender: self)
+//                                    }
+//                                    else{
+//
+//                                        if (IsHoursRequire == "True"){
+//                                            self.performSegue(withIdentifier: "hours", sender: self)
+//                                        }
+//                                        else{
+//                                            Vehicaldetails.sharedInstance.hours = ""
+//
+//                                        if(isdept == "True"){
+//                                            stoptimergotostart.invalidate()
+//                                            self.performSegue(withIdentifier: "dept", sender: self)
+//                                        }
+//                                        else{
+//                                            if(isPPin == "True"){
+//                                                stoptimergotostart.invalidate()
+//                                                self.performSegue(withIdentifier: "pin", sender: self)
+//                                            }
+//                                            else{
+//                                             if(isother == "True"){
+//                                                stoptimergotostart.invalidate()
+//                                                self.performSegue(withIdentifier: "other", sender: self)
+//                                             }
+//                                             else{
+//                                                let deptno = ""
+//                                                let ppin = ""
+//                                                let other = ""
+//                                                Vehicaldetails.sharedInstance.deptno = ""
+//                                                Vehicaldetails.sharedInstance.Personalpinno = ""
+//                                                Vehicaldetails.sharedInstance.Other = ""
+//                                                Vehicaldetails.sharedInstance.Odometerno = "0"
+//                                                self.senddata(deptno: deptno,ppin:ppin,other:other)
+//                                                }
+//                                            }
+//                                        }
+//
+//                                    }
+//                                }
+//                             }
+//                            else {
+//
+//                                if(ResponceMessage == "fail")
+//                                {
+//                                    showAlert(message: "\(ResponceText)")
+//                                    stoptimergotostart.invalidate()
+//                                    viewWillAppear(true)
+//                                }
+//                            }
+//                        }
+//                        Vehicaldetails.sharedInstance.Odometerno = odom
+//                        // self.performSegueWithIdentifier("Vgo", sender: self)
+//                    Vehicaldetails.sharedInstance.Odometerno = odom
+//                   // self.performSegueWithIdentifier("Vgo", sender: self)
+//                }
+//                else if(odo == "True"){
+//                    stoptimergotostart.invalidate()
+//                    self.performSegue(withIdentifier: "odometer", sender: self)
+//                    NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+//                }
+//        }
         Vehicaldetails.sharedInstance.vehicleno = Vehicleno.text!
     }
+}
 }

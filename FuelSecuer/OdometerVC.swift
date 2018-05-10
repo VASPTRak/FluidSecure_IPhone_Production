@@ -19,6 +19,7 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
     var IsSavebuttontapped : Bool = false
     var IsGobuttontapped : Bool = false
     var stoptimergotostart:Timer = Timer()
+     var countfailauth:Int = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -162,16 +163,27 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
         let odom = "0"
         let odometer:Int! = Int(odom)!
         let vehicle_no = Vehicaldetails.sharedInstance.vehicleno
+         countfailauth += 1
         let data = web.vehicleAuth(vehicle_no: vehicle_no,Odometer:odometer!,isdept:deptno,isppin:ppin,isother:other)
         let Split = data.components(separatedBy: "#")
         let reply = Split[0] as! String
         let error = Split[1]as! String
         if (reply == "-1")
         {
-            showAlert(message: "\(error) \n Please try again later" )
+            if(countfailauth>2)
+            {
+                showAlert(message: "Please wait momentarily check your internet connection & try again.")//"\(error) \n Please try again later")
+
+
+            }else{
+
+                self.senddata(deptno: deptno,ppin:ppin,other:other)
+
+            }//showAlert(message: "\(error) \n Please try again later" )
         }
         else
         {
+             countfailauth = 0
             let data1:Data = reply.data(using: String.Encoding.utf8)! 
             do{
                 sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
