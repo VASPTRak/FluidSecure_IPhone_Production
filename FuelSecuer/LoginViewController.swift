@@ -73,22 +73,22 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         locationManager.startUpdatingLocation()
         currentlocation = locationManager.location
         var reply:String!
-        var error:String!
-        var data:String!
+        //        var error:String!
+        //        var data:String!
         if(currentlocation == nil)
         {
             reply = web.checkApprove(uuid: uuid,lat:"\(0)",long:"\(0)")
-//            let Split = data.components(separatedBy: "#")
-//            reply = Split[0]
-//            error = Split[1]
-         }
+            //            let Split = data.components(separatedBy: "#")
+            //            reply = Split[0]
+            //            error = Split[1]
+        }
         else {
             sourcelat = currentlocation.coordinate.latitude
             sourcelong = currentlocation.coordinate.longitude
             print (sourcelat,sourcelong)
             reply = web.checkApprove(uuid: uuid,lat:"\(sourcelat!)",long:"\(sourcelong!)")
-//             let Split = data.components(separatedBy: "#")
-//            reply = Split[0]
+            //             let Split = data.components(separatedBy: "#")
+            //            reply = Split[0]
             if(reply != "-1"){
                 cf.DeleteFileInApp(fileName: "getSites.txt")
                 cf.CreateTextFile(fileName: "getSites.txt", writeText: reply)
@@ -98,7 +98,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
                     reply = cf.ReadFile(fileName: "getSites.txt")
                 }
             }
-           // error = Split[1]
+            // error = Split[1]
         }
         self.navigationController?.navigationBar.barTintColor = UIColor(red: 31.0/255.0, green: 77.0/255.0, blue: 153.0/255.0, alpha: 1.0)//UIColor.blueColor()
         self.navigationController?.navigationBar.tintColor = UIColor.white
@@ -116,13 +116,13 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
                 refresh.isHidden = false
 
                 cf.delay(0.2){
-                 self.viewDidLoad()
+                    self.viewDidLoad()
                 }
             }
             else if(Vehicaldetails.sharedInstance.reachblevia == "cellular") {
 
                 self.navigationItem.title = "Error"
-               // showAlert("Cannot connect to cloud server. Please check your internet connection. \n \(error)")
+                // showAlert("Cannot connect to cloud server. Please check your internet connection. \n \(error)")
                 mview.isHidden = true
                 version.isHidden = false
                 warning.isHidden = false
@@ -149,9 +149,9 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
 
                         reply = web.checkApprove(uuid: uuid,lat:"\(sourcelat!)",long:"\(sourcelong!)")
                     }
-//                      let Split = data.components(separatedBy: "#")
-//                    reply = Split[0]
-//                    error = Split[1]
+                    //                      let Split = data.components(separatedBy: "#")
+                    //                    reply = Split[0]
+                    //                    error = Split[1]
                     if(reply == "-1")
                     {//showAlert("Cannot connect to cloud server. Please check your internet connection. \n \(error)")
                     }
@@ -160,7 +160,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
                         viewDidLoad()
                         break;
                     }
-                 }
+                }
             }
         }
         else {
@@ -177,7 +177,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
             if(Message == "success") {
                 let objUserData = sysdata.value(forKey: "objUserData") as! NSDictionary
                 self.navigationItem.title = "Login"
-                 Email = objUserData.value(forKey: "Email") as! NSString as String
+                Email = objUserData.value(forKey: "Email") as! NSString as String
                 let IMEI_UDID = objUserData.value(forKey: "IMEI_UDID") as! NSString
                 let IsApproved = objUserData.value(forKey: "IsApproved") as! NSString
                 let PersonName = objUserData.value(forKey: "PersonName") as! NSString
@@ -246,7 +246,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
                     defaults.set(0, forKey: "Register")
                     appDel.start()
                 }
-               else if(ResponseText == "notapproved")
+                else if(ResponseText == "notapproved")
                 {
                     defaults.set("false", forKey: "checkApproved")
                     mview.isHidden = true
@@ -306,7 +306,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         paragraphStyle.alignment = NSTextAlignment.left
         var messageMutableString = NSMutableAttributedString()
         messageMutableString = NSMutableAttributedString(string: message as String, attributes: [ NSParagraphStyleAttributeName: paragraphStyle,NSFontAttributeName:UIFont(name: "Georgia", size: 24.0)!])
-        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.darkGray, range: NSRange(location:0,length:message.characters.count))
+        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
 
         // Action.
@@ -341,8 +341,8 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         else
         {
             let reply = web.Login(Username.text!, PWD:PWD.text!, uuid: uuid)
-//            let Split = data.components(separatedBy: "#")
-//            let reply = Split[0]
+            //            let Split = data.components(separatedBy: "#")
+            //            let reply = Split[0]
 
             if(reply == "-1")
             {
@@ -354,7 +354,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
                     warning.isHidden = false
                     warning.text = "Cannot connect to cloud server.Please check your internet connection."
                     refresh.isHidden = false
-               }
+                }
                 else if(Vehicaldetails.sharedInstance.reachblevia == "cellular" ||  Vehicaldetails.sharedInstance.reachblevia == "notreachable") {
                     self.navigationItem.title = "Error"
                     mview.isHidden = true
@@ -418,13 +418,13 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         let message  = message
         var messageMutableString = NSMutableAttributedString()
         messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.black, range: NSRange(location:0,length:message.characters.count))
+        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.black, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
 
         // Action.
-       let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default) { action in //self.//
+        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default) { action in //self.//
             self.openMapForPlace()
-            }
+        }
         alertController.addAction(action)
         self.present(alertController, animated: true, completion: nil)
     }
@@ -440,13 +440,13 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         let message  = message
         var messageMutableString = NSMutableAttributedString()
         messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.black, range: NSRange(location:0,length:message.characters.count))
+        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.black, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
 
         // Action.
         let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default){ action in //self.//
-                self.wifisettings()
-            }
+            self.wifisettings()
+        }
         alertController.addAction(action)
         self.present(alertController, animated: true, completion: nil)
     }

@@ -140,11 +140,11 @@ public class Reachability {
 
         #if (arch(i386) || arch(x86_64)) && os(iOS)
 
-            return false
+        return false
 
         #else
 
-            return true
+        return true
 
         #endif
 
@@ -188,7 +188,7 @@ public class Reachability {
 
     public convenience init?() {
 
-       var zeroAddress = sockaddr()
+        var zeroAddress = sockaddr()
 
         zeroAddress.sa_len = UInt8(MemoryLayout<sockaddr>.size)
 
@@ -270,7 +270,7 @@ public extension Reachability {
 
             if isOnWWANFlagSet && !reachableOnWWAN {
                 // We don't want to connect when on 3G.
-               return false
+                return false
             }
         }
         return true
@@ -340,11 +340,11 @@ fileprivate extension Reachability {
 
         #if os(iOS)
 
-            return reachabilityFlags.contains(.isWWAN)
+        return reachabilityFlags.contains(.isWWAN)
 
         #else
 
-            return false
+        return false
 
         #endif
 

@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 class Selectwifi: UIViewController,UITextFieldDelegate,UIPickerViewDelegate,StreamDelegate {
-var cf = Commanfunction()
+    var cf = Commanfunction()
     var timer:Timer = Timer()
 
     override func viewDidLoad() {
@@ -31,12 +31,12 @@ var cf = Commanfunction()
 
     override func viewDidAppear(_ animated: Bool) {
 
-    if( cf.getSSID() != "" ) {
-        print("SSID: \(cf.getSSID())")
-    } else {
-        // showAlert("SSID not found wifi is not connected.")
+        if( cf.getSSID() != "" ) {
+            print("SSID: \(cf.getSSID())")
+        } else {
+            // showAlert("SSID not found wifi is not connected.")
+        }
     }
-}
 
     override func viewDidLayoutSubviews() {
         if(Vehicaldetails.sharedInstance.SSId == cf.getSSID())

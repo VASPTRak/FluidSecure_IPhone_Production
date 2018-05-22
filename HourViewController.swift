@@ -15,8 +15,8 @@ class HourViewController: UIViewController,UITextFieldDelegate {
     var confs = FuelquantityVC()
     var sysdata:NSDictionary!
     var cf = Commanfunction()
-     var stoptimergotostart:Timer = Timer()
-     var IsSavebuttontapped : Bool = false
+    var stoptimergotostart:Timer = Timer()
+    var IsSavebuttontapped : Bool = false
     var countfailauth:Int = 0
 
     override func viewDidLoad() {
@@ -32,7 +32,6 @@ class HourViewController: UIViewController,UITextFieldDelegate {
         Hour.returnKeyType = .done
         Hour.inputAccessoryView = doneButton
         Hour.autocapitalizationType = UITextAutocapitalizationType.allCharacters
-
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -95,7 +94,7 @@ class HourViewController: UIViewController,UITextFieldDelegate {
 
     @IBAction func reset(sender: AnyObject) {
         stoptimergotostart.invalidate()
-         viewWillAppear(true)
+        viewWillAppear(true)
         Hour.text = ""
     }
 
@@ -148,9 +147,9 @@ class HourViewController: UIViewController,UITextFieldDelegate {
         let vehicle_no = Vehicaldetails.sharedInstance.vehicleno
         let data = web.vehicleAuth(vehicle_no: vehicle_no,Odometer:odometer!,isdept:deptno,isppin:ppin,isother:other)
         countfailauth += 1
-          let Split = data.components(separatedBy: "#")
+        let Split = data.components(separatedBy: "#")
         let reply = Split[0] 
-        let error = Split[1]
+        //let error = Split[1]
         if (reply == "-1")
         {
             if(countfailauth>2)
@@ -277,28 +276,13 @@ class HourViewController: UIViewController,UITextFieldDelegate {
         wifisettings()
     }
 
-//    func createSwitch() -> UISwitch{
-//        let switchControl = UISwitch(frame:CGRect(x: 100, y: 210, width: 0, height: 0));
-//        if(Vehicaldetails.sharedInstance.reachblevia == "wificonn"){
-//            switchControl.isOn = false
-//            switchControl.setOn(true, animated: false);
-//            switchControl.isEnabled = false
-//            return switchControl
-//        }
-//        else if(Vehicaldetails.sharedInstance.reachblevia != "wificonn"){
-//            switchControl.isOn = true
-//            switchControl.setOn(true, animated: false);
-//            switchControl.isEnabled = false
-//            return switchControl
-//        }
-//        return switchControl
-//    }
 
-   @IBAction func saveButtontapped(sender: AnyObject) {
-    IsSavebuttontapped = true
-     stoptimergotostart.invalidate()
-     //viewWillAppear(true)
-    //viewDidLoad()
+
+    @IBAction func saveButtontapped(sender: AnyObject) {
+        IsSavebuttontapped = true
+        stoptimergotostart.invalidate()
+        //viewWillAppear(true)
+        //viewDidLoad()
         tapAction()
         if(Hour.text == "")
         {
@@ -314,40 +298,40 @@ class HourViewController: UIViewController,UITextFieldDelegate {
             let isdept = Vehicaldetails.sharedInstance.IsDepartmentRequire
             let isPPin = Vehicaldetails.sharedInstance.IsPersonnelPINRequire
             let isother = Vehicaldetails.sharedInstance.IsOtherRequire
-            let odometer_req = Vehicaldetails.sharedInstance.odometerreq
-//            if (odometer_req == "True"){
-//                print(odometer_req)
-//                self.performSegue(withIdentifier: "odometer", sender: self)
-//            }
-//            else{
-                if(isdept == "True"){
+            //         let odometer_req = Vehicaldetails.sharedInstance.odometerreq
+            //            if (odometer_req == "True"){
+            //                print(odometer_req)
+            //                self.performSegue(withIdentifier: "odometer", sender: self)
+            //            }
+            //            else{
+            if(isdept == "True"){
+                stoptimergotostart.invalidate()
+                self.performSegue(withIdentifier: "dept", sender: self)
+            }
+            else{
+                if(isPPin == "True"){
                     stoptimergotostart.invalidate()
-                    self.performSegue(withIdentifier: "dept", sender: self)
+                    self.performSegue(withIdentifier: "pin", sender: self)
                 }
                 else{
-                    if(isPPin == "True"){
+                    if(isother == "True"){
                         stoptimergotostart.invalidate()
-                        self.performSegue(withIdentifier: "pin", sender: self)
+                        self.performSegue(withIdentifier: "other", sender: self)
                     }
                     else{
-                        if(isother == "True"){
-                            stoptimergotostart.invalidate()
-                            self.performSegue(withIdentifier: "other", sender: self)
-                        }
-                        else{
-                            let deptno = ""
-                            let ppin = ""
-                            let other = ""
-                            Vehicaldetails.sharedInstance.deptno = ""
-                            Vehicaldetails.sharedInstance.Personalpinno = ""
-                            Vehicaldetails.sharedInstance.Other = ""
-                            self.senddata(deptno: deptno,ppin:ppin,other:other)
-                        }
+                        let deptno = ""
+                        let ppin = ""
+                        let other = ""
+                        Vehicaldetails.sharedInstance.deptno = ""
+                        Vehicaldetails.sharedInstance.Personalpinno = ""
+                        Vehicaldetails.sharedInstance.Other = ""
+                        self.senddata(deptno: deptno,ppin:ppin,other:other)
                     }
                 }
             }
         }
-   // }
+    }
+    // }
 }
 
 

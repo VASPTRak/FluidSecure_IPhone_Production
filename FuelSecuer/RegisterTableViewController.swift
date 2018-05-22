@@ -49,19 +49,11 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
         backView?.layer.cornerRadius = 10.0
         backView?.backgroundColor = UIColor.white
 
-        //            // Change Title With Color and Font:
-
-        //            let myString  = "Alert Title"
-        //            var myMutableString = NSMutableAttributedString()
-        //            myMutableString = NSMutableAttributedString(string: myString as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 30.0)!])
-        //            myMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.redColor(), range: NSRange(location:0,length:myString.characters.count))
-        //            alertController.setValue(myMutableString, forKey: "attributedTitle")
-
         // Change Message With Color and Font
         let message  = message
         var messageMutableString = NSMutableAttributedString()
         messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.darkGray, range: NSRange(location:0,length:message.characters.count))
+        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
 
         // Action.
@@ -75,76 +67,71 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
         // Dispose of any resources that can be recreated.
     }
 
-    // MARK: - Table view data source
-
     @IBAction func registerButtonClicked(sender: AnyObject) {
         self.registerUser()
     }
 
     func register(){
-                let uuid:String = UIDevice.current.identifierForVendor!.uuidString
-                print(uuid)
-                let Name = firstNameTextField.text
-                let Email = emailTextField.text
-                let string = uuid + ":" + Email! + ":" + "Register"
-                let Base64 = convertStringToBase64(string: string)
-                let mobile = mobileNoTextField.text
-                let Companyname = Company_Name.text
-                let data = web.registration(Name: Name!,Email:Email!,Base64:Base64,mobile:mobile!,uuid:uuid,company:Companyname!)
-                let Split = data.components(separatedBy: "#")
-                let reply = Split[0]
-                let error = Split[1]
+        let uuid:String = UIDevice.current.identifierForVendor!.uuidString
+        print(uuid)
+        let Name = firstNameTextField.text
+        let Email = emailTextField.text
+        let string = uuid + ":" + Email! + ":" + "Register"
+        let Base64 = convertStringToBase64(string: string)
+        let mobile = mobileNoTextField.text
+        let Companyname = Company_Name.text
+        let data = web.registration(Name: Name!,Email:Email!,Base64:Base64,mobile:mobile!,uuid:uuid,company:Companyname!)
+        let Split = data.components(separatedBy: "#")
+        let reply = Split[0]
+        let error = Split[1]
 
-                print(reply)
-                if(reply == "-1"){showAlert(message: "Internet connection is not available.\(error)")}
-                else {
-                    let data1:NSData = reply.data(using: String.Encoding.utf8)! as NSData
-                    do{
-                        sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
-                    }catch let error as NSError {
-                        print ("Error: \(error.domain)")
-                    }
-                    print(sysdata)
+        print(reply)
+        if(reply == "-1"){showAlert(message: "Internet connection is not available.\(error)")}
+        else {
+            let data1:NSData = reply.data(using: String.Encoding.utf8)! as NSData
+            do{
+                sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+            }catch let error as NSError {
+                print ("Error: \(error.domain)")
+            }
+            print(sysdata)
 
-                    let ResponceData = sysdata.value(forKey: "ResponceData") as! NSDictionary
-                    let MinLimit = ResponceData.value(forKey: "MinLimit") as! NSNumber
-                    let PulseRatio = ResponceData.value(forKey: "PulseRatio") as! NSNumber
-                    let VehicleId = ResponceData.value(forKey: "VehicleId") as! NSNumber
-                    let FuelTypeId = ResponceData.value(forKey: "FuelTypeId") as! NSNumber
-                    let PersonId = ResponceData.value(forKey: "PersonId") as! NSNumber
-                    let PhoneNumber = ResponceData.value(forKey: "PhoneNumber") as! NSString
-                    print(MinLimit,PersonId,PhoneNumber,FuelTypeId,VehicleId,PulseRatio)
+            let ResponceData = sysdata.value(forKey: "ResponceData") as! NSDictionary
+            let MinLimit = ResponceData.value(forKey: "MinLimit") as! NSNumber
+            let PulseRatio = ResponceData.value(forKey: "PulseRatio") as! NSNumber
+            let VehicleId = ResponceData.value(forKey: "VehicleId") as! NSNumber
+            let FuelTypeId = ResponceData.value(forKey: "FuelTypeId") as! NSNumber
+            let PersonId = ResponceData.value(forKey: "PersonId") as! NSNumber
+            let PhoneNumber = ResponceData.value(forKey: "PhoneNumber") as! NSString
+            print(MinLimit,PersonId,PhoneNumber,FuelTypeId,VehicleId,PulseRatio)
 
-                    let Message = sysdata["ResponceMessage"] as! NSString
-                    let ResponseText = sysdata["ResponceText"] as! NSString
+            let Message = sysdata["ResponceMessage"] as! NSString
+            let ResponseText = sysdata["ResponceText"] as! NSString
 
-                    defaults.set(firstNameTextField.text, forKey: "firstName")
-                    defaults.set(mobileNoTextField.text, forKey: "address")
-                    defaults.set(emailTextField.text, forKey: "mobile")
-                    defaults.set(uuid, forKey: "uuid")
+            defaults.set(firstNameTextField.text, forKey: "firstName")
+            defaults.set(mobileNoTextField.text, forKey: "address")
+            defaults.set(emailTextField.text, forKey: "mobile")
+            defaults.set(uuid, forKey: "uuid")
 
-                    if(Message == "success") {
-                        showAlert(message: "\(ResponseText)")
-
-                        defaults.set(0, forKey: "Login")
-                        defaults.set(1, forKey: "Register")
-                        let appDel = UIApplication.shared.delegate! as! AppDelegate
-
-                        appDel.start()
-
-                    }
-                    else if(Message == "fail") {
-                        self.showAlert(message: "\(ResponseText)")
-                        if(ResponseText == "Please enter valid company.")
-                        {
-                            self.showAlert(message: "\(ResponseText)")
-                        }
-                    }
-                    else
-                    {
-                        showAlert(message: "Please check your check your internet connection or Please contact your admin.")
-                    }
+            if(Message == "success") {
+                showAlert(message: "\(ResponseText)")
+                defaults.set(0, forKey: "Login")
+                defaults.set(1, forKey: "Register")
+                let appDel = UIApplication.shared.delegate! as! AppDelegate
+                appDel.start()
+            }
+            else if(Message == "fail") {
+                self.showAlert(message: "\(ResponseText)")
+                if(ResponseText == "Please enter valid company.")
+                {
+                    self.showAlert(message: "\(ResponseText)")
                 }
+            }
+            else
+            {
+                showAlert(message: "Please check your check your internet connection or Please contact your admin.")
+            }
+        }
     }
 
 
@@ -153,38 +140,39 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
         if(checkedstatus == true){
             let email_id = isValidEmail(testStr: emailTextField.text!)
             if(email_id != false){
-            register()
+                register()
             }
-                else{
-                    showAlert(message: "please enter valid email.")
-                }
-
+            else{
+                showAlert(message: "please enter valid email.")
+            }
         }
         else if(checkedstatus == false){
-        if(firstNameTextField.text == "" || mobileNoTextField.text == "" ||  emailTextField.text == "" || Company_Name.text == "") {
-            showAlert(message: "Please Select All Fields.")
+            if(firstNameTextField.text == "" || mobileNoTextField.text == "" ||  emailTextField.text == "" || Company_Name.text == "") {
+                showAlert(message: "Please Select All Fields.")
 
-        }
-        else
-        {
-            let email_id = isValidEmail(testStr: emailTextField.text!)
-            if(email_id != false){
-                let phoneno = validatephone(testStr: mobileNoTextField.text!)
-                print(phoneno)
-                if(phoneno == true){
-                    register()
-                }
+            }
+            else
+            {
+                let email_id = isValidEmail(testStr: emailTextField.text!)
+                if(email_id != false){
+                    let phoneno = validatephone(testStr: mobileNoTextField.text!)
+                    print(mobileNoTextField.text)
+                    print(phoneno)
+                    if(phoneno == true){
+                        register()
+                    }
                     else
                     {
-                        showAlert(message: "Please enter valid US contact number in (xxx)-xxx-xxxx or xxx-xxx-xxxx format.")
+                        showAlert(message: "Please enter valid Phone number.")
                     }
                 }
                 else{
                     showAlert(message: "please enter valid email.")
                 }
-        }
+            }
         }
     }
+
     @IBAction func uncheckedButtontapped(sender: AnyObject) {
         checked.isHidden = false
         unchecked.isHidden = true
@@ -201,36 +189,31 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
         mobileNoTextField.isHidden = false
         Company_Name.isHidden = false
         checkedstatus = false
-
     }
+
     func isValidEmail(testStr:String) -> Bool {
         if(testStr == "")
         {
             showAlert(message: "Must be a valid email.")
-
             return true
         }
         let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}"
         let range = testStr.range(of: emailRegEx, options:.regularExpression)
         let result = range != nil ? true : false
-
         return result
     }
 
     func validatephone(testStr:String) -> Bool {
-        if(mobileNoTextField.text!.characters.count == 10) {
-
+        if(mobileNoTextField.text!.count > 15) {
             return false
         }
+        else if(mobileNoTextField.text!.count <= 15) {
 
-        else if(mobileNoTextField.text!.characters.count >  10) {
-
-            let PHONE_REGEX = "^(?:(?:\\+?1\\s*(?:[.-]\\s*)?)?(?:\\(\\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\\s*\\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\\s*(?:[.-]\\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\\s*(?:[.-]\\s*)?([0-9]{4})(?:\\s*(?:#|x\\.?|ext\\.?|extension)\\s*(\\d+))?$"
+            let PHONE_REGEX = "^[- +()0-9]*$" //"^[- +()]*[0-9][- +()0-9]*$" //"^(?:(?:\\+?1\\s*(?:[.-]\\s*)?)?(?:\\(\\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\\s*\\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\\s*(?:[.-]\\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\\s*(?:[.-]\\s*)?([0-9]{4})(?:\\s*(?:#|x\\.?|ext\\.?|extension)\\s*(\\d+))?$"
             let phoneTest = NSPredicate(format: "SELF MATCHES %@", PHONE_REGEX)
             let result =  phoneTest.evaluate(with: testStr)
-           return result
+            return result
         }
-
         return false
     }
 
@@ -238,16 +221,22 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
     {
         if (textField == mobileNoTextField)
         {
+
+//            let aSet = CharacterSet(charactersInString:"0123456789+-()").invertedSet
+//            let compSepByCharInSet = string.componentsSeparatedByCharactersInSet(aSet)
+//            let numberFiltered = compSepByCharInSet.joinWithSeparator("")
+//            return string == numberFiltered
+
             let newString = (textField.text! as NSString).replacingCharacters(in: range, with: string)
-            let components = newString.components(separatedBy: CharacterSet.decimalDigits.inverted)
+            let components = newString.components(separatedBy: CharacterSet.init(charactersIn: "0123456789+-()").inverted)// .decimalDigits.inverted)
             let decimalString = components.joined(separator: "") as NSString
             let length = decimalString.length
             let hasLeadingOne = length > 0 && decimalString.character(at: 0) == (1 as unichar)
-            if length == 0 || (length > 10 && !hasLeadingOne) || length > 11
+            if length == 0 || (length > 15 && !hasLeadingOne) || length > 15
             {
                 let newLength = (textField.text! as NSString).length + (string as NSString).length - range.length as Int
 
-                return (newLength > 10) ? false : true
+                return (newLength > 15) ? false : true
             }
             var index = 0 as Int
             let formattedString = NSMutableString()
@@ -257,18 +246,18 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                 formattedString.append("1 ")
                 index += 1
             }
-            if (length - index) > 3
-            {
-                let areaCode = decimalString.substring(with: NSMakeRange(index, 3))
-                formattedString.appendFormat("%@-", areaCode)
-                index += 3
-            }
-            if length - index > 3
-            {
-                let prefix = decimalString.substring(with: NSMakeRange(index, 3))
-                formattedString.appendFormat("%@-", prefix)
-                index += 3
-            }
+//            if (length - index) > 3
+//            {
+//                let areaCode = decimalString.substring(with: NSMakeRange(index, 3))
+//                formattedString.appendFormat("%@-", areaCode)
+//                index += 3
+//            }
+//            if length - index > 3
+//            {
+//                let prefix = decimalString.substring(with: NSMakeRange(index, 3))
+//                formattedString.appendFormat("%@-", prefix)
+//                index += 3
+//            }
 
             let remainder = decimalString.substring(from: index)
             formattedString.append(remainder)
@@ -287,7 +276,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
         let base64str = utf8str.base64EncodedString(options: NSData.Base64EncodingOptions.endLineWithLineFeed)
         return base64str
     }
-
+    // MARK: - Table view data source
     override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
 
         if let headerView = view as? UITableViewHeaderFooterView {

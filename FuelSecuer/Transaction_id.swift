@@ -14,10 +14,10 @@ class Transaction_id
     var isactive: String = ""
     var TransactionID: String = ""
 
-init(isactive: String,TransactionID: String){
+    init(isactive: String,TransactionID: String){
 
-    self.isactive = isactive
-    self.TransactionID = TransactionID
+        self.isactive = isactive
+        self.TransactionID = TransactionID
 
-}
+    }
 }

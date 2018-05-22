@@ -9,5 +9,5 @@
 extern const NSString *FSURL;
 extern const NSString *Get;
 extern const NSString *LogURL;
-extern const NSString *BlueColor;
+//extern const NSString *BlueColor;
 #endif

@@ -16,7 +16,7 @@
 //const NSString *LogURL =  @"http://103.8.126.241:89/LoginHandler.ashx";
 const NSString *FSURL = @"http://fluidsecure.cloudapp.net/HandlerTrak.ashx";
 const NSString *LogURL =  @"http://fluidsecure.cloudapp.net/LoginHandler.ashx";
- const NSString *BlueColor = @"(UIColor.init(red: 31, green: 77, blue: 153, alpha: 1)";
+// const NSString *BlueColor = @"(UIColor.init(red: 31, green: 77, blue: 153, alpha: 1)";
 //"
 const NSString *GET = @"GET";
 const NSString *POST = @"POST";
