@@ -6,16 +6,45 @@
 //  Copyright © 2016 VASP. All rights reserved.
 
 import UIKit
+import MobileCoreServices
+
+extension NSMutableData {
+    
+    /// Append string to NSMutableData
+    ///
+    /// Rather than littering my code with calls to `dataUsingEncoding` to convert strings to NSData, and then add that data to the NSMutableData, this wraps it in a nice convenient little extension to NSMutableData. This converts using UTF-8.
+    ///
+    /// - parameter string:       The string to be added to the `NSMutableData`.
+    
+    func appendString(string: String) {
+        let data = string.data(using: String.Encoding.utf8, allowLossyConversion: true)
+        append(data!)
+    }
+}
+
 
 class Webservices:NSObject {
     var reply :String!
+    var replysentlog :String!
+    var replygetpulsar :String!
     var replySetPulser :String!
     var sysdata:NSDictionary!
     let defaults = UserDefaults.standard
     var cf = Commanfunction()
     var isconect_toFS:String = ""
-
-
+    var contents:Data!
+    
+    
+    func wifisettings(pagename:String)
+    {
+        let url = NSURL(string: "App-Prefs:root=WIFI") //for WIFI setting app
+        let app = UIApplication.shared// .shared
+        app.openURL(url! as URL)
+        self.sentlog(func_name: "Go button Tapped user need to select Wifi data Manually from \(pagename) Page", errorfromserverorlink: " \(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())",errorfromapp: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)" + " Connected link: \(self.cf.getSSID())")
+        // mainPage()
+    }
+    
+    
     func Preauthrization(uuid:String,lat:String,long:String)->String {
         let Url:String = FSURL//APIendpointtrimmedString + url
         let Email = ""
@@ -23,12 +52,13 @@ class Webservices:NSObject {
         let Base64 = convertStringToBase64(string: string)
         let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
         request.httpMethod = "POST"
+        request.timeoutInterval = 10
         request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
-        let bodyData = "Authenticate:I:" + "\(lat),\(long),versionno.1.15.15"
+        let bodyData = "Authenticate:I:" + "\(lat),\(long),versionno.1.15.18,Device Type:\(UIDevice().type),iOS:\(UIDevice.current.systemVersion)"
         print(bodyData)
         request.httpBody = bodyData.data(using: String.Encoding.utf8)
         //request.timeoutInterval = 4
-
+        
         let session = URLSession.shared
         let semaphore = DispatchSemaphore(value: 0)
         let task = session.dataTask(with: request as URLRequest) { data, response, error in
@@ -40,122 +70,126 @@ class Webservices:NSObject {
                 //"\(self.reply)"
             } else {
                 print(error!)
+                
                 //self.reply = "-1"
                 self.reply = "-1" + "#" + "\(error!.localizedDescription)"
+                print(error!)
+                let text = (error?.localizedDescription)! + error.debugDescription
+                let test = String((text.filter { !" \n".contains($0) }))
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+                
+                self.sentlog(func_name: "Preauthrization Function", errorfromserverorlink: " Response from link $$ \(newString)!!", errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
             }
             semaphore.signal()
         }
         task.resume()
-        semaphore.wait(timeout: DispatchTime.distantFuture)
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
         return reply + "#" + ""//return reply
     }
-
-
+    
+    
     func checkApprove(uuid:String,lat:String!,long:String!)->String {
         let Url:String = FSURL//APIendpointtrimmedString + url
         let Email = ""
-        let string = uuid + ":" + Email + ":" + "Other"
+        let string = uuid + ":" + Email + ":" + "Other" //+ ":" + "es-ES"
         let Base64 = convertStringToBase64(string: string)
         print(Base64)
         let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
-
         request.httpMethod = "POST"
         request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
-        let bodyData = "Authenticate:I:" + "\(lat!),\(long!),versionno.1.15.15"
+        request.timeoutInterval = 10
+        let bodyData = "Authenticate:I:" + "\(lat!),\(long!)"//,versionno.1.15.17,Device Type:\(UIDevice().type),iOS: \(UIDevice.current.systemVersion)"
         print(bodyData)
         request.httpBody = bodyData.data(using: String.Encoding.utf8)
-
+        
         let semaphore = DispatchSemaphore(value: 0)
         let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
             if let data = data {
                 print(String(data: data, encoding: String.Encoding.utf8)!)
                 self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)!as String
                 print(self.reply)
-
+                let text = self.reply
+                let test = String((text?.filter { !" \n".contains($0) })!)
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+                self.sentlog(func_name: "Check Approve Function with command:Authenticate:I: \(lat!),\(long!),Devicetype:\(UIDevice().type),iOS_version:\(UIDevice.current.systemVersion)", errorfromserverorlink: "",errorfromapp: "Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + "Connected link : \(self.cf.getSSID())")
+                
             } else {
                 print(error!)
-
+                let text = (error?.localizedDescription)! + error.debugDescription
+                let test = String((text.filter { !" \n".contains($0) }))
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+                self.sentlog(func_name: "Check Approve Function with command:Authenticate:I: \(lat!),\(long!),Devicetype:\(UIDevice().type),iOS_version:\(UIDevice.current.systemVersion)", errorfromserverorlink:" Response from Server $$\(newString)!!", errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 self.reply = "-1"
             }
             semaphore.signal()
         }
-
+        
         task.resume()
-        semaphore.wait(timeout: DispatchTime.distantFuture)
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
         return reply //+ "#" + ""//return reply
     }
-
+    
     func Login(_ Username:String,PWD:String,uuid:String)->String {
         let Url:String = LogURL//APIendpointtrimmedString + url
         // let Email = ""
         let string = uuid + ":" + Username + ":" + PWD
         let Base64 = convertStringToBase64(string: string)
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
-
+        
         request.httpMethod = "POST"
         request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Login")
+        request.timeoutInterval = 10
         let bodyData = ""
         request.httpBody = bodyData.data(using: String.Encoding.utf8)
-
+        
         let semaphore = DispatchSemaphore(value: 0)
         let task = URLSession.shared.dataTask(with: request as URLRequest){ data, response, error in
             if let data = data {
                 print(String(data: data, encoding: String.Encoding.utf8)!)
                 self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
                 print(self.reply)
+                let text = self.reply
+                let test = String((text?.filter { !" \n".contains($0) })!)
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+                self.sentlog(func_name: "Login Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 //"\(self.reply)"
             } else {
                 print(error!)
+                let text = (error?.localizedDescription)! + error.debugDescription
+                let test = String((text.filter { !" \n".contains($0) }))
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+                self.sentlog(func_name: "Login Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                self.reply = "-1"
                 // self.reply = "-1"
                 self.reply = "-1" + "#" + "\(error!)"
             }
             semaphore.signal()
         }//)
-
+        
         task.resume()
-        semaphore.wait(timeout: DispatchTime.distantFuture)
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
         return reply + "#" + ""//return reply
     }
-
-
-    func getbinfile() -> String
-    {
-        let Url:String = "http://103.8.126.241:7854/user1.bin"
-        let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
-        request.httpMethod = "GET"
-
-        // let session = URLSession.shared
-        let semaphore = DispatchSemaphore(value: 0)
-        let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
-            if let data = data {
-                print(String(data: data, encoding: String.Encoding.utf8)!)
-                self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
-                print(self.reply)
-                //"\(self.reply)"
-            } else {
-                print(error!)
-                self.reply = "-1"
-            }
-            semaphore.signal()
-        }//)
-        task.resume()
-        semaphore.wait(timeout: DispatchTime.distantFuture)
-        return reply
-    }
-
+    
+    
     func registration(Name:String,Email:String,Base64:String,mobile:String,uuid:String,company:String) -> String
     {
         //let APIendpointtrimmedString = APIendpoint.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
         let Url:String = FSURL//APIendpointtrimmedString + url
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
-
+        
         request.httpMethod = "POST"
         request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
         let bodyData = "\(Name)#:#\(mobile)#:#\(Email)#:#\(uuid)#:#I#:#\(company)"
         print(bodyData)
         request.httpBody = bodyData.data(using: String.Encoding.utf8)
-        // request.timeoutInterval = 10
-
+        request.timeoutInterval = 10
+        
         let session = URLSession.shared
         let semaphore = DispatchSemaphore(value: 0)
         let task = session.dataTask(with: request as URLRequest) { data, response, error in
@@ -166,16 +200,21 @@ class Webservices:NSObject {
                 // "\(self.reply)"
             } else {
                 print(error!)
+                let text = (error?.localizedDescription)! + error.debugDescription
+                let test = String((text.filter { !" \n".contains($0) }))
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
                 self.reply = "-1" + "#" + "\(error!)"
+                self.sentlog(func_name: "Registration Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 //self.reply = "-1"
             }
             semaphore.signal()
         }
         task.resume()
-        semaphore.wait(timeout: DispatchTime.distantFuture)
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
         return reply + "#" + ""//return reply
     }
-
+    
     func UpgradeTransactionStatus(Transaction_id:String,Status:String) //-> String
     {
         //let Status = //Vehicaldetails.sharedInstance.FirmwareVersion
@@ -196,8 +235,8 @@ class Webservices:NSObject {
             let bodyData = "{\"TransactionId\":\"\(TransactionId)\",\"Status\":\"\(Status)\"}"//
             print(bodyData)
             request.httpBody = bodyData.data(using: String.Encoding.utf8)
-
-            let semaphore = DispatchSemaphore(value: 0)
+            
+            //let semaphore = DispatchSemaphore(value: 0)
             let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
                 if let data = data {
                     print(String(data: data, encoding: String.Encoding.utf8)!)
@@ -206,6 +245,11 @@ class Webservices:NSObject {
                     print(response!)
                 } else {
                     print(error!)
+                    let text = (error?.localizedDescription)! + error.debugDescription
+                    let test = String((text.filter { !" \n".contains($0) }))
+                    let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                    print(newString)
+                    self.sentlog(func_name: "UpgradeTransactionStatus UpgradeTransactionStatus Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                     self.reply = "-1"
                     if(self.reply == "-1"){
                         let jsonstring: String = bodyData
@@ -213,17 +257,22 @@ class Webservices:NSObject {
                         if(jsonstring != ""){
                             // self.cf.SaveTransaction_status(fileName: unsycnfileName, writeText: jsonstring,Path:"data/test/")
                         }//+ "#" + "\(error!)"
+                        let text = (error?.localizedDescription)! + error.debugDescription
+                        let test = String((text.filter { !" \n".contains($0) }))
+                        let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                        print(newString)
+                        self.sentlog(func_name: "UpgradeTransactionStatus UpgradeTransactionStatus Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                     }
                 }
-                semaphore.signal()
+                // semaphore.signal()
             }
             task.resume()
-            semaphore.wait(timeout: DispatchTime.distantFuture)
+            // _ = semaphore.wait(timeout: DispatchTime.distantFuture)
         }
         //return reply //+ "#" + ""//return reply
         //   }
     }
-
+    
     func UpgradeCurrentVersiontoserver() -> String {
         let Version = Vehicaldetails.sharedInstance.FirmwareVersion
         let HoseId = Vehicaldetails.sharedInstance.HoseID
@@ -234,15 +283,16 @@ class Webservices:NSObject {
         let string = uuid! + ":" + Email! + ":" + "UpgradeCurrentVersionWithUgradableVersion"
         let Base64 = convertStringToBase64(string: string)
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
-
+        
         print(string)
         request.httpMethod = "POST"
         request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
         let bodyData = "{\"HoseId\":\"\(HoseId)\",\"Version\":\"\(Version)\"}"//
         print(bodyData)
         request.httpBody = bodyData.data(using: String.Encoding.utf8)
-
-        let semaphore = DispatchSemaphore(value: 0)
+        request.timeoutInterval = 10
+        
+        // let semaphore = DispatchSemaphore(value: 0)
         let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
             if let data = data {
                 print(String(data: data, encoding: String.Encoding.utf8)!)
@@ -251,17 +301,22 @@ class Webservices:NSObject {
                 print(response!)
             } else {
                 print(error!)
+                let text = (error?.localizedDescription)! + error.debugDescription
+                let test = String((text.filter { !" \n".contains($0) }))
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+                self.sentlog(func_name: "Upgrade Current Version toserver UpgradeCurrentVersionWithUgradableVersion Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 self.reply = "-1" + "#" + "\(error!)"
             }
-            semaphore.signal()
+            // semaphore.signal()
         }
         task.resume()
-        semaphore.wait(timeout: DispatchTime.distantFuture)
+        // _ = semaphore.wait(timeout: DispatchTime.distantFuture)
         return reply + "#" + ""//return reply
     }
-
+    
     func SetHoseNameReplacedFlag() -> String{ //-- service
-
+        
         let SiteId = Vehicaldetails.sharedInstance.siteID
         let HoseId = Vehicaldetails.sharedInstance.HoseID
         let IsHoseNameReplaced = "Y"
@@ -273,35 +328,41 @@ class Webservices:NSObject {
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
         print(string)
         request.httpMethod = "POST"
-
+        
         request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
         let bodyData = "{\"SiteId\":\"\(SiteId)\",\"HoseId\":\"\(HoseId)\",\"IsHoseNameReplaced\":\"\(IsHoseNameReplaced)\"}"//
         print(bodyData)
         request.httpBody = bodyData.data(using: String.Encoding.utf8)
+        request.timeoutInterval = 10
         //let session = URLSession.shared
-        let semaphore = DispatchSemaphore(value: 0)
+        // let semaphore = DispatchSemaphore(value: 0)
         let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
             if let data = data {
                 print(String(data: data, encoding: String.Encoding.utf8)!)
                 self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
                 print(self.reply)
                 print(response!)
-
+                
                 //"\(self.reply)"
             } else {
                 print(error!)
+                let text = (error?.localizedDescription)! + error.debugDescription
+                let test = String((text.filter { !" \n".contains($0) }))
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+                self.sentlog(func_name: "Set HoseName Replaced Flag SetHoseNameReplacedFlag Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 self.reply = "-1" + "#" + "\(error!)"
                 //self.reply = "-1"
             }
-            semaphore.signal()
+            //   semaphore.signal()
         }//)
-
+        
         task.resume()
-        semaphore.wait(timeout: DispatchTime.distantFuture)
+        //  _ = semaphore.wait(timeout: DispatchTime.distantFuture)
         return reply + "#" + ""//return reply
     }
-
-
+    
+    
     func checkhour_odometer(_ vehicle_no:String) -> String
     {
         let Email = defaults.string(forKey: "address")
@@ -315,13 +376,13 @@ class Webservices:NSObject {
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
         // request.timeoutInterval = 6
         request.httpMethod = "POST"
-
+        
         request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
         let bodyData = "{\"IMEIUDID\":\"\(uuid!)\",\"VehicleNumber\":\"\(vehicle_no)\",\"WifiSSId\":\"\(wifiSSID)\",\"SiteId\":\"\(siteid)\"}"//
         print(bodyData)
         request.httpBody = bodyData.data(using: String.Encoding.utf8)
-        //request.timeoutInterval = 10
-
+        request.timeoutInterval = 10
+        
         // let session = URLSession.shared
         let semaphore = DispatchSemaphore(value: 0)
         let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
@@ -329,62 +390,150 @@ class Webservices:NSObject {
                 print(String(data: data, encoding: String.Encoding.utf8)!)
                 self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
                 print(self.reply)
+                let text = self.reply//(error?.localizedDescription)! + error.debugDescription
+                let test = String((text?.filter { !" \n".contains($0) })!)
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+                self.sentlog(func_name: "checkhour_odometer CheckVehicleRequireOdometerEntryAndRequireHourEntry Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 // "\(self.reply)"
             } else {
+                let text = (error?.localizedDescription)! + error.debugDescription
+                let test = String((text.filter { !" \n".contains($0) }))
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+                self.sentlog(func_name: "checkhour_odometer CheckVehicleRequireOdometerEntryAndRequireHourEntry Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 //print(error?._domain)
                 self.reply = "-1" + "#" + "\(error!)"
             }
             semaphore.signal()
         }//)
-
+        
         task.resume()
-        semaphore.wait(timeout: DispatchTime.distantFuture)
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
         return reply + "#" + ""
     }
-
-    func sentlog(func_name:String)
-    {
-        let Email = defaults.string(forKey: "address")
-        let uuid = defaults.string(forKey: "uuid")
-        //  let wifiSSID:String = Vehicaldetails.sharedInstance.SSId
-        let siteid = Vehicaldetails.sharedInstance.siteID
-        print("\(Vehicaldetails.sharedInstance.siteID)")
-        let Url:String = FSURL//
-        let string = uuid! + ":" + Email! + ":" + "logSummary"
-        let Base64 = convertStringToBase64(string: string)
-        let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
-        // request.timeoutInterval = 6
-        request.httpMethod = "POST"
-
-        request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
-        let bodyData = "Data = iOS \(uuid!), \(func_name)"//
-        print(bodyData)
-        request.httpBody = bodyData.data(using: String.Encoding.utf8)
-        //request.timeoutInterval = 10
-
-        //let session = URLSession.shared
-        let semaphore = DispatchSemaphore(value: 0)
-        let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
-            if let data = data {
-                print(String(data: data, encoding: String.Encoding.utf8)!)
-                self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
-                print(self.reply)
-                // "\(self.reply)"
-            } else {
-                print(error!)
-                self.reply = "-1" + "#" + "\(error!)"
-            }
-            semaphore.signal()
-        }//)
-
-        task.resume()
-        semaphore.wait(timeout: DispatchTime.distantFuture)
-
-
+    
+    func sentlogFile() {
+//    if( Vehicaldetails.sharedInstance.CollectDiagnosticLogs == "False")
+//    {}
+//    else if( Vehicaldetails.sharedInstance.CollectDiagnosticLogs == "True"){
+//        var filepath:String = ""
+//        var request:NSURLRequest
+//
+//        if( Vehicaldetails.sharedInstance.CollectDiagnosticLogs == "False")
+//        {}
+//        else if( Vehicaldetails.sharedInstance.CollectDiagnosticLogs == "True"){
+//            let Email = defaults.string(forKey: "address")
+//            let uuid = defaults.string(forKey: "uuid")
+//            let string = uuid! + ":" + Email! + ":" + "SaveDiagnosticLogFile" + ":" + "iPhone"
+//            let Base64 = convertStringToBase64(string: string)
+//            let dateFormatter = DateFormatter()
+//            dateFormatter.dateFormat = "ddMMyyyy"
+//            let dtt1: String = dateFormatter.string(from: NSDate() as Date)
+//            if(self.cf.checkPath(fileName: "\(dtt1)" + "Sendlog.txt") == true) {
+//                let readdata = cf.getDocumentsURL().appendingPathComponent("\(dtt1)" + "Sendlog.txt")
+//                filepath = (readdata!.path)
+//                request = createRequest(authBase64: Base64,path:filepath)
+//
+//                let semaphore = DispatchSemaphore(value: 0)
+//                let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
+//                    if let data = data {
+//                        print(String(data: data, encoding: String.Encoding.utf8)!)
+//                        self.replysentlog = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
+//                        print(self.replysentlog)
+//                        let data1:Data = self.replysentlog.data(using: String.Encoding.utf8)!
+//                        do {
+//                            self.sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+//                        }catch let error as NSError {
+//                            print ("Error: \(error.domain)")
+//                        }
+//                        let Message = self.sysdata["ResponceMessage"] as! NSString
+//                        let ResponseText = self.sysdata["ResponceText"] as! NSString
+//
+//                        if(Message == "success"){
+//
+//                            self.cf.DeleteFileInApp(fileName: "\(dtt1)" + "Sendlog.txt")
+//                        }
+//                    } else {
+//                        print(error!)
+//                        let text = (error?.localizedDescription)! + error.debugDescription
+//                        let test = String((text.filter { !" \n".contains($0) }))
+//                        let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+//                        print(newString)
+//                        self.sentlog(func_name: "sentlogFile Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//                        self.replysentlog = "-1" + "#" + "\(error!)"
+//                    }
+//                    semaphore.signal()
+//                }
+//                task.resume()
+//                _ = semaphore.wait(timeout: DispatchTime.distantFuture)
+//            }
+//        }
+//        }
     }
-
+    
+    
+    func sentlog(func_name:String,errorfromserverorlink:String,errorfromapp:String)
+    {
+//        if( Vehicaldetails.sharedInstance.CollectDiagnosticLogs == "False")
+//        {}
+//        else if( Vehicaldetails.sharedInstance.CollectDiagnosticLogs == "True"){
+//            let Email = defaults.string(forKey: "address")
+//            let uuid = defaults.string(forKey: "uuid")
+//
+//            let Url:String = FSURL//
+//            let string = uuid! + ":" + Email! + ":" + "SaveDiagnosticLogs"
+//            let Base64 = convertStringToBase64(string: string)
+//            let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
+//            request.httpMethod = "POST"
+//            let dateFormatter = DateFormatter()
+//            dateFormatter.dateFormat = "MM/dd/yyyy HH:mm:ss a"
+//            let dtt1: String = dateFormatter.string(from: NSDate() as Date)
+//            dateFormatter.dateFormat = "yyyy MM dd"
+//            let dtt: String = dateFormatter.string(from: NSDate() as Date)
+//            request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
+//            var transactionID:String = "\(Vehicaldetails.sharedInstance.TransactionId)"
+//            if(transactionID == "0"){
+//                transactionID = "NA"
+//            }
+//
+//            let bodyData = "\n\n{\"Collectedlogs\":\"\(dtt1), Transaction ID - \(transactionID)" + " \(func_name),\(errorfromserverorlink),\(errorfromapp)*****\",\"LogFrom\":\"iPhone\",\"FileName\":\"\(dtt) DiagnosticLogs_iPhone\"}"//
+//            print(bodyData)
+//            request.httpBody = bodyData.data(using: String.Encoding.utf8)
+//            request.timeoutInterval = 20
+//
+//
+//            let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
+//                if let data = data {
+//                    print(String(data: data, encoding: String.Encoding.utf8)!)
+//                    self.replysentlog = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
+//                    print(self.replysentlog)
+//
+//                } else {
+//                    print(error!)
+//                    self.replysentlog = "-1" + "#" + "\(error!)"
+//                    let dateFormatter = DateFormatter()
+//                    dateFormatter.dateFormat = "ddMMyyyy"
+//                    let dtt1: String = dateFormatter.string(from: NSDate() as Date)
+//
+//                    if(self.cf.checkPath(fileName: "\(dtt1)" + "Sendlog.txt") == true) {
+//                        if(bodyData != ""){
+//                            self.cf.SaveLogFile(fileName: "\(dtt1)" + "Sendlog.txt", writeText: bodyData)
+//                        }
+//                        let logdata = self.cf.ReadFile(fileName: "\(dtt1)" + "Sendlog.txt")
+//                        print(logdata)
+//                    }
+//                    else if(self.cf.checkPath(fileName: "\(dtt1)" + "Sendlog.txt") == false){
+//                        self.cf.CreateTextFile(fileName: "\(dtt1)" + "Sendlog.txt", writeText: bodyData)
+//                    }
+//                }
+//            }
+//            task.resume()
+//        }
+    }
+    
     func vehicleAuth(vehicle_no:String,Odometer:Int,isdept:String,isppin:String,isother:String) -> String {
-
+        
         //       let IsOdoMeterRequire  = Vehicaldetails.sharedInstance.odometerreq
         //        let IsHoursRequire = Vehicaldetails.sharedInstance.IsHoursrequirs
         let isdept = Vehicaldetails.sharedInstance.deptno
@@ -392,7 +541,7 @@ class Webservices:NSObject {
         let isother = Vehicaldetails.sharedInstance.Other
         let Odometer:String = Vehicaldetails.sharedInstance.Odometerno
         let hour = Vehicaldetails.sharedInstance.hours
-
+        
         var TransactionId:String!
         let Email = defaults.string(forKey: "address")
         let uuid = defaults.string(forKey: "uuid")
@@ -405,13 +554,13 @@ class Webservices:NSObject {
         let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
         ///request.timeoutInterval = 6
         request.httpMethod = "POST"
-
+        
         request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
-        let bodyData = "{\"IMEIUDID\":\"\(uuid!)\",\"VehicleNumber\":\"\(vehicle_no)\",\"OdoMeter\":\"\(Odometer)\",\"WifiSSId\":\"\(wifiSSID)\",\"SiteId\":\"\(siteid)\",\"DepartmentNumber\":\"\(isdept)\",\"PersonnelPIN\":\"\(isPPin)\",\"Other\":\"\(isother)\",\"Hours\":\"\(hour)\",\"CurrentLat\":\"\(Vehicaldetails.sharedInstance.Lat)\",\"CurrentLng\":\"\(Vehicaldetails.sharedInstance.Long)\",\"RequestFrom\":\"I\",\"versionno\":\"1.15.15\"}"//
+        let bodyData = "{\"IMEIUDID\":\"\(uuid!)\",\"VehicleNumber\":\"\(vehicle_no)\",\"OdoMeter\":\"\(Odometer)\",\"WifiSSId\":\"\(wifiSSID)\",\"SiteId\":\"\(siteid)\",\"DepartmentNumber\":\"\(isdept)\",\"PersonnelPIN\":\"\(isPPin)\",\"Other\":\"\(isother)\",\"Hours\":\"\(hour)\",\"CurrentLat\":\"\(Vehicaldetails.sharedInstance.Lat)\",\"CurrentLng\":\"\(Vehicaldetails.sharedInstance.Long)\",\"RequestFrom\":\"I\",\"versionno\":\"1.15.18\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\"}"//
         print(bodyData)
         request.httpBody = bodyData.data(using: String.Encoding.utf8)
         request.timeoutInterval = 10
-
+        
         let semaphore = DispatchSemaphore(value: 0)
         let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
             if let data = data {
@@ -419,6 +568,11 @@ class Webservices:NSObject {
                 self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
                 print(self.reply!)
                 // "\(self.reply)"
+                let text = self.reply
+                let test = String((text?.filter { !" \n".contains($0) })!)
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+                self.sentlog(func_name: "AuthorizationSequence Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 let data1:Data = self.reply.data(using: String.Encoding.utf8)!
                 do{
                     self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
@@ -426,7 +580,7 @@ class Webservices:NSObject {
                     print ("Error: \(error.domain)")
                 }
                 print(self.sysdata)
-
+                
                 let ResponceData = self.sysdata.value(forKey: "ResponceData") as! NSDictionary
                 let MinLimit = ResponceData.value(forKey: "MinLimit") as! NSNumber
                 let PulseRatio = ResponceData.value(forKey: "PulseRatio") as! NSNumber
@@ -443,9 +597,9 @@ class Webservices:NSObject {
                 }
                 let FilePath = ResponceData.value(forKey: "FilePath") as! NSString
                 let FirmwawareVersion = ResponceData.value(forKey: "FirmwareVersion") as! NSString
-
+                
                 print(MinLimit,PersonId,PhoneNumber,FuelTypeId,VehicleId,PulseRatio)
-
+                
                 Vehicaldetails.sharedInstance.FirmwareVersion = FirmwawareVersion as String
                 Vehicaldetails.sharedInstance.FilePath = FilePath as String
                 Vehicaldetails.sharedInstance.MinLimit = "\(MinLimit)"
@@ -456,68 +610,75 @@ class Webservices:NSObject {
                 Vehicaldetails.sharedInstance.PhoneNumber = "\(PhoneNumber)"
                 Vehicaldetails.sharedInstance.PulserStopTime = "\(PulserStopTime)"
                 Vehicaldetails.sharedInstance.date = "\(ServerDate)"
-
+                
             } else {
                 //print(error?.domain)
                 self.reply = "-1" + "#" + "\(error!)"
+                let text = (error?.localizedDescription)! + error.debugDescription
+                let test = String((text.filter { !" \n".contains($0) }))
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+                self.sentlog(func_name: "AuthorizationSequence Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: "Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                
             }
             semaphore.signal()
         }
         task.resume()
-        semaphore.wait(timeout: DispatchTime.distantFuture)
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
         return reply + "#" + ""
     }
-
-
-    func ChangeBusyStatus(bodyData:String) -> String{
-
-        let Email = defaults.string(forKey: "address")
-        let uuid = defaults.string(forKey: "uuid")
-        let Url:String = FSURL//APIendpointtrimmedString + url
-        let string = uuid! + ":" + Email! + ":" + "TransactionComplete"
-        let Base64 = convertStringToBase64(string: string)
-        let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
-
-        request.httpMethod = "POST"
-        request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
-        print(bodyData)
-        request.httpBody = bodyData.data(using: String.Encoding.utf8)
-
-        let semaphore = DispatchSemaphore(value: 0)
-        let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
-            if let data = data {
-                print(String(data: data, encoding: String.Encoding.utf8)!)
-                self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
-                print(self.reply)
-                //"\(self.reply)"
-            } else {
-                print(error!)
-                self.reply = "-1" //+ "#" + "\(error!)"
-                //self.reply = "-1"
-            }
-            semaphore.signal()
-        }//)
-
-        task.resume()
-        semaphore.wait(timeout: DispatchTime.distantFuture)
-        return reply
-    }
-
+    
+    
+    //    func ChangeBusyStatus(bodyData:String) -> String{
+    //
+    //        let Email = defaults.string(forKey: "address")
+    //        let uuid = defaults.string(forKey: "uuid")
+    //        let Url:String = FSURL//APIendpointtrimmedString + url
+    //        let string = uuid! + ":" + Email! + ":" + "TransactionComplete"
+    //        let Base64 = convertStringToBase64(string: string)
+    //        let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
+    //
+    //        request.httpMethod = "POST"
+    //        request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
+    //        print(bodyData)
+    //        request.httpBody = bodyData.data(using: String.Encoding.utf8)
+    //        request.timeoutInterval = 10
+    //         let semaphore = DispatchSemaphore(value: 0)
+    //        let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
+    //            if let data = data {
+    //                print(String(data: data, encoding: String.Encoding.utf8)!)
+    //                self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
+    //                print(self.reply)
+    //                //"\(self.reply)"
+    //            } else {
+    //                print(error!)
+    //                self.sentlog(func_name: "ChangeBusyStatus Service Function,Devicetype:\(UIDevice().type),iOS_version:\(UIDevice.current.systemVersion)", errorfromserverorlink: "Responce from Server \(error!)",errorfromapp: "Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + "Connected link : \(self.cf.getSSID())")
+    //                self.reply = "-1" //+ "#" + "\(error!)"
+    //                //self.reply = "-1"
+    //            }
+    //              semaphore.signal()
+    //        }//)
+    //
+    //        task.resume()
+    //          _ = semaphore.wait(timeout: DispatchTime.distantFuture)
+    //        return reply
+    //    }
+    
     func Transactiondetails(bodyData:String) -> String
     {
         let Email = defaults.string(forKey: "address")
         let uuid = defaults.string(forKey: "uuid")
         let Url:String = FSURL//APIendpointtrimmedString + url
-        let string = uuid! + ":" + Email! + ":" + "TransactionComplete"
+        let string = uuid! + ":" + Email! + ":" + "SavePreAuthTransactions"
         let Base64 = convertStringToBase64(string: string)
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
-
+        
         request.httpMethod = "POST"
         request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
-
+        request.timeoutInterval = 10
         print(bodyData)
         request.httpBody = bodyData.data(using: String.Encoding.utf8)
-
+        
         let semaphore = DispatchSemaphore(value: 0)
         let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
             if let data = data {
@@ -527,17 +688,22 @@ class Webservices:NSObject {
                 //"\(self.reply)"
             } else {
                 print(error!)
+                let text = (error?.localizedDescription)! + error.debugDescription
+                let test = String((text.filter { !" \n".contains($0) }))
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+                self.sentlog(func_name: "Transactiondetails SavePreAuthTransactions Service Function, ", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 self.reply = "-1" //+ "#" + "\(error!)"
                 //self.reply = "-1"
             }
             semaphore.signal()
         }//)
-
+        
         task.resume()
-        semaphore.wait(timeout: DispatchTime.distantFuture)
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
         return reply
     }
-
+    
     func Transaction_details(bodyData:String) -> String
     {
         let Email = defaults.string(forKey: "address")
@@ -546,15 +712,15 @@ class Webservices:NSObject {
         let string = uuid! + ":" + Email! + ":" + "TransactionComplete"
         let Base64 = convertStringToBase64(string: string)
         let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
-
+        
         request.httpMethod = "POST"
-
+        
         request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
-
+        
         print(bodyData)
         request.httpBody = bodyData.data(using: String.Encoding.utf8)
-        ///request.timeoutInterval = 3
-
+        request.timeoutInterval = 10
+        
         let session = Foundation.URLSession.shared
         let semaphore = DispatchSemaphore(value: 0)
         let task = session.dataTask(with: request as URLRequest) { data, response, error in
@@ -562,22 +728,68 @@ class Webservices:NSObject {
                 print(String(data: data, encoding: String.Encoding.utf8)!)
                 self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
                 print(self.reply)
+                Vehicaldetails.sharedInstance.TransactionId = 0;
                 // "\(self.reply)"
             } else {
                 print(error!)
+                let text = (error?.localizedDescription)! + error.debugDescription
+                let test = String((text.filter { !" \n".contains($0) }))
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+                self.sentlog(func_name: "Transactiondetails TransactionComplete Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 self.reply = "-1" //+ "#" + "\(error!)"
                 //self.reply = "-1"
-
+                
             }
             semaphore.signal()
         }
-
+        
         task.resume()
-        semaphore.wait(timeout: DispatchTime.distantFuture)
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
         return reply
-
+        
     }
-
+    
+    func tldsendserver(bodyData:String) -> String {
+        let Email = defaults.string(forKey: "address")
+        let uuid = defaults.string(forKey: "uuid")
+        let Url:String = FSURL//APIendpointtrimmedString + url
+        let string = uuid! + ":" + Email! + ":" + "SaveTankMonitorReading" //PreAuthTransactions"
+        let Base64 = convertStringToBase64(string: string)
+        let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
+        
+        request.httpMethod = "POST"
+        request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
+        request.timeoutInterval = 10
+        print(bodyData)
+        request.httpBody = bodyData.data(using: String.Encoding.utf8)
+        
+        let semaphore = DispatchSemaphore(value: 0)
+        let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
+            if let data = data {
+                print(String(data: data, encoding: String.Encoding.utf8)!)
+                self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
+                print(self.reply)
+                //"\(self.reply)"
+            } else {
+                print(error!)
+                let text = (error?.localizedDescription)! + error.debugDescription
+                let test = String((text.filter { !" \n".contains($0) }))
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+                self.sentlog(func_name: "tldsendserver SaveTankMonitorReading Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                self.reply = "-1" //+ "#" + "\(error!)"
+                //self.reply = "-1"
+            }
+            semaphore.signal()
+        }//)
+        
+        task.resume()
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
+        return reply
+        
+    }
+    
     func sendSiteID() -> String {
         let Email = defaults.string(forKey: "address")
         let uuid = defaults.string(forKey: "uuid")
@@ -590,13 +802,13 @@ class Webservices:NSObject {
         let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
         // request.timeoutInterval = 6
         request.httpMethod = "POST"
-
+        
         request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
         let bodyData = "{\"SiteId\":\"\(siteid)\"}"//
         print(bodyData)
         request.httpBody = bodyData.data(using: String.Encoding.utf8)
-        //request.timeoutInterval = 10
-
+        request.timeoutInterval = 30
+        
         //let session = URLSession.shared
         let semaphore = DispatchSemaphore(value: 0)
         let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
@@ -604,21 +816,32 @@ class Webservices:NSObject {
                 print(String(data: data, encoding: String.Encoding.utf8)!)
                 self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
                 print(self.reply)
+                let text = self.reply
+                let test = String((text?.filter { !" \n".contains($0) })!)
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+                self.sentlog(func_name: "SendSiteID with command: UpgradeIsBusyStatus {SiteId:\(siteid)}", errorfromserverorlink: " Response from link $$ \(newString)!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                
                 // "\(self.reply)"
             } else {
                 print(error!)
                 self.reply = "-1"// + "#" + "\(error!)"
+                let text = (error?.localizedDescription)! + error.debugDescription
+                let test = String((text.filter { !" \n".contains($0) }))
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+                self.sentlog(func_name: "SendSiteID with command: UpgradeIsBusyStatus {SiteId:\(siteid)}", errorfromserverorlink: " Response from link $$ \(newString)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
             }
             semaphore.signal()
         }//)
-
+        
         task.resume()
-        semaphore.wait(timeout: DispatchTime.distantFuture)
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
         return reply
     }
-
+    
     func updateMacAddress(macadd:String){
-
+        
         //        let Email = defaults.string(forKey: "address")
         //        let uuid = defaults.string(forKey: "uuid")
         //          //  let wifiSSID:String = Vehicaldetails.sharedInstance.SSId
@@ -638,7 +861,7 @@ class Webservices:NSObject {
         //            //request.timeoutInterval = 10
         //
         //        //let session = URLSession.shared
-        //        let semaphore = DispatchSemaphore(value: 0)
+        //        //let semaphore = DispatchSemaphore(value: 0)
         //           let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
         //                if let data = data {
         //                    print(String(data: data, encoding: String.Encoding.utf8)!)
@@ -649,48 +872,21 @@ class Webservices:NSObject {
         //                    print(error!)
         //                    self.reply = "-1" + "#" + "\(error!)"
         //                }
-        //                semaphore.signal()
+        //           //     semaphore.signal()
         //            }//)
         //
         //            task.resume()
-        //            semaphore.wait(timeout: DispatchTime.distantFuture)
+        //          //  semaphore.wait(timeout: DispatchTime.distantFuture)
         //           // return reply + "#" + ""
     }
-
-
-    func status() {
-        let Url:String = "http://192.168.4.1:80/upgrade?command=reset"
-        let request:NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
-
-        request.httpMethod = "POST"
-        //let session = URLSession.shared
-        let semaphore = DispatchSemaphore(value: 0)
-        let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
-            if let data = data {
-                print(String(data: data, encoding: String.Encoding.utf8)!)
-                self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
-                print(self.reply)
-
-                // "\(self.reply)"
-            } else {
-                print(error!)
-                self.reply = "-1"
-            }
-            semaphore.signal()
-        }
-
-        task.resume()
-        semaphore.wait(timeout: DispatchTime.distantFuture)
-
-        //self.binfiledata.text = self.reply
-
-    }
-
+    
+    
+    
     func getrelay() -> String {
         let Url:String = "http://192.168.4.1:80/config?command=relay"
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
         request.timeoutInterval = 15
-
+        
         request.httpMethod = "GET"
         //let session = URLSession.shared
         let semaphore = DispatchSemaphore(value: 0)
@@ -698,339 +894,176 @@ class Webservices:NSObject {
             if let data = data {
                 print(String(data: data, encoding: String.Encoding.utf8)!)
                 self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
-                print(self.reply)
-
-                // "\(self.reply)"
+                let text = self.reply
+                let test = String((text?.filter { !" \n".contains($0) })!)
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+                self.sentlog(func_name: "Start Button Tapped GetRelay Function", errorfromserverorlink: " Response from link $$ \(newString)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                
             } else {
                 print(error!)
-                self.reply = "-1"
+                let text = (error?.localizedDescription)! + error.debugDescription
+                let test = String((text.filter { !" \n".contains($0) }))
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+                self.sentlog(func_name: "Start Button Tapped GetRelay Function", errorfromserverorlink: " Response from link $$ \(newString)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                self.reply = "-1" + "#" + "\(error!)"
             }
             semaphore.signal()
         }//)
-
+        
         task.resume()
-        semaphore.wait(timeout: DispatchTime.distantFuture)
-
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
+        
+        return reply + "#" + ""
+    }
+    
+    
+    func tldlevel() -> String {
+        
+        let Url:String = "http://192.168.4.1:80/tld?level=info"
+        
+        let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string:Url)!)
+        request.httpMethod = "GET"
+        request.timeoutInterval = 10
+        
+        //let session = URLSession.shared
+        let semaphore = DispatchSemaphore(value: 0)
+        
+        let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
+            if let data = data {
+                print(String(data: data, encoding: String.Encoding.utf8)!)
+                // DispatchQueue.main.async{
+                self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
+                print(self.reply)
+                //  }
+                //"\(self.reply)"
+            } else {
+                print(error!)
+                let text = (error?.localizedDescription)! + error.debugDescription
+                let test = String((text.filter { !" \n".contains($0) }))
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+                self.reply = "-1"
+                self.sentlog(func_name: "Get tldlevel Function", errorfromserverorlink: " Response from link $$ \(newString)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+            }
+            semaphore.signal()
+        }//)
+        
+        task.resume()
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
+        
         return reply
     }
-
-
-    func setrelay() {
-        let Url:String = "http://192.168.4.1:80/config?command=relay";
-        let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string:Url)!)
-
-        request.httpMethod = "POST"
-
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        let bodyData = "{\"relay_request\":{\"Password\":\"12345678\",\"Status\":1}}"
-        request.httpBody = bodyData.data(using: String.Encoding.utf8)
-        request.httpBodyStream = InputStream(data:bodyData.data(using: String.Encoding.utf8)!)
-
-        //let session = URLSession.shared
-        let semaphore = DispatchSemaphore(value: 0)
-        let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
-            if let data = data {
-                print(String(data: data, encoding: String.Encoding.utf8)!)
-                self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
-                print(self.reply)
-                // "\(self.reply)"
-                if let httpResponse = response as? HTTPURLResponse {
-                    print("Status code: (\(httpResponse.statusCode))")
-                    if(httpResponse.statusCode != 200)
-                    {
-                        self.cf.delay(0.3){
-                            self.setrelay()
-                        }
-
-                    }else if(httpResponse.statusCode == 200)
-                    {
-                        ///self.getrelay()
-                    }
-                }
-
-            } else {
-                print(error!)
-                self.reply = "-1"
-            }
-            semaphore.signal()
-        }//)
-
-        task.resume()
-        semaphore.wait(timeout: DispatchTime.distantFuture)
-
-
-    }
-
-
-    //    func sleep() {
-    //        let Url:String = "http://192.168.4.1/config?command=diswifi"
-    //        let request: NSMutableURLRequest = NSMutableURLRequest(URL:NSURL(string:Url)!)
-    //        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-    //        request.HTTPMethod = "POST"
-    //        let bodyData = "{\"wifi_request\":{\"time\":15}}"
-    //        request.HTTPBody = bodyData.data(using: String.Encoding.utf8)
-    //        //request.HTTPBodyStream = NSInputStream(data: bodyData.dataUsingEncoding(NSUTF8StringEncoding)!)
-    //
-    //
-    //        let session = NSURLSession.sharedSession()
-    //        let semaphore = dispatch_semaphore_create(0)
-    //        let task = session.dataTaskWithRequest(request) { data, response, error in
-    //            if let data = data {
-    //                print(String(data: data, encoding: NSUTF8StringEncoding))
-    //                self.reply = NSString(data: data, encoding:NSASCIIStringEncoding)as! String
-    //                print(self.reply)
-    //                print(response)
-    //                if let httpResponse = response as? NSHTTPURLResponse {
-    //                    print("Status code: (\(httpResponse.statusCode))")
-    //                    if(httpResponse.statusCode != 200)
-    //                    {
-    //                        self.cf.delay(0.1){
-    //                        self.sleep()
-    //                        }
-    //                    }
-    //                }
-    //
-    //
-    //                "\(self.reply)"
-    //            } else {
-    //                print(error)
-    //                self.reply = "-1"
-    //            }
-    //            dispatch_semaphore_signal(semaphore)
-    //        }
-    //
-    //        task.resume()
-    //        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW)
-    //
-    //    }
-
-    // curl -X POST http://ip/config?command=sleep
-    func recordcheck() -> String {
-        let Url:String = "http://192.168.4.1:80/client?command=record10";
-        let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
-        request.httpMethod = "GET"
-
-        let session = URLSession.shared
-
-        let semaphore = DispatchSemaphore(value: 0)
-        let task = session.dataTask(with: request as URLRequest as URLRequest) { data, response, error in
-            if let data = data {
-                // print(String(data: data, encoding: String.Encoding.utf8))
-                self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
-                print(self.reply!)
-                "\(self.reply!)"
-            } else {
-                print(error!)
-                self.reply = "-1"
-
-            }
-            semaphore.signal()
-        }
-
-        task.resume()
-        return (reply)!
-        semaphore.wait(timeout: DispatchTime.now())
-
-    }
-
-    func setrelay0() {
-
-        let Url:String = "http://192.168.4.1:80/config?command=relay";
-
-        let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string:Url)!)
-
-        let bodyData = "{\"relay_request\":{\"Password\":\"12345678\",\"Status\":0}}"
-
-        request.httpMethod = "POST"
-        request.httpBody = bodyData.data(using: String.Encoding.utf8)
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-
-        // request.HTTPBodyStream = NSInputStream(data: bodyData.dataUsingEncoding(NSUTF8StringEncoding)!)
-
-        //let session = URLSession.shared
-        let semaphore = DispatchSemaphore(value: 0)
-
-
-        let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
-            if let data = data {
-                print(String(data: data, encoding: String.Encoding.utf8)!)
-                self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
-                print(data)
-                print(self.reply)
-                //"\(self.reply)"
-                if let httpResponse = response as? HTTPURLResponse {
-                    print("Status code: (\(httpResponse.statusCode))")
-                    if(httpResponse.statusCode != 200)
-                    {
-                        self.cf.delay(0.3){
-                            self.setrelay0()
-                        }
-                    }
-                }
-
-            } else {
-                print(error!)
-                self.reply = "-1"
-            }
-            semaphore.signal()
-        }//)
-        task.resume()
-        semaphore.wait(timeout: DispatchTime.now())
-        // Vehicaldetails.sharedInstance.setrelay0
-        
-        //}
-    }
-
+    
+    
     func GetPulser()->String {
+        
         let Url:String = "http://192.168.4.1:80/client?command=pulsar"
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string:Url)!)
         request.httpMethod = "GET"
         request.timeoutInterval = 10
-
-        //let session = URLSession.shared
+        
+        // let session = URLSession.shared
         let semaphore = DispatchSemaphore(value: 0)
+        
         let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
             if let data = data {
                 print(String(data: data, encoding: String.Encoding.utf8)!)
-                self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
-                print(self.reply)
-
+                // DispatchQueue.main.async{
+                self.replygetpulsar = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
+                print(self.replygetpulsar)
+                //  }
                 //"\(self.reply)"
             } else {
                 print(error!)
-                self.reply = "-1"
+                
+                let text = (error?.localizedDescription)! + error.debugDescription
+                let test = String((text.filter { !" \n".contains($0) }))
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+                self.sentlog(func_name: "GetPulser Service Function", errorfromserverorlink: " Response from Link $$ \(newString)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                self.replygetpulsar = "-1" + "#" + "\(error!)"
             }
             semaphore.signal()
         }//)
-
+        
         task.resume()
-        semaphore.wait(timeout: DispatchTime.distantFuture)
-        return reply
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
+        
+        return replygetpulsar + "#" + ""
     }
     
     func getinfo() -> String {
         //cf.delay(1){
-            let Url:String = "http://192.168.4.1:80/client?command=info"
-            let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string:Url)!)
-            request.httpMethod = "GET"
-            self.isconect_toFS = "false";
-            //let session = Foundation.URLSession.shared
-            let semaphore = DispatchSemaphore(value: 0)
-            let task =  URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
-                if let data = data {
-                    print(String(data: data, encoding: String.Encoding.utf8)!)
-                    self.reply =  NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
+        let Url:String = "http://192.168.4.1:80/client?command=info"
+        let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string:Url)!)
+        request.httpMethod = "GET"
+        self.isconect_toFS = "false";
+        //let session = Foundation.URLSession.shared
+        // let semaphore = DispatchSemaphore(value: 0)
+        let task =  URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
+            if let data = data {
+                print(String(data: data, encoding: String.Encoding.utf8)!)
+                self.reply =  NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
 
-                    print(self.reply)
-                    // "\(self.reply)"
-                    let data1:Data = self.reply.data(using: String.Encoding.utf8)!
-                    do{
-                        self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
-                        let Version = self.sysdata.value(forKey: "Version") as! NSDictionary
-                        // let sdk_version = Version.valueForKey("sdk_version") as! NSString
-                        let iot_version = Version.value(forKey: "iot_version") as! NSString
-                        let mac_address = Version.value(forKey: "mac_address") as! NSString
-                        // Vehicaldetails.sharedInstance.FirmwareVersion = "\(iot_version)"
-                        self.isconect_toFS = "true"
-                        print(Vehicaldetails.sharedInstance.FirmwareVersion,iot_version)
-                        if(Vehicaldetails.sharedInstance.MacAddress == "\(mac_address)"){
+                print(self.reply)
+                // "\(self.reply)"
+                let data1:Data = self.reply.data(using: String.Encoding.utf8)!
+                do{
+                    self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                    let Version = self.sysdata.value(forKey: "Version") as! NSDictionary
+                    // let sdk_version = Version.valueForKey("sdk_version") as! NSString
+                    let iot_version = Version.value(forKey: "iot_version") as! NSString
+                    let mac_address = Version.value(forKey: "mac_address") as! NSString
+                    // Vehicaldetails.sharedInstance.FirmwareVersion = "\(iot_version)"
+                    self.isconect_toFS = "true"
+                    print(Vehicaldetails.sharedInstance.FirmwareVersion,iot_version)
+                    if(Vehicaldetails.sharedInstance.MacAddress == "\(mac_address)"){
 
-                        }else {
-                            print(Vehicaldetails.sharedInstance.FS_MacAddress)
-                            Vehicaldetails.sharedInstance.FS_MacAddress = mac_address as String
-                            // self.updateMacAddress(mac_address as String)
-                        }
-                        if(Vehicaldetails.sharedInstance.FirmwareVersion == "\(iot_version)"){
-                            Vehicaldetails.sharedInstance.IsFirmwareUpdate = false
-                        }
-                        else if(Vehicaldetails.sharedInstance.FirmwareVersion != "\(iot_version)"){
-                            Vehicaldetails.sharedInstance.IsFirmwareUpdate = true
-                            Vehicaldetails.sharedInstance.FirmwareVersion = "\(iot_version)"
-                        }
-                    }catch let error as NSError {
-                        print ("Error: \(error.domain)")
+                    }else {
+                        print(Vehicaldetails.sharedInstance.FS_MacAddress)
+                        Vehicaldetails.sharedInstance.FS_MacAddress = mac_address as String
+                        // self.updateMacAddress(mac_address as String)
                     }
-
-                    // print(self.sysdata)
-
-                    // return reply
-                } else {
-                    print(error!)
-                    self.reply = "-1"
+                    if(Vehicaldetails.sharedInstance.FirmwareVersion == "\(iot_version)"){
+                        Vehicaldetails.sharedInstance.IsFirmwareUpdate = false
+                    }
+                    else if(Vehicaldetails.sharedInstance.FirmwareVersion != "\(iot_version)"){
+                        Vehicaldetails.sharedInstance.IsFirmwareUpdate = true
+                        Vehicaldetails.sharedInstance.FirmwareVersion = "\(iot_version)"
+                    }
+                }catch let error as NSError {
+                    print ("Error: \(error.domain)")
                 }
-                semaphore.signal()
+
+                // print(self.sysdata)
+
+                // return reply
+            } else {
+                print(error!)
+                self.reply = "-1"
             }
+            //   semaphore.signal()
+        }
 
-            task.resume()
-            semaphore.wait(timeout: DispatchTime.distantFuture)
-            //self.binfiledata.text = self.reply
-      //  }
-
+        task.resume()
         return isconect_toFS;
     }
 
-    //     func SetPulser()  {
-    //
-    //     let Url:String = "http://192.168.4.1:80/config?command=pulsar"
-    //
-    //        let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string:Url)!)
-    //
-    //        request.httpMethod = "POST"
-    //
-    //        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-    //
-    //        let bodyData = "{\"pulsar_request\":{\"counter_set\":1}}"
-    //
-    //        request.httpBody = bodyData.data(using: String.Encoding.utf8)
-    //
-    //        // request.HTTPBodyStream = NSInputStream(data: bodyData.dataUsingEncoding(NSUTF8StringEncoding)!)
-    //
-    //       // let session = URLSession.shared
-    //        let semaphore = DispatchSemaphore(value: 0)
-    //        let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
-    //            if let data = data {
-    //                print(String(data: data, encoding: String.Encoding.utf8)!)
-    //                self.replySetPulser = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
-    //                print(self.replySetPulser)
-    //                "\(self.replySetPulser)"
-    //                if let httpResponse = response as? HTTPURLResponse {
-    //                    print("Status code: (\(httpResponse.statusCode))")
-    //                    if(httpResponse.statusCode != 200)
-    //                    {
-    //                        self.cf.delay(0.4){
-    //                        self.SetPulser()
-    //                        }
-    //                    }
-    //                    else if(httpResponse.statusCode == 200){
-    //
-    //                       //self.GetPulser()
-    //                    }
-    //                }
-    //
-    //            } else {
-    //                print(error!)
-    //                self.reply = "-1"
-    //            }
-    //            semaphore.signal()
-    //        }//)
-    //         cf.delay(5){}
-    //        task.resume()
-    //        semaphore.wait(timeout: DispatchTime.distantFuture)
-    //    }
-
+    
     func SetPulser0() -> String {
         let Url:String = "http://192.168.4.1:80/config?command=pulsar"
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string:Url)!)
         let bodyData = "{\"pulsar_request\":{\"counter_set\":0}}"
-
+        
         request.httpMethod = "POST"
         request.httpBody = bodyData.data(using: String.Encoding.utf8)
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-
-
+        
+        
         //let session = URLSession.shared
-        let semaphore = DispatchSemaphore(value: 0)
+        // let semaphore = DispatchSemaphore(value: 0)
         let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
             if let data = data {
                 print(String(data: data, encoding: String.Encoding.utf8)!)
@@ -1048,35 +1081,33 @@ class Webservices:NSObject {
                         self.reply = "false"
                     }
                 }
-
+                
             } else {
                 print(error!)
                 self.reply = "-1"
             }
-            semaphore.signal()
+            // semaphore.signal()
         }//)
-
+        
         task.resume()
-        semaphore.wait(timeout: DispatchTime.distantFuture)
+        // _ = semaphore.wait(timeout: DispatchTime.distantFuture)
         return reply
     }
-
-
+    
+    
     func changessidname(wifissid:String) {
-
+        
         let Url = "http://192.168.4.1:80/config?command=wifi"
-
+        
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
         print(Url)
         let bodyData = "{\"Request\":{\"SoftAP\":{\"Connect_SoftAP\":{\"authmode\":\"OPEN\",\"channel\":2,\"ssid\":\"\(wifissid)\",\"password\":\"\"}}}}"
         print(bodyData)
         request.httpBody = bodyData.data(using: String.Encoding.utf8)
-        //request.HTTPBodyStream = NSInputStream(data: bodyData.dataUsingEncoding(NSUTF8StringEncoding)!)
         request.setValue("application/json",forHTTPHeaderField: "Content-Type")
         request.httpMethod = "POST"
-
-        // let session = URLSession.shared
-        let semaphore = DispatchSemaphore(value: 0)
+        request.timeoutInterval = 10
+        
         let task = URLSession.shared.dataTask(with: request as URLRequest){ data, response, error in
             if let data = data {
                 print(String(data: data, encoding: String.Encoding.utf8)!)
@@ -1090,21 +1121,116 @@ class Webservices:NSObject {
                         self.changessidname(wifissid: wifissid)
                     }
                 }
-
+                
             } else {
-                print(error!)
+                let text = (error?.localizedDescription)! + error.debugDescription
+                let test = String((text.filter { !" \n".contains($0) }))
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+                self.sentlog(func_name: "changessidname Service Function", errorfromserverorlink: " Response from Link $$ \(newString)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 self.reply = "-1"
             }
-            semaphore.signal()
-        }//)
+        }
         task.resume()
-        semaphore.wait(timeout: DispatchTime.distantFuture)
     }
-
+    
     func convertStringToBase64(string: String) -> String
     {
         let utf8str = string.data(using: String.Encoding.utf8)!
         let base64str = utf8str.base64EncodedString(options: NSData.Base64EncodingOptions.endLineWithLineFeed)
         return base64str
+    }
+    
+    
+    func createRequest (authBase64:String,path:String) -> NSURLRequest {
+        let param = ["Authorization"  : authBase64]  // build your dictionary however appropriate
+        
+        let boundary = generateBoundaryString()
+        let url = NSURL(string:FSURL)!
+        let request = NSMutableURLRequest(url: url as URL)
+        request.httpMethod = "POST"
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.setValue("\(authBase64)", forHTTPHeaderField: "Authorization")
+        
+        let path1 = path
+        print(path1)
+        
+        request.httpBody = createBodyWithParameters(parameters: param,paths: [path1], boundary: boundary) as Data
+        return request
+    }
+    
+    /// Create body of the multipart/form-data request
+    ///
+    /// - parameter parameters:   The optional dictionary containing keys and values to be passed to web service
+    /// - parameter filePathKey:  The optional field name to be used when uploading files. If you supply paths, you must supply filePathKey, too.
+    /// - parameter paths:        The optional array of file paths of the files to be uploaded
+    /// - parameter boundary:     The multipart/form-data boundary
+    ///
+    /// - returns:                The NSData of the body of the request
+    
+    func createBodyWithParameters(parameters: [String: String]?, paths: [String]?, boundary: String) -> NSData {
+        let body = NSMutableData()
+        
+        if parameters != nil {
+            for (key, value) in parameters! {
+                body.appendString(string: "--\(boundary)\r\n")
+                body.appendString(string: "Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
+                body.appendString(string: "\(value)\r\n")
+            }
+        }
+        
+        if paths != nil {
+            for path in paths! {
+                let url = URL(fileURLWithPath: path)
+                
+                let filename = "\(url.lastPathComponent)"
+                
+                do {
+                    contents = try Data(contentsOf: url)
+                    print(contents)
+                } catch {
+                    // contents could not be loaded
+                }
+                
+                let mimetype = mimeTypeForPath(path: path)
+                
+                body.appendString(string: "--\(boundary)\r\n")
+                body.appendString(string: "Content-Disposition: form-data; filename=\"\(filename)\"\r\n")
+                body.appendString(string: "Content-Type: \(mimetype)\r\n\r\n")
+                body.append(contents)
+                body.appendString(string: "\r\n")
+            }
+        }
+        body.appendString(string: "--\(boundary)--\r\n")
+        print(body)
+        return body
+    }
+    
+    /// Create boundary string for multipart/form-data request
+    ///
+    /// - returns:            The boundary string that consists of "Boundary-" followed by a UUID string.
+    
+    func generateBoundaryString() -> String {
+        return "Boundary-\(NSUUID().uuidString)"
+    }
+    
+    /// Determine mime type on the basis of extension of a file.
+    ///
+    /// This requires MobileCoreServices framework.
+    ///
+    /// - parameter path:         The path of the file for which we are going to determine the mime type.
+    ///
+    /// - returns:                Returns the mime type if successful. Returns application/octet-stream if unable to determine mime type.
+    
+    func mimeTypeForPath(path: String) -> String {
+        let url = NSURL(fileURLWithPath: path)
+        let pathExtension = url.pathExtension
+        
+        if let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension! as NSString, nil)?.takeRetainedValue() {
+            if let mimetype = UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType)?.takeRetainedValue() {
+                return mimetype as String
+            }
+        }
+        return "application/octet-stream";
     }
 }

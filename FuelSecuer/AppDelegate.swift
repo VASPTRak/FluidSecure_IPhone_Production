@@ -20,6 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let defaults = UserDefaults.standard
     var id:Int!
     var jc = FuelquantityVC()
+    var web = Webservices()
     var preauth = PreauthFuelquantity()
     var backgroundUpdateTask: UIBackgroundTaskIdentifier!
     
@@ -240,6 +241,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             print("root VC else condition")
                             let nav =  UINavigationController(rootViewController: secondViewController)
                             self.window?.rootViewController = nav
+                            //self.window?.makeKeyAndVisible()
                         }
                     }
                 }
@@ -261,21 +263,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationDidEnterBackground(_ application: UIApplication)
     {
-        //        cf.delay(0.1){
-        //            self.doBackgroundTask()
-        //        }// Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        self.web.sentlog(func_name: "Application Enter In Background", errorfromserverorlink:  "Selected Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
+        sleep(10)
+//                cf.delay(10){
+//        //            self.doBackgroundTask()
+//        //        }// Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
+//        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+//        }
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+        self.web.sentlog(func_name: "Application Enter In Foreground", errorfromserverorlink: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
         doBackgroundTask()
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
+
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     }
-    
+
+
     func applicationWillTerminate(_ application: UIApplication) {
         if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){
             _ = jc.setralay0tcp()
@@ -286,7 +294,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let pusercount = Vehicaldetails.sharedInstance.pulsarCount
         let PulseRatio = Vehicaldetails.sharedInstance.PulseRatio
         
-        if(pusercount == "" || PulseRatio == ""){
+        if(pusercount == "" || PulseRatio == "" || TransactionId == 0){
             
         }else {
             let fuelQuantity = (Double(pusercount))!/(PulseRatio as NSString).doubleValue
@@ -295,7 +303,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             dateFormatter.dateFormat = "ddMMyyyyhhmmss"
             
             
-            let bodyData = "{\"TransactionId\":\(TransactionId),\"FuelQuantity\":\((fuelQuantity)),\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"versionno\":\"1.15.15\"}"
+            let bodyData = "{\"TransactionId\":\(TransactionId),\"FuelQuantity\":\((fuelQuantity)),\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"versionno\":\"1.15.18\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\"}"
             
             
             let dtt1: String = dateFormatter.string(from: NSDate() as Date)
@@ -305,10 +313,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 cf.SaveTextFile(fileName: unsycnfileName, writeText: bodyData)
             }
         }
+
+        self.web.sentlog(func_name: "Application Will Terminate", errorfromserverorlink: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         // Saves changes in the application's managed object context before the application terminates.
+        sleep(5)
         self.saveContext()
-        
+
     }
     
     

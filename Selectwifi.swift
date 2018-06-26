@@ -22,7 +22,8 @@ class Selectwifi: UIViewController,UITextFieldDelegate,UIPickerViewDelegate,Stre
             self.performSegue(withIdentifier: "goconnect", sender: self)
         }
         else{
-            showAlertSetting(message: "Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
+            showAlertSetting(message: NSLocalizedString("WarningselectWifi", comment:"") + "\(Vehicaldetails.sharedInstance.SSId)" + NSLocalizedString("Wifi", comment:""))
+                //"Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
             print("ssID not Match")
             wifisettings()
         }
@@ -46,7 +47,7 @@ class Selectwifi: UIViewController,UITextFieldDelegate,UIPickerViewDelegate,Stre
             self.performSegue(withIdentifier: "goconnect", sender: self)
         }
         else{
-            showAlertSetting(message: "Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
+            showAlertSetting(message: NSLocalizedString("WarningselectWifi", comment:"") + "\(Vehicaldetails.sharedInstance.SSId)" + NSLocalizedString("Wifi", comment:""))
             print("ssID not Match")
             wifisettings()
         }

@@ -1,0 +1,39 @@
+/* 
+  Localizable.strings
+  FuelSecure
+
+  Created by VASP on 5/29/18.
+  Copyright © 2018 VASP. All rights reserved.
+*/
+"Select Hose to use" = "Seleccione manguera para usar";
+"Date_Fueling" = "";
+"Name" = "Nombre";
+"Mobile" = "Móvil";
+"Email" = "Email";
+"MessageFueling" = "Inserta la boquilla en el tanque \ n Luego toca iniciar";
+"MessageFueling1" = "Espere mientras se establece su conexión Con el enlace FS";
+"LostWifi" = "Conexión WiFi perdida con el móvil.";
+"Touch to select Site" = "Toca para seleccionar Sitio";
+"Regisration" = "Su solicitud de registro aún no ha sido aprobada. Está marcado como Inactivo en el Software de la Compañía. Por favor, póngase en contacto con el administrador de su empresa.";
+"Helptext" = "Seleccione Sitio y luego proceda";
+"HelptextSelectedSite" = "Si usa esta manguera por primera vez, deberá ingresar la contraseña cuando se la redireccione a la pantalla WiFi. La contraseña es ";
+"warninghoseinused" = "\ n Manguera en uso \ n Por favor intente después de algún tiempo";
+"warning_NoInternet_Connection" = "No se puede conectar al servidor de la nube. Por favor revise su conexion a internet.";
+"Error" = "Error";
+"OK" = "DE ACUERDO";
+"NoInternet" = "Verifique su conexión a Internet y vuelva a intentarlo más tarde.";
+"NoHoseselect" = "Seleccione Manguera para usar.";
+"Hoseorder" = "Manguera fuera de servicio";
+
+"Title" = "FluidSecure necesita conectarse a Hose a través de WiFi";
+"Message" = "Por favor conecte wifi";
+"Subtitle" = "FluidSecure necesita conectarse a HOSE a través de WiFi \nAhora será redirigido a la configuración de WiFi";
+"Step1" = "\n El nombre WiFi es el nombre de la MANGUERA. Lea los pasos 1 a 5 a continuación y luego haga clic en la barra verde a continuación.\n\nSiga los pasos: \n1. Encienda el WiFi (puede que ya esté encendido) \n\n2. Elige el WiFi \n llamado:";
+"Step2" = "\n\n3. La primera vez que te pida una contraseña, ingresa: 123456789 \n\n4. Tendrá una marca al lado de ";
+"Step3" = " y dirá \"Sin conexión a Internet\" \n\n5. Ahora, toque en la esquina superior izquierda que dice \"FluidSecure\" - esto le permite cargar combustible.\n\n\n\n";
+"ButtonNAME" = "Ir a la configuración de WiFi";
+"WarningEmptytext" = "Por favor introduce algo.";
+"Warningwait" = "Espere un momento y vuelva a intentarlo.";
+"Entervehicelno" = "Por favor ingrese el número del vehículo.";
+"EneterOdometer" = "Por favor ingrese el número del odómetro.";
+"Odometer_Reasonability" = "El odómetro introducido no está dentro de los límites razonables que su administrador le ha asignado, póngase en contacto con su administrador.";

@@ -57,7 +57,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
 
         // Action.
-        let action = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil)
+        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default, handler: nil)
         alertController.addAction(action)
         self.present(alertController, animated: true, completion: nil)
     }
@@ -86,7 +86,9 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
         let error = Split[1]
 
         print(reply)
-        if(reply == "-1"){showAlert(message: "Internet connection is not available.\(error)")}
+        if(reply == "-1"){showAlert(message: NSLocalizedString("NoInternet", comment:""))
+
+        }//"Internet connection is not available.\(error)")}
         else {
             let data1:NSData = reply.data(using: String.Encoding.utf8)! as NSData
             do{
@@ -129,7 +131,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
             }
             else
             {
-                showAlert(message: "Please check your check your internet connection or Please contact your admin.")
+                showAlert(message: NSLocalizedString("Checkinternet", comment:""))//"Please check your check your internet connection or Please contact your admin.")
             }
         }
     }
@@ -143,12 +145,12 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                 register()
             }
             else{
-                showAlert(message: "please enter valid email.")
+                showAlert(message: NSLocalizedString("checkEmail", comment:""))//"please enter valid email.")
             }
         }
         else if(checkedstatus == false){
             if(firstNameTextField.text == "" || mobileNoTextField.text == "" ||  emailTextField.text == "" || Company_Name.text == "") {
-                showAlert(message: "Please Select All Fields.")
+                showAlert(message: NSLocalizedString("SelectallFields", comment:""))//"Please Select All Fields.")
 
             }
             else
@@ -156,18 +158,17 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                 let email_id = isValidEmail(testStr: emailTextField.text!)
                 if(email_id != false){
                     let phoneno = validatephone(testStr: mobileNoTextField.text!)
-                    print(mobileNoTextField.text)
                     print(phoneno)
                     if(phoneno == true){
                         register()
                     }
                     else
                     {
-                        showAlert(message: "Please enter valid Phone number.")
+                        showAlert(message: NSLocalizedString("ValidPhone", comment:""))//"Please enter valid Phone number.")
                     }
                 }
                 else{
-                    showAlert(message: "please enter valid email.")
+                    showAlert(message: NSLocalizedString("checkEmail", comment:""))//"please enter valid email.")
                 }
             }
         }
@@ -194,7 +195,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
     func isValidEmail(testStr:String) -> Bool {
         if(testStr == "")
         {
-            showAlert(message: "Must be a valid email.")
+            showAlert(message: NSLocalizedString("checkEmail", comment:""))
             return true
         }
         let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}"
@@ -207,7 +208,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
         if(mobileNoTextField.text!.count > 15) {
             return false
         }
-        else if(mobileNoTextField.text!.count <= 15) {
+        else if(mobileNoTextField.text!.count <=  15) {
 
             let PHONE_REGEX = "^[- +()0-9]*$" //"^[- +()]*[0-9][- +()0-9]*$" //"^(?:(?:\\+?1\\s*(?:[.-]\\s*)?)?(?:\\(\\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\\s*\\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\\s*(?:[.-]\\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\\s*(?:[.-]\\s*)?([0-9]{4})(?:\\s*(?:#|x\\.?|ext\\.?|extension)\\s*(\\d+))?$"
             let phoneTest = NSPredicate(format: "SELF MATCHES %@", PHONE_REGEX)

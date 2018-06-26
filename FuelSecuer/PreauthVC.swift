@@ -96,7 +96,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         Vehicaldetails.sharedInstance.deptno = ""
         Vehicaldetails.sharedInstance.Personalpinno = ""
         Vehicaldetails.sharedInstance.Other = ""
-        Vehicaldetails.sharedInstance.Odometerno = ""
+       // Vehicaldetails.sharedInstance.Odometerno = ""
         Vehicaldetails.sharedInstance.hours = ""
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
@@ -114,14 +114,25 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         _ = defaults.array(forKey: "SSID")
         var reply:String!
         var error:String!
-        var data:String!
-        
+        //var data:String!
+
         if(currentlocation == nil)
         {
             let data =  web.checkApprove(uuid: uuid,lat:"\(0)",long:"\(0)")
             let Split = data.components(separatedBy: "#")
             reply = Split[0]
-
+            if(reply != "-1"){
+                cf.DeleteFileInApp(fileName: "getSites.txt")
+                cf.CreateTextFile(fileName: "getSites.txt", writeText: reply)
+                let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                let controller = storyboard.instantiateViewController(withIdentifier: "InitialController") as UIViewController
+                self.present(controller, animated: true, completion: nil)
+            }
+            else if(reply == "-1"){
+                if(cf.checkPath(fileName: "getSites.txt") == true) {
+                    reply = cf.ReadFile(fileName: "getSites.txt")
+                }
+            }
         }
         else {
             sourcelat = currentlocation.coordinate.latitude
@@ -135,6 +146,9 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
             if(reply != "-1"){
                 cf.DeleteFileInApp(fileName: "getSites.txt")
                 cf.CreateTextFile(fileName: "getSites.txt", writeText: reply)
+                let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                let controller = storyboard.instantiateViewController(withIdentifier: "InitialController") as UIViewController
+                self.present(controller, animated: true, completion: nil)
             }
             else if(reply == "-1"){
                 if(cf.checkPath(fileName: "getSites.txt") == true) {
@@ -149,30 +163,32 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         {
             if(Vehicaldetails.sharedInstance.reachblevia == "wificonn")
             {
-                self.navigationItem.title = "Error"
+                self.navigationItem.title = NSLocalizedString("Error",comment:"")//"Error"
                 scrollview.isHidden = true
                 version.isHidden = false
                 refreshButton.isHidden = false
-                showAlertSetting(message: "Cannot connect to cloud server. Please connect to the network having the internet")
+                showAlertSetting(message: NSLocalizedString("warning_NoInternet_Connection", comment:""))//"Cannot connect to cloud server. Please connect to the network having the internet")
             }
                 
             else if(Vehicaldetails.sharedInstance.reachblevia == "cellular") /*||  Vehicaldetails.sharedInstance.reachblevia == "notreachable"*/
             {
-                self.navigationItem.title = "Error"
-                showAlert(message: "\(error)")
+                self.navigationItem.title = NSLocalizedString("Error",comment:"")//"Error"
+               // showAlert(message: "\(error)")
                 scrollview.isHidden = true
                 version.isHidden = false
                 warningLable.isHidden = false
-                warningLable.text = "Cannot connect to cloud server.please check your internet connection."
+                warningLable.text = NSLocalizedString("warning_NoInternet_Connection", comment:"")//"Cannot connect to cloud server.please check your internet connection."
                 refreshButton.isHidden = false
             }
             else if(Vehicaldetails.sharedInstance.reachblevia == "notreachable") {
-                self.navigationItem.title = "Error"
-                showAlert(message: "\(error)")
+                self.navigationItem.title = NSLocalizedString("Error",comment:"")//"Error"
+                if(error == nil){
+                showAlert(message: NSLocalizedString("Preauthtrans",comment:""))//"Pre-Authorized transactions are not Available.")
+                }
                 scrollview.isHidden = true
                 version.isHidden = false
                 warningLable.isHidden = false
-                warningLable.text = "Cannot connect to cloud server. Please check your internet connection."
+                warningLable.text = NSLocalizedString("warning_NoInternet_Connection", comment:"")//"Cannot connect to cloud server. Please check your internet connection."
                 refreshButton.isHidden = false
                 for i in 1...2
                 {
@@ -330,7 +346,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                         }
                         else if(Message == "fail")
                         {
-                            self.navigationItem.title = "Error"
+                            self.navigationItem.title = NSLocalizedString("Error",comment:"")//"Error"
                             scrollview.isHidden = true
                             version.isHidden = false
                             warningLable.isHidden = false
@@ -404,13 +420,14 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                                     
                                     let Transactioniddeatils = Transaction_id(isactive: is_active,TransactionID: TransactionId as String)
                                     Vehicaldetails.sharedInstance.Transaction_id.add(Transactioniddeatils)
+                                    
                                 }
                             }
                         }
                             
                         else if(Message == "fail"){
                             
-                            self.navigationItem.title = "Error"
+                            self.navigationItem.title = NSLocalizedString("Error",comment:"")//"Error"
                             scrollview.isHidden = true
                             version.isHidden = false
                             warningLable.isHidden = false
@@ -440,7 +457,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                 let appDel = UIApplication.shared.delegate! as! AppDelegate
                 defaults.set(0, forKey: "Register")
                 // Call a method on the CustomController property of the AppDelegate
-                self.web.sentlog(func_name: "Preauth")
+                self.web.sentlog(func_name: "Preauth", errorfromserverorlink: "", errorfromapp: "")
                 appDel.start()
             }
                 
@@ -451,7 +468,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                 version.isHidden = false
                 warningLable.isHidden = false
                 refreshButton.isHidden = false
-                self.navigationItem.title = "Error"
+                self.navigationItem.title = NSLocalizedString("Error",comment:"")//"Error"
                 warningLable.text = "Your Registration request is not approved yet. It is marked Inactive in the Company Software. Please contact your company’s administrator."
             } else if(ResponseText == "New Registration") {
                 performSegue(withIdentifier: "Register", sender: self)
@@ -483,7 +500,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
     
     
     @IBAction func Helptext(sender: AnyObject) {
-        showAlert(message: "If you are using this hose for the first time you will need to enter the password when redirected to the WiFi screen. The password is 12345678.")
+        showAlert(message:NSLocalizedString("HelptextSelectedSite", comment:"") +  "12345678.")// "If you are using this hose for the first time you will need to enter the password when redirected to the WiFi screen. The password is 12345678.")
         
         print("Password is" + "12345678")// passwordTextField.text!)
         UIPasteboard.general.string = "12345678" //passwordTextField.text!
@@ -531,7 +548,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
         // Action.
-        let action = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil)
+        let action = UIAlertAction(title:NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default, handler: nil)
         alertController.addAction(action)
         self.present(alertController, animated: true, completion: nil)
     }
@@ -545,13 +562,13 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
     @IBAction func goButtontapped(sender: AnyObject) {
         
         
-        let index = Vehicaldetails.sharedInstance.Transaction_id.count
+        let index = Transaction_Id.count//Vehicaldetails.sharedInstance.Transaction_id.count
         if(index == 0){
             viewDidLoad()
         }else{
             timer.invalidate()
             if (wifiNameTextField.text == ""){
-                showAlert(message: "Please Select Hose to use.")
+                showAlert(message: NSLocalizedString("NoHoseselect", comment:""))//"Please Select Hose to use.")
             }
             else{
                 print("ssID Match")
@@ -571,7 +588,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                     }
                 }
                 if(notransactionid == "True"){
-                    showAlert(message: "Pre-authorized transactions not available for you. Please enabled your internet connection or Please contact your company’s administrator.")
+                    showAlert(message: NSLocalizedString("Preauthnointernet", comment:""))//"Pre-authorized transactions not available for you. Please enabled your internet connection or Please contact your company’s administrator.")
                 }
                 else if(notransactionid == "False"){
 
@@ -588,14 +605,33 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
     }
     
     @IBAction func refreshButtontappd(sender: AnyObject) {
+        if(Vehicaldetails.sharedInstance.reachblevia == "wificonn" || Vehicaldetails.sharedInstance.reachblevia == "cellular")
+        {
+        let uuid:String = UIDevice.current.identifierForVendor!.uuidString
+        print(uuid)
+        let data = web.checkApprove(uuid: uuid,lat:"\(sourcelat!)",long:"\(sourcelong!)")
+        let Split = data.components(separatedBy: "#")
+        reply = Split[0]
+        if(reply != "-1"){
+//            cf.DeleteFileInApp(fileName: "getSites.txt")
+//            cf.CreateTextFile(fileName: "getSites.txt", writeText: reply)
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let controller = storyboard.instantiateViewController(withIdentifier: "InitialController") as UIViewController
+            self.present(controller, animated: true, completion: nil)
+            }
+
+            }
+            else{
         viewDidLoad()
+        }
+
     }
     
     @IBAction func refreshButtontapped(sender: AnyObject) {
         if(cf.getSSID() != "" ) {
             print("SSID: \(cf.getSSID())")
         } else {
-            showAlert(message: "SSID not found wifi is not connected.")
+            showAlert(message:  NSLocalizedString("NoSSIdFound", comment:""))//"SSID not found wifi is not connected.")
         }
     }
     
@@ -726,7 +762,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         // Action.
         let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default) { action in //self.//
             let appDel = UIApplication.shared.delegate! as! AppDelegate
-            self.web.sentlog(func_name: "Preauth shownotransId")
+            self.web.sentlog(func_name: "Preauth shownotransId", errorfromserverorlink: "", errorfromapp: "")
             appDel.start()
             
         }

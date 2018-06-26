@@ -78,7 +78,7 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
     
     func gotostart(){
         
-        self.web.sentlog(func_name: "vehicletimeout")
+        self.web.sentlog(func_name: "vehicletimeout", errorfromserverorlink: "", errorfromapp: "")
         let appDel = UIApplication.shared.delegate! as! AppDelegate
         appDel.start()
     }
@@ -89,61 +89,7 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
         save.isHidden = false
         cancel.isHidden = false
     }
-    
-    func showLetters()
-    {
-        buttontype = "Letters"
-        Vehicleno.font = UIFont(name: Vehicleno.font!.fontName, size: 40)
-        doneButton.setTitle("Press for Numbers", for: UIControlState.normal)
-        let numberToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 50))
-        numberToolbar.barStyle = UIBarStyle.default
-        numberToolbar.items = [
-            UIBarButtonItem(title: "Return", style: UIBarButtonItemStyle.plain, target: self, action: #selector(VehiclenoVC.tapAction)),
-            UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil),
-            UIBarButtonItem(title: "Press for Numbers", style: UIBarButtonItemStyle.plain, target: self, action: #selector(VehiclenoVC.shownumbers))]
-        numberToolbar.sizeToFit()
-        numberToolbar.tintColor = UIColor.white
-        numberToolbar.barTintColor = UIColor.white
-        Vehicleno.inputAccessoryView = numberToolbar
-        
-        self.Mview.endEditing(true)
-        let textFieldOutput = Vehicleno.text
-        let newString = textFieldOutput!.uppercased()
-        Vehicleno.text = newString
-        self.Vehicleno.autocapitalizationType = UITextAutocapitalizationType.allCharacters
-        self.Vehicleno.keyboardType = UIKeyboardType.default
-        self.Vehicleno.returnKeyType = UIReturnKeyType.default
-        self.Vehicleno.becomeFirstResponder()
-        
-        doneButton.backgroundColor = UIColor.white
-        doneButton.setTitle("Press for Numbers", for: UIControlState.normal)
-        doneButton.addTarget(self, action: #selector(VehiclenoVC.shownumbers), for: UIControlEvents.touchUpInside)
-    }
-    
-    func shownumbers()
-    {
-        buttontype = "Numbers"
-        let numberToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 50))
-        numberToolbar.barStyle = UIBarStyle.default
-        numberToolbar.items = [
-            UIBarButtonItem(title: "Return", style: UIBarButtonItemStyle.plain, target: self, action: #selector(VehiclenoVC.tapAction)),
-            UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil),
-            UIBarButtonItem(title: "Press for Letters", style: UIBarButtonItemStyle.plain, target: self, action: #selector(VehiclenoVC.showLetters))]
-        numberToolbar.sizeToFit()
-        numberToolbar.tintColor = UIColor.white
-        numberToolbar.barTintColor = UIColor.white
-        Vehicleno.inputAccessoryView = numberToolbar
-        
-        doneButton.setTitle("Press for letters", for: UIControlState.normal)
-        self.Mview.endEditing(true)
-        self.Vehicleno.keyboardType = UIKeyboardType.numberPad
-        self.Vehicleno.becomeFirstResponder()
-        self.Vehicleno.autocapitalizationType = UITextAutocapitalizationType.allCharacters
-        doneButton.addTarget(self, action: #selector(VehiclenoVC.showLetters), for: UIControlEvents.touchUpInside)
-        doneButton.backgroundColor = UIColor.white
-    }
-    // required method for keyboard delegate protocol
-    
+
     @IBAction func Vno(_ sender: Any) {
         checkMaxLength(textField: Vehicleno,maxLength: 10)
         if(Vehicleno.text != "0"){
@@ -176,10 +122,11 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
         
         // Action.
-        let action = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil)
+        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default, handler: nil)
         alertController.addAction(action)
         self.present(alertController, animated: true, completion: nil)
     }
+
     func showAlertSetting(message: String)
     {
         let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertControllerStyle.alert)
@@ -206,7 +153,8 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
             }
             else{
                 //self.mainPage()
-                self.wifisettings()
+                self.web.wifisettings(pagename: "Vehicle")//self.wifisettings()
+                self.mainPage()
             }
         }
         alertController.addAction(action)
@@ -249,15 +197,8 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
         stoptimergotostart.invalidate()
         viewWillAppear(true)
     }
-    
-    func wifisettings()
-    {
-        let url = NSURL(string: "App-Prefs:root=WIFI") //for WIFI setting app
-        let app = UIApplication.shared// .shared
-        app.openURL(url! as URL)
-        mainPage()
-    }
-    
+
+
     func mainPage()
     {
         cf.delay(2){
@@ -279,7 +220,7 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
         {
             if(countfailauth>2)
             {
-                showAlert(message: "Please wait momentarily check your internet connection & try again.")//"\(error) \n Please try again later")
+                showAlert(message: NSLocalizedString("CheckyourInternet", comment:""))//"Please wait momentarily check your internet connection & try again.")//"\(error) \n Please try again later")
             }else{
                 
                 self.senddata(deptno: deptno,ppin:ppin,other:other)
@@ -300,7 +241,6 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
             let ResponceMessage = sysdata.value(forKey: "ResponceMessage") as! NSString
             let ResponceText = sysdata.value(forKey:"ResponceText") as! NSString
             let ResponceData = sysdata.value(forKey:"ResponceData") as! NSDictionary
-            
             let MinLimit = ResponceData.value(forKey:"MinLimit") as! NSNumber
             let PulseRatio = ResponceData.value(forKey:"PulseRatio") as! NSNumber
             let VehicleId = ResponceData.value(forKey:"VehicleId") as! NSNumber
@@ -310,7 +250,6 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
             let PulserStopTime = ResponceData.value(forKey:"PulserStopTime") as! NSString
             let ServerDate = ResponceData.value(forKey:"ServerDate") as! String
             let pumpoff_time = ResponceData.value(forKey: "PumpOffTime") as! String
-            
             print(MinLimit,PersonId,PhoneNumber,FuelTypeId,VehicleId,PulseRatio)
             
             Vehicaldetails.sharedInstance.MinLimit = "\(MinLimit)"
@@ -324,7 +263,7 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
             
             if(ResponceMessage == "success") {
                 if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()){
-                    let alertController = UIAlertController(title: "FluidSecure needs to connect to Hose via WiFi", message: "Please Connect Wifi \(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertControllerStyle.alert)
+                    let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertControllerStyle.alert)
                     // Background color.
                     let backView = alertController.view.subviews.last?.subviews.last
                     backView?.layer.cornerRadius = 10.0
@@ -336,32 +275,27 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
                     let paragraphStyle1 = NSMutableParagraphStyle()
                     paragraphStyle1.alignment = NSTextAlignment.left
                     
-                    let attributedString = NSAttributedString(string:"FluidSecure needs to connect to HOSE via WiFi\nYou will now be redirected to the WiFi setup", attributes: [
+                    let attributedString = NSAttributedString(string:NSLocalizedString("Subtitle", comment:""), attributes: [
                         NSParagraphStyleAttributeName:paragraphStyle1,
                         NSFontAttributeName : UIFont.systemFont(ofSize: 18), //your font here
                         NSForegroundColorAttributeName : UIColor.black
-                        ])
+                        ]) //"FluidSecure needs to connect to HOSE via WiFi\nYou will now be redirected to the WiFi setup"
                     
                     let formattedString = NSMutableAttributedString()
                     formattedString
-                        .normal("\nThe WiFi name is the name of the HOSE. Read Steps 1 to 5 below then click on Green bar below.\n\nFollow steps:\n1. Turn on the WiFi (it might already be on)\n\n2. Choose the WiFi \n named: ")
+                        .normal(NSLocalizedString("Step1", comment:""))//("\nThe WiFi name is the name of the HOSE. Read Steps 1 to 5 below then click on Green bar below.\n\nFollow steps:\n1. Turn on the WiFi (it might already be on)\n\n2. Choose the WiFi \n named: ")
                         .bold("\(Vehicaldetails.sharedInstance.SSId)")
-                        .normal(" \n\n3. First time it will ask for password,enter: 123456789\n\n4. It will have a check next to ")
+                        .normal(NSLocalizedString("Step2", comment:""))//(" \n\n3. First time it will ask for password,enter: 123456789\n\n4. It will have a check next to ")
                         .bold("\(Vehicaldetails.sharedInstance.SSId)")
-                        .normal(" and it will say \"No Internet Connection\" \n\n5.  Now, tap on the very top left corner that says \"FluidSecure\" - this returns you to allow fueling.\n\n\n\n\n")
-                    
-                    
+                        .normal(NSLocalizedString("Step3", comment:""))//" and it will say \"No Internet Connection\" \n\n5.  Now, tap on the very top left corner that says \"FluidSecure\" - this returns you to allow fueling.\n\n\n\n\n")
+
                     alertController.setValue(formattedString, forKey: "attributedMessage")
                     alertController.setValue(attributedString, forKey: "attributedTitle")
-                    
-                    let btnImage = UIImage(named: "checkbox-checked")!
-                    let imageButton : UIButton = UIButton(frame: CGRect(x: 220, y: 235, width: 20, height: 20))
-                    imageButton.setBackgroundImage(btnImage, for: UIControlState())
-                    
+
                     let btnsetting = UIImage(named: "Button-Green")!
                     let imageButtonws : UIButton = UIButton(frame: CGRect(x: 5, y: 500, width: 260, height: 40))
                     imageButtonws.setBackgroundImage(btnsetting, for: UIControlState())
-                    imageButtonws.setTitle("Go To WiFi Settings", for: UIControlState.normal)
+                    imageButtonws.setTitle(NSLocalizedString("ButtonNAME", comment:""), for: UIControlState.normal) //"Go To WiFi Settings"
                     imageButtonws.setTitleColor(UIColor.white, for: UIControlState.normal)
                     imageButtonws.addTarget(self, action: #selector(OdometerVC.Action(sender:)), for:.touchUpInside)
                     
@@ -372,6 +306,10 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
                 
                 if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){
                     self.performSegue(withIdentifier: "Go", sender: self)
+                    self.web.sentlog(func_name: "Vehicle number entered \(Vehicaldetails.sharedInstance.vehicleno)", errorfromserverorlink: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
+
+
+                    self.web.sentlog(func_name: "Go button Tapped NO need to select Wifi data Manually", errorfromserverorlink: " \(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())",errorfromapp: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)" + " Connected link: \(self.cf.getSSID())")
                 }
             }
             else {
@@ -394,7 +332,8 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
     func Action(sender:UIButton!)
     {
         self.dismiss(animated: true, completion: nil)
-        wifisettings()
+        self.web.wifisettings(pagename: "Vehicle")// wifisettings()
+        self.mainPage()
     }
     
     func getodometer(){
@@ -409,18 +348,17 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
             
             let Split = data.components(separatedBy: "#")
             let reply = Split[0]
-            //let error = Split[1]
             if (reply == "-1")
             {
                 if(counthourauth>2)
                 {
-                    showAlert(message: "Please wait momentarily check your internet connection & try again.")//"\(error) \n Please try again later")
+                    showAlert(message: NSLocalizedString("CheckyourInternet", comment:""))//"Please wait momentarily check your internet connection & try again.")//"\(error) \n Please try again later")
                 }
                 else
                 {
                     getodometer()//self.senddata(deptno: deptno,ppin:ppin,other:other)
                 }
-                showAlert(message: "Please wait momentarily & try again.")//"\(error) \n Please try again later" )
+                showAlert(message: NSLocalizedString("Warningwait", comment:""))//"Please wait momentarily & try again.")//"\(error) \n Please try again later" )
                 stoptimergotostart.invalidate()
                 viewWillAppear(true)
             }
@@ -433,15 +371,15 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
                 }catch let error as NSError {
                     print ("Error: \(error.domain)")
                 }
-                
+
                 print(sysdata)
-                
                 let ResponceMessage = sysdata.value(forKey: "ResponceMessage") as! NSString
                 let ResponceText = sysdata.value(forKey: "ResponceText") as! NSString
                 if(ResponceMessage == "success"){
+                    self.web.sentlog(func_name: "Vehicle number entered \(Vehicaldetails.sharedInstance.vehicleno)", errorfromserverorlink: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
+
                     let IsHoursRequire = sysdata.value(forKey: "IsHoursRequire") as! NSString
                     let IsOdoMeterRequire = sysdata.value(forKey: "IsOdoMeterRequire") as! NSString
-                    
                     let CheckOdometerReasonable = sysdata.value(forKey: "CheckOdometerReasonable") as! NSString
                     let OdometerReasonabilityConditions = sysdata.value(forKey: "OdometerReasonabilityConditions") as! NSString
                     let PreviousOdo = sysdata.value(forKey: "PreviousOdo") as! NSString
@@ -527,7 +465,7 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
         
         if(Vehicleno.text == "")
         {
-            showAlert(message: "Please Enter Vehicle Number.")
+            showAlert(message: NSLocalizedString("Entervehicelno", comment:""))//"Please Enter Vehicle Number.")
             viewWillAppear(true)
         }
         else{

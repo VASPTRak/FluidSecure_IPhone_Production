@@ -1,0 +1,252 @@
+
+/* Class = "UILabel"; text = "Vehicle:"; ObjectID = "1qp-nO-4FC"; */
+"1qp-nO-4FC.text" = "Vehículo:";
+
+/* Class = "UINavigationItem"; title = "FluidSecure"; ObjectID = "2IP-7z-VNd"; */
+"2IP-7z-VNd.title" = "FluidSecure";
+
+/* Class = "UILabel"; text = "Quantity:"; ObjectID = "2aM-8A-iCn"; */
+"2aM-8A-iCn.text" = "Cantidad:";
+
+/* Class = "UIBarButtonItem"; title = "Back"; ObjectID = "2b7-WQ-hc2"; */
+"2b7-WQ-hc2.title" = "Espalda";
+
+/* Class = "UIButton"; normalTitle = "GO"; ObjectID = "3EQ-cf-hHe"; */
+"3EQ-cf-hHe.normalTitle" = "Ir";
+
+/* Class = "UITableViewController"; title = "Register"; ObjectID = "3yL-aV-pxg"; */
+"3yL-aV-pxg.title" = "Registro";
+
+/* Class = "UITextField"; placeholder = "Enter Mobile Number"; ObjectID = "5kN-bx-ShP"; */
+"5kN-bx-ShP.placeholder" = "Ingrese número móvil";
+
+/* Class = "UIButton"; normalTitle = "GO"; ObjectID = "6GF-lJ-66n"; */
+"6GF-lJ-66n.normalTitle" = "Ir";
+
+/* Class = "UILabel"; text = "0.0"; ObjectID = "6tN-iq-bQN"; */
+"6tN-iq-bQN.text" = "0.0";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "AH6-dn-ZUc"; */
+"AH6-dn-ZUc.text" = "Label";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "AMO-PB-PWo"; */
+"AMO-PB-PWo.text" = "Label";
+
+/* Class = "UITextField"; placeholder = "Enter Other"; ObjectID = "BzU-Hb-ipe"; */
+"BzU-Hb-ipe.placeholder" = "Entrar en otro";
+
+/* Class = "UITextField"; placeholder = "Enter Company Name"; ObjectID = "CeV-tP-x8C"; */
+"CeV-tP-x8C.placeholder" = "Introduzca el nombre de la empresa";
+
+/* Class = "UIButton"; normalTitle = "PRESS TO STOP"; ObjectID = "CoA-Ly-fyr"; */
+"CoA-Ly-fyr.normalTitle" = "PULSE PARA DETENERSE";
+
+/* Class = "UINavigationItem"; title = "FluidSecure"; ObjectID = "DEn-cY-C2c"; */
+"DEn-cY-C2c.title" = "FluidSecure";
+
+/* Class = "UIButton"; normalTitle = "Register"; ObjectID = "DXZ-5E-bPU"; */
+"DXZ-5E-bPU.normalTitle" = "Registro";
+
+/* Class = "UITextField"; placeholder = "Enter Vehicle Number "; ObjectID = "DoF-Ct-Xgf"; */
+"DoF-Ct-Xgf.placeholder" = "Ingrese el número del vehículo";
+
+/* Class = "UILabel"; text = "Vehicle:"; ObjectID = "E2l-bD-g5D"; */
+"E2l-bD-g5D.text" = "Vehículo:";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "EHl-Li-0E8"; */
+"EHl-Li-0E8.text" = "Label";
+
+/* Class = "UITextField"; placeholder = "Enter Email Address"; ObjectID = "G0z-to-5pL"; */
+"G0z-to-5pL.placeholder" = "Introducir la dirección de correo electrónico";
+
+/* Class = "UIButton"; normalTitle = "GO"; ObjectID = "Hns-mf-f9H"; */
+"Hns-mf-f9H.normalTitle" = "Ir";
+
+/* Class = "UIBarButtonItem"; title = "Back"; ObjectID = "HoK-Hf-XB8"; */
+"HoK-Hf-XB8.title" = "Espalda";
+
+/* Class = "UINavigationItem"; title = "FluidSecure"; ObjectID = "IQu-0O-erA"; */
+"IQu-0O-erA.title" = "FluidSecure";
+
+/* Class = "UILabel"; text = "Enter Personal Pin"; ObjectID = "IlQ-0h-mLr"; */
+"IlQ-0h-mLr.text" = "Ingrese PIN personal";
+
+/* Class = "UINavigationItem"; title = "FluidSecure"; ObjectID = "IrL-oR-8r2"; */
+"IrL-oR-8r2.title" = "FluidSecure";
+
+/* Class = "UIButton"; normalTitle = "Ok"; ObjectID = "J4a-lx-wy5"; */
+"J4a-lx-wy5.normalTitle" = "acuerdo";
+
+/* Class = "UIButton"; normalTitle = "Click here to use pre-authorized transaction."; ObjectID = "KEq-wY-LnW"; */
+"KEq-wY-LnW.normalTitle" = "Haga clic aquí para usar una transacción preautorizada.";
+
+/* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "KOu-2U-Pfv"; */
+"KOu-2U-Pfv.normalTitle" = "Cancelar";
+
+/* Class = "UILabel"; text = "Version 1.15.17"; ObjectID = "KPD-Ml-Ch9"; */
+//"KPD-Ml-Ch9.text" = "Versión 1.15.17";
+
+/* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "KmM-dZ-GDg"; */
+"KmM-dZ-GDg.normalTitle" = "Cancelar";
+
+/* Class = "UITextField"; placeholder = "Enter Full Name"; ObjectID = "LAf-UD-Cas"; */
+"LAf-UD-Cas.placeholder" = "Ingrese el nombre completo";
+
+/* Class = "UITextField"; placeholder = "Enter Hours"; ObjectID = "LqW-lS-AQW"; */
+"LqW-lS-AQW.placeholder" = "Ingrese Horas";
+
+/* Class = "UINavigationItem"; title = "Register"; ObjectID = "MOd-2J-7L4"; */
+"MOd-2J-7L4.title" = "Registro";
+
+/* Class = "UIButton"; normalTitle = "Usage Information"; ObjectID = "RRA-gh-O7b"; */
+"RRA-gh-O7b.normalTitle" = "Información de uso";
+
+/* Class = "UIButton"; normalTitle = "Start "; ObjectID = "RYL-Is-4dL"; */
+"RYL-Is-4dL.normalTitle" = "comienzo ";
+
+/* Class = "UILabel"; text = "Version 1.15.17"; ObjectID = "SFJ-7w-Fpl"; */
+//"SFJ-7w-Fpl.text" = "Versión 1.15.17";
+
+/* Class = "UINavigationItem"; title = "FluidSecure"; ObjectID = "SFc-Iz-RNG"; */
+"SFc-Iz-RNG.title" = "FluidSecure";
+
+/* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "TF2-d5-X3r"; */
+"TF2-d5-X3r.normalTitle" = "Cancelar";
+
+/* Class = "UIButton"; normalTitle = "GO"; ObjectID = "UDr-NJ-6hy"; */
+"UDr-NJ-6hy.normalTitle" = "Ir";
+
+/* Class = "UITextField"; placeholder = "Enter Department"; ObjectID = "UZt-rx-wKg"; */
+"UZt-rx-wKg.placeholder" = "Ingresar departamento";
+
+/* Class = "UILabel"; text = "Odometer:"; ObjectID = "V59-pK-qar"; */
+"V59-pK-qar.text" = "Cuentakilómetros:";
+
+/* Class = "UIButton"; normalTitle = "HELP"; ObjectID = "VSD-BS-IdT"; */
+"VSD-BS-IdT.normalTitle" = "AYUDA";
+
+/* Class = "UILabel"; text = "Closing out fuel transaction, please wait…"; ObjectID = "WAO-Vd-dUh"; */
+"WAO-Vd-dUh.text" = "Cerrando la transacción de combustible, espere ...";
+
+/* Class = "UITextField"; placeholder = "Username"; ObjectID = "WGm-8y-geX"; */
+"WGm-8y-geX.placeholder" = "Nombre de usuario";
+
+/* Class = "UIButton"; normalTitle = "Click here to use pre-authorized transaction."; ObjectID = "WOv-Js-F7d"; */
+"WOv-Js-F7d.normalTitle" = "Haga clic aquí para usar una transacción preautorizada.";
+
+/* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "Wnl-t7-VMH"; */
+"Wnl-t7-VMH.normalTitle" = "Cancelar";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "Ywl-SJ-ngV"; */
+"Ywl-SJ-ngV.text" = "Label";
+
+/* Class = "UILabel"; text = "Odometer:"; ObjectID = "ZVk-pV-XPj"; */
+"ZVk-pV-XPj.text" = "Cuentakilómetros:";
+
+/* Class = "UIBarButtonItem"; title = "Back"; ObjectID = "aGP-Zx-RUs"; */
+"aGP-Zx-RUs.title" = "Espalda";
+
+/* Class = "UILabel"; text = "Version 1.15.17"; ObjectID = "aIq-3Z-Q0b"; */
+//"aIq-3Z-Q0b.text" = "Versión 1.15.17";
+
+/* Class = "UIButton"; normalTitle = "Refresh"; ObjectID = "aLf-fv-WAk"; */
+"aLf-fv-WAk.normalTitle" = "Refrescar";
+
+/* Class = "UILabel"; text = "Support:support@trakeng.com or 850-878-4585"; ObjectID = "ab3-Ej-L6w"; */
+"ab3-Ej-L6w.text" = "Soporte: support@trakeng.com o 850-878-4585";
+
+/* Class = "UITextField"; placeholder = "Touch to select Site"; ObjectID = "ahm-rc-XyY"; */
+"ahm-rc-XyY.placeholder" = "Toca para seleccionar Sitio";
+
+/* Class = "UITextField"; placeholder = "Enter Odometer Reading"; ObjectID = "evt-sq-fRo"; */
+"evt-sq-fRo.placeholder" = "Ingrese la lectura del odómetro";
+
+/* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "gLK-At-m1O"; */
+"gLK-At-m1O.normalTitle" = "Cancelar";
+
+/* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "gMf-xT-drF"; */
+"gMf-xT-drF.normalTitle" = "Cancelar";
+
+/* Class = "UITextField"; placeholder = "Enter Personal Pin"; ObjectID = "gWy-tI-iBk"; */
+"gWy-tI-iBk.placeholder" = "Ingrese PIN personal";
+
+/* Class = "UIButton"; normalTitle = "GO"; ObjectID = "gfC-BQ-V5X"; */
+"gfC-BQ-V5X.normalTitle" = "Ir";
+
+/* Class = "UILabel"; text = " Version 1.15.17"; ObjectID = "h0f-KN-znz"; */
+//"h0f-KN-znz.text" = " Versión 1.15.17";
+
+/* Class = "UILabel"; text = "Enter Department"; ObjectID = "hm3-1c-G0Y"; */
+"hm3-1c-G0Y.text" = "Ingresar departamento";
+
+/* Class = "UIBarButtonItem"; title = "Back"; ObjectID = "ipW-Ap-EV4"; */
+"ipW-Ap-EV4.title" = "Espalda";
+
+/* Class = "UILabel"; text = "Pulse:"; ObjectID = "jAY-nt-ESg"; */
+"jAY-nt-ESg.text" = "Legumbres:";
+
+/* Class = "UINavigationItem"; title = "FluidSecure"; ObjectID = "kUx-Jd-co4"; */
+"kUx-Jd-co4.title" = "FluidSecure";
+
+/* Class = "UILabel"; text = "Enter Hours"; ObjectID = "kq7-tk-J7N"; */
+"kq7-tk-J7N.text" = "Ingrese Horas";
+
+/* Class = "UIButton"; normalTitle = "GO"; ObjectID = "lhK-Mz-ui4"; */
+"lhK-Mz-ui4.normalTitle" = "Ir";
+
+/* Class = "UINavigationItem"; title = "FluidSecure"; ObjectID = "mMY-ma-OUv"; */
+"mMY-ma-OUv.title" = "FluidSecure";
+
+/* Class = "UIBarButtonItem"; title = "Back"; ObjectID = "mWq-Mr-X9k"; */
+"mWq-Mr-X9k.title" = "Espalda";
+
+/* Class = "UIButton"; normalTitle = "GO"; ObjectID = "mbr-lW-KO7"; */
+"mbr-lW-KO7.normalTitle" = "Ir";
+
+/* Class = "UIButton"; normalTitle = "Login"; ObjectID = "nSi-I4-OPh"; */
+"nSi-I4-OPh.normalTitle" = "Iniciar sesión";
+
+/* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "ncd-xq-C7s"; */
+"ncd-xq-C7s.normalTitle" = "Cancelar";
+
+/* Class = "UILabel"; text = "Version 1.15.17"; ObjectID = "nxZ-wO-69A"; */
+//"nxZ-wO-69A.text" = "Versión 1.15.17";
+
+/* Class = "UILabel"; text = "Enter Other"; ObjectID = "oXF-0o-JlE"; */
+"oXF-0o-JlE.text" = "Entrar en otro";
+
+/* Class = "UILabel"; text = "Quantity:"; ObjectID = "pBx-aM-MFh"; */
+"pBx-aM-MFh.text" = "Cantidad:";
+
+/* Class = "UILabel"; text = "Enter Vehicle Number "; ObjectID = "rF6-Xs-baZ"; */
+"rF6-Xs-baZ.text" = "Ingrese el número del vehículo";
+
+/* Class = "UILabel"; text = "Enter Odometer Reading"; ObjectID = "sz2-pL-N3U"; */
+"sz2-pL-N3U.text" = "Ingrese la lectura del odómetro";
+
+/* Class = "UIBarButtonItem"; title = "Back"; ObjectID = "u4M-FB-NFO"; */
+"u4M-FB-NFO.title" = "Espalda";
+
+/* Class = "UILabel"; text = "0.0"; ObjectID = "u59-2j-3eX"; */
+"u59-2j-3eX.text" = "0.0";
+
+/* Class = "UILabel"; text = "Already have an account"; ObjectID = "uDK-JX-eRv"; */
+"uDK-JX-eRv.text" = "Ya tienes una cuenta";
+
+/* Class = "UIBarButtonItem"; title = "Back"; ObjectID = "uck-Mb-jlB"; */
+"uck-Mb-jlB.title" = "Espalda";
+
+/* Class = "UIButton"; normalTitle = "Refresh"; ObjectID = "ufS-mn-laM"; */
+"ufS-mn-laM.normalTitle" = "Refrescar";
+
+/* Class = "UITextField"; placeholder = "Password"; ObjectID = "wbr-EM-9YG"; */
+"wbr-EM-9YG.placeholder" = "Contraseña";
+
+/* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "yct-6P-3fu"; */
+"yct-6P-3fu.normalTitle" = "Cancelar";
+
+/* Class = "UILabel"; text = "Pulse:"; ObjectID = "zTl-xu-nOI"; */
+"zTl-xu-nOI.text" = "Legumbres:";
+
+/* Class = "UINavigationItem"; title = "FluidSecure"; ObjectID = "zlB-rg-e5D"; */
+"zlB-rg-e5D.title" = "FluidSecure";

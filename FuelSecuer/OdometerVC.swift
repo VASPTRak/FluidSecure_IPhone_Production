@@ -46,7 +46,7 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
     }
     
     func gotostart(){
-        self.web.sentlog(func_name: "Odometer")
+        self.web.sentlog(func_name: "Odometer", errorfromserverorlink: "", errorfromapp: "")
         let appDel = UIApplication.shared.delegate! as! AppDelegate
         appDel.start()
     }
@@ -76,7 +76,7 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
         
         // Action.
-        let action = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil)
+        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default, handler: nil)
         alertController.addAction(action)
         self.present(alertController, animated: true, completion: nil)
     }
@@ -120,7 +120,7 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
             }
             else
             {
-                self.wifisettings()
+                self.web.wifisettings(pagename: "Odometer")
             }
         }
         alertController.addAction(action)
@@ -130,17 +130,12 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
     func Action(sender:UIButton!)
     {
         self.dismiss(animated: true, completion: nil)
-        wifisettings()
+        
+        self.web.wifisettings(pagename: "Odometer")
+        mainPage()
     }
     
     //AUTHENTICATION FUNCTION CALL
-    func wifisettings()
-    {
-        let url = NSURL(string: "App-Prefs:root=WIFI") //for WIFI setting app
-        let app = UIApplication.shared// .shared
-        app.openURL(url! as URL)
-        mainPage()
-    }
     
     func mainPage()
     {
@@ -150,6 +145,7 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
         }
         else
         {
+            self.web.sentlog(func_name: "Go button Tapped user need to select Wifi data Manually", errorfromserverorlink: " \(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())",errorfromapp: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)" + " Connected link: \(self.cf.getSSID())")
             self.performSegue(withIdentifier: "Go", sender: self)
         }
     }
@@ -163,12 +159,11 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
         let data = web.vehicleAuth(vehicle_no: vehicle_no,Odometer:odometer!,isdept:deptno,isppin:ppin,isother:other)
         let Split = data.components(separatedBy: "#")
         let reply = Split[0]
-        // let error = Split[1]
         if (reply == "-1")
         {
             if(countfailauth>2)
             {
-                showAlert(message: "Please wait momentarily check your internet connection & try again.")//"\(error) \n Please try again later")
+                showAlert(message: NSLocalizedString("CheckyourInternet", comment:""))
             }else{
                 self.senddata(deptno: deptno,ppin:ppin,other:other)
             }
@@ -191,7 +186,7 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
             if(ResponceMessage == "success")
             {
                 if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()){
-                    let alertController = UIAlertController(title: "FluidSecure needs to connect to Hose via WiFi", message: "Please Connect Wifi \(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertControllerStyle.alert)
+                    let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertControllerStyle.alert)
                     // Background color.
                     let backView = alertController.view.subviews.last?.subviews.last
                     backView?.layer.cornerRadius = 10.0
@@ -203,7 +198,7 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
                     let paragraphStyle1 = NSMutableParagraphStyle()
                     paragraphStyle1.alignment = NSTextAlignment.left
                     
-                    let attributedString = NSAttributedString(string:"FluidSecure needs to connect to HOSE via WiFi\nYou will now be redirected to the WiFi setup", attributes: [
+                    let attributedString = NSAttributedString(string:NSLocalizedString("Subtitle", comment:""), attributes: [
                         NSParagraphStyleAttributeName:paragraphStyle1,
                         NSFontAttributeName : UIFont.systemFont(ofSize: 20), //your font here
                         NSForegroundColorAttributeName : UIColor.black
@@ -211,31 +206,25 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
                     
                     let formattedString = NSMutableAttributedString()
                     formattedString
-                        .normal("\nThe WiFi name is the name of the HOSE. Read Steps 1 to 5 below then click on Green bar below.\n\nFollow steps:\n1. Turn on the WiFi (it might already be on)\n\n2. Choose the WiFi \n named: ")
+                        .normal(NSLocalizedString("Step1", comment:""))//("\nThe WiFi name is the name of the HOSE. Read Steps 1 to 5 below then click on Green bar below.\n\nFollow steps:\n1. Turn on the WiFi (it might already be on)\n\n2. Choose the WiFi \n named: ")
                         .bold("\(Vehicaldetails.sharedInstance.SSId)")
-                        .normal(" \n\n3. First time it will ask for password,enter: 123456789\n\n4. It will have a check next to ")
+                        .normal(NSLocalizedString("Step2", comment:""))//(" \n\n3. First time it will ask for password,enter: 123456789\n\n4. It will have a check next to ")
                         .bold("\(Vehicaldetails.sharedInstance.SSId)")
-                        .normal(" and it will say \"No Internet Connection\" \n\n5.  Now, tap on the very top left corner that says \"FluidSecure\" - this returns you to allow fueling.\n\n\n\n\n\n")
+                        .normal(NSLocalizedString("Step3", comment:""))//" and it will say \"No Internet Connection\" \n\n5.  Now, tap on the very top left corner that says \"FluidSecure\" - this returns you to allow fueling.\n\n\n\n\n")
                     
                     alertController.setValue(formattedString, forKey: "attributedMessage")
                     alertController.setValue(attributedString, forKey: "attributedTitle")
                     
                     // Action.
                     
-                    let btnImage = UIImage(named: "checkbox-checked")!
-                    let imageButton : UIButton = UIButton(frame: CGRect(x: 220, y: 235, width: 20, height: 20))
-                    imageButton.setBackgroundImage(btnImage, for: UIControlState())
-                    
-                    
                     let btnsetting = UIImage(named: "Button-Green")!
                     let imageButtonws : UIButton = UIButton(frame: CGRect(x: 1, y: 500, width: 270, height: 40))
                     imageButtonws.setBackgroundImage(btnsetting, for: UIControlState())
-                    imageButtonws.setTitle("Go To WiFi Settings", for: UIControlState.normal)
+                    imageButtonws.setTitle(NSLocalizedString("ButtonNAME", comment:""), for: UIControlState.normal)
                     imageButtonws.setTitleColor(UIColor.white, for: UIControlState.normal)
                     imageButtonws.addTarget(self, action: #selector(OdometerVC.Action(sender:)), for:.touchUpInside)
                     
                     alertController.view.addSubview(imageButtonws)
-                    
                     self.present(alertController, animated: true, completion: nil)
                 }
                 
@@ -283,7 +272,7 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
         IsGobuttontapped = true
         if(Odometer.text == "")
         {
-            showAlert(message: "Please Enter Odometer Number.")
+            showAlert(message: NSLocalizedString("EneterOdometer", comment:""))
             viewWillAppear(true)
         }
         else
@@ -378,7 +367,7 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
                             }
                         }
                         else{
-                            showAlert(message: "The odometer entered is not within the reasonability your administrator has assigned, please contact your administrator.")
+                            showAlert(message: NSLocalizedString("Odometer_Reasonability", comment:""))// "The odometer entered is not within the reasonability your administrator has assigned, please contact your administrator.")
                             viewWillAppear(true)
                             print(countdata)
                         }
@@ -420,9 +409,8 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
                             }
                         }
                     }
-                        
                     else{
-                        showAlert(message: "The odometer entered is not within the reasonability your administrator has assigned, please contact your administrator.")
+                        showAlert(message: NSLocalizedString("Odometer_Reasonability", comment:""))//"The odometer entered is not within the reasonability your administrator has assigned, please contact your administrator.")
                         viewWillAppear(true)
                     }
                 }
@@ -454,7 +442,7 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
                     }
                 }
                 else{
-                    showAlert(message: "The odometer entered is not within the reasonability your administrator has assigned, please contact your administrator.")
+                    showAlert(message: NSLocalizedString("Odometer_Reasonability", comment:""))//"The odometer entered is not within the reasonability your administrator has assigned, please contact your administrator.")
                     viewWillAppear(true)
                 }
             }

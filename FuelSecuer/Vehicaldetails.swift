@@ -7,7 +7,7 @@
 //
 
 import UIKit
-private let _Vehicaldetails = Vehicaldetails(Vehicleno:"",Odometeno :"",deptno:"",Personalpinno:"",Other:"",hours:"",buttonset:Bool(),SiteID:"",MinLimit:"",PulseRatio:"",VehicleId:"",FuelTypeId:"",PersonId:"",PhoneNumber:"",SSId:"",reachblevia:"",odometerreq:"",IsPersonnelPINRequire:"",IsOtherRequire:"",IsDepartmentRequire:"",IsHoursrequirs:"",siteName:"",date:"",PulserStopTime:"",IsHoseNameReplaced:"",HoseID:"",gohome:Bool(),setrelay0:Bool(),CheckOdometerReasonable:"",OdometerReasonabilityConditions:"",PreviousOdo:Int(),OdoLimit:Int(),Lat:Double(),Long:Double(),TransactionId:Int(),FilePath:"",FirmwareVersion:"",IsFirmwareUpdate:Bool(),FinalQuantitycount:"",MacAddress:"",FS_MacAddress:"",Transaction_id:NSMutableArray(),IsUpgrade:"",password:"",TimeOut:"",Otherlable:"",pulsarCount:"",PulserTimingAdjust:"",IsBusy:"",IsDefective:"")
+private let _Vehicaldetails = Vehicaldetails(Vehicleno:"",Odometeno :"",deptno:"",Personalpinno:"",Other:"",hours:"",buttonset:Bool(),SiteID:"",MinLimit:"",PulseRatio:"",VehicleId:"",FuelTypeId:"",PersonId:"",PhoneNumber:"",SSId:"",reachblevia:"",odometerreq:"",IsPersonnelPINRequire:"",IsOtherRequire:"",IsDepartmentRequire:"",IsHoursrequirs:"",siteName:"",date:"",PulserStopTime:"",IsHoseNameReplaced:"",HoseID:"",gohome:Bool(),setrelay0:Bool(),CheckOdometerReasonable:"",OdometerReasonabilityConditions:"",PreviousOdo:Int(),OdoLimit:Int(),Lat:Double(),Long:Double(),TransactionId:Int(),FilePath:"",FirmwareVersion:"",IsFirmwareUpdate:Bool(),FinalQuantitycount:"",MacAddress:"",FS_MacAddress:"",Transaction_id:NSMutableArray(),IsUpgrade:"",password:"",TimeOut:"",Otherlable:"",pulsarCount:"",PulserTimingAdjust:"",IsBusy:"",IsDefective:"",CollectDiagnosticLogs:"")
 
 class Vehicaldetails {
 
@@ -61,12 +61,13 @@ class Vehicaldetails {
     var PulserTimingAdjust:String = ""
     var IsBusy:String = ""
     var IsDefective:String = ""
+    var CollectDiagnosticLogs:String = ""
 
 
 
 
 
-    init(Vehicleno:String!,Odometeno:String!,deptno:String,Personalpinno :String,Other:String,hours: String,buttonset:Bool!,SiteID:String,MinLimit:String,PulseRatio:String,VehicleId:String,FuelTypeId:String,PersonId:String,PhoneNumber:String,SSId:String,reachblevia:String,odometerreq:String,IsPersonnelPINRequire:String,IsOtherRequire:String,IsDepartmentRequire:String,IsHoursrequirs:String,siteName:String,date:String,PulserStopTime:String,IsHoseNameReplaced:String,HoseID:String,gohome:Bool!,setrelay0:Bool!,CheckOdometerReasonable:String,OdometerReasonabilityConditions:String,PreviousOdo:Int,OdoLimit:Int,Lat:Double,Long:Double,TransactionId:Int,FilePath:String,FirmwareVersion :String,IsFirmwareUpdate:Bool!,FinalQuantitycount:String,MacAddress:String,FS_MacAddress:String,Transaction_id:NSMutableArray,IsUpgrade:String,password:String,TimeOut:String,Otherlable:String,pulsarCount:String,PulserTimingAdjust:String,IsBusy:String,IsDefective:String)
+    init(Vehicleno:String!,Odometeno:String!,deptno:String,Personalpinno :String,Other:String,hours: String,buttonset:Bool!,SiteID:String,MinLimit:String,PulseRatio:String,VehicleId:String,FuelTypeId:String,PersonId:String,PhoneNumber:String,SSId:String,reachblevia:String,odometerreq:String,IsPersonnelPINRequire:String,IsOtherRequire:String,IsDepartmentRequire:String,IsHoursrequirs:String,siteName:String,date:String,PulserStopTime:String,IsHoseNameReplaced:String,HoseID:String,gohome:Bool!,setrelay0:Bool!,CheckOdometerReasonable:String,OdometerReasonabilityConditions:String,PreviousOdo:Int,OdoLimit:Int,Lat:Double,Long:Double,TransactionId:Int,FilePath:String,FirmwareVersion :String,IsFirmwareUpdate:Bool!,FinalQuantitycount:String,MacAddress:String,FS_MacAddress:String,Transaction_id:NSMutableArray,IsUpgrade:String,password:String,TimeOut:String,Otherlable:String,pulsarCount:String,PulserTimingAdjust:String,IsBusy:String,IsDefective:String,CollectDiagnosticLogs:String)
     {
         self.Odometerno = Odometeno
         self.vehicleno = Vehicleno
@@ -118,6 +119,7 @@ class Vehicaldetails {
         self.PulserTimingAdjust = PulserTimingAdjust
         self.IsBusy = IsBusy
         self.IsDefective = IsDefective
+        self.CollectDiagnosticLogs = CollectDiagnosticLogs
         
 
     }

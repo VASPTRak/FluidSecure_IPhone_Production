@@ -1,0 +1,17 @@
+/* 
+  Localizable.strings
+  FuelSecure
+
+  Created by VASP on 5/29/18.
+  Copyright © 2018 VASP. All rights reserved.
+*/
+"Select Hose to use" = "Select Hose to use";
+"Date_Fueling" = "";
+"Name" = "Name";
+"Mobile" = "Mobile";
+"Email" = "Email";
+"MessageFueling" = "Please insert the nozzle into the tank \n Then tap start";
+"MessageFueling1" = "Please wait while your connection is being established With FS link";
+"LostWifi" = "WiFi Connection lost with mobile.";
+"Datainfo" = "";
+

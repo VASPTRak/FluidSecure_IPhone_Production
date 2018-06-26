@@ -33,6 +33,8 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
     var IsStartbuttontapped : Bool = false
     var setrelaysysdata:NSDictionary!
     var stoptimergotostart:Timer = Timer()
+   // var IsStartbuttontapped : Bool = false
+    var Cancel_Button_tapped :Bool = false
     var s1 :String!
     var iswifi :Bool!
     var Fquantity :Double!
@@ -67,6 +69,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
     var timer_noConnection_withlink = Timer()
     var timer_quantityless_thanprevious = Timer()
     var emptypulsar_count:Int = 0
+    var ResponceMessageUpload:String = ""
 
 
     let addr = "192.168.4.1"
@@ -93,7 +96,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
 
     override func viewDidAppear(_ animated: Bool) {
         stoptimergotostart.invalidate()
-        self.displaytime.text = "Please wait while your connection is being established With FS link"
+        self.displaytime.text = NSLocalizedString("MessageFueling1", comment:"")//"Please wait while your connection is being established With FS link"
         print(string)
         cf.delay(1){
             self.Activity.hidesWhenStopped = true;
@@ -109,20 +112,20 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                 else if(isConect_toFS == "false") {
                     self.start.isEnabled = false
                     self.start.isHidden = true
-                    self.displaytime.text = "Please wait while your connection is being established With FS link"
+                    self.displaytime.text = NSLocalizedString("MessageFueling1", comment:"")//"Please wait while your connection is being established With FS link"
                     print("return  false  by info command")
-                    self.showAlertSetting(message: "Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
+                    self.showAlertSetting(message: NSLocalizedString("WarningselectWifi", comment:"") + "\(Vehicaldetails.sharedInstance.SSId)" + NSLocalizedString("Wifi", comment:""))//"Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
 
                 }
                 if(isConect_toFS == "-1")
                 {
                     print("return  -1  by info command")
-                    self.showAlertSetting(message: "Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
+                    self.showAlertSetting(message: NSLocalizedString("WarningselectWifi", comment:"") + "\(Vehicaldetails.sharedInstance.SSId)" + NSLocalizedString("Wifi", comment:""))//"Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
                 }
                 if(isConect_toFS == "")
                 {
                     print("return \" \"  by info command")
-                    self.showAlertSetting(message: "Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
+                    self.showAlertSetting(message: NSLocalizedString("WarningselectWifi", comment:"") + "\(Vehicaldetails.sharedInstance.SSId)" + NSLocalizedString("Wifi", comment:""))//"Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
                 }
 
                 self.timerview.invalidate()
@@ -131,12 +134,13 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                 {
                     print("startbutton")
                 }
-                self.displaytime.text = "Please insert the nozzle into the tank \n Then tap start"
+                self.displaytime.text = NSLocalizedString("MessageFueling", comment:"")//"Please insert the nozzle into the tank \n Then tap start"
             }
             else if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID())
             {
+                 self.web.sentlog(func_name: "In Preauthorized Transaction On Appearing Fueling screen lost Wifi connection with the link", errorfromserverorlink: self.cf.getSSID(), errorfromapp:"\(Vehicaldetails.sharedInstance.SSId)")
                 self.timerview.invalidate()
-                self.showAlertSetting(message: "Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
+                self.showAlertSetting(message: NSLocalizedString("WarningselectWifi", comment:"") + "\(Vehicaldetails.sharedInstance.SSId)" + NSLocalizedString("Wifi", comment:""))//"Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
             }
         }
     }
@@ -191,7 +195,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                 }
             }
             let appDel = UIApplication.shared.delegate! as! AppDelegate
-            self.web.sentlog(func_name: "Gotostart")
+            self.web.sentlog(func_name: "Gotostart", errorfromserverorlink: "", errorfromapp: "")
             appDel.start()
             print("hi")
         }
@@ -297,7 +301,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
         }
 
         task.resume()
-        semaphore.wait(timeout: DispatchTime.distantFuture)
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
 
         return showstartbutton//isconect_toFS;
     }
@@ -541,7 +545,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "ddMMyyyyhhmmss"
             let dtt1: String = dateFormatter.string(from: NSDate() as Date)
-            let unsycnfileName =  dtt1 + "transaction" + "#" + "lasttransID" + "#" + Vehicaldetails.sharedInstance.SSId
+            let unsycnfileName =  dtt1 + "#" + "transaction" + "#" + "lasttransID" + "#" + Vehicaldetails.sharedInstance.SSId
             cf.SaveTextFile(fileName: unsycnfileName, writeText: jsonstring)
         }
     }
@@ -549,6 +553,8 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
 
     @IBAction func startButtontapped(sender: AnyObject)
     {
+        if(Cancel_Button_tapped == true){}
+        else{
         //Start the fueling with buttontapped
         let formatter = DateFormatter();
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZ";
@@ -556,29 +562,33 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
         IsStartbuttontapped = true
         //viewDidAppear(true)
         stoptimergotostart.invalidate()
-
-        //cf.delay(0.5){
+            self.cancel.isHidden = true
+            //cf.delay(0.5){
         self.timerview.invalidate()
         //self.cf.delay(0.5){
         if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()) //check selected wifi and connected wifi is not same
         {
+            self.web.sentlog(func_name: "In Preauthorized Transaction startButtontapped lost Wifi connection with the link", errorfromserverorlink: self.cf.getSSID(), errorfromapp:"\(Vehicaldetails.sharedInstance.SSId)")
             self.timerview.invalidate()
-            self.showAlertSetting(message: "Your Connection with \(Vehicaldetails.sharedInstance.SSId) is lost. Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
+            self.showAlertSetting(message: NSLocalizedString("wificonnection", comment:"") + "\(Vehicaldetails.sharedInstance.SSId)" +  NSLocalizedString("wificonnection1", comment:"") + "\(Vehicaldetails.sharedInstance.SSId)" + NSLocalizedString("Wifi", comment:""))//"Your Connection with \(Vehicaldetails.sharedInstance.SSId) is lost. Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
 
         }else {
 
-            self.reply = self.web.getrelay()
+            let replygetrelay = self.web.getrelay()
             let defaultTimeZoneStr = formatter.string(from: Date());
-
+            let Split = replygetrelay.components(separatedBy: "#")
+            reply = Split[0]
+            let error = Split[1]
             print(self.reply)
             if(self.reply == "-1"){
-                self.showAlertSetting(message: "Your Connection with \(Vehicaldetails.sharedInstance.SSId) is lost. Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
+                self.showAlertSetting(message: NSLocalizedString("wificonnection", comment:"") + "\(Vehicaldetails.sharedInstance.SSId)" +  NSLocalizedString("wificonnection1", comment:"") + "\(Vehicaldetails.sharedInstance.SSId)" + NSLocalizedString("Wifi", comment:""))//"Your Connection with \(Vehicaldetails.sharedInstance.SSId) is lost. Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
 
             }else{
                 let data1:Data = self.reply.data(using: String.Encoding.utf8)!
                 do{
                     self.setrelaysysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
                 }catch let error as NSError {
+                     self.web.sentlog(func_name: "In Preauthorized Transaction startButtontapped GetRelay Function", errorfromserverorlink: "\(error)", errorfromapp:"\"Error: \(error.domain)")
                     print ("Error: \(error.domain)")
                 }
 
@@ -592,15 +602,16 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                     let defaultTimeZoneStr1 = formatter.string(from: Date());
                     print("after get relay" + defaultTimeZoneStr1)
                     if(relayStatus == 0){
-                        self.Pwait.text = "Please wait ... "
+                        self.Pwait.text =  NSLocalizedString("Pleasewait", comment:"")//"Please wait ... "
                         self.Pwait.isHidden = false
                         self.start.isHidden = true
                         self.cancel.isHidden = true   /// hide the cancel Button.
 
                         if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()) //check selected wifi and connected wifi is not same
                         {
+                            self.web.sentlog(func_name: "In Preauthorized Transaction startButtontapped lost Wifi connection with the link  after get relay.", errorfromserverorlink: self.cf.getSSID(), errorfromapp:"\(Vehicaldetails.sharedInstance.SSId)")
                             self.timerview.invalidate() /// set pulsar off time to FS link
-                            self.showAlertSetting(message: "Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
+                            self.showAlertSetting(message: NSLocalizedString("WarningselectWifi", comment:"") + "\(Vehicaldetails.sharedInstance.SSId)" + NSLocalizedString("Wifi", comment:""))//"Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
 
                         }else {
                             let defaultTimeZoneStr = formatter.string(from: Date());
@@ -612,8 +623,9 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
 
                             if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()) //check selected wifi and connected wifi is not same
                             {
+                                self.web.sentlog(func_name: "In Preauthorized Transaction startButtontapped lost Wifi connection with the link after setpulsaroffTime. ", errorfromserverorlink: self.cf.getSSID(), errorfromapp:"\(Vehicaldetails.sharedInstance.SSId)")
                                 self.timerview.invalidate()
-                                self.showAlertSetting(message: "Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
+                                self.showAlertSetting(message: NSLocalizedString("WarningselectWifi", comment:"") + "\(Vehicaldetails.sharedInstance.SSId)" + NSLocalizedString("Wifi", comment:""))//"Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
 
                             }else {
                                 let defaultTimeZoneStr = formatter.string(from: Date());
@@ -647,8 +659,9 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                                             }
                                             if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()) //check selected wifi and connected wifi is not same
                                             {
+                                                self.web.sentlog(func_name: "In Preauthorized Transaction startButtontapped lost Wifi connection with the link after getlastTrans_ID", errorfromserverorlink: self.cf.getSSID(), errorfromapp:"\(Vehicaldetails.sharedInstance.SSId)")
                                                 self.timerview.invalidate()
-                                                self.showAlertSetting(message: "Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
+                                                self.showAlertSetting(message: NSLocalizedString("WarningselectWifi", comment:"") + "\(Vehicaldetails.sharedInstance.SSId)" + NSLocalizedString("Wifi", comment:""))//"Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
 
                                             } else {
                                                 let defaultTimeZoneStr = formatter.string(from: Date());
@@ -662,7 +675,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                                                     self.beginfuel1 = false
                                                     // self.cancel.isHidden = true
                                                     ///hide start button
-                                                    self.displaytime.text = "Fueling…"
+                                                    self.displaytime.text = NSLocalizedString("Fueling", comment:"")//"Fueling…"
                                                     self.Pwait.isHidden = true
                                                     self.string = ""
                                                     self.iswifi = true
@@ -677,7 +690,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                                                             self.startbutton = "true"
                                                         }
                                                         else{
-                                                            self.showAlertSetting(message: "Please check your wifi connection")
+                                                            self.showAlertSetting(message: NSLocalizedString("CheckWifi", comment:""))//"Please check your wifi connection")
                                                         }
                                                     }
 
@@ -706,7 +719,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                                                                     self.cf.delay(0.5){
                                                                         _ = self.setralay0tcp()
                                                                         _ = self.setpulsar0tcp()
-                                                                        self.error400(message: "Please check your FS unit, and switch off power and back on.")
+                                                                        self.error400(message: NSLocalizedString("CheckFSunit", comment:""))//"Please check your FS unit, and switch off power and back on.")
                                                                     }
                                                                 }
                                                                 else{
@@ -715,7 +728,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                                                                     if(Split.count < 3){
                                                                         _ = self.setralay0tcp()
                                                                         _ = self.setpulsar0tcp()
-                                                                        self.error400(message: "Please check your FS unit, and switch off power and back on.")
+                                                                        self.error400(message: NSLocalizedString("CheckFSunit", comment:""))//"Please check your FS unit, and switch off power and back on.")
                                                                     }    // got invalid respose do nothing
                                                                     else{
 
@@ -758,7 +771,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                                                                                         _ = self.setpulsar0tcp()
                                                                                         let defaultTimeZoneStr = formatter.string(from: Date());
                                                                                         print(defaultTimeZoneStr)
-                                                                                        self.error400(message: "Please check your FS unit, and switch off power and back on.")
+                                                                                        self.error400(message: NSLocalizedString("CheckFSunit", comment:""))//"Please check your FS unit, and switch off power and back on.")
                                                                                     }
                                                                                 }
                                                                                 else{
@@ -767,7 +780,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                                                                                     if(Split.count < 2){
                                                                                         _ = self.setralay0tcp()
                                                                                         _ = self.setpulsar0tcp()
-                                                                                        self.error400(message: "Please check your FS unit, and switch off power and back on.")
+                                                                                        self.error400(message: NSLocalizedString("CheckFSunit", comment:""))//"Please check your FS unit, and switch off power and back on.")
                                                                                     }    // got invalid respose do nothing goto home screen
                                                                                     else{
                                                                                         let reply = Split[0] as! String    // get valid respose proceed
@@ -838,10 +851,13 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                 }
             }
         }
-    }
+        }}
 
 
     @IBAction func cancelButtonTapped(sender: AnyObject) {
+        Cancel_Button_tapped = true
+        if(IsStartbuttontapped == true){}
+        else{
 
         let alert = UIAlertController(title: "Confirm", message: NSLocalizedString("Are you sure to Cancel? Please wait while getting redirected to select hose page.", comment:""), preferredStyle: UIAlertControllerStyle.alert )
         let backView = alert.view.subviews.last?.subviews.last
@@ -857,23 +873,23 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
             // Call a method on the CustomController property of the AppDelegate
 
             self.cf.delay(1) {     // takes a Double value for the delay in seconds
-                if(self.ifstartpulsar_status == 1)
-                {
-                    // put the delayed action/function here
-                    _ = self.setralay0tcp()
-                    _ = self.setpulsar0tcp()
-                    self.BusyStatuschange()
-                    self.web.sentlog(func_name: "Preauth cancelButtonTapped")
-                    appDel.start()
-                }
-                else if(self.ifstartpulsar_status == 0)
-                { _ = self.setralay0tcp()
-                    _ = self.setpulsar0tcp()
-
-                }
-                // put the delayed action/function here
-                self.BusyStatuschange()
-                self.web.sentlog(func_name: "cancelButtonTapped")
+//                if(self.ifstartpulsar_status == 1)
+//                {
+//                    // put the delayed action/function here
+//                    _ = self.setralay0tcp()
+//                    _ = self.setpulsar0tcp()
+//                    self.BusyStatuschange()
+//                    self.web.sentlog(func_name: "Preauth cancelButtonTapped", errorfromserverorlink: "", errorfromapp: "")
+//                    appDel.start()
+//                }
+//                else if(self.ifstartpulsar_status == 0)
+//                { _ = self.setralay0tcp()
+//                    _ = self.setpulsar0tcp()
+//
+//                }
+//                // put the delayed action/function here
+//                self.BusyStatuschange()
+                self.web.sentlog(func_name: "cancelButtonTapped", errorfromserverorlink: "", errorfromapp: "")
                 appDel.start()
                 self.Activity.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray;
                 self.Activity.startAnimating()
@@ -884,7 +900,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
         alert.addAction(okAction)
         alert.addAction(cancelAction)
         self.present(alert, animated: true, completion: nil)
-    }
+        }}
 
     func calculate_fuelquantity(quantitycount: Int)-> Double
     {
@@ -922,7 +938,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                 self.stoptimergotostart.invalidate()
                 self.timerview.invalidate()
                 let appDel = UIApplication.shared.delegate! as! AppDelegate
-                self.web.sentlog(func_name: "Preauth error400")
+                self.web.sentlog(func_name: "Preauth error400", errorfromserverorlink: "", errorfromapp: "")
                 appDel.start()
                 self.stopdelaytime = true
             }
@@ -944,7 +960,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
         messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.lightGray, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
         // Action.
-        let action = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil)
+        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default, handler: nil)
         alertController.addAction(action)
         self.present(alertController, animated: true, completion: nil)
     }
@@ -981,7 +997,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
             alertController.view.tintColor = UIColor.green
             self.timerview.invalidate()
             let appDel = UIApplication.shared.delegate! as! AppDelegate
-            self.web.sentlog(func_name: "Preauth showAlertSetting")
+            self.web.sentlog(func_name: "Preauth showAlertSetting", errorfromserverorlink: "", errorfromapp: "")
             appDel.start()
         }
 
@@ -1010,7 +1026,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
         // alertController.view.tintColor = UIColor.greenColor()
         self.timerview.invalidate()
         let appDel = UIApplication.shared.delegate! as! AppDelegate
-        self.web.sentlog(func_name: "Preauth backaction")
+        self.web.sentlog(func_name: "Preauth backaction", errorfromserverorlink: "", errorfromapp: "")
         appDel.start()
     }
 
@@ -1027,6 +1043,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
             self.timer.invalidate()
             if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()) //check selected wifi and connected wifi is not same
             {
+                self.web.sentlog(func_name: "In Preauthorized Transaction stopButtontapped lost Wifi connection with the link ", errorfromserverorlink: self.cf.getSSID(), errorfromapp:"\(Vehicaldetails.sharedInstance.SSId)" )
                 self.timerview.invalidate()
                 self.stoprelay()
 
@@ -1036,6 +1053,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                     if(setrelayd == ""){
                         if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()) //check selected wifi and connected wifi is not same
                         {
+                            self.web.sentlog(func_name: "In Preauthorized Transaction stopButtontapped lost Wifi connection with the link ", errorfromserverorlink: self.cf.getSSID(), errorfromapp:"\(Vehicaldetails.sharedInstance.SSId)" )
                             self.timerview.invalidate()
                             self.stoprelay()
 
@@ -1048,13 +1066,14 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                         self.cf.delay(0.5){
                             if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()) //check selected wifi and connected wifi is not same
                             {
+                                self.web.sentlog(func_name: "In Preauthorized Transaction stopButtontapped lost Wifi connection with the link", errorfromserverorlink: self.cf.getSSID(), errorfromapp:"\(Vehicaldetails.sharedInstance.SSId)" )
                                 self.timerview.invalidate()
                                 self.stoprelay()
 
                             }else {
                                 _ = self.setralay0tcp()
                                 _ = self.setpulsar0tcp()
-                                self.error400(message: "Please check your FS unit, and switch off power and back on.")
+                                self.error400(message:NSLocalizedString("CheckFSunit", comment:""))// "Please check your FS unit, and switch off power and back on.")
                                 self.stoprelay()
                             }
                         }
@@ -1089,6 +1108,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                                 self.cf.delay(0.5){
                                     if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()) //check selected wifi and connected wifi is not same
                                     {
+                                        self.web.sentlog(func_name: "In Preauthorized Transaction stopButtontapped lost Wifi connection with the link ", errorfromserverorlink: self.cf.getSSID(), errorfromapp:"\(Vehicaldetails.sharedInstance.SSId)" )
                                         self.timerview.invalidate()
                                         self.stoprelay()
 
@@ -1132,11 +1152,11 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                                                     self.counts = objUserData.value(forKey: "counts") as! NSString as String
                                                     let pulsar_status = objUserData.value(forKey: "pulsar_status") as! NSNumber
                                                     if (self.counts != "0"){
-                                                        if(pulsar_status == 0)
-                                                        {
-                                                            _ = self.setpulsar0tcp()
-                                                            self.stoprelay()
-                                                        }
+//                                                        if(pulsar_status == 0)
+//                                                        {
+//                                                            _ = self.setpulsar0tcp()
+//                                                            self.stoprelay()
+//                                                        }
                                                     }
                                                     let fuelQuan = self.calculate_fuelquantity(quantitycount: Int(self.counts as String)!)
                                                     let y = Double(round(100*fuelQuan)/100)
@@ -1172,7 +1192,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                                                                 self.waitactivity.stopAnimating()
                                                                 self.Quantity1.text = "\(String(format: "%.2f", self.fuelquantity))"
                                                                 self.pulse.text = "\(self.counts!)"
-                                                                self.totalquantityinfo.text = "Thank you for using \nFluidSecure!"
+                                                                self.totalquantityinfo.text = NSLocalizedString("ThankyouMSG", comment:"")//"Thank you for using \nFluidSecure!"
                                                                 self.UsageInfoview.isHidden = false
 
                                                                 self.cf.delay(1){
@@ -1204,14 +1224,14 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                                                                         Vehicaldetails.sharedInstance.gohome = true
                                                                         self.timerview.invalidate()
                                                                         let appDel = UIApplication.shared.delegate! as! AppDelegate
-                                                                        self.web.sentlog(func_name: "Preauth stopButtontapped")
+                                                                        self.web.sentlog(func_name: "Preauth stopButtontapped", errorfromserverorlink: "", errorfromapp: "")
                                                                         appDel.start()
                                                                     }
                                                                 }
                                                             }
                                                             else
                                                             {
-                                                                self.showAlert(message: "your transaction is not proceed you fuel quantity is 0 please try agian")
+                                                                self.showAlert(message: NSLocalizedString("Fuelquantityzero", comment:""))//"your transaction is not proceed you fuel quantity is 0 please try agian")
                                                             }
                                                         }
                                                     }
@@ -1241,7 +1261,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
             web.changessidname(wifissid: Vehicaldetails.sharedInstance.SSId)
         }
         if(Vehicaldetails.sharedInstance.PulseRatio == "" || Vehicaldetails.sharedInstance.pulsarCount == "" ){
-            self.error400(message: "No Quantity received. Transaction ended.")
+            self.error400(message: NSLocalizedString("NoQuantity", comment:""))//"No Quantity received. Transaction ended.")
         } else{
             let quantitycount = Vehicaldetails.sharedInstance.pulsarCount
             let PulseRatio = Vehicaldetails.sharedInstance.PulseRatio
@@ -1272,7 +1292,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                             self.waitactivity.stopAnimating()
                             self.Quantity1.text = "\(String(format: "%.2f", self.fuelquantity))"
                             self.pulse.text = "\(self.Last_Count!)"
-                            self.totalquantityinfo.text = "Thank you for using \nFluidSecure!"
+                            self.totalquantityinfo.text = NSLocalizedString("ThankyouMSG", comment:"")//"Thank you for using \nFluidSecure!"
                             //self.totalquantityinfo.text = "Quantity:\t\t\t\t\(String(format: "%.2f", self.fuelquantity))\n\n Pulse:\t\t\t\t \(self.counts)\n\nThank you for using \nFluidSecure!"
                             self.UsageInfoview.isHidden = false
                             //self.error400("Thank you for fueling. Final quantity is \(String(format: "%.2f", self.fuelquantity)). with pulse count at \(self.displaytime.text!). \n Please wait momentarily while the transaction closes.")
@@ -1298,7 +1318,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                         }
                         else
                         {
-                            self.error400(message: "No Quantity received. Transaction ended.")
+                            self.error400(message: NSLocalizedString("NoQuantity", comment:""))//"No Quantity received. Transaction ended.")
                         }
                     }
                 }
@@ -1324,7 +1344,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                             self.waitactivity.stopAnimating()
                             self.Quantity1.text = "\(String(format: "%.2f", self.fuelquantity))"
                             self.pulse.text = "\(self.Last_Count!)"
-                            self.totalquantityinfo.text = "Thank you for using \nFluidSecure!"
+                            self.totalquantityinfo.text = NSLocalizedString("ThankyouMSG", comment:"")//"Thank you for using \nFluidSecure!"
                             // self.totalquantityinfo.text = "Quantity:\t\t\t\t\(String(format: "%.2f", self.fuelquantity))\n\n Pulse:\t\t\t\t \(self.counts)\n\nThank you for using \nFluidSecure!"
                             self.UsageInfoview.isHidden = false
 
@@ -1351,7 +1371,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                         }
                         else
                         {
-                            self.error400(message: "No Quantity received. Transaction ended.")
+                            self.error400(message: NSLocalizedString("NoQuantity", comment:""))//"No Quantity received. Transaction ended.")
                         }
                     }
                 }
@@ -1360,15 +1380,15 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
     }
 }
 
-    func BusyStatuschange(){
-
-        let siteid = Vehicaldetails.sharedInstance.siteID
-
-        let bodyData = "{\"SiteId\":\(siteid)\"}" // + /lat:"\(sourcelat)",long:"\(sourcelong)"
-
-        _ = web.ChangeBusyStatus(bodyData: bodyData)
-
-    }
+//    func BusyStatuschange(){
+//
+//        let siteid = Vehicaldetails.sharedInstance.siteID
+//
+//        let bodyData = "{\"SiteId\":\(siteid)\"}" // + /lat:"\(sourcelat)",long:"\(sourcelong)"
+//
+//        _ = web.ChangeBusyStatus(bodyData: bodyData)
+//
+//    }
 
     func Transaction(fuelQuantity:Double)
     {
@@ -1390,7 +1410,10 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
         }
         let siteid = Vehicaldetails.sharedInstance.siteID
         let FuelTypeId = Vehicaldetails.sharedInstance.FuelTypeId
-        let Odomtr = Vehicaldetails.sharedInstance.Odometerno
+        var Odomtr = Vehicaldetails.sharedInstance.Odometerno
+        if(Odomtr == ""){
+            Odomtr = "0"
+        }
         let Wifyssid = Vehicaldetails.sharedInstance.SSId
         let pusercount = Vehicaldetails.sharedInstance.pulsarCount
 
@@ -1403,7 +1426,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
         print(Wifyssid)
         print(Odomtr)
 
-        let bodyData = "{\"SiteId\":\(siteid),\"CurrentOdometer\":\(Odomtr),\"FuelQuantity\":\((fuelQuantity)),\"TransactionId\":\(TransactionId),\"FuelTypeId\":\(FuelTypeId),\"WifiSSId\":\"\(Wifyssid)\",\"TransactionDate\":\"\(dtt)\",\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"VehicleNumber\":\"\(Vehicaldetails.sharedInstance.vehicleno)\",\"CurrentLat\":\"\(sourcelat!)\",\"CurrentLng\":\"\(sourcelong!)\",\"versionno\":\"1.15.15\"}"
+        let bodyData = "{\"SiteId\":\(siteid),\"CurrentOdometer\":\(Odomtr),\"FuelQuantity\":\((fuelQuantity)),\"TransactionId\":\(TransactionId),\"FuelTypeId\":\(FuelTypeId),\"WifiSSId\":\"\(Wifyssid)\",\"TransactionDate\":\"\(dtt)\",\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"VehicleNumber\":\"\(Vehicaldetails.sharedInstance.vehicleno)\",\"CurrentLat\":\"\(sourcelat!)\",\"CurrentLng\":\"\(sourcelong!)\",\"versionno\":\"1.15.18\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\"}"
         print(bodyData)
         //  SiteId,PersonId,CurrentOdometer,FuelQuantity,FuelTypeId,WifiSSId,TransactionDate,TransactionFrom,CurrentLat,CurrentLng,VehicleNumber,TransactionId
 
@@ -1505,7 +1528,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
 
         let localNotification: UILocalNotification = UILocalNotification()
         localNotification.alertAction = "open"
-        localNotification.alertBody = "Your Transaction is Successfully Completed at \(site)."
+        localNotification.alertBody = NSLocalizedString("Notify", comment:"") + "\(site)."//Your Transaction is Successfully Completed at \(site)."
         localNotification.fireDate = Date(timeIntervalSinceNow: 1)
         localNotification.soundName = "button-24.mp3"//UILocalNotificationDefaultSoundName
         UIApplication.shared.scheduleLocalNotification(localNotification)
@@ -1539,6 +1562,11 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
             // print("\(Vehicaldetails.sharedInstance.reachblevia)")
             if (Vehicaldetails.sharedInstance.reachblevia == "cellular")
             {
+                web.sentlogFile()
+
+                let logdata = self.cf.ReadFile(fileName: "Sendlog.txt")
+                print(logdata)
+
                 var reportsArray: [AnyObject]!
                 let fileManager: FileManager = FileManager()
                 let readdata = cf.getDocumentsURL().appendingPathComponent("data/test/")
@@ -1556,16 +1584,38 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                     reportsArray = fileManager.subpaths(atPath: fromPath)! as [AnyObject]
                     for x in 0  ..< reportsArray.count
                     {
+//                        let filename: String = "\(reportsArray[x])"
+//                        let Split = filename.components(separatedBy: "#")
+//                        //                        let Filename = Split[0] as! String
+//                        let siteName = Split[1]
                         let filename: String = "\(reportsArray[x])"
                         let Split = filename.components(separatedBy: "#")
-                        //                        let Filename = Split[0] as! String
-                        let siteName = Split[1]
+                        let Transaction_id = Split[1]
+                        let quantity = Split[2]
+                        let siteName = Split[3]
+                        if(quantity == "0" ){
+                            web.UpgradeTransactionStatus(Transaction_id:Transaction_id,Status: "1")
+                            self.cf.DeleteReportTextFile(fileName: filename, writeText: "")
+                        }else if(quantity == "" ){
+                            self.cf.DeleteReportTextFile(fileName: filename, writeText: "")
+                        }
 
                         let JData: String = cf.preauthReadReportFile(fileName: filename)
                         if(JData != "")
+
                         {
-                            Upload(jsonstring: JData,filename: filename,siteName:siteName,name:"TransactionComplete")
-                            return "true"
+                            if(siteName == "SaveTankMonitorReading"){
+                                Upload(jsonstring: JData,filename: filename,siteName:"SaveTankMonitorReading")
+                            }
+
+                           else { //(siteName == "TransactionComplete")
+                                Upload(jsonstring: JData,filename: filename,siteName:"TransactionComplete")
+                            }
+                            if(ResponceMessageUpload == "success"){
+                                self.notify(site: siteName)
+                            }
+                          //  Upload(jsonstring: JData,filename: filename,siteName:siteName,name:"TransactionComplete")
+                           // return "true"
                         }
                     }
                 }
@@ -1598,7 +1648,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                         let JData: String = cf.preauthReadReportFile(fileName: filename)
                         if(JData != "")
                         {
-                            Upload(jsonstring: JData,filename: filename,siteName:siteName,name:"TransactionComplete")
+                            Upload(jsonstring: JData,filename: filename,siteName:"TransactionComplete")
                         }
                     }
                 }
@@ -1644,7 +1694,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                     let JData: String = cf.preauthReadReportFile(fileName: filename)
                     if(JData != "")
                     {
-                        Upload(jsonstring: JData,filename: filename,siteName:siteName,name:"SavePreAuthTransactions")
+                        Upload(jsonstring: JData,filename: filename,siteName:"SavePreAuthTransactions")
                         return "true"
                     }
                 }
@@ -1678,7 +1728,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                     let JData: String = cf.preauthReadReportFile(fileName: filename)
                     if(JData != "")
                     {
-                        Upload(jsonstring: JData,filename: filename,siteName:siteName,name:"SavePreAuthTransactions")
+                        Upload(jsonstring: JData,filename: filename,siteName:"SavePreAuthTransactions")
                     }
                 }
             }
@@ -1693,12 +1743,12 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
     }
 
 
-    func Upload(jsonstring: String,filename:String,siteName:String,name:String)
+    func Upload(jsonstring: String,filename:String,siteName:String)
     {
         let Email = defaults.string(forKey: "address")
         let uuid = defaults.string(forKey: "uuid")
         let Url:String = FSURL
-        let string = uuid! + ":" + Email! + ":" + name
+        let string = uuid! + ":" + Email! + ":" + siteName
         let Base64 = cf.convertStringToBase64(string)
         let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
         request.httpMethod = "POST"
@@ -1723,13 +1773,20 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                 }
                 print(self.sysdata1)
 
-                let ResponceMessage = self.sysdata1.value(forKey: "ResponceMessage") as! NSString
-                //self.notify(siteName)
+                let ResponceText = self.sysdata1.value(forKey: "ResponceText") as! NSString
 
-                if(ResponceMessage == "success"){
-                    
+                self.ResponceMessageUpload = (self.sysdata1.value(forKey: "ResponceMessage") as! NSString) as String
+
+                if(self.ResponceMessageUpload == "fail"){
+                    if(ResponceText == "TransactionId not found."){
+                        self.cf.preauthDeleteReportTextFile(fileName: filename, writeText: "")
+                    }
                     self.cf.preauthDeleteReportTextFile(fileName: filename, writeText: "")
                 }
+                if(self.ResponceMessageUpload == "success"){
+                   self.cf.preauthDeleteReportTextFile(fileName: filename, writeText: "")
+                }
+                
             } else {
                 print(error!)
                 self.reply = "-1"
@@ -1771,10 +1828,11 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
     func GetPulser() {
         if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()) //check selected wifi and connected wifi is not same
         {
+            self.web.sentlog(func_name: "In Preauthorized Transaction Getpulsar function lost Wifi connection with the link ", errorfromserverorlink: self.cf.getSSID(), errorfromapp:"\(Vehicaldetails.sharedInstance.SSId)" )
             cf.delay(1) {
                 self.timer.invalidate()
                 self.Stop.isHidden = true
-                self.displaytime.text = "\(Vehicaldetails.sharedInstance.SSId) WiFi Connection lost with mobile."
+                self.displaytime.text = "\(Vehicaldetails.sharedInstance.SSId)" + NSLocalizedString("LostWifi", comment:"")// WiFi Connection lost with mobile."
                 //  cf.delay(0.5) {     // takes a Double value for the delay in seconds
                 self.timer.invalidate()
                 // put the delayed action/function here
@@ -1783,14 +1841,14 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                 }
 
                 if(Vehicaldetails.sharedInstance.PulseRatio == "" || Vehicaldetails.sharedInstance.pulsarCount == "" ){
-                    self.error400(message: "No Quantity received. Transaction ended.")
+                    self.error400(message: NSLocalizedString("NoQuantity", comment:""))//"No Quantity received. Transaction ended.")
                 } else{
                     let quantitycount = Vehicaldetails.sharedInstance.pulsarCount
                     let PulseRatio = Vehicaldetails.sharedInstance.PulseRatio
                     self.fuelquantity = (Double(quantitycount))!/(PulseRatio as NSString).doubleValue
                     self.cf.delay(1){
                         if(self.fuelquantity == nil){
-                            self.error400(message: "No Quantity received. Transaction ended.")
+                            self.error400(message: NSLocalizedString("NoQuantity", comment:""))//"No Quantity received. Transaction ended.")
                         }
                         else{
                             if(self.fuelquantity > 0){
@@ -1800,7 +1858,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                                 self.Quantity1.text = "\(String(format: "%.2f", self.fuelquantity))"
                                 self.pulse.text = "\(self.Last_Count!)"
                                 print(self.counts)
-                                self.totalquantityinfo.text = "Thank you for using \nFluidSecure!"
+                                self.totalquantityinfo.text = NSLocalizedString("ThankyouMSG", comment:"")//"Thank you for using \nFluidSecure!"
                                 self.UsageInfoview.isHidden = false
                                 self.cf.delay(1){
                                     self.Transaction(fuelQuantity: self.fuelquantity)
@@ -1823,7 +1881,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                                             Vehicaldetails.sharedInstance.gohome = true
                                             self.timerview.invalidate()
                                             let appDel = UIApplication.shared.delegate! as! AppDelegate
-                                            self.web.sentlog(func_name: "stoprelay function")
+                                            self.web.sentlog(func_name: "stoprelay function", errorfromserverorlink: "", errorfromapp: "")
                                             appDel.start()
                                         }
                                     }
@@ -1832,14 +1890,14 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                                         Vehicaldetails.sharedInstance.gohome = true
                                         self.timerview.invalidate()
                                         let appDel = UIApplication.shared.delegate! as! AppDelegate
-                                        self.web.sentlog(func_name: "stoprelay function")
+                                        self.web.sentlog(func_name: "stoprelay function", errorfromserverorlink: "", errorfromapp: "")
                                         appDel.start()
                                     }
                                 }
                             }
                             else
                             {
-                                self.error400(message: "No Quantity received. Transaction ended.")
+                                self.error400(message: NSLocalizedString("NoQuantity", comment:""))//"No Quantity received. Transaction ended.")
                             }
                         }
                     }
@@ -1858,11 +1916,16 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
             //cf.delay(0.5) {
             let defaultTimeZoneStr1 = dateFormatter.string(from: Date());
             print("before send  GetPulser" + defaultTimeZoneStr1)
-            reply1 = web.GetPulser()
-            print(reply1)
+            let replyGetpulsar1 = web.GetPulser()
+
+            print(replyGetpulsar1)
+            let Split = replyGetpulsar1.components(separatedBy: "#")
+            reply1 = Split[0]
+            let error = Split[1]
 
             if(self.reply1 == nil || self.reply1 == "-1")
             {
+                self.web.sentlog(func_name: "In Preauthorized Transaction StartButtontapped GetPulsar Function", errorfromserverorlink: "\(error)", errorfromapp: "")
                 timer_noConnection_withlink = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(FuelquantityVC.stoprelay), userInfo: nil, repeats: false)
             }
             else{
@@ -1872,11 +1935,17 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                     self.sysdata1 = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
                 }catch let error as NSError {
                     print ("Error: \(error.domain)")
+                     self.web.sentlog(func_name: "In Preauthorized Transaction StartButtontapped GetPulsar Function ", errorfromserverorlink: "\(error)", errorfromapp: "")
                 }
 
                 if(self.sysdata1 == nil){}
                 else
                 {
+                    let text = reply1
+                    let test = String((text?.filter { !" \n".contains($0) })!)
+                    let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                    print(newString)
+                    self.web.sentlog(func_name: "In Preauthorized Transaction StartButtontapped GetPulsar Function ", errorfromserverorlink: "Response from link $$ \(newString)!!",errorfromapp: "Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + "Connected link : \(self.cf.getSSID())")
                     let objUserData = self.sysdata1.value(forKey: "pulsar_status") as! NSDictionary
 
                     let counts = objUserData.value(forKey: "counts") as! NSString
@@ -1889,7 +1958,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                             Vehicaldetails.sharedInstance.gohome = true
                             self.timerview.invalidate()
                             let appDel = UIApplication.shared.delegate! as! AppDelegate
-                            self.web.sentlog(func_name: "get emptypulsar_count function")
+                            self.web.sentlog(func_name: "In Preauthorized Transaction get emptypulsar_count function", errorfromserverorlink: "", errorfromapp: "")
                             appDel.start()
                         }
 
@@ -1936,7 +2005,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                                                 self.timer.invalidate()
                                                 _ = self.setralay0tcp()
                                                 _ = self.setpulsar0tcp()
-                                                self.displaytime.text = "app autostop because pulsecount getting is same."
+                                                self.displaytime.text = NSLocalizedString("autostop", comment:"")//"app autostop because pulsecount getting is same."
                                                 self.Stop.isHidden = true
                                                 self.stoprelay()
                                             }
@@ -1982,7 +2051,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
 
                                                 _ = self.web.SetPulser0()
                                                 print(Vehicaldetails.sharedInstance.MinLimit)
-                                                self.showAlert(message: "You are fuel day limit reached.")
+                                                self.showAlert(message: NSLocalizedString("Fueldaylimit", comment:""))//"You are fuel day limit reached.")
                                                 self.stopButtontapped()
                                             }
                                         }
@@ -2016,7 +2085,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
 
                                             _ = self.setralay0tcp()
                                             _ = self.setpulsar0tcp()
-                                            self.displaytime.text = "app autostop because pulsecount getting is same."
+                                            self.displaytime.text = NSLocalizedString("autostop", comment:"")//"app autostop because pulsecount getting is same."
                                             self.Stop.isHidden = true
                                             self.stoprelay()
                                         }
@@ -2056,10 +2125,10 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
         }
     }
     
-    func btnQuitPressed() {
-        _ = web.SetPulser0()
-        _ = web.setrelay0()
-    }
+//    func btnQuitPressed() {
+//        _ = web.SetPulser0()
+//        _ = web.setrelay0()
+//    }
 
     //Network functions
     func NetworkEnable() {
@@ -2076,7 +2145,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
         inStream?.open()
         outStream?.open()
 
-        buffer = [UInt8](repeating: 0, count: 4096)
+        buffer = [UInt8](repeating: 0, count: 1024)
     }
     
     

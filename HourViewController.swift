@@ -50,12 +50,11 @@ class HourViewController: UIViewController,UITextFieldDelegate {
     }
 
     func gotostart(){
-
-        self.web.sentlog(func_name: "Hour_screen_timeout")
+        self.web.sentlog(func_name: "Hour_screen_timeout", errorfromserverorlink: "", errorfromapp: "")
         let appDel = UIApplication.shared.delegate! as! AppDelegate
         appDel.start()
-
     }
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -77,7 +76,7 @@ class HourViewController: UIViewController,UITextFieldDelegate {
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
 
         // Action.
-        let action = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil)
+        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default, handler: nil)
         alertController.addAction(action)
         self.present(alertController, animated: true, completion: nil)
     }
@@ -119,7 +118,7 @@ class HourViewController: UIViewController,UITextFieldDelegate {
                 self.performSegue(withIdentifier: "Go", sender: self)
             }
             else{
-                self.wifisettings()
+                self.web.wifisettings(pagename: "Hour")//self.wifisettings()
             }
         }
         alertController.addAction(action)
@@ -127,13 +126,6 @@ class HourViewController: UIViewController,UITextFieldDelegate {
     }
 
     //AUTHENTICATION FUNCTION CALL
-    func wifisettings()
-    {
-        let url = NSURL(string: "App-Prefs:root=WIFI") //for WIFI setting app
-        let app = UIApplication.shared// .shared
-        app.openURL(url! as URL)
-        mainPage()
-    }
 
     func mainPage()
     {
@@ -154,15 +146,11 @@ class HourViewController: UIViewController,UITextFieldDelegate {
         {
             if(countfailauth>2)
             {
-                showAlert(message: "Please wait momentarily check your internet connection & try again.")//"\(error) \n Please try again later")
-                
-
+                showAlert(message: NSLocalizedString("CheckyourInternet", comment:""))//"Please wait momentarily check your internet connection & try again.")//"\(error) \n Please try again later")
             }else{
 
                 self.senddata(deptno: deptno,ppin:ppin,other:other)
-                
             }
-
         }
         else
         {
@@ -181,7 +169,7 @@ class HourViewController: UIViewController,UITextFieldDelegate {
             if(ResponceMessage == "success")
             {
                 if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()){
-                    let alertController = UIAlertController(title: "FluidSecure needs to connect to Hose via WiFi", message: "Please Connect Wifi \(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertControllerStyle.alert)
+                    let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertControllerStyle.alert)
                     // Background color.
                     let backView = alertController.view.subviews.last?.subviews.last
                     backView?.layer.cornerRadius = 10.0
@@ -193,36 +181,24 @@ class HourViewController: UIViewController,UITextFieldDelegate {
                     let paragraphStyle1 = NSMutableParagraphStyle()
                     paragraphStyle1.alignment = NSTextAlignment.left
 
-                    let attributedString = NSAttributedString(string:"FluidSecure needs to connect to HOSE via WiFi\nYou will now be redirected to the WiFi setup", attributes: [
+                    let attributedString = NSAttributedString(string:NSLocalizedString("Subtitle", comment:""), attributes: [
                         NSParagraphStyleAttributeName:paragraphStyle1,
                         NSFontAttributeName : UIFont.systemFont(ofSize: 20), //your font here
                         NSForegroundColorAttributeName : UIColor.black
                         ])
 
-
                     let formattedString = NSMutableAttributedString()
-                    
                     formattedString
-                        .normal("\nThe WiFi name is the name of the HOSE. Read Steps 1 to 5 below then click on Green bar below.\n\nFollow steps:\n1. Turn on the WiFi (it might already be on)\n\n2. Choose the WiFi named: ")
+                        .normal(NSLocalizedString("Step1", comment:""))//("\nThe WiFi name is the name of the HOSE. Read Steps 1 to 5 below then click on Green bar below.\n\nFollow steps:\n1. Turn on the WiFi (it might already be on)\n\n2. Choose the WiFi \n named: ")
                         .bold("\(Vehicaldetails.sharedInstance.SSId)")
-                        .normal("\n\n3. First time it will ask for password,enter: 123456789\n\n4. It will have a check next to ")
+                        .normal(NSLocalizedString("Step2", comment:""))//(" \n\n3. First time it will ask for password,enter: 123456789\n\n4. It will have a check next to ")
                         .bold("\(Vehicaldetails.sharedInstance.SSId)")
-                        .normal(" and it will say \"No Internet Connection\" \n\n5.  Now, tap on the very top left corner that says \"FluidSecure\" - this returns you to allow fueling.\n\n\n\n\n\n")
-
+                        .normal(NSLocalizedString("Step3", comment:""))//" and it will say \"No Internet Connection\" \n\n5.  Now, tap on the very top left corner that says \"FluidSecure\" - this returns you to allow fueling.\n\n\n\n\n")
 
                     alertController.setValue(formattedString, forKey: "attributedMessage")
                     alertController.setValue(attributedString, forKey: "attributedTitle")
 
                     // Action.
-
-                    //alertController.view.addSubview(createSwitch())
-
-                    // alertController.view.tintColor = UIColor.greenColor()
-
-                    let btnImage = UIImage(named: "checkbox-checked")!
-                    let imageButton : UIButton = UIButton(frame: CGRect(x: 220, y: 235, width: 20, height: 20))
-                    imageButton.setBackgroundImage(btnImage, for: UIControlState())
-
 
                     let btnsetting = UIImage(named: "Button-Green")!
                     let imageButtonws : UIButton = UIButton(frame: CGRect(x: 5, y: 500, width: 260, height: 40))
@@ -231,11 +207,7 @@ class HourViewController: UIViewController,UITextFieldDelegate {
                     imageButtonws.setTitleColor(UIColor.white, for: UIControlState.normal)
                     imageButtonws.addTarget(self, action: #selector(OdometerVC.Action(sender:)), for:.touchUpInside)
 
-                    //alertController.view.addSubview(imageButton)
-                    //alertController.view.addSubview(imageButtonwifi)
                     alertController.view.addSubview(imageButtonws)
-
-                    //alertController.addAction(okAction)
                     self.present(alertController, animated: true, completion: nil)
                 }
 
@@ -273,20 +245,17 @@ class HourViewController: UIViewController,UITextFieldDelegate {
     func Action(sender:UIButton!)
     {
         self.dismiss(animated: true, completion: nil)
-        wifisettings()
+        self.web.wifisettings(pagename: "Hour")//wifisettings()
+        mainPage()
     }
-
-
 
     @IBAction func saveButtontapped(sender: AnyObject) {
         IsSavebuttontapped = true
         stoptimergotostart.invalidate()
-        //viewWillAppear(true)
-        //viewDidLoad()
         tapAction()
         if(Hour.text == "")
         {
-            showAlert(message: "Please Enter Hour.")
+            showAlert(message: NSLocalizedString("EnterHour", comment:""))//"Please Enter Hour.")
             stoptimergotostart.invalidate()
             viewWillAppear(true)
         }
@@ -298,12 +267,7 @@ class HourViewController: UIViewController,UITextFieldDelegate {
             let isdept = Vehicaldetails.sharedInstance.IsDepartmentRequire
             let isPPin = Vehicaldetails.sharedInstance.IsPersonnelPINRequire
             let isother = Vehicaldetails.sharedInstance.IsOtherRequire
-            //         let odometer_req = Vehicaldetails.sharedInstance.odometerreq
-            //            if (odometer_req == "True"){
-            //                print(odometer_req)
-            //                self.performSegue(withIdentifier: "odometer", sender: self)
-            //            }
-            //            else{
+
             if(isdept == "True"){
                 stoptimergotostart.invalidate()
                 self.performSegue(withIdentifier: "dept", sender: self)
@@ -331,7 +295,6 @@ class HourViewController: UIViewController,UITextFieldDelegate {
             }
         }
     }
-    // }
 }
 
 

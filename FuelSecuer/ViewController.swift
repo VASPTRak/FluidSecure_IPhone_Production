@@ -14,7 +14,6 @@ import MapKit
 extension Array where Element:Equatable {
     func removeDuplicates() -> [Element] {
         var result = [Element]()
-
         for value in self {
             if result.contains(value) == false {
                 result.append(value)
@@ -88,8 +87,6 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         let storyboard = UIStoryboard(name: "PreauthStoryboard", bundle: nil)
         let controller = storyboard.instantiateViewController(withIdentifier: "InitialController") as UIViewController
         self.present(controller, animated: true, completion: nil)
-
-
     }
 
     override func viewDidLoad() {
@@ -137,6 +134,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             Vehicaldetails.sharedInstance.Lat = sourcelat
             Vehicaldetails.sharedInstance.Long = sourcelong
             reply = web.checkApprove(uuid: uuid,lat:"\(sourcelat!)",long:"\(sourcelong!)")
+            
         }
 
         //Check User approved or not from server
@@ -144,36 +142,37 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         {
             if(Vehicaldetails.sharedInstance.reachblevia == "wificonn")
             {
-                self.navigationItem.title = "Error"
+                self.navigationItem.title = NSLocalizedString("Error",comment:"")
                 scrollview.isHidden = true
                 version.isHidden = false
                 warningLable.isHidden = false
                 refreshButton.isHidden = false
-                warningLable.text = "Cannot connect to cloud server.please check your internet connection."
+                preauth.isHidden = false
+                warningLable.text = NSLocalizedString("warning_NoInternet_Connection", comment:"") //"Cannot connect to cloud server.please check your internet connection."
                 cf.delay(0.5){
                     // self.viewDidLoad()
                 }
             }
             else if(Vehicaldetails.sharedInstance.reachblevia == "cellular") /*||  Vehicaldetails.sharedInstance.reachblevia == "notreachable"*/
             {
-                self.navigationItem.title = "Error"
+                self.navigationItem.title = NSLocalizedString("Error",comment:"")//"Error"
                 // showAlert(message: "\(error)")
                 scrollview.isHidden = true
                 version.isHidden = false
                 warningLable.isHidden = false
-                //preauth.isHidden = false// preauth.hidden = true//preauth.hidden = false
-                warningLable.text = "Cannot connect to cloud server.please check your internet connection."
+                preauth.isHidden = false// preauth.hidden = true//preauth.hidden = false
+                warningLable.text = NSLocalizedString("warning_NoInternet_Connection", comment:"")//"Cannot connect to cloud server.please check your internet connection."
                 refreshButton.isHidden = false
                 // viewDidLoad()
             }
             else if(Vehicaldetails.sharedInstance.reachblevia == "notreachable") {
-                self.navigationItem.title = "Error"
+                self.navigationItem.title = NSLocalizedString("Error",comment:"")//"Error"
                 //showAlert(message: "\(error!)")
                 scrollview.isHidden = true
                 version.isHidden = false
                 warningLable.isHidden = false
-                // preauth.isHidden = false//preauth.hidden = true//preauth.hidden = false
-                warningLable.text = "Cannot connect to cloud server.please check your internet connection."
+                preauth.isHidden = false//preauth.hidden = true//preauth.hidden = false
+                warningLable.text = NSLocalizedString("warning_NoInternet_Connection", comment:"")//"Cannot connect to cloud server.please check your internet connection."
                 refreshButton.isHidden = false
                 for i in 1...2
                 {
@@ -197,10 +196,13 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             }
         }
         else {
+            cf.DeleteFileInApp(fileName: "getSites.txt")
+            cf.CreateTextFile(fileName: "getSites.txt", writeText: reply)
             let data1:Data = reply.data(using: String.Encoding.utf8)!
             do {
                 sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
             }catch let error as NSError {
+                
                 print ("Error: \(error.domain)")
             }
             print(sysdata)
@@ -214,6 +216,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                 let IsApproved = objUserData.value(forKey: "IsApproved") as! NSString
                 let PersonName = objUserData.value(forKey: "PersonName") as! NSString
                 let PhoneNumber = objUserData.value(forKey: "PhoneNumber") as! NSString
+              //  let CollectDiagnosticLogs = objUserData.value(forKey: "CollectDiagnosticLogs") as! NSString
                 IsOdoMeterRequire = objUserData.value(forKey: "IsOdoMeterRequire") as! NSString as String
                 IsLoginRequire = objUserData.value(forKey: "IsLoginRequire") as! NSString as String
                 IsDepartmentRequire = objUserData.value(forKey: "IsDepartmentRequire") as! NSString as String
@@ -222,7 +225,8 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                 OtherLabel = objUserData.value(forKey:"OtherLabel") as!NSString as String
                 timeout = objUserData.value(forKey:"TimeOut") as!NSString as String
 
-                infotext.text = "Name: \(PersonName)\nMobile: \(PhoneNumber)\nEmail: \(Email)"
+                infotext.text =  NSLocalizedString("Name", comment:"") + ": \(PersonName)\n" + NSLocalizedString("Mobile", comment:"") + ":\(PhoneNumber)\n" + NSLocalizedString("Email", comment:"") + ": \(Email)"//"Name: \(PersonName)\nMobile: \(PhoneNumber)\nEmail: \(Email)"
+               // Vehicaldetails.sharedInstance.CollectDiagnosticLogs = CollectDiagnosticLogs as String
                 Vehicaldetails.sharedInstance.odometerreq = IsOdoMeterRequire
                 Vehicaldetails.sharedInstance.IsDepartmentRequire = IsDepartmentRequire
                 Vehicaldetails.sharedInstance.IsPersonnelPINRequire = IsPersonnelPINRequire
@@ -242,26 +246,14 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
 
             defaults.set(uuid, forKey: "uuid")
             if(Message == "success") {
-                let objUserData = sysdata.value(forKey: "PreAuthTransactionsObj") as! NSDictionary
-                let PreAuthJson = objUserData.value(forKey: "TransactionObj") as! NSArray
-                let PreAuthrowCount = PreAuthJson.count
-                for i in 0  ..< PreAuthrowCount
-                {
-                    let PreAuthJsonRow = PreAuthJson[i] as! NSDictionary
-                    let MessageTransactionObj = PreAuthJsonRow["ResponceMessage"] as! NSString
 
-                    if(MessageTransactionObj == "success"){
-                        let T_Id = PreAuthJsonRow["TransactionId"] as! NSString
-                        TransactionId.append(T_Id as String)
-                    }
-                }
                 scrollview.isHidden = false
                 version.isHidden = true
                 warningLable.isHidden = true
                 refreshButton.isHidden = true
                 preauth.isHidden = true
 
-                self.wifiNameTextField.placeholder = "Touch to select Site"
+                self.wifiNameTextField.placeholder = NSLocalizedString("Touch to select Site", comment:"")
                 self.wifiNameTextField.textColor = UIColor.white
                 self.wifiNameTextField.inputView = pickerViewLocation
                 self.pickerViewLocation.delegate = self
@@ -330,7 +322,6 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                 Vehicaldetails.sharedInstance.HoseID = HoseID as String
                                 Vehicaldetails.sharedInstance.IsUpgrade = IsUpgrade as String
                                 Vehicaldetails.sharedInstance.PulserTimingAdjust = PulserTimingAdjust as String
-                                //Vehicaldetails.sharedInstance.IsDefective = IsDefective as String
 
                                 ssid.append(WifiSSId as String)
                                 IFISBusy.append(IsBusy as String)
@@ -344,10 +335,24 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                 pulsartimeadjust.append(PulserTimingAdjust as String)
                                 print(Uhosenumber)
                             }
+
+                            let objUserData = sysdata.value(forKey: "PreAuthTransactionsObj") as! NSDictionary
+                            let PreAuthJson = objUserData.value(forKey: "TransactionObj") as! NSArray
+                            let PreAuthrowCount = PreAuthJson.count
+                            for i in 0  ..< PreAuthrowCount
+                            {
+                                let PreAuthJsonRow = PreAuthJson[i] as! NSDictionary
+                                let MessageTransactionObj = PreAuthJsonRow["ResponceMessage"] as! NSString
+
+                                if(MessageTransactionObj == "success"){
+                                    let T_Id = PreAuthJsonRow["TransactionId"] as! NSString
+                                    TransactionId.append(T_Id as String)
+                                }
+                            }
                         }
                         else if(Message == "fail")
                         {
-                            self.navigationItem.title = "Error"
+                            self.navigationItem.title = NSLocalizedString("Error",comment:"")//"Error"
                             scrollview.isHidden = true
                             version.isHidden = false
                             warningLable.isHidden = false
@@ -382,7 +387,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             else if(ResponseText == "New Registration") {
                 let appDel = UIApplication.shared.delegate! as! AppDelegate
                 defaults.set(0, forKey: "Register")
-                self.web.sentlog(func_name: "Other_screen_timeout")
+                self.web.sentlog(func_name: "Other_screen_timeout", errorfromserverorlink: "", errorfromapp: "")
                 // Call a method on the CustomController property of the AppDelegate
                 appDel.start()
             }
@@ -394,8 +399,8 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                 version.isHidden = false
                 warningLable.isHidden = false
                 refreshButton.isHidden = false
-                self.navigationItem.title = "Error"
-                warningLable.text = "Your Registration request is not approved yet. It is marked Inactive in the Company Software. Please contact your company’s administrator."
+                self.navigationItem.title = NSLocalizedString("Error",comment:"")//"Error"
+                warningLable.text = NSLocalizedString("Regisration", comment:"")//"Your Registration request is not approved yet. It is marked Inactive in the Company Software. Please contact your company’s administrator."
             } else if(ResponseText == "New Registration") {
                 performSegue(withIdentifier: "Register", sender: self)
             }
@@ -465,7 +470,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
         // Action.
-        let action = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil)
+        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default, handler: nil)
         alertController.addAction(action)
         self.present(alertController, animated: true, completion: nil)
     }
@@ -479,10 +484,10 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     @IBAction func helpButtontapped(_ sender: Any) {
 
         if(wifiNameTextField.text == ""){
-            showAlert(message: "Please select Site & then Proceed.")
+            showAlert(message:NSLocalizedString("Helptext", comment:"")) //"Please select Site & then Proceed.")
         }
         else{
-            showAlert(message: "If you are using this hose for the first time you will need to enter the password when redirected to the WiFi screen. The password is \(Vehicaldetails.sharedInstance.password).")
+            showAlert(message: NSLocalizedString("HelptextSelectedSite", comment:"") +  "\(Vehicaldetails.sharedInstance.password).")//"If you are using this hose for the first time you will need to enter the password when redirected to the WiFi screen. The password is \(Vehicaldetails.sharedInstance.password).")
 
             print("Password is" + "\(Vehicaldetails.sharedInstance.password)")// passwordTextField.text!)
             UIPasteboard.general.string = "\(Vehicaldetails.sharedInstance.password)" //passwordTextField.text!
@@ -497,64 +502,71 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
 
 
     @IBAction func goButtontapped(sender: AnyObject) {
-        IsGobuttontapped = true
-        timer.invalidate()
-        self.viewDidLoad()
-        for id in 0  ..< self.ssid.count {
-            if(self.wifiNameTextField.text == self.ssid[id])
-            {
-                Vehicaldetails.sharedInstance.IsBusy = self.IFISBusy[id]
-                Vehicaldetails.sharedInstance.IsDefective = self.IFIsDefective[id]
-                print(Vehicaldetails.sharedInstance.IsBusy)
-            }
+        if(self.wifiNameTextField.text == ""){
+            showAlert(message: NSLocalizedString("NoHoseselect", comment:""))
         }
-        print(Vehicaldetails.sharedInstance.IsDefective )
-        if(Vehicaldetails.sharedInstance.IsDefective == "True"){
-            showAlert(message: "Hose out of order")
-        }
-        else {
-            if(Vehicaldetails.sharedInstance.IsBusy == "Y"){
-                let alert = UIAlertController(title: "Warning", message: NSLocalizedString("", comment:""), preferredStyle: UIAlertControllerStyle.alert )
-                let backView = alert.view.subviews.last?.subviews.last
-                backView?.layer.cornerRadius = 10.0
-                backView?.backgroundColor = UIColor.white
-                var messageMutableString = NSMutableAttributedString()
-                messageMutableString = NSMutableAttributedString(string: "\n Hose In Use \n Please try after sometime" as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 20.0)!])
-                messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.black, range: NSRange(location:0,length:"Hose In Use \n Please try after sometime".count))
-                alert.setValue(messageMutableString, forKey: "attributedMessage")
-
-                let okAction = UIAlertAction(title: NSLocalizedString("YES", comment:""), style: UIAlertActionStyle.default) { action in
-
+        else{
+            print(Vehicaldetails.sharedInstance.IsBusy)
+            IsGobuttontapped = true
+            timer.invalidate()
+            self.viewDidLoad()
+            for id in 0  ..< self.ssid.count {
+                if(self.wifiNameTextField.text == self.ssid[id])
+                {
+                    Vehicaldetails.sharedInstance.IsBusy = self.IFISBusy[id]
+                    Vehicaldetails.sharedInstance.IsDefective = self.IFIsDefective[id]
+                    print(Vehicaldetails.sharedInstance.IsBusy)
                 }
-                alert.addAction(okAction)
-                self.present(alert, animated: true, completion: nil)
             }
-            else if(Vehicaldetails.sharedInstance.IsBusy == "N")
-            {
-                if (wifiNameTextField.text == ""){
-                    showAlert(message: "Please Select Hose to use.")
+            print(Vehicaldetails.sharedInstance.IsDefective )
+            if(Vehicaldetails.sharedInstance.IsDefective == "True"){
+                showAlert(message: NSLocalizedString("Hoseorder", comment:""))//"Hose out of order")
+            }
+            else {
+                if(Vehicaldetails.sharedInstance.IsBusy == "Y"){
+                    let alert = UIAlertController(title: "Warning", message: NSLocalizedString("", comment:""), preferredStyle: UIAlertControllerStyle.alert )
+                    let backView = alert.view.subviews.last?.subviews.last
+                    backView?.layer.cornerRadius = 10.0
+                    backView?.backgroundColor = UIColor.white
+                    var messageMutableString = NSMutableAttributedString() /* "\n Hose In Use \n Please try after sometime"*/
+                    messageMutableString = NSMutableAttributedString(string: NSLocalizedString("warninghoseinused", comment:"")as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 20.0)!])
+                    messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.black, range: NSRange(location:0,length:"Hose In Use \n Please try after sometime".count))
+                    alert.setValue(messageMutableString, forKey: "attributedMessage")
+
+                    let okAction = UIAlertAction(title: NSLocalizedString("YES", comment:""), style: UIAlertActionStyle.default) { action in
+
+                    }
+                    alert.addAction(okAction)
+                    self.present(alert, animated: true, completion: nil)
                 }
-                else{
-                    let reply = self.web.sendSiteID()
-                    if(reply == "-1"){
-                        showAlert(message: "Please check your internet connection and try again later.")
-                    }else{
-                        let data1:NSData = reply.data(using: String.Encoding.utf8)! as NSData
-                        do{
-                            sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
-                        }catch let error as NSError {
-                            print ("Error: \(error.domain)")
-                        }
-                        print(sysdata)
-                        let ResponceText = sysdata.value(forKey: "ResponceText") as! NSString
+                else if(Vehicaldetails.sharedInstance.IsBusy == "N")
+                {
+                    if (wifiNameTextField.text == ""){
+                        showAlert(message: NSLocalizedString("NoHoseselect", comment:""))//"Please Select Hose to use.")
+                    }
+                    else{
+                        let reply = self.web.sendSiteID()
+                        if(reply == "-1"){
+                            showAlert(message: NSLocalizedString("NoInternet", comment:""))//"Please check your internet connection and try again later.")
+                        }else{
+                            let data1:NSData = reply.data(using: String.Encoding.utf8)! as NSData
+                            do{
+                                sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                            }catch let error as NSError {
+                                print ("Error: \(error.domain)")
+                            }
+                            print(sysdata)
+                            let ResponceText = sysdata.value(forKey: "ResponceText") as! NSString
 
-                        print(ResponceText)
-                        if(ResponceText == "Y"){
-                            showAlert(message: "\n Hose In Use \n Please try after sometime")
+                            print(ResponceText)
+                            if(ResponceText == "Y"){
+                                showAlert(message: NSLocalizedString("warninghoseinused", comment:""))
 
-                        }else if(ResponceText == "Busy"){
-                            print("ssID Match")
-                            self.performSegue(withIdentifier: "GO", sender: self)
+                            }else if(ResponceText == "Busy"){
+                                print("ssID Match")
+                                Vehicaldetails.sharedInstance.TransactionId = 0;
+                                self.performSegue(withIdentifier: "GO", sender: self)
+                            }
                         }
                     }
                 }

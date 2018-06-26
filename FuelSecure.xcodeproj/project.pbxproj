@@ -24,13 +24,11 @@
 		DA4BAF9A1CAD3334002A5C63 /* Table-H1.png in Resources */ = {isa = PBXBuildFile; fileRef = DA4BAF941CAD3334002A5C63 /* Table-H1.png */; };
 		DA4BAF9B1CAD3334002A5C63 /* Table-H2.png in Resources */ = {isa = PBXBuildFile; fileRef = DA4BAF951CAD3334002A5C63 /* Table-H2.png */; };
 		DA4BAF9D1CAD47C7002A5C63 /* Vehicaldetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4BAF9C1CAD47C7002A5C63 /* Vehicaldetails.swift */; };
-		DA4F24911DB8D872005D3BEB /* user1.bin in Resources */ = {isa = PBXBuildFile; fileRef = DA4F24901DB8D872005D3BEB /* user1.bin */; };
 		DA5770121F66BA410098103A /* PreauthStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DA5770111F66BA410098103A /* PreauthStoryboard.storyboard */; };
 		DA5BE0381CAA4FCF003155A8 /* OdometerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5BE0371CAA4FCF003155A8 /* OdometerVC.swift */; };
 		DA5BE03A1CAAB578003155A8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5BE0391CAAB578003155A8 /* Reachability.swift */; };
 		DA5DB9821CF8249A00C9A90E /* Wifidetails+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5DB9801CF8249A00C9A90E /* Wifidetails+CoreDataProperties.swift */; };
 		DA5DB9831CF8249A00C9A90E /* Wifidetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5DB9811CF8249A00C9A90E /* Wifidetails.swift */; };
-		DA6019391E94FB2800AB6E22 /* button-24.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DA6019381E94FB2800AB6E22 /* button-24.mp3 */; };
 		DA62068E1D4235D80008344D /* _refresh.png in Resources */ = {isa = PBXBuildFile; fileRef = DA62068D1D4235D80008344D /* _refresh.png */; };
 		DA6282761CF2CCF60057D1CF /* Webservices.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA6282751CF2CCF60057D1CF /* Webservices.swift */; };
 		DA62827B1CF2CD770057D1CF /* Fuelsecure.m in Sources */ = {isa = PBXBuildFile; fileRef = DA62827A1CF2CD770057D1CF /* Fuelsecure.m */; };
@@ -56,6 +54,7 @@
 		DAE2E4451F067914004A9480 /* PinViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE2E4441F067914004A9480 /* PinViewController.swift */; };
 		DAE2E4471F067925004A9480 /* OtherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE2E4461F067925004A9480 /* OtherViewController.swift */; };
 		DAEC17291F4ECC0300714D1A /* Button-Green.png in Resources */ = {isa = PBXBuildFile; fileRef = DAEC17281F4ECC0300714D1A /* Button-Green.png */; };
+		DAF349B020BD7F8900236AF9 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DAF349B220BD7F8900236AF9 /* Localizable.strings */; };
 		DAF9DFA41EEFCD5A00D70BD0 /* LaunchScreenvc.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF9DFA31EEFCD5A00D70BD0 /* LaunchScreenvc.swift */; };
 /* End PBXBuildFile section */
 
@@ -110,13 +109,11 @@
 		DA4BAF941CAD3334002A5C63 /* Table-H1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Table-H1.png"; path = "Assets.xcassets/Table-H1.png"; sourceTree = "<group>"; };
 		DA4BAF951CAD3334002A5C63 /* Table-H2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Table-H2.png"; path = "Assets.xcassets/Table-H2.png"; sourceTree = "<group>"; };
 		DA4BAF9C1CAD47C7002A5C63 /* Vehicaldetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vehicaldetails.swift; sourceTree = "<group>"; };
-		DA4F24901DB8D872005D3BEB /* user1.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = user1.bin; sourceTree = "<group>"; };
 		DA5770111F66BA410098103A /* PreauthStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = PreauthStoryboard.storyboard; sourceTree = "<group>"; };
 		DA5BE0371CAA4FCF003155A8 /* OdometerVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OdometerVC.swift; sourceTree = "<group>"; };
 		DA5BE0391CAAB578003155A8 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		DA5DB9801CF8249A00C9A90E /* Wifidetails+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Wifidetails+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		DA5DB9811CF8249A00C9A90E /* Wifidetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Wifidetails.swift; sourceTree = "<group>"; };
-		DA6019381E94FB2800AB6E22 /* button-24.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "button-24.mp3"; path = "FuelSecuer/button-24.mp3"; sourceTree = "<group>"; };
 		DA62068D1D4235D80008344D /* _refresh.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = _refresh.png; sourceTree = "<group>"; };
 		DA6282751CF2CCF60057D1CF /* Webservices.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Webservices.swift; sourceTree = "<group>"; };
 		DA6282781CF2CD770057D1CF /* FuelSecuer-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FuelSecuer-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -150,6 +147,14 @@
 		DAE2E4441F067914004A9480 /* PinViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PinViewController.swift; sourceTree = "<group>"; };
 		DAE2E4461F067925004A9480 /* OtherViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OtherViewController.swift; sourceTree = "<group>"; };
 		DAEC17281F4ECC0300714D1A /* Button-Green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Button-Green.png"; path = "Assets.xcassets/Button-Green.png"; sourceTree = "<group>"; };
+		DAF349A820BD4E3100236AF9 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Main.strings; sourceTree = "<group>"; };
+		DAF349A920BD4E3100236AF9 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		DAF349AB20BD511500236AF9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
+		DAF349AC20BD67D800236AF9 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/Main.strings; sourceTree = "<group>"; };
+		DAF349AD20BD67D800236AF9 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		DAF349B120BD7F8900236AF9 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		DAF349B320BD7F9200236AF9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
+		DAF349B520BD897400236AF9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		DAF9DFA31EEFCD5A00D70BD0 /* LaunchScreenvc.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LaunchScreenvc.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -181,6 +186,7 @@
 		DA71DA591CA9078500AD06DD = {
 			isa = PBXGroup;
 			children = (
+				DAF349B220BD7F8900236AF9 /* Localizable.strings */,
 				DA30BEB61F739F9600004336 /* transid.swift */,
 				DA30BEB41F739ED000004336 /* Transactionid.swift */,
 				DA30BEAE1F739E9F00004336 /* TransactionID+CoreDataClass.h */,
@@ -193,9 +199,7 @@
 				DAE2E4401F0678C1004A9480 /* HourViewController.swift */,
 				DAF9DFA31EEFCD5A00D70BD0 /* LaunchScreenvc.swift */,
 				DAAB03581ED6EEF300065848 /* Selectwifi.swift */,
-				DA6019381E94FB2800AB6E22 /* button-24.mp3 */,
 				DACD13451E924F6D002784CC /* fuel_secure_lock.png */,
-				DA4F24901DB8D872005D3BEB /* user1.bin */,
 				DA5DB9801CF8249A00C9A90E /* Wifidetails+CoreDataProperties.swift */,
 				DA5DB9811CF8249A00C9A90E /* Wifidetails.swift */,
 				DA71DA641CA9078500AD06DD /* FuelSecure */,
@@ -227,8 +231,8 @@
 				DA62068D1D4235D80008344D /* _refresh.png */,
 				DA6282781CF2CD770057D1CF /* FuelSecuer-Bridging-Header.h */,
 				DA6282791CF2CD770057D1CF /* Fuelsecure.h */,
-				DA62827A1CF2CD770057D1CF /* Fuelsecure.m */,
 				DA4BAF901CAD3334002A5C63 /* Button-Blue.png */,
+				DA62827A1CF2CD770057D1CF /* Fuelsecure.m */,
 				DA4BAF911CAD3334002A5C63 /* Button-White.png */,
 				DA4BAF921CAD3334002A5C63 /* Button-Yellow.png */,
 				DA4BAF931CAD3334002A5C63 /* Table-F.png */,
@@ -409,6 +413,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DAF349B020BD7F8900236AF9 /* Localizable.strings in Resources */,
 				DA9F948D1F14FF9200BFE62B /* WiFI.png in Resources */,
 				DAEC17291F4ECC0300714D1A /* Button-Green.png in Resources */,
 				DA4BAF981CAD3334002A5C63 /* Button-Yellow.png in Resources */,
@@ -423,8 +428,6 @@
 				DA71DA6B1CA9078500AD06DD /* Main.storyboard in Resources */,
 				DA4BAF961CAD3334002A5C63 /* Button-Blue.png in Resources */,
 				DA4BAF9A1CAD3334002A5C63 /* Table-H1.png in Resources */,
-				DA6019391E94FB2800AB6E22 /* button-24.mp3 in Resources */,
-				DA4F24911DB8D872005D3BEB /* user1.bin in Resources */,
 				DA62068E1D4235D80008344D /* _refresh.png in Resources */,
 				DA9F948B1F14F42E00BFE62B /* checkbox-unchecked.png in Resources */,
 			);
@@ -520,6 +523,9 @@
 			isa = PBXVariantGroup;
 			children = (
 				DA71DA6A1CA9078500AD06DD /* Base */,
+				DAF349A820BD4E3100236AF9 /* es */,
+				DAF349AB20BD511500236AF9 /* en */,
+				DAF349AC20BD67D800236AF9 /* hi */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -528,8 +534,20 @@
 			isa = PBXVariantGroup;
 			children = (
 				DA71DA721CA9078500AD06DD /* Base */,
+				DAF349A920BD4E3100236AF9 /* es */,
+				DAF349AD20BD67D800236AF9 /* hi */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		DAF349B220BD7F8900236AF9 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DAF349B120BD7F8900236AF9 /* es */,
+				DAF349B320BD7F9200236AF9 /* Base */,
+				DAF349B520BD897400236AF9 /* en */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -539,6 +557,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -602,6 +621,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -660,9 +680,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = LY75MT5XE6;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = FuelSecuer/Info.plist;
@@ -683,9 +704,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = LY75MT5XE6;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = FuelSecuer/Info.plist;

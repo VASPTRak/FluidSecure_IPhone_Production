@@ -11,18 +11,10 @@ import SystemConfiguration.CaptiveNetwork
 import NetworkExtension
 import Foundation
 
-
 class Commanfunction {
-    //var fetchedResults:[NSManagedObject] = []
-    //var fetchRequest : NSFetchRequest!
-    //    let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-    //    var managedContext:NSManagedObjectContext!
-    // var resultPredicate2:NSPredicate!
-    //var compound:NSCompoundPredicate!
+
     let fileManager: FileManager = FileManager()
     var currentSSID:String!
-    //let context = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext!
-
 
     func showAlert(message: String)
     {
@@ -62,7 +54,6 @@ class Commanfunction {
                 catch{print("error")}
                 }
             }
-
             let writePath = getDocumentsURL().appendingPathComponent("\(Path)/" + fileName)
             let wPath: String = (writePath!.path)
             do { try writeText.write(toFile: wPath, atomically: true, encoding: String.Encoding.utf8)
@@ -129,7 +120,6 @@ class Commanfunction {
             }
         }
         return currentSSID!
-
     }
 
     func saveBinFile(fileName: String, writeText: String)
@@ -149,6 +139,37 @@ class Commanfunction {
             do { try writeText.write(toFile: wPath, atomically: true, encoding: String.Encoding.utf8)
             }
             catch{print("error")}
+        }
+    }
+
+    func stringify(json: Any, prettyPrinted: Bool = false) -> String {
+        var options: JSONSerialization.WritingOptions = []
+        if prettyPrinted {
+            options = JSONSerialization.WritingOptions.prettyPrinted
+        }
+        do {
+            let data = try JSONSerialization.data(withJSONObject: json, options: options)
+            if let string = String(data: data, encoding: String.Encoding.utf8) {
+                return string
+            }
+        } catch {
+            print(error)
+        }
+        return ""
+    }
+
+    func SaveLogFile(fileName: String, writeText: String)
+    {
+        let readdata = getDocumentsURL().appendingPathComponent(fileName)
+        let fromPath: URL = URL(fileURLWithPath: readdata!.path)//(readdata!.path)
+
+        do {
+            let fileHandle = try FileHandle(forWritingTo: fromPath)
+            fileHandle.seekToEndOfFile()
+            fileHandle.write(writeText.data(using: .utf8)!)
+            fileHandle.closeFile()
+        } catch {
+            print("Error writing to file \(error)")
         }
     }
 
@@ -224,7 +245,7 @@ class Commanfunction {
         }
         return parts.joined(separator: "&")
     }
-    //address.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
+
 
     func NSURLByAppendingQueryParameters(URL : NSURL!, queryParameters : Dictionary<String, String>) -> NSURL {
         let URLString : NSString = NSString(format: "%@?%@", URL.absoluteString!, self.stringFromQueryParameters(queryParameters))
@@ -312,13 +333,11 @@ class Commanfunction {
         return readData
     }
 
-
     func convertStringToBase64(_ string: String) -> String
     {
         let plainData = string.data(using: String.Encoding.utf8)
         let base64String = plainData?.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
         return base64String!
-
     }
 }
 

@@ -1,0 +1,72 @@
+/* 
+  Localizable.strings
+  FuelSecure
+
+  Created by VASP on 5/29/18.
+  Copyright © 2018 VASP. All rights reserved.
+*/
+"Select Hose to use" = "Select Hose to use";
+"Date_Fueling" = "";
+"Name" = "Name";
+"Mobile" = "Mobile";
+"Email" = "Email";
+"MessageFueling" = "Please insert the nozzle into the tank \n Then tap start";
+"MessageFueling1" = "Please wait while your connection is being established With FS link";
+"LostWifi" = "WiFi Connection lost with mobile.";
+"Touch to select Site" = "Touch to select Site";
+"Regisration" = "Your Registration request is not approved yet. It is marked Inactive in the Company Software. Please contact your company’s administrator.";
+"Helptext" = "Please select Site & then Proceed";
+"HelptextSelectedSite" = "If you are using this hose for the first time you will need to enter the password when redirected to the WiFi screen. The password is";
+"warninghoseinused" = "\n Hose In Use \n Please try after sometime";
+"warning_NoInternet_Connection" = "Cannot connect to cloud server. Please check your internet connection.";
+"Error" = "Error";
+"OK" = "OK";
+"NoInternet" = "Please check your internet connection and try again later.";
+"NoHoseselect" = "Please Select Hose to use.";
+"Hoseorder" = "Hose out of order";
+"EnterUserNamePWD" = "Please enter Username And Password";
+"CheckyourInternet" = "Please wait momentarily check your internet connection & try again.";
+
+"Title" = "FluidSecure needs to connect to Hose via WiFi";
+"Message" = "Please Connect Wifi";
+"Subtitle" = "FluidSecure needs to connect to HOSE via WiFi\nYou will now be redirected to the WiFi setup";
+"Step1" = "\nThe WiFi name is the name of the HOSE. Read Steps 1 to 5 below then click on Green bar below.\n\nFollow steps:\n1. Turn on the WiFi (it might already be on)\n\n2. Choose the WiFi \n named: ";
+"Step2" = " \n\n3. First time it will ask for password,enter: 123456789\n\n4. It will have a check next to ";
+"Step3" = " and it will say \"No Internet Connection\" \n\n5.  Now, tap on the very top left corner that says \"FluidSecure\" - this returns you to allow fueling.\n\n\n\n\n";
+"ButtonNAME" = "Go To WiFi Settings";
+"WarningEmptytext" = "Please Enter something.";
+"Warningwait" = "Please wait momentarily & try again.";
+"Entervehicelno" = "Please Enter Vehicle Number.";
+"EneterOdometer" = "Please Enter Odometer Number.";
+"Odometer_Reasonability" = "The odometer entered is not within the reasonability your administrator has assigned, please contact your administrator.";
+
+
+"WarningselectWifi" = "Please select";
+"Wifi" = "Wi-Fi.";
+"CheckWifi" = "Please check your wifi connection";
+"wificonnection" = "Your Connection with";
+"wificonnection1" = " is lost. Please select ";
+"CheckFSunit" = "Please check your FS unit, and switch off power and back on.";
+"ThankyouMSG" = "Thank you for using \nFluidSecure!";
+"NoQuantity" = "No Quantity received. Transaction ended.";
+"ZeroQuantity" = "Quantity is zero. Transaction is stopped.";
+"Notify" = "Your Transaction is Successfully Completed at ";
+"autostop" = "app autostop because pulsecount getting is same.";
+"Fueldaylimit" = "You are fuel day limit reached.";
+"checkEmail" = "please enter valid email.";
+"ValidPhone" = "Please enter valid Phone number.";
+"Checkinternet" = "Please check your check your internet connection or Please contact your admin.";
+"SelectallFields" = "Please Select All Fields.";
+"EnterPin" = "Please Enter Personnel PIN Number.";
+"Enterdept" = "Please Enter Department Number.";
+"EnterHour" = "Please Enter Hour.";
+"NoInternet" = "Internet connection is not available.";
+"Preauthtrans" = "Pre-Authorized transactions are not Available.";
+"Preauthnointernet" = "Pre-authorized transactions not available for you. Please enabled your internet connection or Please contact your company’s administrator.";
+"NoSSIdFound" = "SSID not found wifi is not connected.";
+"Pleasewait" = "Please wait ..... ";
+"Fueling" = "Fueling…...";
+"Fuelquantityzero" = "your transaction is not proceed you fuel quantity is 0 please try agian";
+
+
+
