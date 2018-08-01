@@ -12,19 +12,19 @@
 "2b7-WQ-hc2.title" = "Espalda";
 
 /* Class = "UIButton"; normalTitle = "GO"; ObjectID = "3EQ-cf-hHe"; */
-"3EQ-cf-hHe.normalTitle" = "Ir";
+"3EQ-cf-hHe.normalTitle" = "Listo";
 
 /* Class = "UITableViewController"; title = "Register"; ObjectID = "3yL-aV-pxg"; */
 "3yL-aV-pxg.title" = "Registro";
 
 /* Class = "UITextField"; placeholder = "Enter Mobile Number"; ObjectID = "5kN-bx-ShP"; */
-"5kN-bx-ShP.placeholder" = "Ingrese número móvil";
+"5kN-bx-ShP.placeholder" = "Número Móvil";
 
 /* Class = "UIButton"; normalTitle = "GO"; ObjectID = "6GF-lJ-66n"; */
-"6GF-lJ-66n.normalTitle" = "Ir";
+"6GF-lJ-66n.normalTitle" = "Listo";
 
 /* Class = "UILabel"; text = "0.0"; ObjectID = "6tN-iq-bQN"; */
-"6tN-iq-bQN.text" = "0.0";
+"6tN-iq-bQN.text" = "0,0";
 
 /* Class = "UILabel"; text = "Label"; ObjectID = "AH6-dn-ZUc"; */
 "AH6-dn-ZUc.text" = "Label";
@@ -36,10 +36,10 @@
 "BzU-Hb-ipe.placeholder" = "Entrar en otro";
 
 /* Class = "UITextField"; placeholder = "Enter Company Name"; ObjectID = "CeV-tP-x8C"; */
-"CeV-tP-x8C.placeholder" = "Introduzca el nombre de la empresa";
+"CeV-tP-x8C.placeholder" = "Nombre de Empresa";
 
 /* Class = "UIButton"; normalTitle = "PRESS TO STOP"; ObjectID = "CoA-Ly-fyr"; */
-"CoA-Ly-fyr.normalTitle" = "PULSE PARA DETENERSE";
+"CoA-Ly-fyr.normalTitle" = "Oprima Para Parar";
 
 /* Class = "UINavigationItem"; title = "FluidSecure"; ObjectID = "DEn-cY-C2c"; */
 "DEn-cY-C2c.title" = "FluidSecure";
@@ -48,7 +48,7 @@
 "DXZ-5E-bPU.normalTitle" = "Registro";
 
 /* Class = "UITextField"; placeholder = "Enter Vehicle Number "; ObjectID = "DoF-Ct-Xgf"; */
-"DoF-Ct-Xgf.placeholder" = "Ingrese el número del vehículo";
+"DoF-Ct-Xgf.placeholder" = "Ingrese Numero de Vehiculo";
 
 /* Class = "UILabel"; text = "Vehicle:"; ObjectID = "E2l-bD-g5D"; */
 "E2l-bD-g5D.text" = "Vehículo:";
@@ -57,10 +57,10 @@
 "EHl-Li-0E8.text" = "Label";
 
 /* Class = "UITextField"; placeholder = "Enter Email Address"; ObjectID = "G0z-to-5pL"; */
-"G0z-to-5pL.placeholder" = "Introducir la dirección de correo electrónico";
+"G0z-to-5pL.placeholder" = "Dirección de Correo Electrónico";
 
 /* Class = "UIButton"; normalTitle = "GO"; ObjectID = "Hns-mf-f9H"; */
-"Hns-mf-f9H.normalTitle" = "Ir";
+"Hns-mf-f9H.normalTitle" = "Listo";
 
 /* Class = "UIBarButtonItem"; title = "Back"; ObjectID = "HoK-Hf-XB8"; */
 "HoK-Hf-XB8.title" = "Espalda";
@@ -77,20 +77,23 @@
 /* Class = "UIButton"; normalTitle = "Ok"; ObjectID = "J4a-lx-wy5"; */
 "J4a-lx-wy5.normalTitle" = "acuerdo";
 
+/* Class = "UITextField"; placeholder = "Select hose to use"; ObjectID = "JuT-NE-iD7"; */
+//"JuT-NE-iD7" = "Seleccionar Mavga Para Utilzar"
+
 /* Class = "UIButton"; normalTitle = "Click here to use pre-authorized transaction."; ObjectID = "KEq-wY-LnW"; */
-"KEq-wY-LnW.normalTitle" = "Haga clic aquí para usar una transacción preautorizada.";
+"KEq-wY-LnW.normalTitle" = "Chic Quio Par usar Transaccion pre authrizada.";//Haga clic aquí para usar una transacción preautorizada.";
 
 /* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "KOu-2U-Pfv"; */
-"KOu-2U-Pfv.normalTitle" = "Cancelar";
+"KOu-2U-Pfv.normalTitle" = "Cancele";
 
 /* Class = "UILabel"; text = "Version 1.15.17"; ObjectID = "KPD-Ml-Ch9"; */
 //"KPD-Ml-Ch9.text" = "Versión 1.15.17";
 
 /* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "KmM-dZ-GDg"; */
-"KmM-dZ-GDg.normalTitle" = "Cancelar";
+"KmM-dZ-GDg.normalTitle" = "Cancele";
 
 /* Class = "UITextField"; placeholder = "Enter Full Name"; ObjectID = "LAf-UD-Cas"; */
-"LAf-UD-Cas.placeholder" = "Ingrese el nombre completo";
+"LAf-UD-Cas.placeholder" = "Ingrese Nombre completo";
 
 /* Class = "UITextField"; placeholder = "Enter Hours"; ObjectID = "LqW-lS-AQW"; */
 "LqW-lS-AQW.placeholder" = "Ingrese Horas";
@@ -99,10 +102,10 @@
 "MOd-2J-7L4.title" = "Registro";
 
 /* Class = "UIButton"; normalTitle = "Usage Information"; ObjectID = "RRA-gh-O7b"; */
-"RRA-gh-O7b.normalTitle" = "Información de uso";
+"RRA-gh-O7b.normalTitle" = "Información de Uso";
 
 /* Class = "UIButton"; normalTitle = "Start "; ObjectID = "RYL-Is-4dL"; */
-"RYL-Is-4dL.normalTitle" = "comienzo ";
+"RYL-Is-4dL.normalTitle" = "Cumensar ";
 
 /* Class = "UILabel"; text = "Version 1.15.17"; ObjectID = "SFJ-7w-Fpl"; */
 //"SFJ-7w-Fpl.text" = "Versión 1.15.17";
@@ -111,37 +114,37 @@
 "SFc-Iz-RNG.title" = "FluidSecure";
 
 /* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "TF2-d5-X3r"; */
-"TF2-d5-X3r.normalTitle" = "Cancelar";
+"TF2-d5-X3r.normalTitle" = "Cancele";
 
 /* Class = "UIButton"; normalTitle = "GO"; ObjectID = "UDr-NJ-6hy"; */
-"UDr-NJ-6hy.normalTitle" = "Ir";
+"UDr-NJ-6hy.normalTitle" = "Listo";
 
 /* Class = "UITextField"; placeholder = "Enter Department"; ObjectID = "UZt-rx-wKg"; */
 "UZt-rx-wKg.placeholder" = "Ingresar departamento";
 
 /* Class = "UILabel"; text = "Odometer:"; ObjectID = "V59-pK-qar"; */
-"V59-pK-qar.text" = "Cuentakilómetros:";
+"V59-pK-qar.text" = "Cuenta kilómetros:";
 
 /* Class = "UIButton"; normalTitle = "HELP"; ObjectID = "VSD-BS-IdT"; */
 "VSD-BS-IdT.normalTitle" = "AYUDA";
 
 /* Class = "UILabel"; text = "Closing out fuel transaction, please wait…"; ObjectID = "WAO-Vd-dUh"; */
-"WAO-Vd-dUh.text" = "Cerrando la transacción de combustible, espere ...";
+"WAO-Vd-dUh.text" = "Cerrando Transasccion de Comustible, Por Favor de Esperar....";//"Cerrando la transacción de combustible, espere ...";
 
 /* Class = "UITextField"; placeholder = "Username"; ObjectID = "WGm-8y-geX"; */
 "WGm-8y-geX.placeholder" = "Nombre de usuario";
 
 /* Class = "UIButton"; normalTitle = "Click here to use pre-authorized transaction."; ObjectID = "WOv-Js-F7d"; */
-"WOv-Js-F7d.normalTitle" = "Haga clic aquí para usar una transacción preautorizada.";
+"WOv-Js-F7d.normalTitle" = "Chic Quio Par usar Transaccion pre authrizada.";
 
 /* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "Wnl-t7-VMH"; */
-"Wnl-t7-VMH.normalTitle" = "Cancelar";
+"Wnl-t7-VMH.normalTitle" = "Cancele";
 
 /* Class = "UILabel"; text = "Label"; ObjectID = "Ywl-SJ-ngV"; */
 "Ywl-SJ-ngV.text" = "Label";
 
 /* Class = "UILabel"; text = "Odometer:"; ObjectID = "ZVk-pV-XPj"; */
-"ZVk-pV-XPj.text" = "Cuentakilómetros:";
+"ZVk-pV-XPj.text" = "Cuenta kilómetros:";
 
 /* Class = "UIBarButtonItem"; title = "Back"; ObjectID = "aGP-Zx-RUs"; */
 "aGP-Zx-RUs.title" = "Espalda";
@@ -156,22 +159,22 @@
 "ab3-Ej-L6w.text" = "Soporte: support@trakeng.com o 850-878-4585";
 
 /* Class = "UITextField"; placeholder = "Touch to select Site"; ObjectID = "ahm-rc-XyY"; */
-"ahm-rc-XyY.placeholder" = "Toca para seleccionar Sitio";
+"ahm-rc-XyY.placeholder" = "Toque Para Seleccionar el Sitio";//"Toca para seleccionar Sitio";
 
 /* Class = "UITextField"; placeholder = "Enter Odometer Reading"; ObjectID = "evt-sq-fRo"; */
 "evt-sq-fRo.placeholder" = "Ingrese la lectura del odómetro";
 
 /* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "gLK-At-m1O"; */
-"gLK-At-m1O.normalTitle" = "Cancelar";
+"gLK-At-m1O.normalTitle" = "Cancele";
 
 /* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "gMf-xT-drF"; */
-"gMf-xT-drF.normalTitle" = "Cancelar";
+"gMf-xT-drF.normalTitle" = "Cancele";
 
 /* Class = "UITextField"; placeholder = "Enter Personal Pin"; ObjectID = "gWy-tI-iBk"; */
 "gWy-tI-iBk.placeholder" = "Ingrese PIN personal";
 
 /* Class = "UIButton"; normalTitle = "GO"; ObjectID = "gfC-BQ-V5X"; */
-"gfC-BQ-V5X.normalTitle" = "Ir";
+"gfC-BQ-V5X.normalTitle" = "Listo";
 
 /* Class = "UILabel"; text = " Version 1.15.17"; ObjectID = "h0f-KN-znz"; */
 //"h0f-KN-znz.text" = " Versión 1.15.17";
@@ -183,7 +186,7 @@
 "ipW-Ap-EV4.title" = "Espalda";
 
 /* Class = "UILabel"; text = "Pulse:"; ObjectID = "jAY-nt-ESg"; */
-"jAY-nt-ESg.text" = "Legumbres:";
+"jAY-nt-ESg.text" = "Pulsos:";
 
 /* Class = "UINavigationItem"; title = "FluidSecure"; ObjectID = "kUx-Jd-co4"; */
 "kUx-Jd-co4.title" = "FluidSecure";
@@ -192,7 +195,7 @@
 "kq7-tk-J7N.text" = "Ingrese Horas";
 
 /* Class = "UIButton"; normalTitle = "GO"; ObjectID = "lhK-Mz-ui4"; */
-"lhK-Mz-ui4.normalTitle" = "Ir";
+"lhK-Mz-ui4.normalTitle" = "Listo";
 
 /* Class = "UINavigationItem"; title = "FluidSecure"; ObjectID = "mMY-ma-OUv"; */
 "mMY-ma-OUv.title" = "FluidSecure";
@@ -201,16 +204,16 @@
 "mWq-Mr-X9k.title" = "Espalda";
 
 /* Class = "UIButton"; normalTitle = "GO"; ObjectID = "mbr-lW-KO7"; */
-"mbr-lW-KO7.normalTitle" = "Ir";
+"mbr-lW-KO7.normalTitle" = "Listo";
 
 /* Class = "UIButton"; normalTitle = "Login"; ObjectID = "nSi-I4-OPh"; */
 "nSi-I4-OPh.normalTitle" = "Iniciar sesión";
 
 /* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "ncd-xq-C7s"; */
-"ncd-xq-C7s.normalTitle" = "Cancelar";
+"ncd-xq-C7s.normalTitle" = "Cancele";
 
 /* Class = "UILabel"; text = "Version 1.15.17"; ObjectID = "nxZ-wO-69A"; */
-//"nxZ-wO-69A.text" = "Versión 1.15.17";
+/*"nxZ-wO-69A.text" = "Versión 1.15.17";*/
 
 /* Class = "UILabel"; text = "Enter Other"; ObjectID = "oXF-0o-JlE"; */
 "oXF-0o-JlE.text" = "Entrar en otro";
@@ -219,7 +222,7 @@
 "pBx-aM-MFh.text" = "Cantidad:";
 
 /* Class = "UILabel"; text = "Enter Vehicle Number "; ObjectID = "rF6-Xs-baZ"; */
-"rF6-Xs-baZ.text" = "Ingrese el número del vehículo";
+"rF6-Xs-baZ.text" = "Ingrese Numero de Vehiculo";//ngrese el número del vehículo";
 
 /* Class = "UILabel"; text = "Enter Odometer Reading"; ObjectID = "sz2-pL-N3U"; */
 "sz2-pL-N3U.text" = "Ingrese la lectura del odómetro";
@@ -228,10 +231,10 @@
 "u4M-FB-NFO.title" = "Espalda";
 
 /* Class = "UILabel"; text = "0.0"; ObjectID = "u59-2j-3eX"; */
-"u59-2j-3eX.text" = "0.0";
+"u59-2j-3eX.text" = "0,0";
 
 /* Class = "UILabel"; text = "Already have an account"; ObjectID = "uDK-JX-eRv"; */
-"uDK-JX-eRv.text" = "Ya tienes una cuenta";
+"uDK-JX-eRv.text" = "Ya Tienes Una Cuenta";
 
 /* Class = "UIBarButtonItem"; title = "Back"; ObjectID = "uck-Mb-jlB"; */
 "uck-Mb-jlB.title" = "Espalda";
@@ -243,10 +246,10 @@
 "wbr-EM-9YG.placeholder" = "Contraseña";
 
 /* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "yct-6P-3fu"; */
-"yct-6P-3fu.normalTitle" = "Cancelar";
+"yct-6P-3fu.normalTitle" = "Cancele";//"Cancelar";
 
 /* Class = "UILabel"; text = "Pulse:"; ObjectID = "zTl-xu-nOI"; */
-"zTl-xu-nOI.text" = "Legumbres:";
+"zTl-xu-nOI.text" = "Pulsos:";
 
 /* Class = "UINavigationItem"; title = "FluidSecure"; ObjectID = "zlB-rg-e5D"; */
 "zlB-rg-e5D.title" = "FluidSecure";

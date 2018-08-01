@@ -27,7 +27,7 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
         Odometer.delegate = self
         Odometer.font = UIFont(name: Odometer.font!.fontName, size: 40)
         let doneButton:UIButton = UIButton (frame: CGRect(x: 100, y: 100, width: 100, height: 44));
-        doneButton.setTitle("Return", for: UIControlState.normal)
+        doneButton.setTitle(NSLocalizedString("Return", comment:""), for: UIControlState.normal)
         doneButton.addTarget(self, action: #selector(OdometerVC.tapAction), for: UIControlEvents.touchUpInside);
         doneButton.backgroundColor = UIColor .black
         Odometer.returnKeyType = .done
@@ -45,13 +45,13 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
         super.viewWillDisappear(animated)
     }
     
-    func gotostart(){
+    @objc func gotostart(){
         self.web.sentlog(func_name: "Odometer", errorfromserverorlink: "", errorfromapp: "")
         let appDel = UIApplication.shared.delegate! as! AppDelegate
         appDel.start()
     }
     
-    func tapAction() {//(sender: UITapGestureRecognizer) {
+    @objc func tapAction() {
         self.view.frame = CGRect(x: 0,y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height)
         self.oview.endEditing(true)
     }
@@ -71,8 +71,8 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
         // Change Message With Color and Font
         let message  = message
         var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
+        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
         
         // Action.
@@ -107,8 +107,8 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
         
         let message  = message
         var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.black, range: NSRange(location:0,length:message.count))
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
+        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.black, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
         
         // Action.
@@ -120,7 +120,11 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
             }
             else
             {
-                self.web.wifisettings(pagename: "Odometer")
+                if #available(iOS 11.0, *) {
+                    self.web.wifisettings(pagename: "Odometer")
+                } else {
+                    // Fallback on earlier versions
+                }
             }
         }
         alertController.addAction(action)
@@ -131,7 +135,11 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
     {
         self.dismiss(animated: true, completion: nil)
         
-        self.web.wifisettings(pagename: "Odometer")
+        if #available(iOS 11.0, *) {
+            self.web.wifisettings(pagename: "Odometer")
+        } else {
+            // Fallback on earlier versions
+        }
         mainPage()
     }
     
@@ -186,46 +194,48 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
             if(ResponceMessage == "success")
             {
                 if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()){
-                    let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertControllerStyle.alert)
-                    // Background color.
-                    let backView = alertController.view.subviews.last?.subviews.last
-                    backView?.layer.cornerRadius = 10.0
-                    backView?.backgroundColor = UIColor.white
+                    if #available(iOS 11.0, *) {
+                        self.web.wifisettings(pagename: "Odometer")
+                    } else {
+                        // Fallback on earlier versions
+
+                        let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertControllerStyle.alert)
+                        let backView = alertController.view.subviews.last?.subviews.last
+                        backView?.layer.cornerRadius = 10.0
+                        backView?.backgroundColor = UIColor.white
+
+                        let paragraphStyle = NSMutableParagraphStyle()
+                        paragraphStyle.alignment = NSTextAlignment.left
+
+                        let paragraphStyle1 = NSMutableParagraphStyle()
+                        paragraphStyle1.alignment = NSTextAlignment.left
+
+                        let attributedString = NSAttributedString(string:NSLocalizedString("Subtitle", comment:""), attributes: [
+                            NSAttributedStringKey.paragraphStyle:paragraphStyle1,
+                            NSAttributedStringKey.font : UIFont.systemFont(ofSize: 20), //your font here
+                            NSAttributedStringKey.foregroundColor : UIColor.black
+                            ])
+
+                        let formattedString = NSMutableAttributedString()
+                        formattedString
+                            .normal(NSLocalizedString("Step1", comment:""))
+                            .bold("\(Vehicaldetails.sharedInstance.SSId)")
+                            .normal(NSLocalizedString("Step2", comment:""))
+                            .bold("\(Vehicaldetails.sharedInstance.SSId)")
+                            .normal(NSLocalizedString("Step3", comment:""))
+
+                        alertController.setValue(formattedString, forKey: "attributedMessage")
+                        alertController.setValue(attributedString, forKey: "attributedTitle")
+                        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default){
+                            action in
+                            self.performSegue(withIdentifier: "Go", sender: self)
+                        }
+                        alertController.addAction(action)
+
+                        self.present(alertController, animated: true, completion: nil)
+                    }
+                    self.mainPage()
                     
-                    let paragraphStyle = NSMutableParagraphStyle()
-                    paragraphStyle.alignment = NSTextAlignment.left
-                    
-                    let paragraphStyle1 = NSMutableParagraphStyle()
-                    paragraphStyle1.alignment = NSTextAlignment.left
-                    
-                    let attributedString = NSAttributedString(string:NSLocalizedString("Subtitle", comment:""), attributes: [
-                        NSParagraphStyleAttributeName:paragraphStyle1,
-                        NSFontAttributeName : UIFont.systemFont(ofSize: 20), //your font here
-                        NSForegroundColorAttributeName : UIColor.black
-                        ])
-                    
-                    let formattedString = NSMutableAttributedString()
-                    formattedString
-                        .normal(NSLocalizedString("Step1", comment:""))//("\nThe WiFi name is the name of the HOSE. Read Steps 1 to 5 below then click on Green bar below.\n\nFollow steps:\n1. Turn on the WiFi (it might already be on)\n\n2. Choose the WiFi \n named: ")
-                        .bold("\(Vehicaldetails.sharedInstance.SSId)")
-                        .normal(NSLocalizedString("Step2", comment:""))//(" \n\n3. First time it will ask for password,enter: 123456789\n\n4. It will have a check next to ")
-                        .bold("\(Vehicaldetails.sharedInstance.SSId)")
-                        .normal(NSLocalizedString("Step3", comment:""))//" and it will say \"No Internet Connection\" \n\n5.  Now, tap on the very top left corner that says \"FluidSecure\" - this returns you to allow fueling.\n\n\n\n\n")
-                    
-                    alertController.setValue(formattedString, forKey: "attributedMessage")
-                    alertController.setValue(attributedString, forKey: "attributedTitle")
-                    
-                    // Action.
-                    
-                    let btnsetting = UIImage(named: "Button-Green")!
-                    let imageButtonws : UIButton = UIButton(frame: CGRect(x: 1, y: 500, width: 270, height: 40))
-                    imageButtonws.setBackgroundImage(btnsetting, for: UIControlState())
-                    imageButtonws.setTitle(NSLocalizedString("ButtonNAME", comment:""), for: UIControlState.normal)
-                    imageButtonws.setTitleColor(UIColor.white, for: UIControlState.normal)
-                    imageButtonws.addTarget(self, action: #selector(OdometerVC.Action(sender:)), for:.touchUpInside)
-                    
-                    alertController.view.addSubview(imageButtonws)
-                    self.present(alertController, animated: true, completion: nil)
                 }
                 
                 if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){
@@ -277,63 +287,110 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
         }
         else
         {
-            let odometer:Int! = Int(Odometer.text!)
-            Vehicaldetails.sharedInstance.Odometerno = "\(odometer!)"
-            Odometer.text = Vehicaldetails.sharedInstance.Odometerno
-            let hours = Vehicaldetails.sharedInstance.IsHoursrequirs
-            let isdept = Vehicaldetails.sharedInstance.IsDepartmentRequire
-            let isPPin = Vehicaldetails.sharedInstance.IsPersonnelPINRequire
-            let isother = Vehicaldetails.sharedInstance.IsOtherRequire
-            let CheckOdometerReasonable = Vehicaldetails.sharedInstance.CheckOdometerReasonable
-            let OdometerReasonabilityConditions = Vehicaldetails.sharedInstance.OdometerReasonabilityConditions
-            let PreviousOdo:Int = Vehicaldetails.sharedInstance.PreviousOdo
-            let OdoLimit:Int = Vehicaldetails.sharedInstance.OdoLimit
-            
-            if(CheckOdometerReasonable == "True"){
-                
-                if(OdometerReasonabilityConditions == "1"){
-                    
-                    if(OdoLimit >= odometer && odometer >= PreviousOdo)
-                    {
-                        if (hours == "True"){
-                            self.performSegue(withIdentifier: "hour", sender: self)
-                        }
-                        else{
-                            Vehicaldetails.sharedInstance.hours = ""
-                            if(isdept == "True"){
-                                countdata = 0
-                                stoptimergotostart.invalidate()
-                                self.performSegue(withIdentifier: "dept", sender: self)
+            if(Int(Odometer.text!) == nil){
+                showAlert(message: NSLocalizedString("EnterHour_Eng", comment:""))
+            }
+            else{
+                let odometer:Int! = Int(Odometer.text!)
+                Vehicaldetails.sharedInstance.Odometerno = "\(odometer!)"
+                Odometer.text = Vehicaldetails.sharedInstance.Odometerno
+                let hours = Vehicaldetails.sharedInstance.IsHoursrequirs
+                let isdept = Vehicaldetails.sharedInstance.IsDepartmentRequire
+                let isPPin = Vehicaldetails.sharedInstance.IsPersonnelPINRequire
+                let isother = Vehicaldetails.sharedInstance.IsOtherRequire
+                let CheckOdometerReasonable = Vehicaldetails.sharedInstance.CheckOdometerReasonable
+                let OdometerReasonabilityConditions = Vehicaldetails.sharedInstance.OdometerReasonabilityConditions
+                let PreviousOdo:Int = Vehicaldetails.sharedInstance.PreviousOdo
+                let OdoLimit:Int = Vehicaldetails.sharedInstance.OdoLimit
+
+                if(CheckOdometerReasonable == "True"){
+
+                    if(OdometerReasonabilityConditions == "1"){
+
+                        if(OdoLimit >= odometer && odometer >= PreviousOdo)
+                        {
+                            if (hours == "True"){
+                                self.performSegue(withIdentifier: "hour", sender: self)
                             }
                             else{
-                                if(isPPin == "True"){
+                                Vehicaldetails.sharedInstance.hours = ""
+                                if(isdept == "True"){
                                     countdata = 0
                                     stoptimergotostart.invalidate()
-                                    self.performSegue(withIdentifier: "pin", sender: self)
+                                    self.performSegue(withIdentifier: "dept", sender: self)
                                 }
                                 else{
-                                    if(isother == "True"){
+                                    if(isPPin == "True"){
                                         countdata = 0
                                         stoptimergotostart.invalidate()
-                                        self.performSegue(withIdentifier: "other", sender: self)
+                                        self.performSegue(withIdentifier: "pin", sender: self)
                                     }
                                     else{
-                                        let deptno = ""
-                                        let ppin = ""
-                                        let other = ""
-                                        Vehicaldetails.sharedInstance.deptno = ""
-                                        Vehicaldetails.sharedInstance.Personalpinno = ""
-                                        Vehicaldetails.sharedInstance.Other = ""
-                                        self.senddata(deptno: deptno,ppin:ppin,other:other)
+                                        if(isother == "True"){
+                                            countdata = 0
+                                            stoptimergotostart.invalidate()
+                                            self.performSegue(withIdentifier: "other", sender: self)
+                                        }
+                                        else{
+                                            let deptno = ""
+                                            let ppin = ""
+                                            let other = ""
+                                            Vehicaldetails.sharedInstance.deptno = ""
+                                            Vehicaldetails.sharedInstance.Personalpinno = ""
+                                            Vehicaldetails.sharedInstance.Other = ""
+                                            self.senddata(deptno: deptno,ppin:ppin,other:other)
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                    else{
-                        countdata += 1
-                        
-                        if(countdata >  3){
+                        else{
+                            countdata += 1
+
+                            if(countdata >  3){
+                                if (hours == "True"){
+                                    self.performSegue(withIdentifier: "hour", sender: self)
+                                }
+                                else{
+                                    Vehicaldetails.sharedInstance.hours = ""
+                                    if(isdept == "True"){
+                                        countdata = 0
+                                        self.performSegue(withIdentifier: "dept", sender: self)
+                                    }
+                                    else{
+                                        if(isPPin == "True"){
+                                            countdata = 0
+                                            self.performSegue(withIdentifier: "pin", sender: self)
+                                        }
+                                        else{
+                                            if(isother == "True"){
+                                                countdata = 0
+                                                self.performSegue(withIdentifier: "other", sender: self)
+                                            }
+                                            else{
+                                                let deptno = ""
+                                                let ppin = ""
+                                                let other = ""
+                                                Vehicaldetails.sharedInstance.deptno = ""
+                                                Vehicaldetails.sharedInstance.Personalpinno = ""
+                                                Vehicaldetails.sharedInstance.Other = ""
+                                                self.senddata(deptno: deptno,ppin:ppin,other:other)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else{
+                                showAlert(message: NSLocalizedString("Odometer_Reasonability", comment:""))
+                                viewWillAppear(true)
+                                print(countdata)
+                            }
+                        }
+
+                    } else if(OdometerReasonabilityConditions == "2"){
+
+                        if(OdoLimit >= odometer && odometer >= PreviousOdo)
+                        {
                             if (hours == "True"){
                                 self.performSegue(withIdentifier: "hour", sender: self)
                             }
@@ -367,83 +424,41 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
                             }
                         }
                         else{
-                            showAlert(message: NSLocalizedString("Odometer_Reasonability", comment:""))// "The odometer entered is not within the reasonability your administrator has assigned, please contact your administrator.")
+                            showAlert(message: NSLocalizedString("Odometer_Reasonability", comment:""))
                             viewWillAppear(true)
-                            print(countdata)
                         }
                     }
-                    
-                } else if(OdometerReasonabilityConditions == "2"){
-                    
-                    if(OdoLimit >= odometer && odometer >= PreviousOdo)
+                }
+                else if (CheckOdometerReasonable == "False"){
+                    if(odometer >= PreviousOdo)
                     {
-                        if (hours == "True"){
-                            self.performSegue(withIdentifier: "hour", sender: self)
+                        if(isdept == "True"){
+                            self.performSegue(withIdentifier: "dept", sender: self)
                         }
                         else{
-                            Vehicaldetails.sharedInstance.hours = ""
-                            if(isdept == "True"){
-                                countdata = 0
-                                self.performSegue(withIdentifier: "dept", sender: self)
+                            if(isPPin == "True"){
+                                self.performSegue(withIdentifier: "pin", sender: self)
                             }
                             else{
-                                if(isPPin == "True"){
-                                    countdata = 0
-                                    self.performSegue(withIdentifier: "pin", sender: self)
+                                if(isother == "True"){
+                                    self.performSegue(withIdentifier: "other", sender: self)
                                 }
                                 else{
-                                    if(isother == "True"){
-                                        countdata = 0
-                                        self.performSegue(withIdentifier: "other", sender: self)
-                                    }
-                                    else{
-                                        let deptno = ""
-                                        let ppin = ""
-                                        let other = ""
-                                        Vehicaldetails.sharedInstance.deptno = ""
-                                        Vehicaldetails.sharedInstance.Personalpinno = ""
-                                        Vehicaldetails.sharedInstance.Other = ""
-                                        self.senddata(deptno: deptno,ppin:ppin,other:other)
-                                    }
+                                    let deptno = ""
+                                    let ppin = ""
+                                    let other = ""
+                                    Vehicaldetails.sharedInstance.deptno = ""
+                                    Vehicaldetails.sharedInstance.Personalpinno = ""
+                                    Vehicaldetails.sharedInstance.Other = ""
+                                    self.senddata(deptno: deptno,ppin:ppin,other:other)
                                 }
                             }
                         }
                     }
                     else{
-                        showAlert(message: NSLocalizedString("Odometer_Reasonability", comment:""))//"The odometer entered is not within the reasonability your administrator has assigned, please contact your administrator.")
+                        showAlert(message: NSLocalizedString("Odometer_Reasonability", comment:""))
                         viewWillAppear(true)
                     }
-                }
-            }
-            else if (CheckOdometerReasonable == "False"){
-                if(odometer >= PreviousOdo)
-                {
-                    if(isdept == "True"){
-                        self.performSegue(withIdentifier: "dept", sender: self)
-                    }
-                    else{
-                        if(isPPin == "True"){
-                            self.performSegue(withIdentifier: "pin", sender: self)
-                        }
-                        else{
-                            if(isother == "True"){
-                                self.performSegue(withIdentifier: "other", sender: self)
-                            }
-                            else{
-                                let deptno = ""
-                                let ppin = ""
-                                let other = ""
-                                Vehicaldetails.sharedInstance.deptno = ""
-                                Vehicaldetails.sharedInstance.Personalpinno = ""
-                                Vehicaldetails.sharedInstance.Other = ""
-                                self.senddata(deptno: deptno,ppin:ppin,other:other)
-                            }
-                        }
-                    }
-                }
-                else{
-                    showAlert(message: NSLocalizedString("Odometer_Reasonability", comment:""))//"The odometer entered is not within the reasonability your administrator has assigned, please contact your administrator.")
-                    viewWillAppear(true)
                 }
             }
         }

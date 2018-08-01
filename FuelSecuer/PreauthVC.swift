@@ -50,6 +50,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
     var PumpOffTimelist = [String]()
     var PumpOnTimelist = [String]()
     var Transaction_Id = [String]()
+    var Available_preauthtransactions = [String]()
     var Ulocation = [String]()
     var siteID = [String]()
     var Uhosenumber = [String]()
@@ -58,6 +59,10 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
     var IsBusy :String!
     var notransactionid :String!
     
+
+    @IBOutlet var selecthose: UILabel!
+    @IBOutlet var version_2: UILabel!
+    //@IBOutlet var itembarbutton: UIBarButtonItem!
     @IBOutlet var AvailablePreauthTransactions: UILabel!
     @IBOutlet var preauth: UIButton!
     @IBOutlet var version: UILabel!
@@ -82,11 +87,22 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        version_2.text = "Version \(Version)"
+        version.text = "Version \(Version)"
+//        if(Vehicaldetails.sharedInstance.Language == "es-ES"){
+//            itembarbutton.title = "English"
+//            //defaults.set("es", forKey: "Language")
+//
+//        }else  if(Vehicaldetails.sharedInstance.Language == ""){
+//            itembarbutton.title = "Spanish"
+//            //defaults.set("en", forKey: "Language")
+//        }
         wifiNameTextField.delegate = self
 
+
+        selecthose.text = NSLocalizedString("Select Hose to use", comment:"")
         let doneButton:UIButton = UIButton (frame: CGRect(x: 100, y: 100, width: 100, height: 44));
-        doneButton.setTitle("Return", for: UIControlState())
+        doneButton.setTitle(NSLocalizedString("Return", comment:""), for: UIControlState())
         doneButton.addTarget(self, action: #selector(tapAction), for: UIControlEvents.touchUpInside);
         doneButton.backgroundColor = UIColor .black
         wifiNameTextField.returnKeyType = .done
@@ -108,8 +124,8 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         var myMutableStringTitle = NSMutableAttributedString()
         let Name  = "Enter Title" // PlaceHolderText
         
-        myMutableStringTitle = NSMutableAttributedString(string:Name, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 20.0)!]) // Font
-        myMutableStringTitle.addAttribute(NSForegroundColorAttributeName, value: UIColor.red, range:NSRange(location:0,length:Name.count))    // Color
+        myMutableStringTitle = NSMutableAttributedString(string:Name, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 20.0)!]) // Font
+        myMutableStringTitle.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.red, range:NSRange(location:0,length:Name.count))    // Color
         wifiNameTextField.attributedPlaceholder = myMutableStringTitle
         _ = defaults.array(forKey: "SSID")
         var reply:String!
@@ -239,7 +255,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                 IsPersonnelPINRequire = objUserData.value(forKey: "IsPersonnelPINRequire") as! NSString as String
                 IsOtherRequire = objUserData.value(forKey: "IsOtherRequire") as! NSString as String
                 
-                infotext.text = "\n\nName: \(PersonName)\nMobile: \(PhoneNumber)\nEmail: \(Email)"
+                infotext.text = NSLocalizedString("Name", comment:"") + ": \(PersonName)\n" + NSLocalizedString("Mobile", comment:"") + ":\(PhoneNumber)\n" + NSLocalizedString("Email", comment:"") + ": \(Email)"
                 Vehicaldetails.sharedInstance.odometerreq = IsOdoMeterRequire
                 Vehicaldetails.sharedInstance.IsDepartmentRequire = IsDepartmentRequire
                 Vehicaldetails.sharedInstance.IsPersonnelPINRequire = IsPersonnelPINRequire
@@ -265,7 +281,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                 warningLable.isHidden = true
                 refreshButton.isHidden = true
                 
-                self.wifiNameTextField.placeholder = "Touch to select Site"
+                self.wifiNameTextField.placeholder = NSLocalizedString("Touch to select Site", comment:"")
                 self.wifiNameTextField.textColor = UIColor.white
                 self.wifiNameTextField.inputView = pickerViewLocation
                 self.pickerViewLocation.delegate = self
@@ -326,6 +342,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                             
                             let WifiSSId = JsonRow["WifiSSId"] as! NSString
                             let PulserRatio = JsonRow["PulserRatio"] as! NSString
+                            let DecimalPulserRatio = JsonRow["DecimalPulserRatio"] as! NSNumber
                             let FuelTypeId = JsonRow["FuelTypeId"] as! NSString
                             let Sitid = JsonRow["SiteId"] as! NSString
                             let pulsarstoptime = JsonRow["PulserStopTime"] as! NSString
@@ -334,7 +351,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                             
                             ssid.append(WifiSSId as String)
                             Ulocation = ssid.removeDuplicates()
-                            location.append(PulserRatio as String)
+                            location.append("\(DecimalPulserRatio)" as String)
                             Pass.append(FuelTypeId as String)
                             PulserStopTimelist.append(pulsarstoptime as String)
                             PumpOffTimelist.append(PumpOffTime as String)
@@ -368,7 +385,6 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                             
                             let entityDescription = NSEntityDescription.entity(forEntityName: "TransactionID",in: managedObjectContext)
                             let ID = TransactionID(entity: entityDescription!, insertInto: managedObjectContext)
-                            
                             let context = (UIApplication.shared.delegate as! AppDelegate).managedObjectContext
                             let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName:"TransactionID")
                             fetchRequest.returnsObjectsAsFaults = false
@@ -397,6 +413,8 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                                 }catch let error as NSError {
                                     print ("Error: \(error.domain)")
                                 }
+                                let Transactioniddeatils = Transaction_id(isactive: ID.isactive!,TransactionID: TransactionId as String)
+                                Vehicaldetails.sharedInstance.Transaction_id.add(Transactioniddeatils)
                             }
                             else {
                                 
@@ -488,10 +506,23 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         dateFormatter.dateFormat = "HH:mm MMM dd, yyyy"
         let strDate = dateFormatter.string(from: Date())
         datetime.text = strDate
-        AvailablePreauthTransactions.text = "Available Pre-Authorized transactions - \(Transaction_Id.count)"
+        AvailablePreauthTransactions.text = NSLocalizedString("No_Pre-auth_transaction", comment:"") + "\(Available_preauthtransactions.count)"
     }
     
-    
+    @IBAction func spanish(_ sender: Any) {
+//        if(itembarbutton.title == "English"){
+//            Vehicaldetails.sharedInstance.Language = ""
+//            Bundle.setLanguage("en")
+//            let appDel = UIApplication.shared.delegate! as! AppDelegate
+//            appDel.preauthstart()
+//        }else if(itembarbutton.title == "Spanish"){
+//            Bundle.setLanguage("es")
+//            Vehicaldetails.sharedInstance.Language = "es-ES"
+//            //itembarbutton.title = "Eng"
+//            let appDel = UIApplication.shared.delegate! as! AppDelegate
+//            appDel.preauthstart()
+//        }
+    }
     @IBAction func copypwd(sender: AnyObject) {
         print("Password is" + "12345678")// passwordTextField.text!)
         UIPasteboard.general.string = "12345678" //passwordTextField.text!
@@ -513,13 +544,35 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         self.navigationController?.navigationBar.barTintColor = UIColor(red: 31.0/255.0, green: 77.0/255.0, blue: 153.0/255.0, alpha: 1.0)//UIColor.blueColor()
         self.navigationItem.title = "FluidSecure"
         self.navigationController?.navigationBar.tintColor = UIColor.white
-        self.navigationController!.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
-        
+        self.navigationController!.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
+
+        let index = Transaction_Id.count//Vehicaldetails.sharedInstance.Transaction_id.count
+        if(index == 0){
+            Available_preauthtransactions = []
+        }else{
+            timer.invalidate()
+            Available_preauthtransactions = []
+            print("ssID Match")
+            for i in 0  ..< index
+            {
+                let obj: Transaction_id = Vehicaldetails.sharedInstance.Transaction_id[i] as! Transaction_id
+                let transactionid = obj.TransactionID
+                let status = obj.isactive
+                if(status == "true"){
+                    notransactionid = "True"
+                }
+                else if(status == "false"){
+                    notransactionid = "False"
+                    Available_preauthtransactions.append(transactionid)
+                }
+            }}
+        AvailablePreauthTransactions.text = NSLocalizedString("No_Pre-auth_transaction", comment:"") + "\(Available_preauthtransactions.count)"//"Available Pre-Authorized transactions - \(Available_preauthtransactions.count)"
         if(cf.getSSID() != "" ) {
             print("SSID: \(cf.getSSID())")
         } else {
             //showAlert("SSID not found wifi is not connected.")
         }
+
     }
     
     
@@ -529,6 +582,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
             print("SSID: \(cf.getSSID())")
         } else {}
         _ = ad.unsyncTransaction()
+
     }
     
     
@@ -543,9 +597,9 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = NSTextAlignment.left
         var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [ NSParagraphStyleAttributeName: paragraphStyle,NSFontAttributeName:UIFont(name: "Georgia", size: 24.0)!])
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [ NSAttributedStringKey.paragraphStyle: paragraphStyle,NSAttributedStringKey.font:UIFont(name: "Georgia", size: 24.0)!])
         
-        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
+        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
         // Action.
         let action = UIAlertAction(title:NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default, handler: nil)
@@ -588,7 +642,8 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                     }
                 }
                 if(notransactionid == "True"){
-                    showAlert(message: NSLocalizedString("Preauthnointernet", comment:""))//"Pre-authorized transactions not available for you. Please enabled your internet connection or Please contact your company’s administrator.")
+
+                    shownotransId(message: NSLocalizedString("Preauthnointernet", comment:""))//"Pre-authorized transactions not available for you. Please enabled your internet connection or Please contact your company’s administrator.")
                 }
                 else if(notransactionid == "False"){
 
@@ -598,7 +653,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         }
     }
     
-    func tapAction() {
+    @objc func tapAction() {
         
         self.view.frame = CGRect(x: 0,y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height)
         self.view.endEditing(true)
@@ -613,8 +668,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         let Split = data.components(separatedBy: "#")
         reply = Split[0]
         if(reply != "-1"){
-//            cf.DeleteFileInApp(fileName: "getSites.txt")
-//            cf.CreateTextFile(fileName: "getSites.txt", writeText: reply)
+
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let controller = storyboard.instantiateViewController(withIdentifier: "InitialController") as UIViewController
             self.present(controller, animated: true, completion: nil)
@@ -636,7 +690,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
     }
     
     
-    func numberOfComponentsInPickerView(pickerView: UIPickerView!)-> Int
+   @objc func numberOfComponentsInPickerView(pickerView: UIPickerView!)-> Int
     {
         if(pickerView == pickerViewLocation)
         {
@@ -646,7 +700,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
     }
     
     
-    func pickerView(_ pickerView: UIPickerView!,numberOfRowsInComponent component: Int)-> Int
+    @objc func pickerView(_ pickerView: UIPickerView!,numberOfRowsInComponent component: Int)-> Int
     {
         if(pickerView == pickerViewLocation)
         {
@@ -657,7 +711,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
     }
     
     
-    func pickerView(_ pickerView: UIPickerView,titleForRow row: Int, forComponent component: Int)-> String?
+    @objc func pickerView(_ pickerView: UIPickerView,titleForRow row: Int, forComponent component: Int)-> String?
     {
         if(pickerView == pickerViewLocation)
         {
@@ -681,7 +735,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
     }
     
     
-    func pickerView(_ pickerView: UIPickerView,didSelectRow row: Int, inComponent component: Int)
+    @objc func pickerView(_ pickerView: UIPickerView,didSelectRow row: Int, inComponent component: Int)
     {
         var index: Int = 0
         if(pickerView == pickerViewLocation)
@@ -734,16 +788,13 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
     }
     
     @IBAction func selecthose(sender: AnyObject) {
-        //defaults.removeObjectForKey("SSID")
-        self.performSegue(withIdentifier: "showhose", sender: self)
+           self.performSegue(withIdentifier: "showhose", sender: self)
     }
     
     
     func wifisettings()
     {
-        let url = NSURL(string: "App-Prefs:root=WIFI") //for WIFI setting app
-        let app = UIApplication.shared// .shared
-        app.openURL(url! as URL)
+
     }
     
     func shownotransId(message:String){
@@ -755,8 +806,8 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         
         let message  = message
         var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.black, range: NSRange(location:0,length:message.count))
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
+        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.black, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
         
         // Action.
@@ -781,8 +832,8 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         
         let message  = message
         var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.lightGray, range: NSRange(location:0,length:message.count))
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
+        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.lightGray, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
         
         // Action.
@@ -795,9 +846,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
     
     
     @IBAction func changewifi(sender: AnyObject) {
-        let url = NSURL(string: "App-Prefs:root=WIFI") //for WIFI setting app
-        let app = UIApplication.shared// .shared
-        app.openURL(url! as URL)
+
         viewWillAppear(true)
     }
 }

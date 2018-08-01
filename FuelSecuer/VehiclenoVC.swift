@@ -13,8 +13,8 @@ extension NSMutableAttributedString {
     @discardableResult func bold(_ text:String) -> NSMutableAttributedString {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = NSTextAlignment.left
-        let boldString = NSMutableAttributedString(string: text, attributes: [NSParagraphStyleAttributeName: paragraphStyle,NSFontAttributeName:UIFont(name: "Arial", size: 17)!])
-        boldString.addAttribute(NSForegroundColorAttributeName, value: UIColor.red, range: NSRange(location:0,length:text.count))
+        let boldString = NSMutableAttributedString(string: text, attributes: [NSAttributedStringKey.paragraphStyle: paragraphStyle,NSAttributedStringKey.font:UIFont(name: "Arial", size: 17)!])
+        boldString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.red, range: NSRange(location:0,length:text.count))
         self.append(boldString)
         return self
     }
@@ -22,7 +22,7 @@ extension NSMutableAttributedString {
     @discardableResult func normal(_ text:String)->NSMutableAttributedString {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = NSTextAlignment.left
-        let normal =  NSMutableAttributedString(string: text, attributes: [NSParagraphStyleAttributeName: paragraphStyle,NSFontAttributeName:UIFont(name: "Arial", size: 15.0)!])
+        let normal =  NSMutableAttributedString(string: text, attributes: [NSAttributedStringKey.paragraphStyle: paragraphStyle,NSAttributedStringKey.font:UIFont(name: "Arial", size: 15.0)!])
         self.append(normal)
         return self
     }
@@ -60,7 +60,7 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
         Vehicleno.textAlignment = NSTextAlignment.center
         Vehicleno.textColor = UIColor.white
         Vehicleno.delegate = self
-        save.isEnabled = false
+
         self.navigationItem.title = "\(Vehicaldetails.sharedInstance.SSId)"
     }
     
@@ -76,7 +76,7 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
         super.viewWillDisappear(animated)
     }
     
-    func gotostart(){
+    @objc func gotostart(){
         
         self.web.sentlog(func_name: "vehicletimeout", errorfromserverorlink: "", errorfromapp: "")
         let appDel = UIApplication.shared.delegate! as! AppDelegate
@@ -117,8 +117,8 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
         backView?.backgroundColor = UIColor.white
         let message  = message
         var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
+        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
         
         // Action.
@@ -137,8 +137,8 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
         
         let message  = message
         var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.black, range: NSRange(location:0,length:message.count))
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
+        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.black, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
         
         // Action.
@@ -153,7 +153,11 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
             }
             else{
                 //self.mainPage()
-                self.web.wifisettings(pagename: "Vehicle")//self.wifisettings()
+                if #available(iOS 11.0, *) {
+                    self.web.wifisettings(pagename: "Vehicle")
+                } else {
+                    // Fallback on earlier versions
+                }
                 self.mainPage()
             }
         }
@@ -220,7 +224,8 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
         {
             if(countfailauth>2)
             {
-                showAlert(message: NSLocalizedString("CheckyourInternet", comment:""))//"Please wait momentarily check your internet connection & try again.")//"\(error) \n Please try again later")
+                showAlert(message: NSLocalizedString("CheckyourInternet", comment:""))
+
             }else{
                 
                 self.senddata(deptno: deptno,ppin:ppin,other:other)
@@ -263,51 +268,52 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
             
             if(ResponceMessage == "success") {
                 if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()){
-                    let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertControllerStyle.alert)
-                    // Background color.
-                    let backView = alertController.view.subviews.last?.subviews.last
-                    backView?.layer.cornerRadius = 10.0
-                    backView?.backgroundColor = UIColor.white
-                    
-                    let paragraphStyle = NSMutableParagraphStyle()
-                    paragraphStyle.alignment = NSTextAlignment.left
-                    
-                    let paragraphStyle1 = NSMutableParagraphStyle()
-                    paragraphStyle1.alignment = NSTextAlignment.left
-                    
-                    let attributedString = NSAttributedString(string:NSLocalizedString("Subtitle", comment:""), attributes: [
-                        NSParagraphStyleAttributeName:paragraphStyle1,
-                        NSFontAttributeName : UIFont.systemFont(ofSize: 18), //your font here
-                        NSForegroundColorAttributeName : UIColor.black
-                        ]) //"FluidSecure needs to connect to HOSE via WiFi\nYou will now be redirected to the WiFi setup"
-                    
-                    let formattedString = NSMutableAttributedString()
-                    formattedString
-                        .normal(NSLocalizedString("Step1", comment:""))//("\nThe WiFi name is the name of the HOSE. Read Steps 1 to 5 below then click on Green bar below.\n\nFollow steps:\n1. Turn on the WiFi (it might already be on)\n\n2. Choose the WiFi \n named: ")
-                        .bold("\(Vehicaldetails.sharedInstance.SSId)")
-                        .normal(NSLocalizedString("Step2", comment:""))//(" \n\n3. First time it will ask for password,enter: 123456789\n\n4. It will have a check next to ")
-                        .bold("\(Vehicaldetails.sharedInstance.SSId)")
-                        .normal(NSLocalizedString("Step3", comment:""))//" and it will say \"No Internet Connection\" \n\n5.  Now, tap on the very top left corner that says \"FluidSecure\" - this returns you to allow fueling.\n\n\n\n\n")
+                    if #available(iOS 11.0, *) {
+                        self.web.wifisettings(pagename: "Vehicle")
+                    } else {
+                        // Fallback on earlier versions
 
-                    alertController.setValue(formattedString, forKey: "attributedMessage")
-                    alertController.setValue(attributedString, forKey: "attributedTitle")
+                        let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertControllerStyle.alert)
+                        let backView = alertController.view.subviews.last?.subviews.last
+                        backView?.layer.cornerRadius = 10.0
+                        backView?.backgroundColor = UIColor.white
 
-                    let btnsetting = UIImage(named: "Button-Green")!
-                    let imageButtonws : UIButton = UIButton(frame: CGRect(x: 5, y: 500, width: 260, height: 40))
-                    imageButtonws.setBackgroundImage(btnsetting, for: UIControlState())
-                    imageButtonws.setTitle(NSLocalizedString("ButtonNAME", comment:""), for: UIControlState.normal) //"Go To WiFi Settings"
-                    imageButtonws.setTitleColor(UIColor.white, for: UIControlState.normal)
-                    imageButtonws.addTarget(self, action: #selector(OdometerVC.Action(sender:)), for:.touchUpInside)
-                    
-                    alertController.view.addSubview(imageButtonws)
-                    
-                    self.present(alertController, animated: true, completion: nil)
+                        let paragraphStyle = NSMutableParagraphStyle()
+                        paragraphStyle.alignment = NSTextAlignment.left
+
+                        let paragraphStyle1 = NSMutableParagraphStyle()
+                        paragraphStyle1.alignment = NSTextAlignment.left
+
+                        let attributedString = NSAttributedString(string:NSLocalizedString("Subtitle", comment:""), attributes: [
+                            NSAttributedStringKey.paragraphStyle:paragraphStyle1,
+                            NSAttributedStringKey.font : UIFont.systemFont(ofSize: 20), //your font here
+                            NSAttributedStringKey.foregroundColor : UIColor.black
+                            ])
+
+                        let formattedString = NSMutableAttributedString()
+                        formattedString
+                            .normal(NSLocalizedString("Step1", comment:""))
+                            .bold("\(Vehicaldetails.sharedInstance.SSId)")
+                            .normal(NSLocalizedString("Step2", comment:""))
+                            .bold("\(Vehicaldetails.sharedInstance.SSId)")
+                            .normal(NSLocalizedString("Step3", comment:""))
+
+                        alertController.setValue(formattedString, forKey: "attributedMessage")
+                        alertController.setValue(attributedString, forKey: "attributedTitle")
+                        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default){
+                            action in
+                            self.performSegue(withIdentifier: "Go", sender: self)
+                        }
+                        alertController.addAction(action)
+
+                        self.present(alertController, animated: true, completion: nil)
+                    }
+                    self.mainPage()
                 }
                 
                 if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){
                     self.performSegue(withIdentifier: "Go", sender: self)
                     self.web.sentlog(func_name: "Vehicle number entered \(Vehicaldetails.sharedInstance.vehicleno)", errorfromserverorlink: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
-
 
                     self.web.sentlog(func_name: "Go button Tapped NO need to select Wifi data Manually", errorfromserverorlink: " \(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())",errorfromapp: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)" + " Connected link: \(self.cf.getSSID())")
                 }
@@ -332,7 +338,11 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
     func Action(sender:UIButton!)
     {
         self.dismiss(animated: true, completion: nil)
-        self.web.wifisettings(pagename: "Vehicle")// wifisettings()
+        if #available(iOS 11.0, *) {
+            self.web.wifisettings(pagename: "Vehicle")
+        } else {
+            // Fallback on earlier versions
+        }
         self.mainPage()
     }
     
@@ -352,13 +362,13 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
             {
                 if(counthourauth>2)
                 {
-                    showAlert(message: NSLocalizedString("CheckyourInternet", comment:""))//"Please wait momentarily check your internet connection & try again.")//"\(error) \n Please try again later")
+                    showAlert(message: NSLocalizedString("CheckyourInternet", comment:""))
                 }
                 else
                 {
-                    getodometer()//self.senddata(deptno: deptno,ppin:ppin,other:other)
+                    getodometer()
                 }
-                showAlert(message: NSLocalizedString("Warningwait", comment:""))//"Please wait momentarily & try again.")//"\(error) \n Please try again later" )
+                showAlert(message: NSLocalizedString("Warningwait", comment:""))
                 stoptimergotostart.invalidate()
                 viewWillAppear(true)
             }
@@ -465,7 +475,7 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
         
         if(Vehicleno.text == "")
         {
-            showAlert(message: NSLocalizedString("Entervehicelno", comment:""))//"Please Enter Vehicle Number.")
+            showAlert(message: NSLocalizedString("Entervehicelno", comment:""))
             viewWillAppear(true)
         }
         else{

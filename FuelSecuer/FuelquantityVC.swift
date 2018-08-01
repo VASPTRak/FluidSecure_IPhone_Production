@@ -12,6 +12,8 @@ import SystemConfiguration.CaptiveNetwork
 import NetworkExtension
 import Foundation
 
+
+
 public enum Model : String {
     case simulator     = "simulator/sandbox",
     iPod1              = "iPod 1",
@@ -166,6 +168,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
         }
     }
     
+    @IBOutlet var Warning: UILabel!
     @IBOutlet var Pwait: UILabel!
     @IBOutlet var waitactivity: UIActivityIndicatorView!
     @IBOutlet var lable: UILabel!
@@ -175,16 +178,17 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
     @IBOutlet var Activity: UIActivityIndicatorView!
     
     //var downloadTask: URLSessionDownloadTask!
+    
+    var FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
     var stringdata:String = ""
     var reachability = Reachability.self
     var cf = Commanfunction()
     let defaults = UserDefaults.standard
     var web = Webservices()
     var getdatafromsetting = false
-    //var readData:String!
+
     var setrelaydata:String = ""
-    //var dataformserver = [String]()
-    //var datafromfs = [String]()
+
     var IsStartbuttontapped : Bool = false
     var Cancel_Button_tapped :Bool = false
     var string:String = ""
@@ -192,14 +196,14 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
     var tstring:String = ""
     var sysdata:NSDictionary!
     var setrelaysysdata:NSDictionary!
-    //var setpulsarsysdata:NSDictionary!
+
     var sysdata1:NSDictionary!
     var currentSSID:String!
     var s1:String!
     var iswifi :Bool!
     var Fquantity :Double!
     var string_data = ""
-    //var startingpoint = [String]()
+
     var quantity = [String]()
     var counts:String!
     var replySetPulser :String!
@@ -235,7 +239,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
     var emptypulsar_count:Int = 0
     var total_count:Int = 0
     var Last_Count:String!
-    //  var ifstartpulsar_status:Int = 0
+
     var stopdelaytime:Bool = false
     var timer_noConnection_withlink = Timer()
     var timer_quantityless_thanprevious = Timer()
@@ -243,6 +247,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
     //Network variables
     var inStream : InputStream?
     var outStream: OutputStream?
+    private let SSID = "\(Vehicaldetails.sharedInstance.SSId)"
     
     //Mark IBOutlets
     //@IBOutlet var fuelquan: UILabel!
@@ -263,55 +268,62 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
     
     override func viewDidAppear(_ animated: Bool) {
         stoptimergotostart.invalidate()
+       
+        self.timerview.invalidate()
+        if(startbutton == "true"){}
+        else{
+            self.displaytime.text = NSLocalizedString("MessageFueling1", comment:"")
+            print(string)
+            cf.delay(4){
+                self.Activity.hidesWhenStopped = true;
+                if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){
+                    let showstart = self.getinfo()
+                    if(showstart == "true"){
+                        self.start.isEnabled = true
+                        self.start.isHidden = false
+                        self.Pwait.isHidden = true
+                    }else
+                        if(showstart == "false"){
+                            self.start.isEnabled = false
+                            self.start.isHidden = true
+                            self.displaytime.text =  NSLocalizedString("MessageFueling1", comment:"")
+                            print("return  false  by info command")
+                            self.showAlertSetting(message: NSLocalizedString("WarningselectWifi", comment:"") + " \(Vehicaldetails.sharedInstance.SSId) " + NSLocalizedString("Wifi", comment:""))
+                    }
+                    if(showstart == "-1")
+                    {
+                        print("return  -1  by info command")
+                        self.showAlertSetting(message: NSLocalizedString("WarningselectWifi", comment:"") + "\(Vehicaldetails.sharedInstance.SSId)" + NSLocalizedString("Wifi", comment:""))
+                    }
+                    if(showstart == "")
+                    {
+                        print("return \" \"  by info command")
+                        self.showAlertSetting(message: NSLocalizedString("WarningselectWifi", comment:"") + "\(Vehicaldetails.sharedInstance.SSId)" + NSLocalizedString("Wifi", comment:""))
+                    }
+                    self.timerview.invalidate()
+                    self.iswifi = true
+                    if(self.startbutton == "true")
+                    {
+                        print("startbutton")
+                    }
 
-        self.displaytime.text = NSLocalizedString("MessageFueling1", comment:"")//"Please wait while your connection is being established With FS link"
-        print(string)
-        cf.delay(1){
-            self.Activity.hidesWhenStopped = true;
-            if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){
-                let showstart = self.getinfo()
+                    self.displaytime.text = NSLocalizedString("MessageFueling", comment:"")
 
-                if(showstart == "true"){
-                    self.start.isEnabled = true
-                    self.start.isHidden = false
-                    self.Pwait.isHidden = true
-                }else
-                    if(showstart == "false"){
-                        self.start.isEnabled = false
-                        self.start.isHidden = true
-                        self.displaytime.text =  NSLocalizedString("MessageFueling1", comment:"")//"Please wait while your connection is being established With FS link"
-                        print("return  false  by info command")
-                        self.showAlertSetting(message: NSLocalizedString("WarningselectWifi", comment:"") + "\(Vehicaldetails.sharedInstance.SSId)" + NSLocalizedString("Wifi", comment:""))//"Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
-                }
-                if(showstart == "-1")
+                } else if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID())
                 {
-                    print("return  -1  by info command")
-                    self.showAlertSetting(message: NSLocalizedString("WarningselectWifi", comment:"") + "\(Vehicaldetails.sharedInstance.SSId)" + NSLocalizedString("Wifi", comment:""))//"Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
-                }
-                if(showstart == "")
-                {
-                    print("return \" \"  by info command")
-                    self.showAlertSetting(message: NSLocalizedString("WarningselectWifi", comment:"") + "\(Vehicaldetails.sharedInstance.SSId)" + NSLocalizedString("Wifi", comment:""))//"Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
-                }
-                self.timerview.invalidate()
-                self.iswifi = true
-                if(self.startbutton == "true")
-                {
-                    print("startbutton")
-                }
+                    self.IsStartbuttontapped = false
+                    self.cf.delay(4){
+                        let dateFormatter = DateFormatter()
+                        dateFormatter.dateFormat = "MM/dd/yyyy HH:mm:ss a" //9/25/2017 10:21:41 AM"
+                        dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
+                        let dtt: String = dateFormatter.string(from: NSDate() as Date)
 
-                self.displaytime.text = NSLocalizedString("MessageFueling", comment:"")// "Please insert the nozzle into the tank \n Then tap start"
-                
-            } else if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID())
-            {
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "MM/dd/yyyy HH:mm:ss a" //9/25/2017 10:21:41 AM"
-                let dtt: String = dateFormatter.string(from: NSDate() as Date)
+                        self.web.sentlog(func_name: "OnAppearing Fueling screen lost Wifi connection with the link, Date\(dtt)", errorfromserverorlink: " Connected link: \(self.cf.getSSID())", errorfromapp:" Selected Hose: \(Vehicaldetails.sharedInstance.SSId)")
 
-                self.web.sentlog(func_name: "OnAppearing Fueling screen lost Wifi connection with the link, Date\(dtt)", errorfromserverorlink: " Connected link: \(self.cf.getSSID())", errorfromapp:" Selected Hose: \(Vehicaldetails.sharedInstance.SSId)")
-
-                self.timerview.invalidate()
-                self.showAlertSetting(message: NSLocalizedString("WarningselectWifi", comment:"") + "\(Vehicaldetails.sharedInstance.SSId)" + NSLocalizedString("Wifi", comment:""))//"Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
+                        self.timerview.invalidate()
+                        self.showAlertSetting(message: NSLocalizedString("WarningselectWifi", comment:"") + "\(Vehicaldetails.sharedInstance.SSId)" + NSLocalizedString("Wifi", comment:""))
+                    }
+                }
             }
         }
     }
@@ -324,7 +336,9 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
         self.navigationController?.navigationBar.barTintColor = UIColor(red: 31.0/255.0, green: 77.0/255.0, blue: 153.0/255.0, alpha: 1.0)//
         self.navigationController?.navigationBar.tintColor = UIColor.white
         self.navigationItem.title = "\(Vehicaldetails.sharedInstance.SSId)"
-        self.navigationController!.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
+        self.navigationController!.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
+        Warning.isHidden = true
+        
     }
     
     override func viewDidLoad() {
@@ -342,9 +356,9 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
         currentlocation = locationManager.location
         Vehicaldetails.sharedInstance.gohome = false
         let doneButton:UIButton = UIButton (frame: CGRect(x: 100, y: 100, width: 100, height: 44));
-        doneButton.setTitle("Return", for: UIControlState())
+        doneButton.setTitle(NSLocalizedString("Return", comment:""), for: UIControlState())
         doneButton.addTarget(self, action: #selector(FuelquantityVC.tapAction), for: UIControlEvents.touchUpInside);
-        doneButton.backgroundColor = UIColor .black
+        doneButton.backgroundColor = UIColor.black
         
         FQ.isHidden = false
         Stop.isHidden = true
@@ -378,7 +392,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
         }
     }
     
-    func tapAction() {
+    @objc func tapAction() {
         self.view.frame = CGRect(x: 0,y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height)
         self.view.endEditing(true)
     }
@@ -406,7 +420,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
 
     
     func getinfo() -> String {
-        //cf.delay(1){
+
         let Url:String = "http://192.168.4.1:80/client?command=info"
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string:Url)!)
         request.httpMethod = "GET"
@@ -473,7 +487,6 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                 self.web.sentlog(func_name: "Fueling Page Getinfo Function", errorfromserverorlink: " Response from link $$ \(newString)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
 
                 self.reply = "-1"
-                //  self.web.sentlog(func_name: <#T##String#>)
             }
             semaphore.signal()
         }
@@ -503,10 +516,14 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
         Thread.sleep(forTimeInterval:1)
         print(outputdata)
         let text = self.string
+
+        //Get the output from the link in JSON Format remove the New line, spaces and null characters and then send log to server using sendlog function.
         let test = String((text.filter { !" \n".contains($0) }))
         let newString = test.replacingOccurrences(of: "\"" , with: " ", options: .literal, range: nil)
         print(newString)
-        self.web.sentlog(func_name: "Fueling Page Realy On Function with command:http://192.168.4.1:80/config?command=relay { relay_request :{ Password : 12345678 , Status :1}}", errorfromserverorlink: " Response from link $$ \(newString)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+        let responsestring = newString.replacingOccurrences(of: "\0" , with: " ", options: .literal, range: nil)
+
+        self.web.sentlog(func_name: "Fueling Page Realy On Function with command:http://192.168.4.1:80/config?command=relay { relay_request :{ Password : 12345678 , Status :1}}", errorfromserverorlink: " Response from link $$ \(responsestring)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
         
         if(self.string == ""){}
         else{
@@ -522,8 +539,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
     func setpulsartcp()->String{
         
         NetworkEnable()
-        //        let s:String = "{\"pulsar_request\":{\"counter_set\":1}}"
-        //        print(s.count)
+
         let datastring = "POST /config?command=pulsar HTTP/1.1\r\nContent-Type: application/json; charset=utf-8\r\nContent-Length: 36\r\nHost: 192.168.4.1\r\nConnection: Keep-Alive\r\nAccept-Encoding: gzip\r\nUser-Agent: okhttp/3.6.0\r\n\r\n{\"pulsar_request\":{\"counter_set\":1}}"
         let data : Data = datastring.data(using: String.Encoding.utf8)!
         outStream?.write((data as NSData).bytes.bindMemory(to: UInt8.self, capacity: data.count), maxLength: data.count)
@@ -533,7 +549,8 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
         let test = String((text.filter { !" \n".contains($0) }))
         let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
         print(newString)
-        self.web.sentlog(func_name: "Fueling Page Set Pulsar oncommand Function with command:http://192.168.4.1:80/config?command=pulsar {pulsar_request:{counter_set:1}}", errorfromserverorlink: " Response from link \(newString)",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+        let responsestring = newString.replacingOccurrences(of: "\0" , with: " ", options: .literal, range: nil)
+        self.web.sentlog(func_name: "Fueling Page Set Pulsar oncommand Function with command:http://192.168.4.1:80/config?command=pulsar {pulsar_request:{counter_set:1}}", errorfromserverorlink: " Response from link \(responsestring)",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
         return outputdata
     }
     
@@ -550,7 +567,8 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
         let test = String((text.filter { !" \n".contains($0) }))
         let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
         print(newString)
-        self.web.sentlog(func_name: "Fueling Page Set Sampling time Function with command:http://192.168.4.1:80/config?command=pulsar { pulsar_status :{ sampling_time_ms:\(Int(Vehicaldetails.sharedInstance.PulserTimingAdjust)!)", errorfromserverorlink: " Response from link $$\(newString)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+        let responsestring = newString.replacingOccurrences(of: "\0" , with: " ", options: .literal, range: nil)
+        self.web.sentlog(func_name: "Fueling Page Set Sampling time Function with command:http://192.168.4.1:80/config?command=pulsar { pulsar_status :{ sampling_time_ms:\(Int(Vehicaldetails.sharedInstance.PulserTimingAdjust)!)", errorfromserverorlink: " Response from link $$\(responsestring)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
         return outputdata
     }
     
@@ -569,7 +587,8 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
         let test = String((text.filter { !" \n".contains($0) }))
         let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
         print(newString)
-        self.web.sentlog(func_name: "Fueling Page Realy OFF Function with command:http://192.168.4.1:80/config?command=relay { relay_request :{ Password : 12345678 , Status :0}}", errorfromserverorlink: " Response from link $$ \(newString)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+        let responsestring = newString.replacingOccurrences(of: "\0" , with: " ", options: .literal, range: nil)
+        self.web.sentlog(func_name: "Fueling Page Realy OFF Function with command:http://192.168.4.1:80/config?command=relay { relay_request :{ Password : 12345678 , Status :0}}", errorfromserverorlink: " Response from link $$ \(responsestring)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
         return outputdata
     }
     
@@ -583,7 +602,8 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
         let test = String((text.filter { !" \n".contains($0) }))
         let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
         print(newString)
-        self.web.sentlog(func_name: "Fueling Page Set Pulsar OFF command Function with command:http://192.168.4.1:80/config?command=pulsar {pulsar_request:{counter_set:0}}", errorfromserverorlink: " Response from link $$ \(newString)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+        let responsestring = newString.replacingOccurrences(of: "\0" , with: " ", options: .literal, range: nil)
+        self.web.sentlog(func_name: "Fueling Page Set Pulsar OFF command Function with command:http://192.168.4.1:80/config?command=pulsar {pulsar_request:{counter_set:0}}", errorfromserverorlink: " Response from link $$ \(responsestring)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
         return outputdata
     }
     
@@ -600,7 +620,8 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
         let test = String((text.filter { !" \n".contains($0) }))
         let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
         print(newString)
-        self.web.sentlog(func_name: "Fueling Page final_pulsar_request Function with command:http://192.168.4.1:80/config?command=pulsarX { final_pulsar_request :{ time :10}}", errorfromserverorlink: " Response from link $$  \(newString)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+        let responsestring = newString.replacingOccurrences(of: "\0" , with: " ", options: .literal, range: nil)
+        self.web.sentlog(func_name: "Fueling Page final_pulsar_request Function with command:http://192.168.4.1:80/config?command=pulsarX { final_pulsar_request :{ time :10}}", errorfromserverorlink: " Response from link $$  \(responsestring)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
         print(outputdata)
         return outputdata
     }
@@ -632,7 +653,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                     let objUserData = self.sysdata1.value(forKey: "quantity_10_record") as! NSDictionary
                     let counts = objUserData.value(forKey: "1:") as! NSNumber
 
-                    let t_count = Int(counts) + 1
+                    let t_count = Int(truncating: counts) + 1
                     print(t_count)
                     Vehicaldetails.sharedInstance.FinalQuantitycount = "\(t_count)"
                 }
@@ -692,7 +713,8 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
         let test = String((text.filter { !" \n".contains($0) }))
         let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
         print(newString)
-        self.web.sentlog(func_name: "Fueling Page Set Pulsar OFF Time Function with command:http://192.168.4.1:80/config?command=pulsar { pulsar_status :{ pulsar_off_time :\(time)}}", errorfromserverorlink: " Response from link $$ \(newString)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+        let responsestring = newString.replacingOccurrences(of: "\0" , with: " ", options: .literal, range: nil)
+        self.web.sentlog(func_name: "Fueling Page Set Pulsar OFF Time Function with command:http://192.168.4.1:80/config?command=pulsar { pulsar_status :{ pulsar_off_time :\(time)}}", errorfromserverorlink: " Response from link $$ \(responsestring)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
         print(outputdata)
 
         print(datastring)
@@ -723,7 +745,8 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
         let test = String((text.filter { !" \n".contains($0) }))
         let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
         print(newString)
-        self.web.sentlog(func_name: "Fueling Page Set_Transaction_IDtoFS Function with command:http://192.168.4.1:80/config?command=txtnid", errorfromserverorlink: " Response from link $$ \(newString)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+        let responsestring = newString.replacingOccurrences(of: "\0" , with: " ", options: .literal, range: nil)
+        self.web.sentlog(func_name: "Fueling Page Set_Transaction_IDtoFS Function with command:http://192.168.4.1:80/config?command=txtnid", errorfromserverorlink: " Response from link $$ \(responsestring)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
         print(outputdata)
         print(datastring)
     }
@@ -733,10 +756,11 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
         let fuelquantity = (Double(lastpulsarcount))!/(PulseRatio as NSString).doubleValue
         if(fuelquantity == 0.0 || lasttransID == "-1"){}
         else{
-            let bodyData = "{\"TransactionId\":\(lasttransID),\"FuelQuantity\":\((fuelquantity)),\"Pulses\":\"\(lastpulsarcount)\",\"TransactionFrom\":\"I\",\"versionno\":\"1.15.18\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\",\"Transaction\":\"LastTransaction\"}"
+            let bodyData = "{\"TransactionId\":\(lasttransID),\"FuelQuantity\":\((fuelquantity)),\"Pulses\":\"\(lastpulsarcount)\",\"TransactionFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\",\"Transaction\":\"LastTransaction\"}"
 
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "ddMMyyyyhhmmss"
+            dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
             let dtt1: String = dateFormatter.string(from: NSDate() as Date)
             let unsycnfileName =  dtt1 + "#" + "transaction" + "#" + "lasttransID" + "#" + Vehicaldetails.sharedInstance.SSId
             if(bodyData != ""){
@@ -763,6 +787,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
             {
                 self.web.sentlog(func_name: "startButtontapped lost Wifi connection with the link", errorfromserverorlink: self.cf.getSSID(), errorfromapp:"\(Vehicaldetails.sharedInstance.SSId)")
                 self.timerview.invalidate()
+
                 self.showAlertSetting(message: NSLocalizedString("wificonnection", comment:"") + "\(Vehicaldetails.sharedInstance.SSId)" +  NSLocalizedString("wificonnection1", comment:"") + "\(Vehicaldetails.sharedInstance.SSId)" + NSLocalizedString("Wifi", comment:""))
             }
             else {
@@ -917,7 +942,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                                                                     self.cf.delay(0.5){
                                                                         _ = self.setralay0tcp()
                                                                         _ = self.setpulsar0tcp()
-                                                                        // self.error400(message: NSLocalizedString("CheckFSunit", comment:""))//"Please check your FS unit, and switch off power and back on.")
+
                                                                     }
                                                                 }
                                                                 else{
@@ -946,7 +971,6 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                                                                         let objUserData = self.sysdata1.value(forKey: "pulsar_status") as! NSDictionary
                                                                         self.counts = objUserData.value(forKey: "counts") as! NSString as String
                                                                         let pulsar_status = objUserData.value(forKey: "pulsar_status") as! NSNumber
-                                                                        //self.ifstartpulsar_status = Int(pulsar_status)
 
 
                                                                         print(setpulsar)
@@ -1031,8 +1055,8 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                             backView?.layer.cornerRadius = 10.0
                             backView?.backgroundColor = UIColor.white
                             var messageMutableString = NSMutableAttributedString()
-                            messageMutableString = NSMutableAttributedString(string: "The link is busy, please try after some time." as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 25.0)!])
-                            messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.black, range: NSRange(location:0,length:"The link is busy, please try after some time.".count))
+                            messageMutableString = NSMutableAttributedString(string: "The link is busy, please try after some time." as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
+                            messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.black, range: NSRange(location:0,length:"The link is busy, please try after some time.".count))
                             alert.setValue(messageMutableString, forKey: "attributedMessage")
 
                             let okAction = UIAlertAction(title: NSLocalizedString("ok", comment:""), style: UIAlertActionStyle.default) { action in
@@ -1058,13 +1082,13 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
         Cancel_Button_tapped = true
         if(IsStartbuttontapped == true){}
         else{
-            let alert = UIAlertController(title: "Confirm", message: NSLocalizedString("Are you sure you want to Cancel? Please wait while getting redirected to select hose page.", comment:""), preferredStyle: UIAlertControllerStyle.alert)
+            let alert = UIAlertController(title: "Confirm", message: NSLocalizedString("Cancelwarning", comment:""), preferredStyle: UIAlertControllerStyle.alert)
             let backView = alert.view.subviews.last?.subviews.last
             backView?.layer.cornerRadius = 10.0
             backView?.backgroundColor = UIColor.white
             var messageMutableString = NSMutableAttributedString()
-            messageMutableString = NSMutableAttributedString(string: "Are you sure you want to Cancel? Please wait while getting redirected to select hose page." as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 25.0)!])
-            messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.black, range: NSRange(location:0,length:"Are you sure you want to Cancel? Please wait while getting redirected to select hose page.".count))
+            messageMutableString = NSMutableAttributedString(string: NSLocalizedString("Cancelwarning", comment:"") as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
+            messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.black, range: NSRange(location:0,length:NSLocalizedString("Cancelwarning", comment:"").count))
             alert.setValue(messageMutableString, forKey: "attributedMessage")
 
             let okAction = UIAlertAction(title: NSLocalizedString("YES", comment:""), style: UIAlertActionStyle.default) { action in
@@ -1120,8 +1144,8 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
         
         let message  = message
         var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.black, range: NSRange(location:0,length:message.count))
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
+        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.black, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
         
         // Action.
@@ -1153,8 +1177,8 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
         
         let message  = message
         var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.black, range: NSRange(location:0,length:message.count))
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
+        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.black, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
         // Action.
         let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default, handler: nil)
@@ -1172,25 +1196,76 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
         
         let message  = message
         var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.black, range: NSRange(location:0,length:message.count))
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
+        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.black, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
         
         // Action.
-        let action = UIAlertAction(title: NSLocalizedString("Wifi Settings", comment:""), style: UIAlertActionStyle.default) { action in //self.
-            let settingsUrl = URL(string: UIApplicationOpenSettingsURLString)!
-            if #available(iOS 10.0, *) {
-                UIApplication.shared.open(settingsUrl)
+        let action = UIAlertAction(title: NSLocalizedString("ConnectWifi", comment:""), style: UIAlertActionStyle.default) { action in //self.
+
+            if #available(iOS 11.0, *) {
+                // self.web.wifisettings(pagename: "FuelQuantityVC")
+                self.cf.delay(1){
+                    let hotspotConfig = NEHotspotConfiguration(ssid: self.SSID, passphrase: "123456789", isWEP: false)
+                    hotspotConfig.joinOnce = true
+
+                    NEHotspotConfigurationManager.shared.apply(hotspotConfig) {(error) in
+
+                        if let error = error {
+                            // self.showError(error: error)
+                            print("Error\(error)")
+                            self.web.wifisettings(pagename:"Retry")
+                        }
+                        else {
+                            self.web.sentlog(func_name: "Go button Tapped user Joins \(Vehicaldetails.sharedInstance.SSId) wifi Automatically from FuelquantityVC Page", errorfromserverorlink: " \(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())",errorfromapp: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)" + " Connected link: \(self.cf.getSSID())")
+                            // self.showSuccess()
+                            print("Connected")
+                        }
+                    }
+                }
             } else {
                 // Fallback on earlier versions
+
+                let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertControllerStyle.alert)
+                let backView = alertController.view.subviews.last?.subviews.last
+                backView?.layer.cornerRadius = 10.0
+                backView?.backgroundColor = UIColor.white
+
+                let paragraphStyle = NSMutableParagraphStyle()
+                paragraphStyle.alignment = NSTextAlignment.left
+
+                let paragraphStyle1 = NSMutableParagraphStyle()
+                paragraphStyle1.alignment = NSTextAlignment.left
+
+                let attributedString = NSAttributedString(string:NSLocalizedString("Subtitle", comment:""), attributes: [
+                    NSAttributedStringKey.paragraphStyle:paragraphStyle1,
+                    NSAttributedStringKey.font : UIFont.systemFont(ofSize: 20), //your font here
+                    NSAttributedStringKey.foregroundColor : UIColor.black
+                    ])
+
+                let formattedString = NSMutableAttributedString()
+                formattedString
+                    .normal(NSLocalizedString("Step1", comment:""))
+                    .bold("\(Vehicaldetails.sharedInstance.SSId)")
+                    .normal(NSLocalizedString("Step2", comment:""))
+                    .bold("\(Vehicaldetails.sharedInstance.SSId)")
+                    .normal(NSLocalizedString("Step3", comment:""))
+
+                alertController.setValue(formattedString, forKey: "attributedMessage")
+                alertController.setValue(attributedString, forKey: "attributedTitle")
+                let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default){
+                    action in
+                    // self.cf.getSSID()
+                }
+                alertController.addAction(action)
+
+                self.present(alertController, animated: true, completion: nil)
             }
-           // let url = NSURL(string: "App-Prefs:root=WIFI") //for WIFI setting app
-          //  let app = UIApplication.shared// .shared
-         //   app.openURL(url! as URL)
+
             Vehicaldetails.sharedInstance.gohome = false
             self.resumetimer()
         }
-        let home = UIAlertAction(title: NSLocalizedString("Back to Home", comment:""), style: UIAlertActionStyle.default) { action in //
+        let home = UIAlertAction(title: NSLocalizedString("BacktoHome", comment:""), style: UIAlertActionStyle.default) { action in //
             
             Vehicaldetails.sharedInstance.gohome = true
             self.IsStartbuttontapped = true
@@ -1200,6 +1275,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
             let appDel = UIApplication.shared.delegate! as! AppDelegate
             
             appDel.start()
+             self.timerview.invalidate()
         }
         alertController.addAction(action)
         alertController.addAction(home)
@@ -1212,9 +1288,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
     }
     
     func okaction(sender:UIButton){
-        let url = NSURL(string: "App-Prefs:root=WIFI") //for WIFI setting app
-        let app = UIApplication.shared// .shared
-        app.openURL(url! as URL)
+
         Vehicaldetails.sharedInstance.gohome = false
         self.resumetimer()
     }
@@ -1229,7 +1303,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
         appDel.start()
     }
     
-    func stopButtontapped()
+    @objc func stopButtontapped()
     {
         Stop.isEnabled = false
         Stop.isHidden = true
@@ -1244,8 +1318,13 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
             {
                 self.web.sentlog(func_name: "stopButtontapped lost Wifi connection with the link ", errorfromserverorlink: self.cf.getSSID(), errorfromapp:"\(Vehicaldetails.sharedInstance.SSId)" )
                 self.timerview.invalidate()
-                self.stoprelay()
-                
+                do{
+                    try self.stoprelay()
+                }
+                catch let error as NSError {
+                    print ("Error: \(error.domain)")
+                    self.web.sentlog(func_name: "stoprelay", errorfromserverorlink: "\(error)", errorfromapp:"Error: \(error.domain)")
+                }
             }else {
                 var setrelayd = self.setralay0tcp()
                 self.cf.delay(0.5){
@@ -1254,8 +1333,14 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                         if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()) //check selected wifi and connected wifi is not same
                         {self.web.sentlog(func_name: "stopButtontapped lost Wifi connection with the link", errorfromserverorlink: self.cf.getSSID(), errorfromapp:"\(Vehicaldetails.sharedInstance.SSId)" )
                             self.timerview.invalidate()
-                            self.stoprelay()
-                            
+                          //  self.stoprelay()
+                            do{
+                                try self.stoprelay()
+                            }
+                            catch let error as NSError {
+                                print ("Error: \(error.domain)")
+                                self.web.sentlog(func_name: "stoprelay", errorfromserverorlink: "\(error)", errorfromapp:"Error: \(error.domain)")
+                            }
                         }else {
                             setrelayd = self.setralay0tcp()
                             self.cf.delay(0.5){}
@@ -1268,15 +1353,29 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                             {
                                 self.web.sentlog(func_name: "stopButtontapped lost Wifi connection with the link ", errorfromserverorlink: self.cf.getSSID(), errorfromapp:"\(Vehicaldetails.sharedInstance.SSId)" )
                                 self.timerview.invalidate()
-                                self.stoprelay()
-                                
+                               // self.stoprelay()
+                                do{
+                                    try self.stoprelay()
+                                }
+                                catch let error as NSError {
+                                    print ("Error: \(error.domain)")
+                                    self.web.sentlog(func_name: "stoprelay", errorfromserverorlink: "\(error)", errorfromapp:"Error: \(error.domain)")
+                                }
+
                             }else {
                                 _ = self.setralay0tcp()
                                 
                                 _ = self.setpulsar0tcp()
                                 self.web.sentlog(func_name: "stopButtontapped set relay off command Response from link is $$ \(setrelayd)!!", errorfromserverorlink: self.cf.getSSID(), errorfromapp:"\(Vehicaldetails.sharedInstance.SSId)" )
-                                // self.error400(message: NSLocalizedString("CheckFSunit", comment:""))//"Please check your FS unit, and switch off power and back on.")
-                                self.stoprelay()
+
+                               // self.stoprelay()
+                                do{
+                                    try self.stoprelay()
+                                }
+                                catch let error as NSError {
+                                    print ("Error: \(error.domain)")
+                                    self.web.sentlog(func_name: "stoprelay", errorfromserverorlink: "\(error)", errorfromapp:"Error: \(error.domain)")
+                                }
                             }
                         }
                     }
@@ -1286,7 +1385,14 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                         if(Split.count < 3){
                             _ = self.setralay0tcp()
                             _ = self.setpulsar0tcp()
-                            self.stoprelay()
+                           // self.stoprelay()
+                            do{
+                                try self.stoprelay()
+                            }
+                            catch let error as NSError {
+                                print ("Error: \(error.domain)")
+                                self.web.sentlog(func_name: "stoprelay", errorfromserverorlink: "\(error)", errorfromapp:"Error: \(error.domain)")
+                            }
                         }
                         else {
                             
@@ -1314,128 +1420,161 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                                 {
                                     self.web.sentlog(func_name: "stopButtontapped lost Wifi connection with the link ", errorfromserverorlink: self.cf.getSSID(), errorfromapp:"\(Vehicaldetails.sharedInstance.SSId)" )
                                     self.timerview.invalidate()
-                                    self.stoprelay()
-
+                                    //self.stoprelay()
+                                    do{
+                                        try self.stoprelay()
+                                    }
+                                    catch let error as NSError {
+                                        print ("Error: \(error.domain)")
+                                        self.web.sentlog(func_name: "stoprelay", errorfromserverorlink: "\(error)", errorfromapp:"Error: \(error.domain)")
+                                    }
                                 }else {
                                     self.timer.invalidate()
                                     self.string = ""
-                                    var finalpulsar = self.final_pulsar_request()
                                     self.cf.delay(0.5){
-                                        if(finalpulsar == ""){
-                                            finalpulsar = self.final_pulsar_request()
-                                        }
-                                        print(finalpulsar)
-                                        let Split = finalpulsar.components(separatedBy: "{")
-                                        print("Splitcout\(Split.count)")
-                                        if(Split.count < 3){  _ = self.setralay0tcp()
-                                            
-                                            _ = self.setpulsar0tcp()
-                                            self.stoprelay()
-                                        }
-                                        else{
-                                            let reply = Split[1]
-                                            let setrelay = Split[2]
-                                            let Split1 = setrelay.components(separatedBy: "}")
-                                            let setrelay1 = Split1[0]
-                                            let outputdata = "{" +  reply + "{" + setrelay1 + "}" + "}"
-                                            let data1 = outputdata.data(using: String.Encoding.utf8)!
-                                            do{
-                                                self.sysdata1 = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
-                                            }catch let error as NSError {
-                                                print ("Error: \(error.domain)")
+                                        var finalpulsar = self.final_pulsar_request()
+                                        self.cf.delay(0.5){
+                                            if(finalpulsar == ""){
+                                                finalpulsar = self.final_pulsar_request()
                                             }
-                                            print(self.sysdata1,"pulsar_status")
-                                            if(self.sysdata1 == nil){}
-                                            else{
-                                                let objUserData = self.sysdata1.value(forKey: "pulsar_status") as! NSDictionary
-                                                self.counts = objUserData.value(forKey: "counts") as! NSString as String
-                                                // let pulsar_status = objUserData.value(forKey: "pulsar_status") as! NSNumber
-                                                if (self.counts != "0"){
+                                            print(finalpulsar)
+                                            let Split = finalpulsar.components(separatedBy: "{")
+                                            print("Splitcout\(Split.count)")
+                                            if(Split.count < 3){  _ = self.setralay0tcp()
 
+                                                _ = self.setpulsar0tcp()
+                                               // self.stoprelay()
+                                                do{
+                                                    try self.stoprelay()
                                                 }
-                                                let fuelQuan = self.calculate_fuelquantity(quantitycount: Int(self.counts as String)!)
-                                                let y = Double(round(100*fuelQuan)/100)
-                                                self.tquantity.text = "\(y) "
-                                                self.tpulse.text = (self.counts as String) as String
+                                                catch let error as NSError {
+                                                    print ("Error: \(error.domain)")
+                                                    self.web.sentlog(func_name: "stoprelay", errorfromserverorlink: "\(error)", errorfromapp:"Error: \(error.domain)")
+                                                }
                                             }
-                                            
-                                            print(self.string)
-                                            self.Stop.isHidden = true
+                                            else{
+                                                let reply = Split[1]
+                                                let setrelay = Split[2]
+                                                let Split1 = setrelay.components(separatedBy: "}")
+                                                let setrelay1 = Split1[0]
+                                                let outputdata = "{" +  reply + "{" + setrelay1 + "}" + "}"
+                                                let data1 = outputdata.data(using: String.Encoding.utf8)!
+                                                do{
+                                                    self.sysdata1 = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                                                }catch let error as NSError {
+                                                    print ("Error: \(error.domain)")
+                                                }
+                                                print(self.sysdata1,"pulsar_status")
+                                                if(self.sysdata1 == nil){}
+                                                else{
+                                                    let objUserData = self.sysdata1.value(forKey: "pulsar_status") as! NSDictionary
+                                                    self.counts = objUserData.value(forKey: "counts") as! NSString as String
 
-                                            let SSID:String = self.cf.getSSID()
-                                            print(SSID)
-                                            print(Vehicaldetails.sharedInstance.SSId)
-                                            if(Vehicaldetails.sharedInstance.IsHoseNameReplaced == "N"){
-                                                self.web.changessidname(wifissid: Vehicaldetails.sharedInstance.SSId)
-                                            }
-                                            _ = self.setpulsar0tcp()
-                                            if( Vehicaldetails.sharedInstance.SSId == SSID  || "FUELSECURE" == SSID)
-                                            {
-                                                
-                                                self.cf.delay(0.5) {     // takes a Double value for the delay in seconds
-                                                    
-                                                    // put the delayed action/function here
-                                                    if(Vehicaldetails.sharedInstance.IsHoseNameReplaced == "N"){
-                                                        _ = self.web.SetHoseNameReplacedFlag()
+                                                    if (self.counts != "0"){
+
                                                     }
-                                                    if(Vehicaldetails.sharedInstance.IsUpgrade == "Y"){
-                                                        
-                                                        self.getuser()
-                                                        //                            Vehicaldetails.sharedInstance.IsUpgrade = "N"
-                                                    }else{}
-                                                    self.cf.delay(1){
-                                                        if(self.fuelquantity > 0){
-                                                            self.wait.isHidden = true
-                                                            self.waitactivity.isHidden = true
-                                                            self.waitactivity.stopAnimating()
-                                                            self.Quantity1.text = "\(String(format: "%.2f", self.fuelquantity))"
-                                                            self.pulse.text = "\(self.counts!)"
-                                                            print(self.counts)
-                                                            self.totalquantityinfo.text = NSLocalizedString("ThankyouMSG", comment:"")//"Thank you for using \nFluidSecure!"
-                                                            self.UsageInfoview.isHidden = false
+                                                    let fuelQuan = self.calculate_fuelquantity(quantitycount: Int(self.counts as String)!)
+                                                    if(Vehicaldetails.sharedInstance.Language == "es-ES"){
+                                                        let y = Double(round(100*fuelQuan)/100)
+                                                        self.tquantity.text = "\(y) ".replacingOccurrences(of: ".", with: ",", options: .literal, range: nil)
+                                                        print(self.tquantity.text!)
+                                                    }
+                                                    else {
+                                                    let y = Double(round(100*fuelQuan)/100)
+                                                    self.tquantity.text = "\(y) "
 
+                                                    }
+                                                    self.tpulse.text = (self.counts as String) as String
+                                                    self.Last_Count = (self.counts as String) as String
+                                                }
+
+                                                print(self.string)
+                                                self.Stop.isHidden = true
+
+                                                let SSID:String = self.cf.getSSID()
+                                                print(SSID)
+                                                print(Vehicaldetails.sharedInstance.SSId)
+                                                if(Vehicaldetails.sharedInstance.IsHoseNameReplaced == "N"){
+                                                    self.web.changessidname(wifissid: Vehicaldetails.sharedInstance.SSId)
+                                                }
+                                                self.cf.delay(0.5) {
+                                                    _ = self.setpulsar0tcp()
+                                                    if( Vehicaldetails.sharedInstance.SSId == SSID  || "FUELSECURE" == SSID)
+                                                    {
+
+                                                        self.cf.delay(0.5) {     // takes a Double value for the delay in seconds
+
+                                                            // put the delayed action/function here
+                                                            if(Vehicaldetails.sharedInstance.IsHoseNameReplaced == "N"){
+                                                                _ = self.web.SetHoseNameReplacedFlag()
+                                                            }
+                                                            if(Vehicaldetails.sharedInstance.IsUpgrade == "Y"){
+                                                                self.web.sentlog(func_name: "StopButtonTapped Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                                                                self.getuser()
+                                                                //                            Vehicaldetails.sharedInstance.IsUpgrade = "N"
+                                                            }else{}
                                                             self.cf.delay(1){
-                                                                self.Transaction(fuelQuantity: self.fuelquantity)
-                                                                let replytld = self.web.tldlevel()
+                                                                if(self.fuelquantity > 0){
+                                                                    self.wait.isHidden = true
+                                                                    self.waitactivity.isHidden = true
+                                                                    self.waitactivity.stopAnimating()
+                                                                    if(Vehicaldetails.sharedInstance.Language == "es-ES"){
+                                                                        self.Quantity1.text = "\(String(format: "%.2f", self.fuelquantity))".replacingOccurrences(of: ".", with: ",", options: .literal, range: nil)
+                                                                    }
+                                                                    else {
+                                                                        self.Quantity1.text = "\(String(format: "%.2f", self.fuelquantity))"
+                                                                    }
 
-                                                                if(replytld == ""){}
-                                                                else{
-                                                                    self.sendtld(replytld: replytld)
+                                                                    self.pulse.text = "\(self.counts!)"
+                                                                    print(self.counts)
+                                                                    self.totalquantityinfo.text = NSLocalizedString("ThankyouMSG", comment:"")//"Thank you for using \nFluidSecure!"
+                                                                    self.UsageInfoview.isHidden = false
+                                                                    self.Warning.isHidden = true
+                                                                    self.cf.delay(1){
+                                                                        self.Transaction(fuelQuantity: self.fuelquantity)
+                                                                        let replytld = self.web.tldlevel()
+
+                                                                        if(replytld == "" || replytld == "nil"){}
+                                                                        else{
+                                                                            self.sendtld(replytld: replytld)
+                                                                        }
+                                                                        if(Vehicaldetails.sharedInstance.MacAddress == "nil"){
+                                                                            Vehicaldetails.sharedInstance.MacAddress = "not found"
+                                                                        }
+                                                                        self.web.sentlog(func_name: "StopButtonTapped MacAddresses", errorfromserverorlink: "FS Version \(Vehicaldetails.sharedInstance.FS_MacAddress)", errorfromapp: " \(Vehicaldetails.sharedInstance.MacAddress)" + " Connected link : \(self.cf.getSSID())")
+
+                                                                    }
+                                                                    self.cf.delay(10){
+                                                                        if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
+                                                                        {
+                                                                            _ = self.web.getinfo()
+                                                                            if(Vehicaldetails.sharedInstance.IsFirmwareUpdate == false) {
+                                                                                _ = self.web.UpgradeCurrentVersiontoserver()
+                                                                            }
+                                                                            Vehicaldetails.sharedInstance.IsUpgrade = "N"
+                                                                            self.cf.delay(30){
+                                                                                Vehicaldetails.sharedInstance.gohome = true
+                                                                                self.timerview.invalidate()
+                                                                                let appDel = UIApplication.shared.delegate! as! AppDelegate
+                                                                                self.web.sentlog(func_name: "stopButtontapped 30 delay", errorfromserverorlink: "", errorfromapp: "")
+                                                                                appDel.start()
+                                                                            }
+                                                                        }
+                                                                        if (self.stopdelaytime == true){}
+                                                                        else{
+                                                                            Vehicaldetails.sharedInstance.gohome = true
+                                                                            self.timerview.invalidate()
+                                                                            let appDel = UIApplication.shared.delegate! as! AppDelegate
+                                                                            self.web.sentlog(func_name: "stopButtontapped ", errorfromserverorlink: "", errorfromapp: "")
+                                                                            appDel.start()
+                                                                        }
+                                                                    }
                                                                 }
-                                                                print(Vehicaldetails.sharedInstance.MacAddress,Vehicaldetails.sharedInstance.FS_MacAddress)
-                                                                if(Vehicaldetails.sharedInstance.FS_MacAddress == Vehicaldetails.sharedInstance.MacAddress){}
-                                                                else if(Vehicaldetails.sharedInstance.FS_MacAddress != Vehicaldetails.sharedInstance.MacAddress){
-                                                                }
-                                                            }
-                                                            self.cf.delay(10){
-                                                                if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
+                                                                else
                                                                 {
-                                                                    _ = self.web.getinfo()
-                                                                    if(Vehicaldetails.sharedInstance.IsFirmwareUpdate == false) {
-                                                                        _ = self.web.UpgradeCurrentVersiontoserver()
-                                                                    }
-                                                                    Vehicaldetails.sharedInstance.IsUpgrade = "N"
-                                                                    self.cf.delay(30){
-                                                                        Vehicaldetails.sharedInstance.gohome = true
-                                                                        self.timerview.invalidate()
-                                                                        let appDel = UIApplication.shared.delegate! as! AppDelegate
-                                                                        self.web.sentlog(func_name: "stopButtontapped 30 delay", errorfromserverorlink: "", errorfromapp: "")
-                                                                        appDel.start()
-                                                                    }
-                                                                }
-                                                                if (self.stopdelaytime == true){}
-                                                                else{
-                                                                    Vehicaldetails.sharedInstance.gohome = true
-                                                                    self.timerview.invalidate()
-                                                                    let appDel = UIApplication.shared.delegate! as! AppDelegate
-                                                                    self.web.sentlog(func_name: "stopButtontapped ", errorfromserverorlink: "", errorfromapp: "")
-                                                                    appDel.start()
+                                                                    self.error400(message: NSLocalizedString("ZeroQuantity", comment:""))//"Quantity is zero. Transaction is stopped")
                                                                 }
                                                             }
-                                                        }
-                                                        else
-                                                        {
-                                                            self.error400(message: NSLocalizedString("ZeroQuantity", comment:""))//"Quantity is zero. Transaction is stopped")
                                                         }
                                                     }
                                                 }
@@ -1454,7 +1593,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
     func sendtld(replytld: String)
     {
         print(replytld);
-        if(replytld == nil || replytld == "-1")
+        if(replytld == "nil" || replytld == "-1")
         {
         }
         else{
@@ -1473,23 +1612,25 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                 let LSB = objUserData.value(forKey: "LSB") as! NSNumber
                 let MSB = objUserData.value(forKey: "MSB") as! NSNumber
                 let Mac_address = objUserData.value(forKey: "Mac_address") as! NSString
+                let TLDTemperature = objUserData.value(forKey: "Tem_data") as! NSNumber
                 print(LSB,MSB,Mac_address)
-                let probereading = self.GetProbeReading(LSB:Int(LSB),MSB:Int(MSB))
+               // let probereading = self.GetProbeReading(LSB:Int(LSB),MSB:Int(MSB))
                 let uuid = self.defaults.string(forKey: "uuid")
                 let siteid = Vehicaldetails.sharedInstance.siteID
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "MM/dd/yyyy HH:mm a" //9/25/2017 10:21:41 AM"
+                dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
                 let dtt: String = dateFormatter.string(from: NSDate() as Date)
 
-                let bodyData = "{\"FromSiteId\":\(siteid),\"IMEI_UDID\":\"\((uuid!))\",\"ProbeReading\":\"\(probereading)\",\"ReadingDateTime\":\"\(dtt)\",\"TLD\":\"\(Mac_address)\"}"
+                let bodyData = "{\"FromSiteId\":\(siteid),\"IMEI_UDID\":\"\((uuid!))\",\"LSB\":\"\(LSB)\",\"MSB\":\"\(MSB)\",\"TLDTemperature\":\"\(TLDTemperature)\",\"ReadingDateTime\":\"\(dtt)\",\"TLD\":\"\(Mac_address)\"}"
 
                 let reply = self.web.tldsendserver(bodyData: bodyData)
                 print(reply)
                 if (reply == "-1")
                 {
-                    let unsycnfileName =  dtt + "#" + "\(probereading)" + "#" + "\(siteid)" + "#" + "SaveTankMonitorReading" //
+                    //let unsycnfileName =  dtt + "#" + "\(probereading)" + "#" + "\(siteid)"// + "#" + "SaveTankMonitorReading" //
                     if(bodyData != ""){
-                        cf.SaveTextFile(fileName: unsycnfileName, writeText: bodyData)
+                      //  cf.SaveTextFile(fileName: unsycnfileName, writeText: bodyData)
                     }
                 }
             }
@@ -1508,7 +1649,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
     }
 
     
-    func stoprelay(){
+    @objc func stoprelay() throws -> String {
         if(Last_Count == nil){
             Last_Count = "0.0"
         }
@@ -1526,7 +1667,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
         if(Vehicaldetails.sharedInstance.PulseRatio == "" || Vehicaldetails.sharedInstance.pulsarCount == "" ){
             self.error400(message: NSLocalizedString("NoQuantity", comment:""))//"No Quantity received. Transaction ended.")
         } else{
-            let quantitycount = Vehicaldetails.sharedInstance.pulsarCount
+            let quantitycount = self.Last_Count! //Vehicaldetails.sharedInstance.pulsarCount
             let PulseRatio = Vehicaldetails.sharedInstance.PulseRatio
             self.fuelquantity = (Double(quantitycount))!/(PulseRatio as NSString).doubleValue
 
@@ -1551,11 +1692,18 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                                 self.wait.isHidden = true
                                 self.waitactivity.isHidden = true
                                 self.waitactivity.stopAnimating()
-                                self.Quantity1.text = "\(String(format: "%.2f", self.fuelquantity))"
+                                if(Vehicaldetails.sharedInstance.Language == "es-ES"){
+                                    self.Quantity1.text = "\(String(format: "%.2f", self.fuelquantity))".replacingOccurrences(of: ".", with: ",", options: .literal, range: nil)
+                                }
+                                else {
+                                    self.Quantity1.text = "\(String(format: "%.2f", self.fuelquantity))"
+                                }
+                                //self.Quantity1.text = "\(String(format: "%.2f", self.fuelquantity))"
                                 self.pulse.text = "\(self.Last_Count!)"
                                 print(self.Last_Count)
                                 self.totalquantityinfo.text = NSLocalizedString("ThankyouMSG", comment:"")//"Thank you for using \nFluidSecure!"
                                 self.UsageInfoview.isHidden = false
+                                self.Warning.isHidden = true
                                 self.cf.delay(1){
                                     self.Transaction(fuelQuantity: self.fuelquantity)
                                     // var data = self.web.tldlevel()
@@ -1563,11 +1711,6 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                                     if(replytld == ""){}
                                     else{
                                         self.sendtld(replytld: replytld)
-                                    }
-                                    print(Vehicaldetails.sharedInstance.MacAddress,Vehicaldetails.sharedInstance.FS_MacAddress)
-                                    if(Vehicaldetails.sharedInstance.FS_MacAddress == Vehicaldetails.sharedInstance.MacAddress){}
-                                    else{
-                                        //  self.web.updateMacAddress(macadd: Vehicaldetails.sharedInstance.FS_MacAddress as String)
                                     }
                                 }
                                 self.cf.delay(10){
@@ -1626,11 +1769,18 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                                 self.wait.isHidden = true
                                 self.waitactivity.isHidden = true
                                 self.waitactivity.stopAnimating()
-                                self.Quantity1.text = "\(String(format: "%.2f", self.fuelquantity))"
+                                if(Vehicaldetails.sharedInstance.Language == "es-ES"){
+                                    self.Quantity1.text = "\(String(format: "%.2f", self.fuelquantity))".replacingOccurrences(of: ".", with: ",", options: .literal, range: nil)
+                                }
+                                else {
+                                    self.Quantity1.text = "\(String(format: "%.2f", self.fuelquantity))"
+                                }
+                                //self.Quantity1.text = "\(String(format: "%.2f", self.fuelquantity))"
                                 self.pulse.text = "\(self.Last_Count!)"
                                 print(self.Last_Count)
                                 self.totalquantityinfo.text = NSLocalizedString("ThankyouMSG", comment:"")//"Thank you for using \nFluidSecure!"
                                 self.UsageInfoview.isHidden = false
+                                self.Warning.isHidden = true
                                 self.cf.delay(1){
                                     self.Transaction(fuelQuantity: self.fuelquantity)
                                     // var data = self.web.tldlevel()
@@ -1639,12 +1789,6 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                                     if(replytld == ""){}
                                     else{
                                         self.sendtld(replytld: replytld)
-                                    }
-
-                                    print(Vehicaldetails.sharedInstance.MacAddress,Vehicaldetails.sharedInstance.FS_MacAddress)
-                                    if(Vehicaldetails.sharedInstance.FS_MacAddress == Vehicaldetails.sharedInstance.MacAddress){}
-                                    else{
-                                        //  self.web.updateMacAddress(macadd: Vehicaldetails.sharedInstance.FS_MacAddress as String)
                                     }
                                 }
                                 self.cf.delay(10){
@@ -1683,36 +1827,30 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                 }
             }
         }
+        return ""
     }
     
-    //    func BusyStatuschange(){
-    //
-    //        let siteid = Vehicaldetails.sharedInstance.siteID
-    //        let bodyData = "{\"SiteId\":\(siteid)\"}"
-    //        //_ = web.ChangeBusyStatus(bodyData: bodyData)
-    //    }
-
-
 
     func Transaction(fuelQuantity:Double)
     {
         let Odomtr = Vehicaldetails.sharedInstance.Odometerno
         let Wifyssid = Vehicaldetails.sharedInstance.SSId
         let TransactionId = Vehicaldetails.sharedInstance.TransactionId
-        let pusercount = Vehicaldetails.sharedInstance.pulsarCount
+        let pusercount = self.Last_Count!//Vehicaldetails.sharedInstance.pulsarCount
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "ddMMyyyyhhmmss"
-
+        
         print(Wifyssid)
         print(Odomtr)
-        let bodyData = "{\"TransactionId\":\(TransactionId),\"FuelQuantity\":\((fuelQuantity)),\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"versionno\":\"1.15.18\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\",\"Transaction\":\"Current_Transaction\"}"
+        let bodyData = "{\"TransactionId\":\(TransactionId),\"FuelQuantity\":\((fuelQuantity)),\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\",\"Transaction\":\"Current_Transaction\"}"
 
         let reply = web.Transaction_details(bodyData: bodyData)
         if (reply == "-1")
         {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "ddMMyyyyhhmmss"
+            dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
             let dtt1: String = dateFormatter.string(from: NSDate() as Date)
 
             let unsycnfileName =  dtt1 + "#" + "\(TransactionId)" + "#" + "\(fuelQuantity)" + "#" + Vehicaldetails.sharedInstance.SSId //
@@ -1721,7 +1859,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
             }
         }
         else{
-            
+            Warning.isHidden = true
             let data1:NSData = reply.data(using: String.Encoding.utf8)! as NSData
             do{
                 sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
@@ -1800,7 +1938,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                                 Upload(jsonstring: JData,filename: filename,siteName:"SaveTankMonitorReading")
                             }
 
-                            else { //(siteName == "TransactionComplete")
+                            else {
                                 Upload(jsonstring: JData,filename: filename,siteName:"TransactionComplete")
                             }
                             if(ResponceMessageUpload == "success"){
@@ -1853,7 +1991,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                                 else{
                                     Upload(jsonstring: JData,filename: filename,siteName:"TransactionComplete")
                                 }
-                                // Upload(jsonstring: JData,filename: filename,siteName:siteName)
+
                                 if(ResponceMessageUpload == "success"){
                                     self.notify(site: siteName)
                                 }
@@ -1869,6 +2007,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
     
     func Upload(jsonstring: String,filename:String,siteName:String)
     {
+        FSURL = Vehicaldetails.sharedInstance.URL + "/HandlerTrak.ashx"
         let Email = defaults.string(forKey: "address")
         let uuid = defaults.string(forKey: "uuid")
         let Url:String = FSURL
@@ -1906,7 +2045,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                     if(ResponceText == "TransactionId not found."){
                         self.cf.DeleteReportTextFile(fileName: filename, writeText: "")
                     }
-                    self.cf.DeleteReportTextFile(fileName: filename, writeText: "")
+                    // self.cf.DeleteReportTextFile(fileName: filename, writeText: "")
                 }
                 if(self.ResponceMessageUpload == "success"){
                     self.cf.DeleteReportTextFile(fileName: filename, writeText: "")
@@ -1938,7 +2077,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
         }
     }
     
-    func GetPulser() {
+    @objc func GetPulser() {
         if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()) //check selected wifi and connected wifi is not same
         {
             self.web.sentlog(func_name: "Getpulsar function lost Wifi connection with the link ", errorfromserverorlink: self.cf.getSSID(), errorfromapp:"\(Vehicaldetails.sharedInstance.SSId)" )
@@ -1954,7 +2093,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                 if(Vehicaldetails.sharedInstance.PulseRatio == "" || Vehicaldetails.sharedInstance.pulsarCount == "" ){
                     self.error400(message: NSLocalizedString("NoQuantity", comment:""))//"No Quantity received. Transaction ended.")
                 } else{
-                    let quantitycount = Vehicaldetails.sharedInstance.pulsarCount
+                    let quantitycount = Vehicaldetails.sharedInstance.pulsarCount//self.Last_Count! //Vehicaldetails.sharedInstance.pulsarCount
                     let PulseRatio = Vehicaldetails.sharedInstance.PulseRatio
                     self.fuelquantity = (Double(quantitycount))!/(PulseRatio as NSString).doubleValue
                     self.cf.delay(4){
@@ -1966,26 +2105,26 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                                 self.wait.isHidden = true
                                 self.waitactivity.isHidden = true
                                 self.waitactivity.stopAnimating()
-                                self.Quantity1.text = "\(String(format: "%.2f", self.fuelquantity))"
+                                if(Vehicaldetails.sharedInstance.Language == "es-ES"){
+                                    self.Quantity1.text = "\(String(format: "%.2f", self.fuelquantity))".replacingOccurrences(of: ".", with: ",", options: .literal, range: nil)
+                                }
+                                else {
+                                    self.Quantity1.text = "\(String(format: "%.2f", self.fuelquantity))"
+                                }
+                                //self.Quantity1.text = "\(String(format: "%.2f", self.fuelquantity))"
                                 self.pulse.text = "\(self.Last_Count!)"
                                 print(self.counts)
                                 self.totalquantityinfo.text = NSLocalizedString("ThankyouMSG", comment:"")//"Thank you for using \nFluidSecure!"
                                 self.UsageInfoview.isHidden = false
+                                self.Warning.isHidden = true
                                 self.cf.delay(1){
                                     self.Transaction(fuelQuantity: self.fuelquantity)
-                                    let replytld = self.web.tldlevel()
-
-                                    if(replytld == ""){}
-                                    else{
-                                        self.sendtld(replytld: replytld)
-                                    }
-                                    //                                    var data = self.web.tldlevel()
-                                    //                                    print(data)
-                                    print(Vehicaldetails.sharedInstance.MacAddress,Vehicaldetails.sharedInstance.FS_MacAddress)
-                                    if(Vehicaldetails.sharedInstance.FS_MacAddress == Vehicaldetails.sharedInstance.MacAddress){}
-                                    else{
-                                        //  self.web.updateMacAddress(macadd: Vehicaldetails.sharedInstance.FS_MacAddress as String)
-                                    }
+//                                    let replytld = self.web.tldlevel()
+//
+//                                    if(replytld == ""){}
+//                                    else{
+//                                        self.sendtld(replytld: replytld)
+//                                    }
                                 }
                                 self.cf.delay(10){
                                     if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
@@ -2026,14 +2165,17 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
         }
         else {
             let dateFormatter = DateFormatter()
-            
+            Warning.text = NSLocalizedString("Warningfueling", comment:"")
+            Warning.isHidden = false
             dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZ"
+            dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
             let defaultTimeZoneStr = dateFormatter.string(from: Date());
             
             print("before GetPulser" + defaultTimeZoneStr)
             //cf.delay(0.5) {
             let defaultTimeZoneStr1 = dateFormatter.string(from: Date());
             print("before send  GetPulser" + defaultTimeZoneStr1)
+            self.web.sentlog(func_name: "StartButtontapped Send GetPulsar Request Function", errorfromserverorlink: "", errorfromapp: "")
             let replyGetpulsar1 = web.GetPulser()
 
             print(replyGetpulsar1)
@@ -2052,7 +2194,11 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                 do{
                     self.sysdata1 = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
                 }catch let error as NSError {
-                    self.web.sentlog(func_name: "StartButtontapped GetPulsar Function ", errorfromserverorlink: "\(error)", errorfromapp: "")
+                    let text = error.localizedDescription + error.debugDescription
+                    let test = String((text.filter { !" \n".contains($0) }))
+                    let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                    print(newString)
+                    self.web.sentlog(func_name: "StartButtontapped GetPulsar Function ", errorfromserverorlink: "\(newString)", errorfromapp: "")
                     print ("Error: \(error.domain)")
                 }
                 
@@ -2068,7 +2214,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                     print(sysdata1)
                     let objUserData = self.sysdata1.value(forKey: "pulsar_status") as! NSDictionary
                     
-                    let counts = objUserData.value(forKey: "counts") as! NSString//"\(0)" as! NSString //objUserData.value(forKey: "counts") as! NSString
+                    let counts = objUserData.value(forKey: "counts") as! NSString
                     let pulsar_status = objUserData.value(forKey: "pulsar_status") as! NSNumber
                     let pulsar_secure_status = objUserData.value(forKey: "pulsar_secure_status") as! NSNumber
                     
@@ -2086,11 +2232,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                         self.emptypulsar_count = 0
                         if (counts != "0"){
                             print(self.tpulse.text!, counts)
-                            if(pulsar_status == 0)
-                            {
-                                _ = self.setpulsar0tcp()
-                                self.stoprelay()
-                            }
+
                             if (self.tpulse.text! == (counts as String) as String){
                                 
                             }
@@ -2105,8 +2247,17 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                                 let v = self.quantity.count
                                 let fuelQuan = self.calculate_fuelquantity(quantitycount: Int(counts as String)!)
                                 let y = Double(round(100*fuelQuan)/100)
-                                
-                                self.tquantity.text = "\(y)"// + "Gallon"
+                                if(Vehicaldetails.sharedInstance.Language == "es-ES"){
+                                    let y = Double(round(100*fuelQuan)/100)
+                                    self.tquantity.text = "\(y) ".replacingOccurrences(of: ".", with: ",", options: .literal, range: nil)
+                                    print(self.tquantity.text!)
+                                }
+                                else {
+                                    let y = Double(round(100*fuelQuan)/100)
+                                    self.tquantity.text = "\(y) "
+
+                                }
+                               // self.tquantity.text = "\(y)"// + "Gallon"
                                 self.tpulse.text = (counts as String) as String
                                 self.quantity.append("\(y) ")
                                 
@@ -2115,7 +2266,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                                 print("Inside loop GetPulser" + defaultTimeZoneStr1)
                                 if(v >= 2){
                                     print(self.quantity[v-1],self.quantity[v-2])
-                                    if(self.quantity[v-1] == self.quantity[v-2]){// + "Gallon"){
+                                    if(self.quantity[v-1] == self.quantity[v-2]){
                                         self.total_count += 1
                                         if(self.total_count == 3){
                                             
@@ -2125,7 +2276,14 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                                                 _ = self.setpulsar0tcp()
                                                 self.displaytime.text = NSLocalizedString("autostop", comment:"")//"app autostop because pulsecount getting is same."
                                                 self.Stop.isHidden = true
-                                                self.stoprelay()
+                                                do{
+                                                    try self.stoprelay()
+                                                }
+                                                catch let error as NSError {
+                                                    print ("Error: \(error.domain)")
+                                                    self.web.sentlog(func_name: "stoprelay", errorfromserverorlink: "\(error)", errorfromapp:"Error: \(error.domain)")
+                                                }
+                                                //self.stoprelay()
                                             }
                                         }
                                     }
@@ -2181,13 +2339,24 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                                 timer_quantityless_thanprevious = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(FuelquantityVC.stoprelay), userInfo: nil, repeats: false)
                                 print("lower qty. than the prior one.")
                             }
+                            if(pulsar_status == 0)
+                            {
+                                _ = self.setpulsar0tcp()
+                                do{
+                                    try self.stoprelay()
+                                }
+                                catch let error as NSError {
+                                    print ("Error: \(error.domain)")
+                                    self.web.sentlog(func_name: "stoprelay", errorfromserverorlink: "\(error)", errorfromapp:"Error: \(error.domain)")
+                                }
+                                // self.stoprelay()
+                            }
                         }
                         else{
                             let v = self.quantity.count
                             let fuelQuan = self.calculate_fuelquantity(quantitycount: Int(counts as String)!)
                             let y = Double(round(100*fuelQuan)/100)
-                            //                            self.tquantity.text = "\(y)"// + "Gallon"
-                            //                            self.tpulse.text = (counts as String) as String
+
                             self.quantity.append("\(y) ")
 
                             print(self.tquantity.text!, "\(y)" ,self.tquantity.text!,y,Vehicaldetails.sharedInstance.PulserStopTime)
@@ -2204,7 +2373,14 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                                             _ = self.setpulsar0tcp()
                                             self.displaytime.text = NSLocalizedString("autostop", comment:"")//"app autostop because pulsecount getting is same."
                                             self.Stop.isHidden = true
-                                            self.stoprelay()
+                                            do{
+                                                try self.stoprelay()
+                                            }
+                                            catch let error as NSError {
+                                                print ("Error: \(error.domain)")
+                                                self.web.sentlog(func_name: "stoprelay", errorfromserverorlink: "\(error)", errorfromapp:"Error: \(error.domain)")
+                                            }
+                                            //self.stoprelay()
                                         }
                                     }
                                 }
@@ -2230,13 +2406,14 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
     @IBAction func OKbuttontapped(sender: AnyObject) {
         UsageInfoview.isHidden = true
         IsStartbuttontapped = true
+        timer.invalidate()
         stoptimergotostart.invalidate()
         self.cf.delay(1){
             Vehicaldetails.sharedInstance.gohome = true
             self.timerview.invalidate()
             let appDel = UIApplication.shared.delegate! as! AppDelegate
-            self.web.sentlog(func_name: "OKbuttontapped", errorfromserverorlink: "", errorfromapp: "")
             appDel.start()
+            self.web.sentlog(func_name: "OKbuttontapped", errorfromserverorlink: "", errorfromapp: "")
             self.stopdelaytime = true
         }
     }

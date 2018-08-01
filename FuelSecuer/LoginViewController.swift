@@ -9,6 +9,7 @@ import CoreData
 import CoreLocation
 import MapKit
 
+
 class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDelegate {
 
     var web = Webservices()
@@ -44,8 +45,10 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
     var Uhosenumber = [String]()
     var login = "True"
     let uuid:String = UIDevice.current.identifierForVendor!.uuidString
+    
 
     @IBOutlet var version: UILabel!
+    @IBOutlet var version_2: UILabel!
     @IBOutlet var warning: UILabel!
     @IBOutlet var refresh: UIButton!
     @IBOutlet var mview: UIView!
@@ -56,16 +59,61 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        if(defaults.string(forKey: "Language") == "es"){
+            Bundle.setLanguage("es")
+            Vehicaldetails.sharedInstance.Language = "es-ES"
+            let appDel = UIApplication.shared.delegate! as! AppDelegate
+            appDel.start()
+        }
+        else if(defaults.string(forKey: "Language") == "en"){
+
+            Bundle.setLanguage("en")
+            Vehicaldetails.sharedInstance.Language = "en-US"
+            let appDel = UIApplication.shared.delegate! as! AppDelegate
+            appDel.start()
+        }
+
+        version.text = "Version \(Version)"
+        version_2.text = "Version \(Version)"
+        let urldisplay = web.Checkurl()
+        if(urldisplay == "-1"){
+            showAlert(message: NSLocalizedString("NoInternet", comment:""))
+
+        }else{
+        let data1:Data = urldisplay.data(using: String.Encoding.utf8)!
+        do {
+            sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+        }catch let error as NSError {
+            print ("Error: \(error.domain)")
+        }
+        print(sysdata)
+        let Json = sysdata["App"] as! NSArray
+        let rowCount = Json.count
+        let index: Int = 0
+        for i in 0  ..< rowCount
+        {
+            let JsonRow = Json[i] as! NSDictionary
+            let appName = JsonRow["appName"] as! NSString
+            if(appName == "FluidSecure"){
+                let appLink = JsonRow["appLink"] as! NSString
+                print(appLink,appName)
+                
+                Vehicaldetails.sharedInstance.URL = appLink as String
+                break;
+            }
+        }
+        }
         Vehicaldetails.sharedInstance.deptno = ""
         Vehicaldetails.sharedInstance.Personalpinno = ""
         Vehicaldetails.sharedInstance.Other = ""
         Vehicaldetails.sharedInstance.Odometerno = ""
         Vehicaldetails.sharedInstance.hours = ""
+        Vehicaldetails.sharedInstance.AppType = "AuthTransaction"
         Username.delegate = self
         PWD.delegate = self
 
         print(uuid)
-        let uid = defaults.array(forKey: "SSID") //stringForKey("SSID")
+        let uid = defaults.array(forKey: "SSID")
 
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
@@ -73,7 +121,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         locationManager.startUpdatingLocation()
         currentlocation = locationManager.location
         var reply:String!
-
+        
         if(currentlocation == nil)
         {
             reply = web.checkApprove(uuid: uuid,lat:"\(0)",long:"\(0)")
@@ -93,50 +141,48 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
                     reply = cf.ReadFile(fileName: "getSites.txt")
                 }
             }
-            // error = Split[1]
         }
-        self.navigationController?.navigationBar.barTintColor = UIColor(red: 31.0/255.0, green: 77.0/255.0, blue: 153.0/255.0, alpha: 1.0)//UIColor.blueColor()
+        self.navigationController?.navigationBar.barTintColor = UIColor(red: 31.0/255.0, green: 77.0/255.0, blue: 153.0/255.0, alpha: 1.0)
         self.navigationController?.navigationBar.tintColor = UIColor.white
-        self.navigationController!.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
+        self.navigationController!.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
 
         if(reply == "-1")
         {
             preauth.isHidden = false
             if(Vehicaldetails.sharedInstance.reachblevia == "wificonn")
             {
-                self.navigationItem.title = NSLocalizedString("Error",comment:"")//"Error"
+                self.navigationItem.title = NSLocalizedString("Error",comment:"")
                 mview.isHidden = true
                 version.isHidden = false
                 warning.isHidden = false
-                warning.text = NSLocalizedString("warning_NoInternet_Connection", comment:"")//"Cannot connect to cloud server. Please check your internet connection."
+                warning.text = NSLocalizedString("warning_NoInternet_Connection", comment:"")
                 refresh.isHidden = false
 
                 cf.delay(0.2){
-                    //  self.viewDidLoad()
+
                 }
             }
             else if(Vehicaldetails.sharedInstance.reachblevia == "cellular") {
 
-                self.navigationItem.title = NSLocalizedString("Error",comment:"")//"Error"
-                // showAlert("Cannot connect to cloud server. Please check your internet connection. \n \(error)")
+                self.navigationItem.title = NSLocalizedString("Error",comment:"")
+
                 mview.isHidden = true
                 version.isHidden = false
                 warning.isHidden = false
-                warning.text = NSLocalizedString("warning_NoInternet_Connection", comment:"")//"Cannot connect to cloud server. Please check your internet connection."
+                warning.text = NSLocalizedString("warning_NoInternet_Connection", comment:"")
                 refresh.isHidden = false
-                //viewDidLoad()
+
             }
             else if( Vehicaldetails.sharedInstance.reachblevia == "notreachable"){
-                self.navigationItem.title = NSLocalizedString("Error",comment:"")//"Error"
-                //showAlert("Cannot connect to cloud server. Please check your internet connection. \n \(error)")
+                self.navigationItem.title = NSLocalizedString("Error",comment:"")
+
                 mview.isHidden = true
                 version.isHidden = false
                 warning.isHidden = false
-                warning.text = NSLocalizedString("warning_NoInternet_Connection", comment:"")//"Cannot connect to cloud server. Please check your internet connection."
+                warning.text = NSLocalizedString("warning_NoInternet_Connection", comment:"")
                 refresh.isHidden = false
                 for i in 1...2
                 {
-                    //
                     print(i)
                     if(currentlocation == nil)
                     {
@@ -177,7 +223,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
                 let IsApproved = objUserData.value(forKey: "IsApproved") as! NSString
                 let PersonName = objUserData.value(forKey: "PersonName") as! NSString
                 let PhoneNumber = objUserData.value(forKey: "PhoneNumber") as! NSString
-            //    let CollectDiagnosticLogs = objUserData.value(forKey: "CollectDiagnosticLogs") as! NSString
+                let CollectDiagnosticLogs = objUserData.value(forKey: "CollectDiagnosticLogs") as! NSString
                 IsOdoMeterRequire = objUserData.value(forKey:"IsOdoMeterRequire") as! NSString as String
                 IsLoginRequire = objUserData.value(forKey: "IsLoginRequire") as! NSString as String
                 IsDepartmentRequire = objUserData.value(forKey: "IsDepartmentRequire") as! NSString as String
@@ -190,7 +236,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
                 defaults.set(uuid, forKey: "uuid")
                 defaults.set(1, forKey: "Register")
 
-              //  Vehicaldetails.sharedInstance.CollectDiagnosticLogs = CollectDiagnosticLogs as String
+                Vehicaldetails.sharedInstance.CollectDiagnosticLogs = CollectDiagnosticLogs as String
                 Vehicaldetails.sharedInstance.odometerreq = IsOdoMeterRequire
                 Vehicaldetails.sharedInstance.IsDepartmentRequire = IsDepartmentRequire
                 Vehicaldetails.sharedInstance.IsPersonnelPINRequire = IsPersonnelPINRequire
@@ -229,7 +275,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
                         }
                     }else if(Message == "fail") {
                         let ResponseText = JsonRow["ResponceText"] as! NSString
-                        // showMap(message: ResponseText as String)
+
                         defaults.set("ssid", forKey: "SSID")
                     }
                 }
@@ -249,15 +295,15 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
                     version.isHidden = false
                     warning.isHidden = false
                     refresh.isHidden = false
-                    self.navigationItem.title = NSLocalizedString("Error",comment:"")//"Error"
-                    warning.text = NSLocalizedString("Regisration", comment:"")//"Your Registration request is not approved yet.  It is marked Inactive in the Company Software.  Please contact your company’s administrator."
+                    self.navigationItem.title = NSLocalizedString("Error",comment:"")
+                    warning.text = NSLocalizedString("Regisration", comment:"")
                 }else
                 {
                     mview.isHidden = true
                     version.isHidden = false
                     warning.isHidden = false
                     refresh.isHidden = false
-                    self.navigationItem.title = NSLocalizedString("Error",comment:"")//"Error"
+                    self.navigationItem.title = NSLocalizedString("Error",comment:"")
                     warning.text = ResponseText as String
                 }
             }
@@ -305,8 +351,8 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = NSTextAlignment.left
         var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [ NSParagraphStyleAttributeName: paragraphStyle,NSFontAttributeName:UIFont(name: "Georgia", size: 24.0)!])
-        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [ NSAttributedStringKey.paragraphStyle: paragraphStyle,NSAttributedStringKey.font:UIFont(name: "Georgia", size: 24.0)!])
+        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
 
         // Action.
@@ -336,39 +382,38 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
 
         if(Username.text == "" || PWD.text == "")
         {
-            showAlert(message:  NSLocalizedString("EnterUserNamePWD",comment:""))//"Please enter Username And Password")
+            showAlert(message:  NSLocalizedString("EnterUserNamePWD",comment:""))
         }
         else
         {
             let reply = web.Login(Username.text!, PWD:PWD.text!, uuid: uuid)
-            //            let Split = data.components(separatedBy: "#")
-            //            let reply = Split[0]
+
 
             if(reply == "-1")
             {
                 if(Vehicaldetails.sharedInstance.reachblevia == "wificonn")
                 {
-                    self.navigationItem.title = NSLocalizedString("Error",comment:"")//"Error"
+                    self.navigationItem.title = NSLocalizedString("Error",comment:"")
                     mview.isHidden = true
                     version.isHidden = false
                     warning.isHidden = false
-                    warning.text = NSLocalizedString("warning_NoInternet_Connection", comment:"")//"Cannot connect to cloud server.Please check your internet connection."
+                    warning.text = NSLocalizedString("warning_NoInternet_Connection", comment:"")
                     refresh.isHidden = false
                 }
                 else if(Vehicaldetails.sharedInstance.reachblevia == "cellular" ||  Vehicaldetails.sharedInstance.reachblevia == "notreachable") {
-                    self.navigationItem.title = NSLocalizedString("Error",comment:"")//"Error"
+                    self.navigationItem.title = NSLocalizedString("Error",comment:"")
                     mview.isHidden = true
                     version.isHidden = false
                     warning.isHidden = false
-                    warning.text = NSLocalizedString("warning_NoInternet_Connection", comment:"")//"Cannot connect to cloud server.Please check your internet connection."
+                    warning.text = NSLocalizedString("warning_NoInternet_Connection", comment:"")
                     refresh.isHidden = false
                 }
                 else if(Vehicaldetails.sharedInstance.reachblevia == "notreachable" ||  Vehicaldetails.sharedInstance.reachblevia == "notreachable") {
-                    self.navigationItem.title = NSLocalizedString("Error",comment:"")//"Error"
+                    self.navigationItem.title = NSLocalizedString("Error",comment:"")
                     mview.isHidden = true
                     version.isHidden = false
                     warning.isHidden = false
-                    warning.text = NSLocalizedString("warning_NoInternet_Connection", comment:"")//"Cannot connect to cloud server.Please check your internet connection."
+                    warning.text = NSLocalizedString("warning_NoInternet_Connection", comment:"")
                     refresh.isHidden = false            }
             }
             else {
@@ -396,6 +441,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
 
     @IBAction func preauth(_ sender: AnyObject) {
         let storyboard = UIStoryboard(name: "PreauthStoryboard", bundle: nil)
+        Vehicaldetails.sharedInstance.AppType = "preAuthTransaction"
         let controller = storyboard.instantiateViewController(withIdentifier: "InitialController") as UIViewController
         self.present(controller, animated: true, completion: nil)
     }
@@ -410,12 +456,12 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
 
         let message  = message
         var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.black, range: NSRange(location:0,length:message.count))
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
+        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.black, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
 
         // Action.
-        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default) { action in //self.//
+        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default) { action in 
             self.openMapForPlace()
         }
         alertController.addAction(action)

@@ -5,26 +5,26 @@
   Created by VASP on 5/29/18.
   Copyright © 2018 VASP. All rights reserved.
 */
-"Select Hose to use" = "Seleccione manguera para usar";
+"Select Hose to use" = "Seleccionar Mavga Para Utilzar";//"Seleccione manguera para usar";
 "Date_Fueling" = "";
 "Name" = "Nombre";
 "Mobile" = "Móvil";
 "Email" = "Email";
-"MessageFueling" = "Inserta la boquilla en el tanque \ n Luego toca iniciar";
-"MessageFueling1" = "Espere mientras se establece su conexión Con el enlace FS";
-"LostWifi" = "Conexión WiFi perdida con el móvil.";
+"MessageFueling" = "Por Favor Inserte La Manga Enel Tanque, Luego Oprima Listo";//"Inserta la boquilla en el tanque \ n Luego toca iniciar";
+"MessageFueling1" = "Por Favor de Espenrar Hasta Que Su Conecciun Sea Esta Milizada Con Ez FluidSecure Enlase.";//Espere mientras se establece su conexión Con el enlace FS";
+"LostWifi" = "Coneccion WiFi perdida en su Móvil.";
 "Touch to select Site" = "Toca para seleccionar Sitio";
 "Regisration" = "Su solicitud de registro aún no ha sido aprobada. Está marcado como Inactivo en el Software de la Compañía. Por favor, póngase en contacto con el administrador de su empresa.";
 "Helptext" = "Seleccione Sitio y luego proceda";
-"HelptextSelectedSite" = "Si usa esta manguera por primera vez, deberá ingresar la contraseña cuando se la redireccione a la pantalla WiFi. La contraseña es ";
+"HelptextSelectedSite" = "Ingrese Contraseñ Cuando Sea Redirigido Ala Pantaila de WiFi. Contraseñ es ";
 "warninghoseinused" = "\ n Manguera en uso \ n Por favor intente después de algún tiempo";
-"warning_NoInternet_Connection" = "No se puede conectar al servidor de la nube. Por favor revise su conexion a internet.";
+"warning_NoInternet_Connection" = "No Tieme Coneccion con el Servidor de la Nube. \nConprobar su coneccion de Internet.";//"No se puede conectar al servidor de la nube. Por favor revise su conexion a internet.";
 "Error" = "Error";
-"OK" = "DE ACUERDO";
+"OK" = "Bueno";
 "NoInternet" = "Verifique su conexión a Internet y vuelva a intentarlo más tarde.";
-"NoHoseselect" = "Seleccione Manguera para usar.";
+"NoHoseselect" = "Favor Seleccione Manguera para usar.";
 "Hoseorder" = "Manguera fuera de servicio";
-
+"checkEmail" = "Ingrese Correco Electronico";
 "Title" = "FluidSecure necesita conectarse a Hose a través de WiFi";
 "Message" = "Por favor conecte wifi";
 "Subtitle" = "FluidSecure necesita conectarse a HOSE a través de WiFi \nAhora será redirigido a la configuración de WiFi";
@@ -37,3 +37,43 @@
 "Entervehicelno" = "Por favor ingrese el número del vehículo.";
 "EneterOdometer" = "Por favor ingrese el número del odómetro.";
 "Odometer_Reasonability" = "El odómetro introducido no está dentro de los límites razonables que su administrador le ha asignado, póngase en contacto con su administrador.";
+"CheckyourInternet" = "Favor de Esperar un memnto y comprobar la coneccion de Internet y trate otravéz";
+
+"Return" = "Regreso";
+"WarningselectWifi" = "Favur Conneccion ";
+"Wifi" = " Wi-Fi.";
+"CheckWifi" = "Por favor revisa tu conexión wifi";
+"wificonnection" = "Su Conneccion Se Perdio ";
+"wificonnection1" = " Por Favor Seleccione  ";
+"CheckFSunit" = "Verifique su unidad FS y apague la alimentación y vuelva a encenderla.";//Please check your FS unit, and switch off power and back on.";
+"ThankyouMSG" = "Gracias Por Usar \nFluidSecure.";
+"NoQuantity" = "Sin cantidad recibida. Transacción finalizada";//"No Quantity received. Transaction ended.";
+"ZeroQuantity" = "La cantidad es cero. Transacción está detenida.";//"Quantity is zero. Transaction is stopped.";
+"Notify" = "Su transacción se completa con éxito en";//"Your Transaction is Successfully Completed at ";
+"autostop" = "la aplicación se detiene automáticamente porque el conteo de pulsos es el mismo.";
+"Fueldaylimit" = "Usted es el límite del día del combustible alcanzado.";
+//"checkEmail" = "please enter valid email.";
+"ValidPhone" = "Por favor ingrese un número de teléfono válido.";
+"Checkinternet" = "Verifique su conexión a Internet y contacto con su administrador.";//"Please check your check your internet connection or Please contact your admin.";
+"SelectallFields" = "Por favor seleccione todos los campos.";
+"EnterPin" = "Por favor ingrese el número PIN del personal.";
+"Enterdept" = "Por favor ingrese el número del departamento.";
+"EnterHour" = "Por favor ingrese la hora.";
+"EnterHour_Eng" = "Ingrese la hora en inglés Entero";
+"NoInternet" = "La conexión a Internet no está disponible.";
+"Preauthtrans" = "Pre-Authorized transactions are not Available.";
+"Preauthnointernet" = "Transacciones pre autorizadas no Sun Disponible para usted Favor de Habilitar so coneccion de Internet o Contactese con el Administrador de la Empresa.";
+
+"NoSSIdFound" = "SSID no encontrado wifi no está conectado.";
+"Pleasewait" = "Por Favor de Esperar….... ";
+"Fueling" = "Abasteciendo de Combustible...";
+"Fuelquantityzero" = "your transaction is not proceed you fuel quantity is 0 please try agian";
+"Cancelwarning" = "Seguro Que Quieres Cancelar? \nEsper Hasta Que Sea Redirigido a La Pagina de seleccion de manga";
+"NO" = "No";
+"YES" = "Si";
+"Confirm" = "Confirmar";
+"selectHose" = "Seleccionar Mavga Para Utilzar";
+"No_Pre-auth_transaction" = "transacciones pre autorizadas disponibles - ";
+"BacktoHome" = "Pagina Principal";
+"ConnectWifi" = "Conectar Wifi";
+"Warningfueling" = "No salgas de esta pantalla mientras abastece de combustible - la bomba puede apagarse si lo hace.";

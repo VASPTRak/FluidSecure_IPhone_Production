@@ -9,6 +9,8 @@ import CoreLocation
 
 class RegisterTableViewController: UITableViewController,CLLocationManagerDelegate,UITextFieldDelegate {
 
+    //@IBOutlet var itembarbutton: UIBarButtonItem!
+    @IBOutlet var version: UILabel!
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var mobileNoTextField: UITextField!
     @IBOutlet weak var registerButton: UIButton!
@@ -25,6 +27,12 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        version.text = "Version \(Version)"
+//        if(Vehicaldetails.sharedInstance.Language == "es-ES"){
+//            itembarbutton.title = "English"
+//        }else  if(Vehicaldetails.sharedInstance.Language == ""){
+//            itembarbutton.title = "Spanish"
+//        }
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         locationManager.desiredAccuracy=kCLLocationAccuracyBest
@@ -38,7 +46,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.navigationBar.barTintColor = UIColor(red: 31.0/255.0, green: 77.0/255.0, blue: 153.0/255.0, alpha: 1.0)//UIColor.blueColor()
         self.navigationController?.navigationBar.tintColor = UIColor.white
-        self.navigationController!.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
+        self.navigationController!.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
     }
 
     func showAlert(message: String)
@@ -52,8 +60,8 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
         // Change Message With Color and Font
         let message  = message
         var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
+        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
 
         // Action.
@@ -76,7 +84,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
         print(uuid)
         let Name = firstNameTextField.text
         let Email = emailTextField.text
-        let string = uuid + ":" + Email! + ":" + "Register"
+        let string = uuid + ":" + Email! + ":" + "Register" + ":" + "\(Vehicaldetails.sharedInstance.Language)"
         let Base64 = convertStringToBase64(string: string)
         let mobile = mobileNoTextField.text
         let Companyname = Company_Name.text
@@ -134,6 +142,23 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                 showAlert(message: NSLocalizedString("Checkinternet", comment:""))//"Please check your check your internet connection or Please contact your admin.")
             }
         }
+    }
+
+    
+    @IBAction func Spanish(_ sender: Any) {
+//        if(itembarbutton.title == "English"){
+//            Vehicaldetails.sharedInstance.Language = ""
+//            Bundle.setLanguage("en")
+//            let appDel = UIApplication.shared.delegate! as! AppDelegate
+//            appDel.start()
+//        }else if(itembarbutton.title == "Spanish"){
+//            Bundle.setLanguage("es")
+//            Vehicaldetails.sharedInstance.Language = "es-ES"
+//            //itembarbutton.title = "Eng"
+//            let appDel = UIApplication.shared.delegate! as! AppDelegate
+//            appDel.start()
+//        }
+
     }
 
 
@@ -210,7 +235,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
         }
         else if(mobileNoTextField.text!.count <=  15) {
 
-            let PHONE_REGEX = "^[- +()0-9]*$" //"^[- +()]*[0-9][- +()0-9]*$" //"^(?:(?:\\+?1\\s*(?:[.-]\\s*)?)?(?:\\(\\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\\s*\\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\\s*(?:[.-]\\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\\s*(?:[.-]\\s*)?([0-9]{4})(?:\\s*(?:#|x\\.?|ext\\.?|extension)\\s*(\\d+))?$"
+            let PHONE_REGEX = "^[- +()0-9]*$"
             let phoneTest = NSPredicate(format: "SELF MATCHES %@", PHONE_REGEX)
             let result =  phoneTest.evaluate(with: testStr)
             return result
@@ -222,12 +247,6 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
     {
         if (textField == mobileNoTextField)
         {
-
-//            let aSet = CharacterSet(charactersInString:"0123456789+-()").invertedSet
-//            let compSepByCharInSet = string.componentsSeparatedByCharactersInSet(aSet)
-//            let numberFiltered = compSepByCharInSet.joinWithSeparator("")
-//            return string == numberFiltered
-
             let newString = (textField.text! as NSString).replacingCharacters(in: range, with: string)
             let components = newString.components(separatedBy: CharacterSet.init(charactersIn: "0123456789+-()").inverted)// .decimalDigits.inverted)
             let decimalString = components.joined(separator: "") as NSString
@@ -247,18 +266,6 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                 formattedString.append("1 ")
                 index += 1
             }
-//            if (length - index) > 3
-//            {
-//                let areaCode = decimalString.substring(with: NSMakeRange(index, 3))
-//                formattedString.appendFormat("%@-", areaCode)
-//                index += 3
-//            }
-//            if length - index > 3
-//            {
-//                let prefix = decimalString.substring(with: NSMakeRange(index, 3))
-//                formattedString.appendFormat("%@-", prefix)
-//                index += 3
-//            }
 
             let remainder = decimalString.substring(from: index)
             formattedString.append(remainder)

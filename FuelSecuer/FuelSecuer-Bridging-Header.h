@@ -6,8 +6,10 @@
 #define CommanCrypto_h
 #import <CommonCrypto/CommonCrypto.h>
 
-extern const NSString *FSURL;
+//extern const NSString *FSURL;
 extern const NSString *Get;
-extern const NSString *LogURL;
+//extern const NSString *LogURL;
+extern const NSString *URL;
+extern const NSString *Version;
 //extern const NSString *BlueColor;
 #endif

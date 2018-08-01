@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		DA0BA0751D8971E00050831C /* commanfunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0BA0741D8971E00050831C /* commanfunction.swift */; };
+		DA15066A20DA24630077288C /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA15066920DA24620077288C /* NetworkExtension.framework */; };
+		DA26F43920EE106400CABF4E /* BundleEx.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA26F43820EE106400CABF4E /* BundleEx.swift */; };
+		DA29DE3B2101AD2A00B9F77D /* PreauthStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DA29DE3D2101AD2A00B9F77D /* PreauthStoryboard.storyboard */; };
 		DA30BEB21F739E9F00004336 /* TransactionID+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = DA30BEAF1F739E9F00004336 /* TransactionID+CoreDataClass.m */; };
 		DA30BEB31F739E9F00004336 /* TransactionID+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = DA30BEB11F739E9F00004336 /* TransactionID+CoreDataProperties.m */; };
 		DA30BEB51F739ED000004336 /* Transactionid.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA30BEB41F739ED000004336 /* Transactionid.swift */; };
@@ -24,7 +27,6 @@
 		DA4BAF9A1CAD3334002A5C63 /* Table-H1.png in Resources */ = {isa = PBXBuildFile; fileRef = DA4BAF941CAD3334002A5C63 /* Table-H1.png */; };
 		DA4BAF9B1CAD3334002A5C63 /* Table-H2.png in Resources */ = {isa = PBXBuildFile; fileRef = DA4BAF951CAD3334002A5C63 /* Table-H2.png */; };
 		DA4BAF9D1CAD47C7002A5C63 /* Vehicaldetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4BAF9C1CAD47C7002A5C63 /* Vehicaldetails.swift */; };
-		DA5770121F66BA410098103A /* PreauthStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DA5770111F66BA410098103A /* PreauthStoryboard.storyboard */; };
 		DA5BE0381CAA4FCF003155A8 /* OdometerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5BE0371CAA4FCF003155A8 /* OdometerVC.swift */; };
 		DA5BE03A1CAAB578003155A8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5BE0391CAAB578003155A8 /* Reachability.swift */; };
 		DA5DB9821CF8249A00C9A90E /* Wifidetails+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5DB9801CF8249A00C9A90E /* Wifidetails+CoreDataProperties.swift */; };
@@ -46,7 +48,6 @@
 		DA9F948A1F14F42E00BFE62B /* checkbox-checked.png in Resources */ = {isa = PBXBuildFile; fileRef = DA9F94881F14F42E00BFE62B /* checkbox-checked.png */; };
 		DA9F948B1F14F42E00BFE62B /* checkbox-unchecked.png in Resources */ = {isa = PBXBuildFile; fileRef = DA9F94891F14F42E00BFE62B /* checkbox-unchecked.png */; };
 		DA9F948D1F14FF9200BFE62B /* WiFI.png in Resources */ = {isa = PBXBuildFile; fileRef = DA9F948C1F14FF9200BFE62B /* WiFI.png */; };
-		DAAB03591ED6EEF300065848 /* Selectwifi.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAAB03581ED6EEF300065848 /* Selectwifi.swift */; };
 		DAC3E4981E1D20F60012E65F /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAC3E4971E1D20F60012E65F /* LoginViewController.swift */; };
 		DACD13461E924F6D002784CC /* fuel_secure_lock.png in Resources */ = {isa = PBXBuildFile; fileRef = DACD13451E924F6D002784CC /* fuel_secure_lock.png */; };
 		DAE2E4411F0678C1004A9480 /* HourViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE2E4401F0678C1004A9480 /* HourViewController.swift */; };
@@ -90,6 +91,15 @@
 
 /* Begin PBXFileReference section */
 		DA0BA0741D8971E00050831C /* commanfunction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = commanfunction.swift; sourceTree = "<group>"; };
+		DA15066920DA24620077288C /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
+		DA26F43820EE106400CABF4E /* BundleEx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleEx.swift; sourceTree = "<group>"; };
+		DA29DE47210205A200B9F77D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/PreauthStoryboard.storyboard; sourceTree = "<group>"; };
+		DA29DE4A2102086100B9F77D /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Main.strings; sourceTree = "<group>"; };
+		DA29DE4B2102086100B9F77D /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		DA29DE4C2102086100B9F77D /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/PreauthStoryboard.strings; sourceTree = "<group>"; };
+		DA29DE4D210208A500B9F77D /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		DA29DE4E21020AA700B9F77D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		DA29DE4F2102118B00B9F77D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
 		DA30BEAE1F739E9F00004336 /* TransactionID+CoreDataClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TransactionID+CoreDataClass.h"; sourceTree = "<group>"; };
 		DA30BEAF1F739E9F00004336 /* TransactionID+CoreDataClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "TransactionID+CoreDataClass.m"; sourceTree = "<group>"; };
 		DA30BEB01F739E9F00004336 /* TransactionID+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TransactionID+CoreDataProperties.h"; sourceTree = "<group>"; };
@@ -97,6 +107,7 @@
 		DA30BEB41F739ED000004336 /* Transactionid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transactionid.swift; sourceTree = "<group>"; };
 		DA30BEB61F739F9600004336 /* transid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = transid.swift; sourceTree = "<group>"; };
 		DA30BEB81F73FE8D00004336 /* FuelSecure.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FuelSecure.entitlements; sourceTree = SOURCE_ROOT; };
+		DA30D67120FF775B00DDD185 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DA434DA41F692FEC00FF83E1 /* PreauthVehicleVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreauthVehicleVC.swift; sourceTree = "<group>"; };
 		DA434DA61F69309200FF83E1 /* PreauthOdometrVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreauthOdometrVC.swift; sourceTree = "<group>"; };
 		DA434DA81F693EB100FF83E1 /* PreauthVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreauthVC.swift; sourceTree = "<group>"; };
@@ -109,7 +120,6 @@
 		DA4BAF941CAD3334002A5C63 /* Table-H1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Table-H1.png"; path = "Assets.xcassets/Table-H1.png"; sourceTree = "<group>"; };
 		DA4BAF951CAD3334002A5C63 /* Table-H2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Table-H2.png"; path = "Assets.xcassets/Table-H2.png"; sourceTree = "<group>"; };
 		DA4BAF9C1CAD47C7002A5C63 /* Vehicaldetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vehicaldetails.swift; sourceTree = "<group>"; };
-		DA5770111F66BA410098103A /* PreauthStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = PreauthStoryboard.storyboard; sourceTree = "<group>"; };
 		DA5BE0371CAA4FCF003155A8 /* OdometerVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OdometerVC.swift; sourceTree = "<group>"; };
 		DA5BE0391CAAB578003155A8 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		DA5DB9801CF8249A00C9A90E /* Wifidetails+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Wifidetails+CoreDataProperties.swift"; sourceTree = "<group>"; };
@@ -126,7 +136,6 @@
 		DA71DA6D1CA9078500AD06DD /* FuelSecuer.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FuelSecuer.xcdatamodel; sourceTree = "<group>"; };
 		DA71DA6F1CA9078500AD06DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DA71DA721CA9078500AD06DD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		DA71DA741CA9078500AD06DD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DA71DA791CA9078500AD06DD /* FuelSecure.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FuelSecure.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA71DA7D1CA9078500AD06DD /* FuelSecuerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FuelSecuerTests.swift; sourceTree = "<group>"; };
 		DA71DA7F1CA9078500AD06DD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -139,7 +148,6 @@
 		DA9F94881F14F42E00BFE62B /* checkbox-checked.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "checkbox-checked.png"; sourceTree = "<group>"; };
 		DA9F94891F14F42E00BFE62B /* checkbox-unchecked.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "checkbox-unchecked.png"; sourceTree = "<group>"; };
 		DA9F948C1F14FF9200BFE62B /* WiFI.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = WiFI.png; sourceTree = "<group>"; };
-		DAAB03581ED6EEF300065848 /* Selectwifi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Selectwifi.swift; sourceTree = "<group>"; };
 		DAC3E4971E1D20F60012E65F /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		DACD13451E924F6D002784CC /* fuel_secure_lock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fuel_secure_lock.png; path = FuelSecuer/Assets.xcassets/fuel_secure_lock.png; sourceTree = "<group>"; };
 		DAE2E4401F0678C1004A9480 /* HourViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HourViewController.swift; sourceTree = "<group>"; };
@@ -147,14 +155,7 @@
 		DAE2E4441F067914004A9480 /* PinViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PinViewController.swift; sourceTree = "<group>"; };
 		DAE2E4461F067925004A9480 /* OtherViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OtherViewController.swift; sourceTree = "<group>"; };
 		DAEC17281F4ECC0300714D1A /* Button-Green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Button-Green.png"; path = "Assets.xcassets/Button-Green.png"; sourceTree = "<group>"; };
-		DAF349A820BD4E3100236AF9 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Main.strings; sourceTree = "<group>"; };
-		DAF349A920BD4E3100236AF9 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
-		DAF349AB20BD511500236AF9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
-		DAF349AC20BD67D800236AF9 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/Main.strings; sourceTree = "<group>"; };
-		DAF349AD20BD67D800236AF9 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
-		DAF349B120BD7F8900236AF9 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		DAF349B320BD7F9200236AF9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
-		DAF349B520BD897400236AF9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		DAF9DFA31EEFCD5A00D70BD0 /* LaunchScreenvc.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LaunchScreenvc.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -163,6 +164,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DA15066A20DA24630077288C /* NetworkExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -186,6 +188,7 @@
 		DA71DA591CA9078500AD06DD = {
 			isa = PBXGroup;
 			children = (
+				DA26F43820EE106400CABF4E /* BundleEx.swift */,
 				DAF349B220BD7F8900236AF9 /* Localizable.strings */,
 				DA30BEB61F739F9600004336 /* transid.swift */,
 				DA30BEB41F739ED000004336 /* Transactionid.swift */,
@@ -198,7 +201,6 @@
 				DAE2E4421F0678EC004A9480 /* DeptViewController.swift */,
 				DAE2E4401F0678C1004A9480 /* HourViewController.swift */,
 				DAF9DFA31EEFCD5A00D70BD0 /* LaunchScreenvc.swift */,
-				DAAB03581ED6EEF300065848 /* Selectwifi.swift */,
 				DACD13451E924F6D002784CC /* fuel_secure_lock.png */,
 				DA5DB9801CF8249A00C9A90E /* Wifidetails+CoreDataProperties.swift */,
 				DA5DB9811CF8249A00C9A90E /* Wifidetails.swift */,
@@ -239,13 +241,13 @@
 				DA4BAF941CAD3334002A5C63 /* Table-H1.png */,
 				DA4BAF951CAD3334002A5C63 /* Table-H2.png */,
 				DA71DA651CA9078500AD06DD /* AppDelegate.swift */,
-				DA71DA671CA9078500AD06DD /* ViewController.swift */,
 				DA71DA691CA9078500AD06DD /* Main.storyboard */,
+				DA71DA671CA9078500AD06DD /* ViewController.swift */,
 				DAC3E4971E1D20F60012E65F /* LoginViewController.swift */,
 				DA71DAA81CA93CD400AD06DD /* VehiclenoVC.swift */,
 				DA71DA6F1CA9078500AD06DD /* Assets.xcassets */,
 				DA71DA711CA9078500AD06DD /* LaunchScreen.storyboard */,
-				DA71DA741CA9078500AD06DD /* Info.plist */,
+				DA30D67120FF775B00DDD185 /* Info.plist */,
 				DA71DA6C1CA9078500AD06DD /* FuelSecuer.xcdatamodeld */,
 				DA5BE0371CAA4FCF003155A8 /* OdometerVC.swift */,
 				DA5BE0391CAAB578003155A8 /* Reachability.swift */,
@@ -254,7 +256,7 @@
 				DA497B2C1CEC841F0058E218 /* RegisterTableViewController.swift */,
 				DA6282751CF2CCF60057D1CF /* Webservices.swift */,
 				DA0BA0741D8971E00050831C /* commanfunction.swift */,
-				DA5770111F66BA410098103A /* PreauthStoryboard.storyboard */,
+				DA29DE3D2101AD2A00B9F77D /* PreauthStoryboard.storyboard */,
 				DA434DA81F693EB100FF83E1 /* PreauthVC.swift */,
 				DA434DA41F692FEC00FF83E1 /* PreauthVehicleVC.swift */,
 				DA434DA61F69309200FF83E1 /* PreauthOdometrVC.swift */,
@@ -286,6 +288,7 @@
 		DAA9164820860130006A5F27 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DA15066920DA24620077288C /* NetworkExtension.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -354,16 +357,19 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = VASP;
 				TargetAttributes = {
 					DA71DA611CA9078500AD06DD = {
 						CreatedOnToolsVersion = 7.2;
 						DevelopmentTeam = LY75MT5XE6;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0940;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.HotspotConfiguration = {
 								enabled = 1;
 							};
 							com.apple.Push = {
@@ -376,14 +382,15 @@
 					};
 					DA71DA781CA9078500AD06DD = {
 						CreatedOnToolsVersion = 7.2;
-						DevelopmentTeam = 398Q9X5345;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0940;
+						ProvisioningStyle = Automatic;
 						TestTargetID = DA71DA611CA9078500AD06DD;
 					};
 					DA71DA831CA9078500AD06DD = {
 						CreatedOnToolsVersion = 7.2;
 						DevelopmentTeam = 398Q9X5345;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0940;
+						ProvisioningStyle = Automatic;
 						TestTargetID = DA71DA611CA9078500AD06DD;
 					};
 				};
@@ -395,6 +402,7 @@
 			knownRegions = (
 				en,
 				Base,
+				es,
 			);
 			mainGroup = DA71DA591CA9078500AD06DD;
 			productRefGroup = DA71DA631CA9078500AD06DD /* Products */;
@@ -420,7 +428,7 @@
 				DA9F948A1F14F42E00BFE62B /* checkbox-checked.png in Resources */,
 				DA71DA731CA9078500AD06DD /* LaunchScreen.storyboard in Resources */,
 				DACD13461E924F6D002784CC /* fuel_secure_lock.png in Resources */,
-				DA5770121F66BA410098103A /* PreauthStoryboard.storyboard in Resources */,
+				DA29DE3B2101AD2A00B9F77D /* PreauthStoryboard.storyboard in Resources */,
 				DA4BAF991CAD3334002A5C63 /* Table-F.png in Resources */,
 				DA71DA701CA9078500AD06DD /* Assets.xcassets in Resources */,
 				DA4BAF9B1CAD3334002A5C63 /* Table-H2.png in Resources */,
@@ -460,7 +468,6 @@
 				DAE2E4451F067914004A9480 /* PinViewController.swift in Sources */,
 				DA30BEB21F739E9F00004336 /* TransactionID+CoreDataClass.m in Sources */,
 				DA434DA91F693EB100FF83E1 /* PreauthVC.swift in Sources */,
-				DAAB03591ED6EEF300065848 /* Selectwifi.swift in Sources */,
 				DA434DA71F69309200FF83E1 /* PreauthOdometrVC.swift in Sources */,
 				DAE2E4431F0678EC004A9480 /* DeptViewController.swift in Sources */,
 				DA30BEB71F739F9600004336 /* transid.swift in Sources */,
@@ -477,6 +484,7 @@
 				DA30BEB31F739E9F00004336 /* TransactionID+CoreDataProperties.m in Sources */,
 				DA5BE0381CAA4FCF003155A8 /* OdometerVC.swift in Sources */,
 				DA0BA0751D8971E00050831C /* commanfunction.swift in Sources */,
+				DA26F43920EE106400CABF4E /* BundleEx.swift in Sources */,
 				DA71DAA91CA93CD400AD06DD /* VehiclenoVC.swift in Sources */,
 				DA30BEB51F739ED000004336 /* Transactionid.swift in Sources */,
 				DAF9DFA41EEFCD5A00D70BD0 /* LaunchScreenvc.swift in Sources */,
@@ -519,13 +527,21 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		DA29DE3D2101AD2A00B9F77D /* PreauthStoryboard.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DA29DE47210205A200B9F77D /* Base */,
+				DA29DE4C2102086100B9F77D /* es */,
+			);
+			name = PreauthStoryboard.storyboard;
+			sourceTree = "<group>";
+		};
 		DA71DA691CA9078500AD06DD /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				DA71DA6A1CA9078500AD06DD /* Base */,
-				DAF349A820BD4E3100236AF9 /* es */,
-				DAF349AB20BD511500236AF9 /* en */,
-				DAF349AC20BD67D800236AF9 /* hi */,
+				DA29DE4A2102086100B9F77D /* es */,
+				DA29DE4F2102118B00B9F77D /* en */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -534,8 +550,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				DA71DA721CA9078500AD06DD /* Base */,
-				DAF349A920BD4E3100236AF9 /* es */,
-				DAF349AD20BD67D800236AF9 /* hi */,
+				DA29DE4B2102086100B9F77D /* es */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -543,9 +558,9 @@
 		DAF349B220BD7F8900236AF9 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				DAF349B120BD7F8900236AF9 /* es */,
 				DAF349B320BD7F9200236AF9 /* Base */,
-				DAF349B520BD897400236AF9 /* en */,
+				DA29DE4D210208A500B9F77D /* es */,
+				DA29DE4E21020AA700B9F77D /* en */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -566,12 +581,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -630,12 +647,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -680,10 +699,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_ENTITLEMENTS = FuelSecure.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = LY75MT5XE6;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = FuelSecuer/Info.plist;
@@ -695,7 +714,8 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "FuelSecuer/FuelSecuer-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -704,10 +724,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_ENTITLEMENTS = FuelSecure.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = LY75MT5XE6;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = FuelSecuer/Info.plist;
@@ -718,7 +738,8 @@
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "FuelSecuer/FuelSecuer-Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
@@ -727,11 +748,15 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = FuelSecuerTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.VASPLLP.FuelSecuerTests;
 				PRODUCT_NAME = FuelSecure;
-				SWIFT_VERSION = 3.0;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FuelSecure.app/FuelSecure";
 			};
 			name = Debug;
@@ -741,11 +766,15 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = FuelSecuerTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.VASPLLP.FuelSecuerTests;
 				PRODUCT_NAME = FuelSecure;
-				SWIFT_VERSION = 3.0;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FuelSecure.app/FuelSecure";
 			};
 			name = Release;
@@ -754,11 +783,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = FuelSecuerUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.VASPLLP.FuelSecuerUITests;
 				PRODUCT_NAME = FuelSecure;
-				SWIFT_VERSION = 3.0;
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TEST_TARGET_NAME = FuelSecuer;
 				USES_XCTRUNNER = YES;
 			};
@@ -768,11 +802,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = FuelSecuerUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.VASPLLP.FuelSecuerUITests;
 				PRODUCT_NAME = FuelSecure;
-				SWIFT_VERSION = 3.0;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TEST_TARGET_NAME = FuelSecuer;
 				USES_XCTRUNNER = YES;
 			};

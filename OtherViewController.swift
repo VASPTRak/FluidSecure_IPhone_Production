@@ -28,7 +28,7 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
         Other.font = UIFont(name: Other.font!.fontName, size: 40)
         Other.text = Vehicaldetails.sharedInstance.Other
         let doneButton:UIButton = UIButton (frame: CGRect(x: 100, y: 100, width: 100, height: 44));
-        doneButton.setTitle("Return", for: UIControlState())
+        doneButton.setTitle(NSLocalizedString("Return", comment:""), for: UIControlState())
         doneButton.addTarget(self, action: #selector(OdometerVC.tapAction), for: UIControlEvents.touchUpInside);
         doneButton.backgroundColor = UIColor.black
         Other.returnKeyType = .done
@@ -46,7 +46,7 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
         super.viewWillDisappear(animated)
     }
 
-    func gotostart() {
+    @objc func gotostart() {
         self.web.sentlog(func_name: "Other_screen_timeout", errorfromserverorlink: "", errorfromapp: "")
         let appDel = UIApplication.shared.delegate! as! AppDelegate
         appDel.start()
@@ -58,7 +58,7 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
         self.navigationItem.title = "\(Vehicaldetails.sharedInstance.SSId)"
     }
 
-    func tapAction()
+   @objc func tapAction()
     {
         self.view.frame = CGRect(x: 0,y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height)
         self.oview.endEditing(true)
@@ -79,8 +79,8 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
         // Change Message With Color and Font
         let message  = message
         var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
+        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
         // Action.
         let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default, handler: nil)
@@ -115,8 +115,8 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
 
         let message  = message
         var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.black, range: NSRange(location:0,length:message.count))
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
+        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.black, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
 
         // Action.
@@ -129,7 +129,12 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
             }
             else
             {
-                self.web.wifisettings(pagename: "Other")// self.wifisettings()
+                if #available(iOS 11.0, *) {
+                    self.web.wifisettings(pagename: "Other")
+                } else {
+
+                    // Fallback on earlier versions
+                }// self.wifisettings()
             }
         }
         alertController.addAction(action)
@@ -183,8 +188,11 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
 
             if(ResponceMessage == "success") {
                 if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()){
-                    //let alertController = UIAlertController(title: "FluidSecure needs to connect to Hose via WiFi", message: "Please Connect Wifi \(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertControllerStyle.alert)
-                    // Background color.
+                    if #available(iOS 11.0, *) {
+                        self.web.wifisettings(pagename: "Other")
+                    } else {
+                    // Fallback on earlier versions
+
                     let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertControllerStyle.alert)
                     let backView = alertController.view.subviews.last?.subviews.last
                     backView?.layer.cornerRadius = 10.0
@@ -197,9 +205,9 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
                     paragraphStyle1.alignment = NSTextAlignment.left
 
                     let attributedString = NSAttributedString(string:NSLocalizedString("Subtitle", comment:""), attributes: [
-                        NSParagraphStyleAttributeName:paragraphStyle1,
-                        NSFontAttributeName : UIFont.systemFont(ofSize: 20), //your font here
-                        NSForegroundColorAttributeName : UIColor.black
+                        NSAttributedStringKey.paragraphStyle:paragraphStyle1,
+                        NSAttributedStringKey.font : UIFont.systemFont(ofSize: 20), //your font here
+                        NSAttributedStringKey.foregroundColor : UIColor.black
                         ])
 
                     let formattedString = NSMutableAttributedString()
@@ -209,20 +217,19 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
                         .normal(NSLocalizedString("Step2", comment:""))//(" \n\n3. First time it will ask for password,enter: 123456789\n\n4. It will have a check next to ")
                         .bold("\(Vehicaldetails.sharedInstance.SSId)")
                         .normal(NSLocalizedString("Step3", comment:""))//" and it will say \"No Internet Connection\" \n\n5.  Now, tap on the very top left corner that says \"FluidSecure\" - this returns you to allow fueling.\n\n\n\n\n")
-                    
+
                     alertController.setValue(formattedString, forKey: "attributedMessage")
                     alertController.setValue(attributedString, forKey: "attributedTitle")
-                    // Action.
+                        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default){
+                            action in
+                        self.performSegue(withIdentifier: "Go", sender: self)
+                        }
+                        alertController.addAction(action)
 
-                    let btnsetting = UIImage(named: "Button-Green")!
-                    let imageButtonws : UIButton = UIButton(frame: CGRect(x: 5, y: 500, width: 260, height: 40))
-                    imageButtonws.setBackgroundImage(btnsetting, for: UIControlState())
-                    imageButtonws.setTitle(NSLocalizedString("ButtonNAME", comment:""), for: UIControlState.normal)
-                    imageButtonws.setTitleColor(UIColor.white, for: UIControlState.normal)
-                    imageButtonws.addTarget(self, action: #selector(OdometerVC.Action(sender:)), for:.touchUpInside)
-
-                    alertController.view.addSubview(imageButtonws)
                     self.present(alertController, animated: true, completion: nil)
+
+                    }// wifisettings()
+                    self.mainPage()
                 }
 
                 if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){
@@ -260,7 +267,11 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
     func Action(sender:UIButton!)
     {
         self.dismiss(animated: true, completion: nil)
-        self.web.wifisettings(pagename: "Other")//wifisettings()
+        if #available(iOS 11.0, *) {
+            self.web.wifisettings(pagename: "Other")
+        } else {
+            // Fallback on earlier versions
+        }//wifisettings()
         mainPage()
     }
 

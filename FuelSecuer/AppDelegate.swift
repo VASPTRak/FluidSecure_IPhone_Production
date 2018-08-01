@@ -54,7 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UIApplication.shared.scheduleLocalNotification(note)
     }
     
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
          doBackgroundTask()
         do {
             reachability = try Reachability.init()
@@ -145,19 +145,133 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         application.registerForRemoteNotifications()
         return true
     }
-    
-    func start()
-    {
+    func preauthstart(){
         do{
+            self.web.sentlog(func_name: "Appdelegate Start()", errorfromserverorlink: "", errorfromapp: "")
+
             if(defaults.string(forKey: "Register") == nil) {
-                
+
             }
             else{
                 if(defaults.string(forKey: "Register") == "0")
                 {
+
                     let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
                     let initViewController: UIViewController = storyBoard.instantiateViewController(withIdentifier: "firstVC") as! RegisterTableViewController
-                    let nav =  UINavigationController(rootViewController: initViewController)
+                    let nav = UINavigationController(rootViewController: initViewController)
+                    self.window?.rootViewController = nav
+                }
+                else {
+                    let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                    let _: UIViewController = storyBoard.instantiateViewController(withIdentifier: "firstVC") as! RegisterTableViewController
+                    let loginViewController: UIViewController = storyBoard.instantiateViewController(withIdentifier: "Login") as! LoginViewController
+
+                    if(defaults.array(forKey: "SSID") == nil) {
+                        if(defaults.string(forKey: "Login") == "1")
+                        {
+                            let storyboard = UIStoryboard(name: "PreauthStoryboard", bundle: nil)
+                            Vehicaldetails.sharedInstance.AppType = "preAuthTransaction"
+                            let controller = storyboard.instantiateViewController(withIdentifier: "InitialController") as! PreauthVC
+                            let nav =  UINavigationController(rootViewController: controller)
+                            self.window?.rootViewController = nav
+                        }
+                        else if(defaults.string(forKey: "Login") != "1")
+                        {
+                            let storyboard = UIStoryboard(name: "PreauthStoryboard", bundle: nil)
+                            Vehicaldetails.sharedInstance.AppType = "preAuthTransaction"
+                            let controller = storyboard.instantiateViewController(withIdentifier: "InitialController") as! PreauthVC
+                            let nav =  UINavigationController(rootViewController: controller)
+                            self.window?.rootViewController = nav
+                        }
+                        else {
+                            print("root VC else condition")
+                            let nav =  UINavigationController(rootViewController: loginViewController)
+                            self.window?.rootViewController = nav
+                        }
+                    }
+                    else{
+                        do
+                        { let uid = try defaults.array(forKey: "SSID")
+                            let rowCount =  uid!.count
+                            for i in 0  ..< rowCount
+                            {
+                                if(cf.getSSID() == uid![i] as! String)
+                                {
+                                    wificonnection = "True"
+                                    id = i
+                                }
+                                else
+                                {
+                                    wificonnection = "False"
+                                }
+                            }
+                        } catch let error as NSError {}
+                        if(defaults.string(forKey: "Login") == "1")
+                        {
+                            let storyboard = UIStoryboard(name: "PreauthStoryboard", bundle: nil)
+                            Vehicaldetails.sharedInstance.AppType = "preAuthTransaction"
+                            let controller = storyboard.instantiateViewController(withIdentifier: "InitialController") as! PreauthVC
+                            let nav = UINavigationController(rootViewController: controller)
+                            self.window?.rootViewController = nav
+                        }
+                        else{
+                            print("root VC else condition")
+                            let nav =  UINavigationController(rootViewController: loginViewController)
+                            self.window?.rootViewController = nav
+                        }
+                        let storyboard = UIStoryboard(name: "PreauthStoryboard", bundle: nil)
+                        Vehicaldetails.sharedInstance.AppType = "preAuthTransaction"
+                        let controller = storyboard.instantiateViewController(withIdentifier: "preauthInitialController") as! PreauthVC
+
+
+                        print(defaults.string(forKey: "Register")!)
+                        if(defaults.string(forKey: "Register") != "\(1)"){
+                            print("root VC if condition")
+                            let nav =  UINavigationController(rootViewController: loginViewController)
+                            self.window?.rootViewController = nav
+                        }
+                        else{ }
+                        if(wificonnection == "True"){
+                            if (defaults.array(forKey: "SiteID") == nil) {}
+                            else{
+
+                                let nav =  UINavigationController(rootViewController: controller)
+                                self.window?.rootViewController = nav
+                            }
+                        }
+                        else if(wificonnection == "False"){
+                            print("root VC else condition")
+                            let nav =  UINavigationController(rootViewController: controller)
+                            
+                            self.window?.rootViewController = nav
+                            self.web.sentlog(func_name: "Appdelegate Start goto select hose screen", errorfromserverorlink: "", errorfromapp: "")
+                            //self.window?.makeKeyAndVisible()
+                        }
+                    }
+                }
+            }
+        }
+        catch let error as NSError {
+            print ("Error: \(error.domain)")
+        }
+
+    }
+    
+    func start()
+    {
+        do{
+        self.web.sentlog(func_name: "Appdelegate Start()", errorfromserverorlink: "", errorfromapp: "")
+
+            if(defaults.string(forKey: "Register") == nil) {
+                
+            }
+            else{
+                 if(defaults.string(forKey: "Register") == "0")
+                {
+
+                    let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                    let initViewController: UIViewController = storyBoard.instantiateViewController(withIdentifier: "firstVC") as! RegisterTableViewController
+                    let nav = UINavigationController(rootViewController: initViewController)
                     self.window?.rootViewController = nav
                 }
                 else {
@@ -185,8 +299,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         }
                     }
                     else{
-                        let uid = defaults.array(forKey: "SSID")
-                        let rowCount = uid!.count
+                        do
+                        { let uid = try defaults.array(forKey: "SSID")
+                        let rowCount =  uid!.count
                         for i in 0  ..< rowCount
                         {
                             if(cf.getSSID() == uid![i] as! String)
@@ -199,10 +314,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                 wificonnection = "False"
                             }
                         }
+                        } catch let error as NSError {}
                         if(defaults.string(forKey: "Login") == "1")
                         {
                             let secondViewController: UIViewController = storyBoard.instantiateViewController(withIdentifier: "thirdVC") as! ViewController
-                            let nav =  UINavigationController(rootViewController: secondViewController)
+                            let nav = UINavigationController(rootViewController: secondViewController)
                             self.window?.rootViewController = nav
                         }
                         else{
@@ -228,11 +344,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         if(wificonnection == "True"){
                             if (defaults.array(forKey: "SiteID") == nil) {}
                             else{
-                                let siteid = defaults.array(forKey: "SiteID")
-                                let sid = siteid![id]
-                                print(sid,id)
-                                Vehicaldetails.sharedInstance.siteID = sid as! String
-                                print("root VC if condition")
+//                                let siteid = defaults.array(forKey: "SiteID")
+//                                let sid = siteid![id]
+//                                print(sid,id)
+//                                Vehicaldetails.sharedInstance.siteID = sid as! String
+//                                print("root VC if condition")
                                 let nav =  UINavigationController(rootViewController: thirdViewController)
                                 self.window?.rootViewController = nav
                             }
@@ -241,11 +357,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             print("root VC else condition")
                             let nav =  UINavigationController(rootViewController: secondViewController)
                             self.window?.rootViewController = nav
+                            self.web.sentlog(func_name: "Appdelegate Start goto select hose screen", errorfromserverorlink: "", errorfromapp: "")
                             //self.window?.makeKeyAndVisible()
                         }
                     }
                 }
             }
+        }
+        catch let error as NSError {
+            print ("Error: \(error.domain)")
         }
     }
     
@@ -293,19 +413,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let TransactionId = Vehicaldetails.sharedInstance.TransactionId
         let pusercount = Vehicaldetails.sharedInstance.pulsarCount
         let PulseRatio = Vehicaldetails.sharedInstance.PulseRatio
-        
+        var bodyData = ""
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "ddMMyyyyhhmmss"
         if(pusercount == "" || PulseRatio == "" || TransactionId == 0){
             
         }else {
+
             let fuelQuantity = (Double(pusercount))!/(PulseRatio as NSString).doubleValue
-            
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "ddMMyyyyhhmmss"
-            
-            
-            let bodyData = "{\"TransactionId\":\(TransactionId),\"FuelQuantity\":\((fuelQuantity)),\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"versionno\":\"1.15.18\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\"}"
-            
-            
+            if(Vehicaldetails.sharedInstance.AppType == "AuthTransaction"){
+
+             bodyData = "{\"TransactionId\":\(TransactionId),\"FuelQuantity\":\((fuelQuantity)),\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\"}"
+            }
+            else if(Vehicaldetails.sharedInstance.AppType == "preAuthTransaction"){
+
+                preauth.Transaction(fuelQuantity: (Double(pusercount))!/(PulseRatio as NSString).doubleValue)
+            }
+
             let dtt1: String = dateFormatter.string(from: NSDate() as Date)
             //let unsycnfileName =  dtt1 + "transaction" + "#" + Vehicaldetails.sharedInstance.siteName
             let unsycnfileName =  dtt1 + "#" + "\(TransactionId)" + "#" + "\(fuelQuantity)" + "#" + Vehicaldetails.sharedInstance.SSId//Vehicaldetails.sharedInstance.siteName
@@ -385,7 +509,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     // MARK: Reachability callback
-    func reachabilityChanged(note: NSNotification) {
+    @objc func reachabilityChanged(note: NSNotification) {
         
         let reachability = note.object as! Reachability
         if reachability.isReachable {

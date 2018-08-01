@@ -26,7 +26,7 @@ class HourViewController: UIViewController,UITextFieldDelegate {
         Hour.font = UIFont(name: Hour.font!.fontName, size: 40)
         Hour.text = Vehicaldetails.sharedInstance.hours
         let doneButton:UIButton = UIButton (frame: CGRect(x: 100, y: 100, width: 100, height: 44));
-        doneButton.setTitle("Return", for: UIControlState())
+        doneButton.setTitle(NSLocalizedString("Return", comment:""), for: UIControlState())
         doneButton.addTarget(self, action: #selector(tapAction), for: UIControlEvents.touchUpInside);
         doneButton.backgroundColor = UIColor .black
         Hour.returnKeyType = .done
@@ -44,12 +44,12 @@ class HourViewController: UIViewController,UITextFieldDelegate {
         super.viewWillDisappear(animated)
     }
 
-    func tapAction() {
+    @objc func tapAction() {
         self.view.frame = CGRect(x: 0,y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height)
         self.oview.endEditing(true)
     }
 
-    func gotostart(){
+    @objc func gotostart(){
         self.web.sentlog(func_name: "Hour_screen_timeout", errorfromserverorlink: "", errorfromapp: "")
         let appDel = UIApplication.shared.delegate! as! AppDelegate
         appDel.start()
@@ -71,8 +71,8 @@ class HourViewController: UIViewController,UITextFieldDelegate {
         // Change Message With Color and Font
         let message  = message
         var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
+        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
 
         // Action.
@@ -106,8 +106,8 @@ class HourViewController: UIViewController,UITextFieldDelegate {
         backView?.backgroundColor = UIColor.white
         let message  = message
         var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.black, range: NSRange(location:0,length:message.count))
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
+        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.black, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
 
         // Action.
@@ -118,7 +118,11 @@ class HourViewController: UIViewController,UITextFieldDelegate {
                 self.performSegue(withIdentifier: "Go", sender: self)
             }
             else{
-                self.web.wifisettings(pagename: "Hour")//self.wifisettings()
+                if #available(iOS 11.0, *) {
+                    self.web.wifisettings(pagename: "Hour")
+                } else {
+                    // Fallback on earlier versions
+                }
             }
         }
         alertController.addAction(action)
@@ -141,12 +145,11 @@ class HourViewController: UIViewController,UITextFieldDelegate {
         countfailauth += 1
         let Split = data.components(separatedBy: "#")
         let reply = Split[0] 
-        //let error = Split[1]
         if (reply == "-1")
         {
             if(countfailauth>2)
             {
-                showAlert(message: NSLocalizedString("CheckyourInternet", comment:""))//"Please wait momentarily check your internet connection & try again.")//"\(error) \n Please try again later")
+                showAlert(message: NSLocalizedString("CheckyourInternet", comment:""))
             }else{
 
                 self.senddata(deptno: deptno,ppin:ppin,other:other)
@@ -169,46 +172,47 @@ class HourViewController: UIViewController,UITextFieldDelegate {
             if(ResponceMessage == "success")
             {
                 if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()){
-                    let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertControllerStyle.alert)
-                    // Background color.
-                    let backView = alertController.view.subviews.last?.subviews.last
-                    backView?.layer.cornerRadius = 10.0
-                    backView?.backgroundColor = UIColor.white
+                    if #available(iOS 11.0, *) {
+                        self.web.wifisettings(pagename: "Hour")
+                    } else {
+                        // Fallback on earlier versions
 
-                    let paragraphStyle = NSMutableParagraphStyle()
-                    paragraphStyle.alignment = NSTextAlignment.left
+                        let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertControllerStyle.alert)
+                        let backView = alertController.view.subviews.last?.subviews.last
+                        backView?.layer.cornerRadius = 10.0
+                        backView?.backgroundColor = UIColor.white
 
-                    let paragraphStyle1 = NSMutableParagraphStyle()
-                    paragraphStyle1.alignment = NSTextAlignment.left
+                        let paragraphStyle = NSMutableParagraphStyle()
+                        paragraphStyle.alignment = NSTextAlignment.left
 
-                    let attributedString = NSAttributedString(string:NSLocalizedString("Subtitle", comment:""), attributes: [
-                        NSParagraphStyleAttributeName:paragraphStyle1,
-                        NSFontAttributeName : UIFont.systemFont(ofSize: 20), //your font here
-                        NSForegroundColorAttributeName : UIColor.black
-                        ])
+                        let paragraphStyle1 = NSMutableParagraphStyle()
+                        paragraphStyle1.alignment = NSTextAlignment.left
 
-                    let formattedString = NSMutableAttributedString()
-                    formattedString
-                        .normal(NSLocalizedString("Step1", comment:""))//("\nThe WiFi name is the name of the HOSE. Read Steps 1 to 5 below then click on Green bar below.\n\nFollow steps:\n1. Turn on the WiFi (it might already be on)\n\n2. Choose the WiFi \n named: ")
-                        .bold("\(Vehicaldetails.sharedInstance.SSId)")
-                        .normal(NSLocalizedString("Step2", comment:""))//(" \n\n3. First time it will ask for password,enter: 123456789\n\n4. It will have a check next to ")
-                        .bold("\(Vehicaldetails.sharedInstance.SSId)")
-                        .normal(NSLocalizedString("Step3", comment:""))//" and it will say \"No Internet Connection\" \n\n5.  Now, tap on the very top left corner that says \"FluidSecure\" - this returns you to allow fueling.\n\n\n\n\n")
+                        let attributedString = NSAttributedString(string:NSLocalizedString("Subtitle", comment:""), attributes: [
+                            NSAttributedStringKey.paragraphStyle:paragraphStyle1,
+                            NSAttributedStringKey.font : UIFont.systemFont(ofSize: 20), //your font here
+                            NSAttributedStringKey.foregroundColor : UIColor.black
+                            ])
 
-                    alertController.setValue(formattedString, forKey: "attributedMessage")
-                    alertController.setValue(attributedString, forKey: "attributedTitle")
+                        let formattedString = NSMutableAttributedString()
+                        formattedString
+                            .normal(NSLocalizedString("Step1", comment:""))
+                            .bold("\(Vehicaldetails.sharedInstance.SSId)")
+                            .normal(NSLocalizedString("Step2", comment:""))
+                            .bold("\(Vehicaldetails.sharedInstance.SSId)")
+                            .normal(NSLocalizedString("Step3", comment:""))
 
-                    // Action.
+                        alertController.setValue(formattedString, forKey: "attributedMessage")
+                        alertController.setValue(attributedString, forKey: "attributedTitle")
+                        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default){
+                            action in
+                            self.performSegue(withIdentifier: "Go", sender: self)
+                        }
+                        alertController.addAction(action)
 
-                    let btnsetting = UIImage(named: "Button-Green")!
-                    let imageButtonws : UIButton = UIButton(frame: CGRect(x: 5, y: 500, width: 260, height: 40))
-                    imageButtonws.setBackgroundImage(btnsetting, for: UIControlState())
-                    imageButtonws.setTitle("Go To WiFi Settings", for: UIControlState.normal)
-                    imageButtonws.setTitleColor(UIColor.white, for: UIControlState.normal)
-                    imageButtonws.addTarget(self, action: #selector(OdometerVC.Action(sender:)), for:.touchUpInside)
-
-                    alertController.view.addSubview(imageButtonws)
-                    self.present(alertController, animated: true, completion: nil)
+                        self.present(alertController, animated: true, completion: nil)
+                    }
+                    self.mainPage()
                 }
 
                 if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){
@@ -245,7 +249,11 @@ class HourViewController: UIViewController,UITextFieldDelegate {
     func Action(sender:UIButton!)
     {
         self.dismiss(animated: true, completion: nil)
-        self.web.wifisettings(pagename: "Hour")//wifisettings()
+        if #available(iOS 11.0, *) {
+            self.web.wifisettings(pagename: "Hour")
+        } else {
+            // Fallback on earlier versions
+        }
         mainPage()
     }
 
@@ -255,41 +263,48 @@ class HourViewController: UIViewController,UITextFieldDelegate {
         tapAction()
         if(Hour.text == "")
         {
-            showAlert(message: NSLocalizedString("EnterHour", comment:""))//"Please Enter Hour.")
+            showAlert(message: NSLocalizedString("EnterHour", comment:""))
             stoptimergotostart.invalidate()
             viewWillAppear(true)
         }
         else
         {
-            let hour:Int! = Int(Hour.text!)
-            Vehicaldetails.sharedInstance.hours = "\(hour!)"
-            Hour.text = Vehicaldetails.sharedInstance.hours
-            let isdept = Vehicaldetails.sharedInstance.IsDepartmentRequire
-            let isPPin = Vehicaldetails.sharedInstance.IsPersonnelPINRequire
-            let isother = Vehicaldetails.sharedInstance.IsOtherRequire
-
-            if(isdept == "True"){
-                stoptimergotostart.invalidate()
-                self.performSegue(withIdentifier: "dept", sender: self)
+            if(Int(Hour.text!) == nil)
+            {
+                showAlert(message: NSLocalizedString("EnterHour_Eng", comment:""))
+                
             }
             else{
-                if(isPPin == "True"){
+                let hour:Int! = Int(Hour.text!)
+                Vehicaldetails.sharedInstance.hours = "\(hour!)"
+                Hour.text = Vehicaldetails.sharedInstance.hours
+                let isdept = Vehicaldetails.sharedInstance.IsDepartmentRequire
+                let isPPin = Vehicaldetails.sharedInstance.IsPersonnelPINRequire
+                let isother = Vehicaldetails.sharedInstance.IsOtherRequire
+
+                if(isdept == "True"){
                     stoptimergotostart.invalidate()
-                    self.performSegue(withIdentifier: "pin", sender: self)
+                    self.performSegue(withIdentifier: "dept", sender: self)
                 }
                 else{
-                    if(isother == "True"){
+                    if(isPPin == "True"){
                         stoptimergotostart.invalidate()
-                        self.performSegue(withIdentifier: "other", sender: self)
+                        self.performSegue(withIdentifier: "pin", sender: self)
                     }
                     else{
-                        let deptno = ""
-                        let ppin = ""
-                        let other = ""
-                        Vehicaldetails.sharedInstance.deptno = ""
-                        Vehicaldetails.sharedInstance.Personalpinno = ""
-                        Vehicaldetails.sharedInstance.Other = ""
-                        self.senddata(deptno: deptno,ppin:ppin,other:other)
+                        if(isother == "True"){
+                            stoptimergotostart.invalidate()
+                            self.performSegue(withIdentifier: "other", sender: self)
+                        }
+                        else{
+                            let deptno = ""
+                            let ppin = ""
+                            let other = ""
+                            Vehicaldetails.sharedInstance.deptno = ""
+                            Vehicaldetails.sharedInstance.Personalpinno = ""
+                            Vehicaldetails.sharedInstance.Other = ""
+                            self.senddata(deptno: deptno,ppin:ppin,other:other)
+                        }
                     }
                 }
             }

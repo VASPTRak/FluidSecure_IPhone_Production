@@ -34,7 +34,6 @@ class Commanfunction {
         let createfile = getDocumentsURL().appendingPathComponent(fileName)
         let fromPath: String = (createfile!.path)
         do{
-            //try fileManager.removeItemAtPath(fromPath)
             do{try writeText.write(toFile: fromPath, atomically: true, encoding: String.Encoding.utf8)}
             catch{print("error")}
         }
@@ -46,7 +45,6 @@ class Commanfunction {
         let readdata = getDocumentsURL().appendingPathComponent("\(Path)/")
         let fromPath: String = (readdata!.path)
         do{
-            //try fileManager.removeItemAtPath(fromPath)
             do{ if(!FileManager.default.fileExists(atPath: fromPath))
             {
                 do{ try FileManager.default.createDirectory(atPath: fromPath, withIntermediateDirectories: true, attributes: nil)
@@ -90,7 +88,6 @@ class Commanfunction {
         let readdata = getDocumentsURL().appendingPathComponent(fileName)
         let fromPath: String = (readdata!.path)
         do{
-            //try fileManager.removeItemAtPath(fromPath)
             do{ readData = try String(contentsOfFile: fromPath, encoding: String.Encoding.utf8)
             }
             catch{print("error")}
@@ -120,6 +117,32 @@ class Commanfunction {
             }
         }
         return currentSSID!
+    }
+
+    func getInterfaces() -> Bool {
+        guard let unwrappedCFArrayInterfaces = CNCopySupportedInterfaces() else {
+            print("this must be a simulator, no interfaces found")
+            return false
+        }
+        guard let swiftInterfaces = (unwrappedCFArrayInterfaces as NSArray) as? [String] else {
+            print("System error: did not come back as array of Strings")
+            return false
+        }
+        for interface in swiftInterfaces {
+            print("Looking up SSID info for \(interface)")
+            guard let unwrappedCFDictionaryForInterface = CNCopyCurrentNetworkInfo(interface as CFString) else {
+                print("System error: \(interface) has no information")
+                return false
+            }
+            guard let SSIDDict = (unwrappedCFDictionaryForInterface as NSDictionary) as? [String: AnyObject] else {
+                print("System error: interface information is not a string-keyed dictionary")
+                return false
+            }
+            for d in SSIDDict.keys {
+                print("\(d): \(SSIDDict[d]!)")
+            }
+        }
+        return true
     }
 
     func saveBinFile(fileName: String, writeText: String)
@@ -160,8 +183,8 @@ class Commanfunction {
 
     func SaveLogFile(fileName: String, writeText: String)
     {
-        let readdata = getDocumentsURL().appendingPathComponent(fileName)
-        let fromPath: URL = URL(fileURLWithPath: readdata!.path)//(readdata!.path)
+        let readdata = getDocumentsURL().appendingPathComponent("data/unsyncdata/" + fileName)
+        let fromPath: URL = URL(fileURLWithPath: readdata!.path)
 
         do {
             let fileHandle = try FileHandle(forWritingTo: fromPath)
@@ -216,7 +239,7 @@ class Commanfunction {
 
     func DeleteReportTextFile(fileName: String, writeText: String)
     {
-        let deletePath = getDocumentsURL().appendingPathComponent("data/test/" + fileName)//("data/" + fileName)
+        let deletePath = getDocumentsURL().appendingPathComponent("data/test/" + fileName)
         let fromPath: String = (deletePath!.path)
         do{
             try fileManager.removeItem(atPath: fromPath)
@@ -226,7 +249,7 @@ class Commanfunction {
 
     func preauthDeleteReportTextFile(fileName: String, writeText: String)
     {
-        let deletePath = getDocumentsURL().appendingPathComponent("data/preauth/" + fileName)//("data/" + fileName)
+        let deletePath = getDocumentsURL().appendingPathComponent("data/preauth/" + fileName)
         let fromPath: String = (deletePath!.path)
         do{
             try fileManager.removeItem(atPath: fromPath)
@@ -255,19 +278,19 @@ class Commanfunction {
     func ReadReportFile(fileName: String) -> String
     {
         var readData: String!
-
-        let readdata = getDocumentsURL().appendingPathComponent("data/test/" + fileName)///("data/" + fileName)
+        let readdata = getDocumentsURL().appendingPathComponent("data/test/" + fileName)
         let fromPath: String = (readdata!.path)
         do{
-            //try fileManager.removeItemAtPath(fromPath)
             do{ readData = try String(contentsOfFile: fromPath, encoding: String.Encoding.utf8)
                 if(readData == nil){
                     readData = ""
                 }
             }
-            catch{print("error")}
+            catch let error as NSError {
+                print ("Error: \(error.domain)")
+            }
+            
         }
-        //catch{print("error")}
         return readData
     }
 
@@ -275,15 +298,13 @@ class Commanfunction {
     {
         var readData: String!
 
-        let readdata = getDocumentsURL().appendingPathComponent("data/preauth/" + fileName)///("data/" + fileName)
+        let readdata = getDocumentsURL().appendingPathComponent("data/preauth/" + fileName)
         let fromPath: String = (readdata!.path)
         do{
-            //try fileManager.removeItemAtPath(fromPath)
             do{ readData = try String(contentsOfFile: fromPath, encoding: String.Encoding.utf8)
             }
             catch{print("error")}
         }
-        //catch{print("error")}
         return readData
     }
 
@@ -308,7 +329,6 @@ class Commanfunction {
         let readdata = getDocumentsURL().appendingPathComponent("Order/" + fileName)
         let fromPath: String = (readdata!.path)
         do{
-            //try fileManager.removeItemAtPath(fromPath)
             do{ readData = try String(contentsOfFile: fromPath, encoding: String.Encoding.utf8)
             }
             catch{print("error")}
@@ -324,12 +344,10 @@ class Commanfunction {
         let readdata = getDocumentsURL().appendingPathComponent(fileName)
         let fromPath: String = (readdata!.path)
         do{
-            //try fileManager.removeItemAtPath(fromPath)
             do{ readData = try String(contentsOfFile: fromPath, encoding: String.Encoding.utf8)
             }
             catch{print("error")}
         }
-        //catch{print("error")}
         return readData
     }
 
