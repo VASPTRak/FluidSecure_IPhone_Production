@@ -62,7 +62,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
 
     @IBOutlet var selecthose: UILabel!
     @IBOutlet var version_2: UILabel!
-    //@IBOutlet var itembarbutton: UIBarButtonItem!
+    @IBOutlet var itembarbutton: UIBarButtonItem!
     @IBOutlet var AvailablePreauthTransactions: UILabel!
     @IBOutlet var preauth: UIButton!
     @IBOutlet var version: UILabel!
@@ -89,14 +89,14 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         super.viewDidLoad()
         version_2.text = "Version \(Version)"
         version.text = "Version \(Version)"
-//        if(Vehicaldetails.sharedInstance.Language == "es-ES"){
-//            itembarbutton.title = "English"
-//            //defaults.set("es", forKey: "Language")
-//
-//        }else  if(Vehicaldetails.sharedInstance.Language == ""){
-//            itembarbutton.title = "Spanish"
-//            //defaults.set("en", forKey: "Language")
-//        }
+        if(Vehicaldetails.sharedInstance.Language == "es-ES"){
+            itembarbutton.title = "English"
+            //defaults.set("es", forKey: "Language")
+
+        }else  if(Vehicaldetails.sharedInstance.Language == ""){
+            itembarbutton.title = "Spanish"
+            //defaults.set("en", forKey: "Language")
+        }
         wifiNameTextField.delegate = self
 
 
@@ -510,18 +510,18 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
     }
     
     @IBAction func spanish(_ sender: Any) {
-//        if(itembarbutton.title == "English"){
-//            Vehicaldetails.sharedInstance.Language = ""
-//            Bundle.setLanguage("en")
-//            let appDel = UIApplication.shared.delegate! as! AppDelegate
-//            appDel.preauthstart()
-//        }else if(itembarbutton.title == "Spanish"){
-//            Bundle.setLanguage("es")
-//            Vehicaldetails.sharedInstance.Language = "es-ES"
-//            //itembarbutton.title = "Eng"
-//            let appDel = UIApplication.shared.delegate! as! AppDelegate
-//            appDel.preauthstart()
-//        }
+        if(itembarbutton.title == "English"){
+            Vehicaldetails.sharedInstance.Language = ""
+            Bundle.setLanguage("en")
+            let appDel = UIApplication.shared.delegate! as! AppDelegate
+            appDel.preauthstart()
+        }else if(itembarbutton.title == "Spanish"){
+            Bundle.setLanguage("es")
+            Vehicaldetails.sharedInstance.Language = "es-ES"
+            //itembarbutton.title = "Eng"
+            let appDel = UIApplication.shared.delegate! as! AppDelegate
+            appDel.preauthstart()
+        }
     }
     @IBAction func copypwd(sender: AnyObject) {
         print("Password is" + "12345678")// passwordTextField.text!)

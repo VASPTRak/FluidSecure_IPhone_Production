@@ -15,6 +15,19 @@ class Commanfunction {
 
     let fileManager: FileManager = FileManager()
     var currentSSID:String!
+    public var dateUpdated: String {
+
+        let dateFormatterGet = DateFormatter()
+        dateFormatterGet.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZ"
+
+        if let date = dateFormatterGet.date(from: "\(NSDate())") {
+
+            return dateFormatterGet.string(from: date)
+        }
+        else {
+            return "There was an error decoding the string"
+        }
+    }
 
     func showAlert(message: String)
     {

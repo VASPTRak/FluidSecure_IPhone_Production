@@ -455,6 +455,11 @@
                     </view>
                     <navigationItem key="navigationItem" title="FluidSecure" id="9JV-dk-nJA">
                         <barButtonItem key="backBarButtonItem" title="Back" id="bmi-fg-Wre"/>
+                        <barButtonItem key="rightBarButtonItem" title="Spanish" id="cYt-k7-PAU">
+                            <connections>
+                                <action selector="spanish:" destination="f2y-dQ-gqO" id="zaF-VP-Bkc"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO"/>
                     <connections>
@@ -462,6 +467,7 @@
                         <outlet property="datetime" destination="cic-mx-u2Z" id="3i4-7T-M0b"/>
                         <outlet property="go" destination="nMB-1B-hvn" id="m6D-Zi-ChX"/>
                         <outlet property="infotext" destination="uC6-Gh-ysS" id="1zC-yY-LbC"/>
+                        <outlet property="itembarbutton" destination="cYt-k7-PAU" id="CXu-Px-Y8D"/>
                         <outlet property="refreshButton" destination="sSL-vI-RYe" id="PSD-xU-kUC"/>
                         <outlet property="scrollview" destination="Ltv-xH-9lH" id="xdf-5k-bXT"/>
                         <outlet property="selecthose" destination="QzA-8t-ZQK" id="dCb-U5-eVL"/>
@@ -1541,6 +1547,12 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dy8-Ho-FTB">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="795"/>
                                         <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Please wait processing...." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y9f-gp-V9R">
+                                                <rect key="frame" x="20" y="268" width="335" height="68"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hhv-9H-GFM">
                                                 <rect key="frame" x="20" y="383" width="335" height="55"/>
                                                 <color key="backgroundColor" red="0.28235294119999998" green="0.63921568630000003" blue="0.2156862745" alpha="1" colorSpace="calibratedRGB"/>
@@ -1721,7 +1733,7 @@
                                                 </connections>
                                             </button>
                                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="dGb-lT-MuF">
-                                                <rect key="frame" x="177.5" y="178" width="20" height="20"/>
+                                                <rect key="frame" x="177.5" y="216" width="20" height="20"/>
                                             </activityIndicatorView>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="Closing out fuel transaction, please wait…" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yno-hf-V0f">
                                                 <rect key="frame" x="90" y="383" width="265" height="46"/>
@@ -1736,8 +1748,8 @@
                                                 <rect key="frame" x="45" y="383" width="37" height="37"/>
                                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                             </activityIndicatorView>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="siJ-UP-EYc" userLabel="UsageInfoView">
-                                                <rect key="frame" x="20" y="154" width="335" height="275"/>
+                                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="siJ-UP-EYc" userLabel="UsageInfoView">
+                                                <rect key="frame" x="20" y="273" width="335" height="275"/>
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xsj-9t-40f">
                                                         <rect key="frame" x="0.0" y="0.0" width="335" height="42"/>
@@ -1863,17 +1875,20 @@
                                             <constraint firstItem="guL-MB-sfL" firstAttribute="trailing" secondItem="vPA-fB-OUC" secondAttribute="trailing" id="7L3-EG-iUI"/>
                                             <constraint firstItem="HXZ-ng-x1b" firstAttribute="leading" secondItem="dy8-Ho-FTB" secondAttribute="leading" id="8YF-jQ-2GO"/>
                                             <constraint firstItem="guL-MB-sfL" firstAttribute="top" secondItem="vPA-fB-OUC" secondAttribute="bottom" constant="10" id="AbE-q4-cbi"/>
-                                            <constraint firstItem="guL-MB-sfL" firstAttribute="top" secondItem="dGb-lT-MuF" secondAttribute="bottom" constant="182" id="BnA-vZ-62z"/>
+                                            <constraint firstItem="guL-MB-sfL" firstAttribute="top" secondItem="dGb-lT-MuF" secondAttribute="bottom" constant="144" id="BnA-vZ-62z"/>
                                             <constraint firstItem="Hhv-9H-GFM" firstAttribute="leading" secondItem="7RS-jt-1tB" secondAttribute="leading" id="C0O-5x-51D"/>
                                             <constraint firstAttribute="trailing" secondItem="dZ4-vW-wHJ" secondAttribute="trailing" constant="20" id="Dem-ec-yqA"/>
                                             <constraint firstItem="Hhv-9H-GFM" firstAttribute="centerX" secondItem="dGb-lT-MuF" secondAttribute="centerX" constant="0.5" id="F6W-jz-rm2"/>
+                                            <constraint firstAttribute="bottom" secondItem="Y9f-gp-V9R" secondAttribute="bottom" constant="459" id="IcU-WR-CWa"/>
                                             <constraint firstItem="0Dc-pV-eBa" firstAttribute="top" secondItem="guL-MB-sfL" secondAttribute="top" constant="68" id="J15-NQ-vl7"/>
+                                            <constraint firstAttribute="trailing" secondItem="Y9f-gp-V9R" secondAttribute="trailing" constant="20" id="JiJ-lw-wVD"/>
                                             <constraint firstAttribute="trailing" secondItem="HXZ-ng-x1b" secondAttribute="trailing" id="Ngx-9h-pJd"/>
                                             <constraint firstItem="7sZ-nI-Dv8" firstAttribute="top" secondItem="vPA-fB-OUC" secondAttribute="bottom" constant="13" id="TOB-Uk-3cj"/>
                                             <constraint firstItem="0Dc-pV-eBa" firstAttribute="leading" secondItem="dy8-Ho-FTB" secondAttribute="leading" constant="20" id="Uc9-zL-DBS"/>
                                             <constraint firstAttribute="bottom" secondItem="7RS-jt-1tB" secondAttribute="bottom" constant="290" id="WXi-he-3bS"/>
                                             <constraint firstItem="Hhv-9H-GFM" firstAttribute="centerX" secondItem="guL-MB-sfL" secondAttribute="centerX" id="Wek-MX-SWN"/>
                                             <constraint firstItem="2t2-Vr-SSC" firstAttribute="leading" secondItem="dy8-Ho-FTB" secondAttribute="leading" constant="20" id="YBO-6e-XLU"/>
+                                            <constraint firstItem="Y9f-gp-V9R" firstAttribute="top" secondItem="dy8-Ho-FTB" secondAttribute="top" constant="268" id="aYv-XN-hNM"/>
                                             <constraint firstItem="Hhv-9H-GFM" firstAttribute="baseline" secondItem="Yno-hf-V0f" secondAttribute="baseline" constant="-1" id="bCJ-Gf-d1S"/>
                                             <constraint firstItem="vPA-fB-OUC" firstAttribute="top" secondItem="HXZ-ng-x1b" secondAttribute="bottom" constant="8" id="caq-2h-lFO"/>
                                             <constraint firstItem="dZ4-vW-wHJ" firstAttribute="leading" secondItem="dy8-Ho-FTB" secondAttribute="leading" constant="20" id="cm9-Kw-Trm"/>
@@ -1891,6 +1906,7 @@
                                             <constraint firstItem="7sZ-nI-Dv8" firstAttribute="leading" secondItem="dy8-Ho-FTB" secondAttribute="leading" constant="45" id="vR7-I9-KG7"/>
                                             <constraint firstItem="HXZ-ng-x1b" firstAttribute="top" secondItem="dy8-Ho-FTB" secondAttribute="top" id="veC-YI-pFC"/>
                                             <constraint firstAttribute="trailing" secondItem="7RS-jt-1tB" secondAttribute="trailing" constant="20" id="xu7-NL-vWI"/>
+                                            <constraint firstItem="Y9f-gp-V9R" firstAttribute="leading" secondItem="dy8-Ho-FTB" secondAttribute="leading" constant="20" id="ySZ-q4-7mg"/>
                                             <constraint firstAttribute="bottom" secondItem="siJ-UP-EYc" secondAttribute="bottom" constant="366" id="yuZ-8b-HTA"/>
                                             <constraint firstItem="Hhv-9H-GFM" firstAttribute="trailing" secondItem="guL-MB-sfL" secondAttribute="trailing" id="zuo-BI-mSr"/>
                                         </constraints>
@@ -1943,6 +1959,7 @@
                         <outlet property="Quantity1" destination="QOv-8m-hXp" id="RdD-sL-vqD"/>
                         <outlet property="Stop" destination="Hhv-9H-GFM" id="K3P-uQ-Hg7"/>
                         <outlet property="UsageInfoview" destination="siJ-UP-EYc" id="DmB-4H-Lnd"/>
+                        <outlet property="Waitp" destination="Y9f-gp-V9R" id="3Fp-Q2-Ser"/>
                         <outlet property="Warning" destination="0Dc-pV-eBa" id="TzS-hT-zgS"/>
                         <outlet property="cancel" destination="7RS-jt-1tB" id="GUf-sn-Npe"/>
                         <outlet property="displaytime" destination="5i0-lR-8YV" id="YNe-yT-Xc8"/>
@@ -1953,6 +1970,7 @@
                         <outlet property="tpulse" destination="fxl-aT-O8z" id="jTC-wd-XCJ"/>
                         <outlet property="tquantity" destination="EyJ-MX-ksl" id="uCO-8t-Rvl"/>
                         <outlet property="vehicleno" destination="FOD-EL-Uhe" id="zhH-3R-L1S"/>
+                        <outlet property="viewdata" destination="vPA-fB-OUC" id="hay-Di-wxY"/>
                         <outlet property="wait" destination="Yno-hf-V0f" id="9Pe-va-Uoi"/>
                         <outlet property="waitactivity" destination="7sZ-nI-Dv8" id="6q6-9I-3kI"/>
                         <segue destination="CIL-b3-p1l" kind="show" identifier="main" id="cZq-Ct-7Z5"/>
@@ -2338,13 +2356,20 @@
                             <outlet property="delegate" destination="eW0-8w-6zn" id="BWu-AO-iYi"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Register" id="iwq-Zq-HmO"/>
+                    <navigationItem key="navigationItem" title="Register" id="iwq-Zq-HmO">
+                        <barButtonItem key="rightBarButtonItem" title="Spanish" id="cbx-Ev-lSY">
+                            <connections>
+                                <action selector="Spanish:" destination="eW0-8w-6zn" id="F4H-1x-Rrx"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="375" height="767"/>
                     <connections>
                         <outlet property="Company_Name" destination="k0r-Ec-5Y8" id="P6u-R6-HW8"/>
                         <outlet property="emailTextField" destination="tBN-fd-Sct" id="hpZ-fh-bOI"/>
                         <outlet property="firstNameTextField" destination="gHv-81-aFu" id="zgJ-Rb-nG1"/>
+                        <outlet property="itembarbutton" destination="cbx-Ev-lSY" id="Suu-QY-G75"/>
                         <outlet property="mobileNoTextField" destination="ufA-Gc-ufx" id="dcR-K1-1Vv"/>
                         <outlet property="registerButton" destination="zXr-zG-GKb" id="2zD-SN-3H3"/>
                         <segue destination="lYV-rd-FmR" kind="show" identifier="Loginreg" id="ru8-4c-d1E"/>
@@ -2380,12 +2405,12 @@
         <image name="fuel_secure_lock.png" width="310" height="128"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="wBc-Bs-ltW"/>
+        <segue reference="ydU-GA-6EK"/>
         <segue reference="9ET-Yh-wne"/>
-        <segue reference="jjF-9n-BqP"/>
-        <segue reference="cnl-R5-XzB"/>
+        <segue reference="A5n-qH-3Fm"/>
+        <segue reference="4F2-wK-b42"/>
         <segue reference="FPz-ii-K32"/>
-        <segue reference="NIn-2G-x1e"/>
+        <segue reference="osf-EM-wBA"/>
         <segue reference="a9s-uc-3Tp"/>
         <segue reference="rSW-Pp-umg"/>
         <segue reference="wUh-5s-zKS"/>

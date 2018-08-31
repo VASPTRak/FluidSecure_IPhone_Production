@@ -9,7 +9,7 @@ import CoreLocation
 
 class RegisterTableViewController: UITableViewController,CLLocationManagerDelegate,UITextFieldDelegate {
 
-    //@IBOutlet var itembarbutton: UIBarButtonItem!
+    @IBOutlet var itembarbutton: UIBarButtonItem!
     @IBOutlet var version: UILabel!
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var mobileNoTextField: UITextField!
@@ -28,11 +28,11 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         version.text = "Version \(Version)"
-//        if(Vehicaldetails.sharedInstance.Language == "es-ES"){
-//            itembarbutton.title = "English"
-//        }else  if(Vehicaldetails.sharedInstance.Language == ""){
-//            itembarbutton.title = "Spanish"
-//        }
+        if(Vehicaldetails.sharedInstance.Language == "es-ES"){
+            itembarbutton.title = "English"
+        }else  if(Vehicaldetails.sharedInstance.Language == ""){
+            itembarbutton.title = "Spanish"
+        }
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         locationManager.desiredAccuracy=kCLLocationAccuracyBest
@@ -146,18 +146,18 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
 
     
     @IBAction func Spanish(_ sender: Any) {
-//        if(itembarbutton.title == "English"){
-//            Vehicaldetails.sharedInstance.Language = ""
-//            Bundle.setLanguage("en")
-//            let appDel = UIApplication.shared.delegate! as! AppDelegate
-//            appDel.start()
-//        }else if(itembarbutton.title == "Spanish"){
-//            Bundle.setLanguage("es")
-//            Vehicaldetails.sharedInstance.Language = "es-ES"
-//            //itembarbutton.title = "Eng"
-//            let appDel = UIApplication.shared.delegate! as! AppDelegate
-//            appDel.start()
-//        }
+        if(itembarbutton.title == "English"){
+            Vehicaldetails.sharedInstance.Language = ""
+            Bundle.setLanguage("en")
+            let appDel = UIApplication.shared.delegate! as! AppDelegate
+            appDel.start()
+        }else if(itembarbutton.title == "Spanish"){
+            Bundle.setLanguage("es")
+            Vehicaldetails.sharedInstance.Language = "es-ES"
+            //itembarbutton.title = "Eng"
+            let appDel = UIApplication.shared.delegate! as! AppDelegate
+            appDel.start()
+        }
 
     }
 

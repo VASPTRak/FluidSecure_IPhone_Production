@@ -205,9 +205,9 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
 
     func mainPage()
     {
-        cf.delay(2){
+//        cf.delay(2){
             self.performSegue(withIdentifier: "Go", sender: self)
-        }
+//        }
     }
     
     func senddata(deptno:String,ppin:String,other:String)
@@ -268,7 +268,9 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
             
             if(ResponceMessage == "success") {
                 if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()){
+
                     if #available(iOS 11.0, *) {
+                        self.mainPage()
                         self.web.wifisettings(pagename: "Vehicle")
                     } else {
                         // Fallback on earlier versions
@@ -308,7 +310,7 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
 
                         self.present(alertController, animated: true, completion: nil)
                     }
-                    self.mainPage()
+                   // self.mainPage()
                 }
                 
                 if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){

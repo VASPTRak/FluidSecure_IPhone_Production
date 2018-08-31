@@ -383,8 +383,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationDidEnterBackground(_ application: UIApplication)
     {
+         doBackgroundTask()
         self.web.sentlog(func_name: "Application Enter In Background", errorfromserverorlink:  "Selected Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
+
         sleep(10)
+
 //                cf.delay(10){
 //        //            self.doBackgroundTask()
 //        //        }// Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.

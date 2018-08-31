@@ -19,7 +19,7 @@
 const NSString *URL = @"http://103.8.126.241:89/App.txt";
 //const NSString *FSURL = @"\(Vehicaldetails.sharedInstance.URL)/HandlerTrak.ashx";
 
-const NSString *Version = @"1.15.19";
+const NSString *Version = @"1.15.21";
 //@"http://103.8.126.241:89/HandlerTrak.ashx";
 //const NSString *LogURL =  @"http://103.8.126.241:89/LoginHandler.ashx";
 //const NSString *FSURL = @"http://fluidsecure.cloudapp.net/HandlerTrak.ashx";

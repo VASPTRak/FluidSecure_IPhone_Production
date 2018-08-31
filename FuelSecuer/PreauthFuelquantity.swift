@@ -13,6 +13,7 @@ import CoreData
 
 class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,URLSessionDownloadDelegate, UIDocumentInteractionControllerDelegate,CLLocationManagerDelegate
 {
+    @IBOutlet var Waitp: UILabel!
     @IBOutlet var Pwait: UILabel!
     @IBOutlet var waitactivity: UIActivityIndicatorView!
     @IBOutlet var lable: UILabel!
@@ -20,7 +21,8 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
     @IBOutlet var tquantity: UILabel!
     @IBOutlet var wait: UILabel!
     @IBOutlet var Activity: UIActivityIndicatorView!
-
+    @IBOutlet var viewdata: UIView!
+    
     var cf = Commanfunction()
     let defaults = UserDefaults.standard
     var web = Webservices()
@@ -115,6 +117,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                         self.start.isEnabled = true
                         self.start.isHidden = false
                         self.Pwait.isHidden = true
+                         self.Activity.stopAnimating()
                     }
                     else if(isConect_toFS == "false") {
                         self.start.isEnabled = false
@@ -166,6 +169,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
     }
 
     override func viewDidLoad() {
+        self.Activity.startAnimating()
         stoptimergotostart.invalidate()
         super.viewDidLoad()
         self.navigationItem.title = "\(Vehicaldetails.sharedInstance.SSId)"
@@ -464,7 +468,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                 else{
                     let objUserData = self.sysdata1.value(forKey: "quantity_10_record") as! NSDictionary
                     let counts = objUserData.value(forKey: "1:") as! NSNumber
-                    let t_count = Int(truncating: counts) + 1
+                    let t_count = Int(truncating: counts)// + 1
                     print(t_count)
                     Vehicaldetails.sharedInstance.FinalQuantitycount = "\(t_count)"
 
@@ -1988,7 +1992,11 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
 
             if(self.reply1 == nil || self.reply1 == "-1")
             {
-                self.web.sentlog(func_name: "In Preauthorized Transaction StartButtontapped GetPulsar Function", errorfromserverorlink: "\(error)", errorfromapp: "")
+                let text = reply1//error.localizedDescription + error.debugDescription
+                let test = String((text?.filter { !" \n".contains($0) })!)
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+                self.web.sentlog(func_name: "In Preauthorized Transaction StartButtontapped GetPulsar Function", errorfromserverorlink: "\(newString)", errorfromapp: "")
                 timer_noConnection_withlink = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(FuelquantityVC.stoprelay), userInfo: nil, repeats: false)
             }
             else{
@@ -1997,8 +2005,12 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                 do{
                     self.sysdata1 = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
                 }catch let error as NSError {
+                    let text = error.localizedDescription + error.debugDescription
+                    let test = String((text.filter { !" \n".contains($0) }))
+                    let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                    print(newString)
                     print ("Error: \(error.domain)")
-                    self.web.sentlog(func_name: "In Preauthorized Transaction StartButtontapped GetPulsar Function ", errorfromserverorlink: "\(error)", errorfromapp: "")
+                    self.web.sentlog(func_name: "In Preauthorized Transaction StartButtontapped GetPulsar Function ", errorfromserverorlink: "\(newString)", errorfromapp: "")
                 }
 
                 if(self.sysdata1 == nil){}
@@ -2175,6 +2187,8 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
     @IBAction func OKbuttontapped(sender: AnyObject) {
         UsageInfoview.isHidden = true
         IsStartbuttontapped = true
+        Waitp.isHidden = false
+        viewdata.isHidden = true
         stoptimergotostart.invalidate()
         self.cf.delay(1){
             Vehicaldetails.sharedInstance.gohome = true

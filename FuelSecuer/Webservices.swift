@@ -38,6 +38,8 @@ class Webservices:NSObject {
     private let SSID = "\(Vehicaldetails.sharedInstance.SSId)"
     var FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
     var LogURL = Vehicaldetails.sharedInstance.URL + "LoginHandler.ashx"
+
+
     
     @available(iOS 11.0, *)
     func wifisettings(pagename:String)
@@ -158,7 +160,12 @@ class Webservices:NSObject {
             ///Vehicaldetails.sharedInstance.Language = "en-ES"
         }
         let Url:String = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"//FSURL//APIendpointtrimmedString + url
-        let Email = ""
+        var Email :String
+        if(defaults.string(forKey: "address") == nil){
+            Email = ""
+        }else {
+            Email = defaults.string(forKey: "address")!
+        }
         let string = uuid + ":" + Email + ":" + "Other" + ":" + "\(Vehicaldetails.sharedInstance.Language)"//es-ES"
         let Base64 = convertStringToBase64(string: string)
         print(Base64)
@@ -257,7 +264,7 @@ class Webservices:NSObject {
         let bodyData = "\(Name)#:#\(mobile)#:#\(Email)#:#\(uuid)#:#I#:#\(company)"
         print(bodyData)
         request.httpBody = bodyData.data(using: String.Encoding.utf8)
-        request.timeoutInterval = 10
+        request.timeoutInterval = 15
         
         let session = URLSession.shared
         let semaphore = DispatchSemaphore(value: 0)
@@ -678,7 +685,10 @@ class Webservices:NSObject {
                     print ("Error: \(error.domain)")
                 }
                 print(self.sysdata)
-                
+                let ResponceMessage = self.sysdata.value(forKey: "ResponceMessage") as! String
+
+                if(ResponceMessage == "success")
+                {
                 let ResponceData = self.sysdata.value(forKey: "ResponceData") as! NSDictionary
                 let MinLimit = ResponceData.value(forKey: "MinLimit") as! NSNumber
                 let PulseRatio = ResponceData.value(forKey: "PulseRatio") as! NSNumber
@@ -708,7 +718,7 @@ class Webservices:NSObject {
                 Vehicaldetails.sharedInstance.PhoneNumber = "\(PhoneNumber)"
                 Vehicaldetails.sharedInstance.PulserStopTime = "\(PulserStopTime)"
                 Vehicaldetails.sharedInstance.date = "\(ServerDate)"
-                
+                }
             } else {
 
                 self.reply = "-1" + "#" + "\(error!)"
@@ -1105,53 +1115,54 @@ class Webservices:NSObject {
                 print(error!)
                 self.reply = "-1"
             }
-
         }
-        
         task.resume()
         return reply
     }
     
     
     func changessidname(wifissid:String) {
-        
-        let Url = "http://192.168.4.1:80/config?command=wifi"
-        
-        let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
-        print(Url)
-        let bodyData = "{\"Request\":{\"SoftAP\":{\"Connect_SoftAP\":{\"authmode\":\"OPEN\",\"channel\":2,\"ssid\":\"\(wifissid)\",\"password\":\"\"}}}}"
-        print(bodyData)
-        self.sentlog(func_name: "changessidname send request Service Function", errorfromserverorlink: " Response from Link $$!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-        request.httpBody = bodyData.data(using: String.Encoding.utf8)
-        request.setValue("application/json",forHTTPHeaderField: "Content-Type")
-        request.httpMethod = "POST"
-        request.timeoutInterval = 10
-        
-        let task = URLSession.shared.dataTask(with: request as URLRequest){ data, response, error in
-            if let data = data {
-                print(String(data: data, encoding: String.Encoding.utf8)!)
-                self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
-                print(self.reply)
 
-                self.sentlog(func_name: "changessidname send request Service Function", errorfromserverorlink: " Response from Link $$\(String(describing: response as? HTTPURLResponse?))!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-                if let httpResponse = response as? HTTPURLResponse {
-                    print("Status code: (\(httpResponse.statusCode))")
-                    if(httpResponse.statusCode != 200)
-                    {
-                        self.changessidname(wifissid: wifissid)
-                    }
-                }
-                
-            } else {
-                let text = (error?.localizedDescription)! + error.debugDescription
-                let test = String((text.filter { !" \n".contains($0) }))
-                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
-                print(newString)
-                self.sentlog(func_name: "changessidname Service Function", errorfromserverorlink: " Response from Link $$ \(newString)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-                self.reply = "-1"
-            }
-        }
-        task.resume()
+
+
+        
+//        let Url = "http://192.168.4.1:80/config?command=wifi"
+//        let password = Vehicaldetails.sharedInstance.password
+//        let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
+//        print(Url)
+//        let bodyData = "{\"Request\":{\"Softap\":{\"Connect_Softap\":{\"authmode\":\"WPAPSK/WPA2PSK\",\"channel\":6,\"ssid\":\"\(wifissid)\",\"password\":\"\(password)\"}}}}"
+//        print(bodyData)
+//        self.sentlog(func_name: "changessidname send request Service Function", errorfromserverorlink: " Response from Link $$!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//        request.httpBody = bodyData.data(using: String.Encoding.utf8)
+//        request.setValue("application/json",forHTTPHeaderField: "Content-Type")
+//        request.httpMethod = "POST"
+//        request.timeoutInterval = 20
+//
+//        let task = URLSession.shared.dataTask(with: request as URLRequest){ data, response, error in
+//            if let data = data {
+//                print(String(data: data, encoding: String.Encoding.utf8)!)
+//                self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
+//                print(self.reply)
+//
+//                self.sentlog(func_name: "changessidname send request Service Function", errorfromserverorlink: " Response from Link $$\(String(describing: response as! HTTPURLResponse?))!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//                if let httpResponse = response as? HTTPURLResponse {
+//                    print("Status code: (\(httpResponse.statusCode))")
+//                    if(httpResponse.statusCode != 200)
+//                    {
+//                        self.changessidname(wifissid: wifissid)
+//                    }
+//                }
+//
+//            } else {
+//                let text = (error?.localizedDescription)! + error.debugDescription
+//                let test = String((text.filter { !" \n".contains($0) }))
+//                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+//                print(newString)
+//                self.sentlog(func_name: "changessidname Service Function", errorfromserverorlink: " Response from Link $$ \(newString)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//                self.reply = "-1"
+//            }
+//        }
+//        task.resume()
     }
     
     func convertStringToBase64(string: String) -> String

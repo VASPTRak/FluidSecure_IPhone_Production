@@ -62,6 +62,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     var Is_upgrade = [String]()
     var pulsartimeadjust = [String]()
     var IFISBusy = [String]()
+    var Is_HoseNameReplaced = [String]()
     var IFIsDefective = [String]()
     var Uhosenumber = [String]()
     var TransactionId = [String]()
@@ -73,7 +74,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
 
     @IBOutlet var version_2: UILabel!
     @IBOutlet var selectHose: UILabel!
-   // @IBOutlet var itembarbutton: UIBarButtonItem!
+    @IBOutlet var itembarbutton: UIBarButtonItem!
     @IBOutlet var preauth: UIButton!
     @IBOutlet var oview: UIView!
     @IBOutlet var version: UILabel!
@@ -97,11 +98,11 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         super.viewDidLoad()
         version.text = "Version \(Version)"
         version_2.text = "Version \(Version)"
-//        if(Vehicaldetails.sharedInstance.Language == "es-ES"){
-//            itembarbutton.title = "English"
-//        }else  if(Vehicaldetails.sharedInstance.Language == ""){
-//            itembarbutton.title = "Spanish"
-//        }
+        if(Vehicaldetails.sharedInstance.Language == "es-ES"){
+            itembarbutton.title = "English"
+        }else  if(Vehicaldetails.sharedInstance.Language == ""){
+            itembarbutton.title = "Spanish"
+        }
         TransactionId = []
         wifiNameTextField.delegate = self
         self.web.sentlog(func_name: "ViewdidLoad select hose page", errorfromserverorlink: "", errorfromapp: "")
@@ -324,12 +325,6 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                 let PulserTimingAdjust = JsonRow["PulserTimingAdjust"] as! NSString
                                 let IsDefective = JsonRow["IsDefective"] as!NSString
 
-                                Vehicaldetails.sharedInstance.MacAddress = MacAddress as String
-                                Vehicaldetails.sharedInstance.IsHoseNameReplaced = IsHoseNameReplaced as String
-                                Vehicaldetails.sharedInstance.HoseID = HoseID as String
-                                Vehicaldetails.sharedInstance.IsUpgrade = IsUpgrade as String
-                                Vehicaldetails.sharedInstance.PulserTimingAdjust = PulserTimingAdjust as String
-
                                 ssid.append(WifiSSId as String)
                                 IFISBusy.append(IsBusy as String)
                                 location.append(SiteName as String)
@@ -340,6 +335,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                 Is_upgrade.append(IsUpgrade as String)
                                 IFIsDefective.append(IsDefective as String)
                                 pulsartimeadjust.append(PulserTimingAdjust as String)
+                                Is_HoseNameReplaced.append(IsHoseNameReplaced as String)
                                 print(Uhosenumber)
                             }
 
@@ -385,6 +381,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                         Vehicaldetails.sharedInstance.PulserTimingAdjust = pulsartime_adjust
                         Vehicaldetails.sharedInstance.IsBusy = IsBusy
                         Vehicaldetails.sharedInstance.IsDefective = IFIsDefective[0]
+                        Vehicaldetails.sharedInstance.IsHoseNameReplaced = Is_HoseNameReplaced[0]
                         defaults.set(siteid, forKey: "SiteID")
                     }
                 }
@@ -518,20 +515,20 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
 //        }
     }
     @IBAction func spanish(_ sender: Any) {
-//        if(itembarbutton.title == "English"){
-//            Vehicaldetails.sharedInstance.Language = ""
-//            Bundle.setLanguage("en")
-//            defaults.set("en", forKey: "Language")
-//            let appDel = UIApplication.shared.delegate! as! AppDelegate
-//            appDel.start()
-//        }else if(itembarbutton.title == "Spanish"){
-//        Bundle.setLanguage("es")
-//            defaults.set("es", forKey: "Language")
-//        Vehicaldetails.sharedInstance.Language = "es-ES"
-//
-//        let appDel = UIApplication.shared.delegate! as! AppDelegate
-//            appDel.start()
-//        }
+        if(itembarbutton.title == "English"){
+            Vehicaldetails.sharedInstance.Language = ""
+            Bundle.setLanguage("en")
+            defaults.set("en", forKey: "Language")
+            let appDel = UIApplication.shared.delegate! as! AppDelegate
+            appDel.start()
+        }else if(itembarbutton.title == "Spanish"){
+        Bundle.setLanguage("es")
+            defaults.set("es", forKey: "Language")
+        Vehicaldetails.sharedInstance.Language = "es-ES"
+
+        let appDel = UIApplication.shared.delegate! as! AppDelegate
+            appDel.start()
+        }
     }
 
     @IBAction func goButtontapped(sender: AnyObject) {
@@ -654,6 +651,8 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             Vehicaldetails.sharedInstance.PulserTimingAdjust = pulsartime_adjust
             Vehicaldetails.sharedInstance.IsBusy = IsBusy
             Vehicaldetails.sharedInstance.IsDefective = IsDefective
+            Vehicaldetails.sharedInstance.ReplaceableHoseName = ReplaceableHosename[0]
+            Vehicaldetails.sharedInstance.IsHoseNameReplaced = Is_HoseNameReplaced[0]
 
             return ssid[row]
         }
@@ -690,7 +689,9 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             Vehicaldetails.sharedInstance.PulserTimingAdjust = pulsartime_adjust
             Vehicaldetails.sharedInstance.IsBusy = IsBusy
             Vehicaldetails.sharedInstance.IsDefective = IFIsDefective[index]
-        print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID)
+            Vehicaldetails.sharedInstance.ReplaceableHoseName = ReplaceableHosename[index]
+            Vehicaldetails.sharedInstance.IsHoseNameReplaced = Is_HoseNameReplaced[index]
+        print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced)
             defaults.set(siteid, forKey: "SiteID")
 
             let Json = systemdata.value(forKey: "SSIDDataObj") as! NSArray
