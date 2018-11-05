@@ -10,6 +10,7 @@
 "Name" = "Nombre";
 "Mobile" = "Móvil";
 "Email" = "Email";
+"Enter" = "Entrar";
 "MessageFueling" = "Por Favor Inserte La Manga Enel Tanque, Luego Oprima Listo";//"Inserta la boquilla en el tanque \ n Luego toca iniciar";
 "MessageFueling1" = "Por Favor de Espenrar Hasta Que Su Conecciun Sea Esta Milizada Con Ez FluidSecure Enlase.";//Espere mientras se establece su conexión Con el enlace FS";
 "LostWifi" = "Coneccion WiFi perdida en su Móvil.";
@@ -37,6 +38,7 @@
 "Entervehicelno" = "Por favor ingrese el número del vehículo.";
 "EneterOdometer" = "Por favor ingrese el número del odómetro.";
 "Odometer_Reasonability" = "El odómetro introducido no está dentro de los límites razonables que su administrador le ha asignado, póngase en contacto con su administrador.";
+"Hour_Reasonability" = "La hora ingresada no está dentro de lo razonable que su administrador le ha asignado, comuníquese con su administrador.";
 "CheckyourInternet" = "Favor de Esperar un memnto y comprobar la coneccion de Internet y trate otravéz";
 
 "Return" = "Regreso";
@@ -59,7 +61,7 @@
 "EnterPin" = "Por favor ingrese el número PIN del personal.";
 "Enterdept" = "Por favor ingrese el número del departamento.";
 "EnterHour" = "Por favor ingrese la hora.";
-"EnterHour_Eng" = "Ingrese la hora en inglés Entero";
+"EnterHour_Eng" = "Ingrese la hora en enteros";
 "NoInternet" = "La conexión a Internet no está disponible.";
 "Preauthtrans" = "Pre-Authorized transactions are not Available.";
 "Preauthnointernet" = "Transacciones pre autorizadas no Sun Disponible para usted Favor de Habilitar so coneccion de Internet o Contactese con el Administrador de la Empresa.";
@@ -77,3 +79,4 @@
 "BacktoHome" = "Pagina Principal";
 "ConnectWifi" = "Conectar Wifi";
 "Warningfueling" = "No salgas de esta pantalla mientras abastece de combustible - la bomba puede apagarse si lo hace.";
+"Pulsardisconnected" = "Pulsar disconnected";

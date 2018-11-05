@@ -244,3 +244,6 @@
 
 /* Class = "UIButton"; normalTitle = "Register"; ObjectID = "zXr-zG-GKb"; */
 "zXr-zG-GKb.normalTitle" = "Registro";
+
+/* Class = "UILabel"; text = "Please wait processing.... "; ObjectID = "EQu-oX-Gla"; */
+"EQu-oX-Gla.text" = "Por favor, espera a procesar ...";

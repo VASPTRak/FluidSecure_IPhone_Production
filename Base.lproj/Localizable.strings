@@ -40,7 +40,7 @@
 "Entervehicelno" = "Please Enter Vehicle Number.";
 "EneterOdometer" = "Please Enter Odometer Number.";
 "Odometer_Reasonability" = "The odometer entered is not within the reasonability your administrator has assigned, please contact your administrator.";
-
+"Hour_Reasonability" = "The hour entered is not within the reasonability your administrator has assigned, please contact your administrator.";
 "Return" = "Return";
 "WarningselectWifi" = "Please Connect ";
 "Wifi" = " Wi-Fi.";
@@ -61,7 +61,7 @@
 "EnterPin" = "Please Enter Personnel PIN Number.";
 "Enterdept" = "Please Enter Department Number.";
 "EnterHour" = "Please Enter Hour.";
-"EnterHour_Eng" = "Please Enter Hour in English Integer";
+"EnterHour_Eng" = "Please Enter Hour in Integer";
 "NoInternet" = "Internet connection is not available.";
 "Preauthtrans" = "Pre-Authorized transactions are not Available.";
 "Preauthnointernet" = "Pre-authorized transactions not available for you. Please enabled your internet connection or Please contact your company’s administrator.";

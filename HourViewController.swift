@@ -18,6 +18,7 @@ class HourViewController: UIViewController,UITextFieldDelegate {
     var stoptimergotostart:Timer = Timer()
     var IsSavebuttontapped : Bool = false
     var countfailauth:Int = 0
+    var countdata = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -60,27 +61,6 @@ class HourViewController: UIViewController,UITextFieldDelegate {
         // Dispose of any resources that can be recreated.
     }
 
-    func showAlert(message: String)
-    {
-        let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertControllerStyle.alert)
-        // Background color.
-        let backView = alertController.view.subviews.last?.subviews.last
-        backView?.layer.cornerRadius = 10.0
-        backView?.backgroundColor = UIColor.white
-
-        // Change Message With Color and Font
-        let message  = message
-        var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
-        alertController.setValue(messageMutableString, forKey: "attributedMessage")
-
-        // Action.
-        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default, handler: nil)
-        alertController.addAction(action)
-        self.present(alertController, animated: true, completion: nil)
-    }
-
     @IBAction func hour(_ sender: Any) {
         checkMaxLength(textField: Hour, maxLength:7)
     }
@@ -95,38 +75,6 @@ class HourViewController: UIViewController,UITextFieldDelegate {
         stoptimergotostart.invalidate()
         viewWillAppear(true)
         Hour.text = ""
-    }
-
-    func showAlertSetting(message: String)
-    {
-        let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertControllerStyle.alert)
-        // Background color.
-        let backView = alertController.view.subviews.last?.subviews.last
-        backView?.layer.cornerRadius = 10.0
-        backView?.backgroundColor = UIColor.white
-        let message  = message
-        var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.black, range: NSRange(location:0,length:message.count))
-        alertController.setValue(messageMutableString, forKey: "attributedMessage")
-
-        // Action.
-        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default) { action in //self.//
-            if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
-            {
-                print("ssID Match")
-                self.performSegue(withIdentifier: "Go", sender: self)
-            }
-            else{
-                if #available(iOS 11.0, *) {
-                    self.web.wifisettings(pagename: "Hour")
-                } else {
-                    // Fallback on earlier versions
-                }
-            }
-        }
-        alertController.addAction(action)
-        self.present(alertController, animated: true, completion: nil)
     }
 
     //AUTHENTICATION FUNCTION CALL
@@ -168,6 +116,7 @@ class HourViewController: UIViewController,UITextFieldDelegate {
             let ResponceMessage = sysdata.value(forKey: "ResponceMessage") as! NSString
             let ResponceText = sysdata.value(forKey: "ResponceText") as! NSString
             let ValidationFailFor = sysdata.value(forKey: "ValidationFailFor") as! NSString
+
 
             if(ResponceMessage == "success")
             {
@@ -277,34 +226,155 @@ class HourViewController: UIViewController,UITextFieldDelegate {
             else{
                 let hour:Int! = Int(Hour.text!)
                 Vehicaldetails.sharedInstance.hours = "\(hour!)"
-                Hour.text = Vehicaldetails.sharedInstance.hours
+                let hours = Vehicaldetails.sharedInstance.IsHoursrequirs
                 let isdept = Vehicaldetails.sharedInstance.IsDepartmentRequire
                 let isPPin = Vehicaldetails.sharedInstance.IsPersonnelPINRequire
                 let isother = Vehicaldetails.sharedInstance.IsOtherRequire
+                let CheckOdometerReasonable = Vehicaldetails.sharedInstance.CheckOdometerReasonable
+                let OdometerReasonabilityConditions = Vehicaldetails.sharedInstance.OdometerReasonabilityConditions
+                let Hourlimit:Int = Vehicaldetails.sharedInstance.HoursLimit
+                let Previoushours:Int = Vehicaldetails.sharedInstance.PreviousHours
 
-                if(isdept == "True"){
-                    stoptimergotostart.invalidate()
-                    self.performSegue(withIdentifier: "dept", sender: self)
-                }
-                else{
-                    if(isPPin == "True"){
-                        stoptimergotostart.invalidate()
-                        self.performSegue(withIdentifier: "pin", sender: self)
-                    }
-                    else{
-                        if(isother == "True"){
-                            stoptimergotostart.invalidate()
-                            self.performSegue(withIdentifier: "other", sender: self)
+                if(CheckOdometerReasonable == "True"){
+
+                    if(OdometerReasonabilityConditions == "1"){
+
+                        if(Hourlimit >= hour && hour >= Previoushours)
+                        {
+                            if(isdept == "True"){
+                                countdata = 0
+                                stoptimergotostart.invalidate()
+                                self.performSegue(withIdentifier: "dept", sender: self)
+                            }
+                            else{
+                                if(isPPin == "True"){
+                                    countdata = 0
+                                    stoptimergotostart.invalidate()
+                                    self.performSegue(withIdentifier: "pin", sender: self)
+                                }
+                                else{
+                                    if(isother == "True"){
+                                        countdata = 0
+                                        stoptimergotostart.invalidate()
+                                        self.performSegue(withIdentifier: "other", sender: self)
+                                    }
+                                    else{
+                                        let deptno = ""
+                                        let ppin = ""
+                                        let other = ""
+                                        Vehicaldetails.sharedInstance.deptno = ""
+                                        Vehicaldetails.sharedInstance.Personalpinno = ""
+                                        Vehicaldetails.sharedInstance.Other = ""
+                                        self.senddata(deptno: deptno,ppin:ppin,other:other)
+                                    }
+                                }
+                            }
                         }
                         else{
-                            let deptno = ""
-                            let ppin = ""
-                            let other = ""
-                            Vehicaldetails.sharedInstance.deptno = ""
-                            Vehicaldetails.sharedInstance.Personalpinno = ""
-                            Vehicaldetails.sharedInstance.Other = ""
-                            self.senddata(deptno: deptno,ppin:ppin,other:other)
+                            countdata += 1
+
+                            if(countdata >  3){
+
+                                if(isdept == "True"){
+                                    countdata = 0
+                                    self.performSegue(withIdentifier: "dept", sender: self)
+                                }
+                                else{
+                                    if(isPPin == "True"){
+                                        countdata = 0
+                                        self.performSegue(withIdentifier: "pin", sender: self)
+                                    }
+                                    else{
+                                        if(isother == "True"){
+                                            countdata = 0
+                                            self.performSegue(withIdentifier: "other", sender: self)
+                                        }
+                                        else{
+                                            let deptno = ""
+                                            let ppin = ""
+                                            let other = ""
+                                            Vehicaldetails.sharedInstance.deptno = ""
+                                            Vehicaldetails.sharedInstance.Personalpinno = ""
+                                            Vehicaldetails.sharedInstance.Other = ""
+                                            self.senddata(deptno: deptno,ppin:ppin,other:other)
+                                        }
+                                    }
+                                }
+                            }
+                            else{
+                                showAlert(message: NSLocalizedString("Hour_Reasonability", comment:""))
+                                viewWillAppear(true)
+                                print(countdata)
+                            }
                         }
+
+                    } else if(OdometerReasonabilityConditions == "2"){
+
+                        if(Hourlimit >= hour && hour >= Previoushours)
+                        {
+
+                            Vehicaldetails.sharedInstance.hours = ""
+                            if(isdept == "True"){
+                                countdata = 0
+                                self.performSegue(withIdentifier: "dept", sender: self)
+                            }
+                            else{
+                                if(isPPin == "True"){
+                                    countdata = 0
+                                    self.performSegue(withIdentifier: "pin", sender: self)
+                                }
+                                else{
+                                    if(isother == "True"){
+                                        countdata = 0
+                                        self.performSegue(withIdentifier: "other", sender: self)
+                                    }
+                                    else{
+                                        let deptno = ""
+                                        let ppin = ""
+                                        let other = ""
+                                        Vehicaldetails.sharedInstance.deptno = ""
+                                        Vehicaldetails.sharedInstance.Personalpinno = ""
+                                        Vehicaldetails.sharedInstance.Other = ""
+                                        self.senddata(deptno: deptno,ppin:ppin,other:other)
+                                    }
+                                }
+                            }
+                        }
+                        else{
+                            showAlert(message: NSLocalizedString("Hour_Reasonability", comment:""))
+                            viewWillAppear(true)
+                        }
+                    }
+                }
+                else if (CheckOdometerReasonable == "False"){
+                    if(hour >= Previoushours)
+                    {
+                        if(isdept == "True"){
+                            self.performSegue(withIdentifier: "dept", sender: self)
+                        }
+                        else{
+                            if(isPPin == "True"){
+                                self.performSegue(withIdentifier: "pin", sender: self)
+                            }
+                            else{
+                                if(isother == "True"){
+                                    self.performSegue(withIdentifier: "other", sender: self)
+                                }
+                                else{
+                                    let deptno = ""
+                                    let ppin = ""
+                                    let other = ""
+                                    Vehicaldetails.sharedInstance.deptno = ""
+                                    Vehicaldetails.sharedInstance.Personalpinno = ""
+                                    Vehicaldetails.sharedInstance.Other = ""
+                                    self.senddata(deptno: deptno,ppin:ppin,other:other)
+                                }
+                            }
+                        }
+                    }
+                    else{
+                        showAlert(message: NSLocalizedString("Hour_Reasonability", comment:""))
+                        viewWillAppear(true)
                     }
                 }
             }

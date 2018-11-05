@@ -16,10 +16,11 @@
 
 //const NSString *FSURL = @"https://fluidsecure.azurewebsites.net/HandlerTrak.ashx";
 //const NSString *LogURL =  @"https://fluidsecure.azurewebsites.net/LoginHandler.ashx";
+//const NSString *URL = @"http://www.trakeng.com/app.txt";
 const NSString *URL = @"http://103.8.126.241:89/App.txt";
 //const NSString *FSURL = @"\(Vehicaldetails.sharedInstance.URL)/HandlerTrak.ashx";
 
-const NSString *Version = @"1.15.21";
+const NSString *Version = @"1.15.28";
 //@"http://103.8.126.241:89/HandlerTrak.ashx";
 //const NSString *LogURL =  @"http://103.8.126.241:89/LoginHandler.ashx";
 //const NSString *FSURL = @"http://fluidsecure.cloudapp.net/HandlerTrak.ashx";

@@ -49,6 +49,8 @@
 		DA9F948B1F14F42E00BFE62B /* checkbox-unchecked.png in Resources */ = {isa = PBXBuildFile; fileRef = DA9F94891F14F42E00BFE62B /* checkbox-unchecked.png */; };
 		DA9F948D1F14FF9200BFE62B /* WiFI.png in Resources */ = {isa = PBXBuildFile; fileRef = DA9F948C1F14FF9200BFE62B /* WiFI.png */; };
 		DAC3E4981E1D20F60012E65F /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAC3E4971E1D20F60012E65F /* LoginViewController.swift */; };
+		DAC41CEB2136A14D00B1B9C1 /* TCPcommunication.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAC41CEA2136A14D00B1B9C1 /* TCPcommunication.swift */; };
+		DAC41CED2136CDE100B1B9C1 /* Sync_UnsyncTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAC41CEC2136CDE100B1B9C1 /* Sync_UnsyncTransaction.swift */; };
 		DACD13461E924F6D002784CC /* fuel_secure_lock.png in Resources */ = {isa = PBXBuildFile; fileRef = DACD13451E924F6D002784CC /* fuel_secure_lock.png */; };
 		DAE2E4411F0678C1004A9480 /* HourViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE2E4401F0678C1004A9480 /* HourViewController.swift */; };
 		DAE2E4431F0678EC004A9480 /* DeptViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE2E4421F0678EC004A9480 /* DeptViewController.swift */; };
@@ -149,6 +151,8 @@
 		DA9F94891F14F42E00BFE62B /* checkbox-unchecked.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "checkbox-unchecked.png"; sourceTree = "<group>"; };
 		DA9F948C1F14FF9200BFE62B /* WiFI.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = WiFI.png; sourceTree = "<group>"; };
 		DAC3E4971E1D20F60012E65F /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		DAC41CEA2136A14D00B1B9C1 /* TCPcommunication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPcommunication.swift; sourceTree = "<group>"; };
+		DAC41CEC2136CDE100B1B9C1 /* Sync_UnsyncTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync_UnsyncTransaction.swift; sourceTree = "<group>"; };
 		DACD13451E924F6D002784CC /* fuel_secure_lock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fuel_secure_lock.png; path = FuelSecuer/Assets.xcassets/fuel_secure_lock.png; sourceTree = "<group>"; };
 		DAE2E4401F0678C1004A9480 /* HourViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HourViewController.swift; sourceTree = "<group>"; };
 		DAE2E4421F0678EC004A9480 /* DeptViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeptViewController.swift; sourceTree = "<group>"; };
@@ -251,6 +255,7 @@
 				DA71DA6C1CA9078500AD06DD /* FuelSecuer.xcdatamodeld */,
 				DA5BE0371CAA4FCF003155A8 /* OdometerVC.swift */,
 				DA5BE0391CAAB578003155A8 /* Reachability.swift */,
+				DAC41CEA2136A14D00B1B9C1 /* TCPcommunication.swift */,
 				DA4BAF8E1CAD0652002A5C63 /* FuelquantityVC.swift */,
 				DA4BAF9C1CAD47C7002A5C63 /* Vehicaldetails.swift */,
 				DA497B2C1CEC841F0058E218 /* RegisterTableViewController.swift */,
@@ -262,6 +267,7 @@
 				DA434DA61F69309200FF83E1 /* PreauthOdometrVC.swift */,
 				DA9444621F7398E1006F9804 /* PreauthFuelquantity.swift */,
 				DA7A40A71F7633AF00D889D6 /* Transaction_id.swift */,
+				DAC41CEC2136CDE100B1B9C1 /* Sync_UnsyncTransaction.swift */,
 			);
 			name = FuelSecure;
 			path = FuelSecuer;
@@ -366,6 +372,9 @@
 						LastSwiftMigration = 0940;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
+							com.apple.AccessWiFi = {
+								enabled = 1;
+							};
 							com.apple.BackgroundModes = {
 								enabled = 1;
 							};
@@ -478,6 +487,7 @@
 				DA71DA6E1CA9078500AD06DD /* FuelSecuer.xcdatamodeld in Sources */,
 				DA7A40A81F7633AF00D889D6 /* Transaction_id.swift in Sources */,
 				DA434DA51F692FEC00FF83E1 /* PreauthVehicleVC.swift in Sources */,
+				DAC41CEB2136A14D00B1B9C1 /* TCPcommunication.swift in Sources */,
 				DA6282761CF2CCF60057D1CF /* Webservices.swift in Sources */,
 				DA5DB9821CF8249A00C9A90E /* Wifidetails+CoreDataProperties.swift in Sources */,
 				DA5BE03A1CAAB578003155A8 /* Reachability.swift in Sources */,
@@ -486,6 +496,7 @@
 				DA0BA0751D8971E00050831C /* commanfunction.swift in Sources */,
 				DA26F43920EE106400CABF4E /* BundleEx.swift in Sources */,
 				DA71DAA91CA93CD400AD06DD /* VehiclenoVC.swift in Sources */,
+				DAC41CED2136CDE100B1B9C1 /* Sync_UnsyncTransaction.swift in Sources */,
 				DA30BEB51F739ED000004336 /* Transactionid.swift in Sources */,
 				DAF9DFA41EEFCD5A00D70BD0 /* LaunchScreenvc.swift in Sources */,
 				DAC3E4981E1D20F60012E65F /* LoginViewController.swift in Sources */,

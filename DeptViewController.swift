@@ -50,7 +50,7 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
         appDel.start()
     }
 
-   @objc func tapAction() {
+    @objc func tapAction() {
         self.view.frame = CGRect(x: 0,y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height)
         self.oview.endEditing(true)
     }
@@ -58,26 +58,6 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-    }
-
-    func showAlert(message: String)
-    {
-        let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertControllerStyle.alert)
-        // Background color.
-        let backView = alertController.view.subviews.last?.subviews.last
-        backView?.layer.cornerRadius = 10.0
-        backView?.backgroundColor = UIColor.white
-
-        // Change Message With Color and Font
-        let message  = message
-        var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
-        alertController.setValue(messageMutableString, forKey: "attributedMessage")
-        // Action.
-        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default, handler: nil)
-        alertController.addAction(action)
-        self.present(alertController, animated: true, completion: nil)
     }
 
     @IBAction func department(_ sender: Any)
@@ -95,39 +75,6 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
         stoptimergotostart.invalidate()
         viewWillAppear(true)
         Dept.text = ""
-    }
-
-    func showAlertSetting(message: String)
-    {
-        let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertControllerStyle.alert)
-        // Background color.
-        let backView = alertController.view.subviews.last?.subviews.last
-        backView?.layer.cornerRadius = 10.0
-        backView?.backgroundColor = UIColor.white
-
-        let message  = message
-        var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.black, range: NSRange(location:0,length:message.count))
-        alertController.setValue(messageMutableString, forKey: "attributedMessage")
-
-        // Action.
-        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default) { action in
-            if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
-            {
-                print("ssID Match")
-                self.performSegue(withIdentifier: "Go", sender: self)
-            }
-            else{
-                if #available(iOS 11.0, *) {
-                    self.web.wifisettings(pagename: "Department")
-                } else {
-                    // Fallback on earlier versions
-                }
-            }
-        }
-        alertController.addAction(action)
-        self.present(alertController, animated: true, completion: nil)
     }
 
     //AUTHENTICATION FUNCTION CALL
@@ -210,8 +157,8 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
                         alertController.setValue(attributedString, forKey: "attributedTitle")
 
                         let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default){
-                         action in
-                        self.performSegue(withIdentifier: "Go", sender: self)
+                            action in
+                            self.performSegue(withIdentifier: "Go", sender: self)
                         }
                         alertController.addAction(action)
 

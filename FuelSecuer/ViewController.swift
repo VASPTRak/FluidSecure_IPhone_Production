@@ -46,8 +46,8 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     var OtherLabel:String!
     var timeout:String!
     var cf = Commanfunction()
-    var ad = FuelquantityVC()
     var pa = PreauthFuelquantity()
+    var unsync = Sync_Unsynctransactions()
     var sysdata:NSDictionary!
     var systemdata:NSDictionary!
     var pickerViewHose: UIPickerView = UIPickerView()
@@ -66,11 +66,14 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     var IFIsDefective = [String]()
     var Uhosenumber = [String]()
     var TransactionId = [String]()
+    var TLDCall = [String]()
     var IsOdoMeterRequire:String!
+    var IsVehicleNumberRequire:String!
     var IsLoginRequire:String!
     var IsBusy :String!
     var IsDefective:String!
     var IsGobuttontapped : Bool = false
+    var now:Date!
 
     @IBOutlet var version_2: UILabel!
     @IBOutlet var selectHose: UILabel!
@@ -133,7 +136,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         wifiNameTextField.attributedPlaceholder = myMutableStringTitle
         _ = defaults.array(forKey: "SSID")
         var reply:String!
-         
+
 
         if(currentlocation == nil)
         {
@@ -225,6 +228,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                 let PersonName = objUserData.value(forKey: "PersonName") as! NSString
                 let PhoneNumber = objUserData.value(forKey: "PhoneNumber") as! NSString
                 let CollectDiagnosticLogs = objUserData.value(forKey: "CollectDiagnosticLogs") as! NSString
+                IsVehicleNumberRequire = objUserData.value(forKey: "IsVehicleNumberRequire") as! NSString as String
                 IsOdoMeterRequire = objUserData.value(forKey: "IsOdoMeterRequire") as! NSString as String
                 IsLoginRequire = objUserData.value(forKey: "IsLoginRequire") as! NSString as String
                 IsDepartmentRequire = objUserData.value(forKey: "IsDepartmentRequire") as! NSString as String
@@ -232,6 +236,14 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                 IsOtherRequire = objUserData.value(forKey: "IsOtherRequire") as! NSString as String
                 OtherLabel = objUserData.value(forKey:"OtherLabel") as!NSString as String
                 timeout = objUserData.value(forKey:"TimeOut") as!NSString as String
+                Vehicaldetails.sharedInstance.IsVehicleNumberRequire = IsVehicleNumberRequire
+                if(IsVehicleNumberRequire == "False"){
+                    Vehicaldetails.sharedInstance.vehicleno = ""
+                    Vehicaldetails.sharedInstance.Odometerno = "0"
+                }
+                else if(IsVehicleNumberRequire == "True"){
+
+                }
 
                 infotext.text =  NSLocalizedString("Name", comment:"") + ": \(PersonName)\n" + NSLocalizedString("Mobile", comment:"") + ":\(PhoneNumber)\n" + NSLocalizedString("Email", comment:"") + ": \(Email)"
                 Vehicaldetails.sharedInstance.CollectDiagnosticLogs = CollectDiagnosticLogs as String
@@ -247,7 +259,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                 defaults.set(PhoneNumber, forKey: "mobile")
                 defaults.set(uuid, forKey: "uuid")
                 defaults.set(1, forKey: "Register")
-                 Vehicaldetails.sharedInstance.AppType = "AuthTransaction"
+                Vehicaldetails.sharedInstance.AppType = "AuthTransaction"
                 print(IMEI_UDID,IsApproved,PhoneNumber,PersonName,Email)
             }
             else if(Message == "fail"){ }
@@ -324,6 +336,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                 let MacAddress = JsonRow["MacAddress"] as! NSString
                                 let PulserTimingAdjust = JsonRow["PulserTimingAdjust"] as! NSString
                                 let IsDefective = JsonRow["IsDefective"] as!NSString
+                                let IsTLDCall = JsonRow["IsTLDCall"] as! NSString
 
                                 ssid.append(WifiSSId as String)
                                 IFISBusy.append(IsBusy as String)
@@ -336,6 +349,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                 IFIsDefective.append(IsDefective as String)
                                 pulsartimeadjust.append(PulserTimingAdjust as String)
                                 Is_HoseNameReplaced.append(IsHoseNameReplaced as String)
+                                TLDCall.append(IsTLDCall as String)
                                 print(Uhosenumber)
                             }
 
@@ -382,6 +396,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                         Vehicaldetails.sharedInstance.IsBusy = IsBusy
                         Vehicaldetails.sharedInstance.IsDefective = IFIsDefective[0]
                         Vehicaldetails.sharedInstance.IsHoseNameReplaced = Is_HoseNameReplaced[0]
+
                         defaults.set(siteid, forKey: "SiteID")
                     }
                 }
@@ -421,6 +436,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         let strDate = dateFormatter.string(from: NSDate() as Date)
         datetime.text = strDate
         selectHose.text = NSLocalizedString("selectHose", comment:"")
+
     }
 
     func openMapForPlace() {
@@ -456,28 +472,43 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         if( cf.getSSID() != "" ) {
             print("SSID: \(cf.getSSID())")
         } else {}
-        _ = ad.unsyncTransaction()
+        _ = unsync.unsyncTransaction()
         _ = pa.preauthunsyncTransaction()
-    }
 
-    func showAlert(message: String) {
-        let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertControllerStyle.alert)
-        // Background color.
-        let backView = alertController.view.subviews.last?.subviews.last
-        backView?.layer.cornerRadius = 10.0
-        backView?.backgroundColor = UIColor.white
-        // Change Message With Color and Font
-        let message  = message
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = NSTextAlignment.left
-        var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [ NSAttributedStringKey.paragraphStyle: paragraphStyle,NSAttributedStringKey.font:UIFont(name: "Georgia", size: 24.0)!])
-        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
-        alertController.setValue(messageMutableString, forKey: "attributedMessage")
-        // Action.
-        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default, handler: nil)
-        alertController.addAction(action)
-        self.present(alertController, animated: true, completion: nil)
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ssZ"
+        let strDate = dateFormatter.string(from: NSDate() as Date)
+        print(strDate)
+        if(defaults.string(forKey:"Date") == nil){
+            cf.showUpdateWithForce()
+            defaults.set(strDate,forKey: "Date")
+            now = Date()
+        }else{
+            print(defaults.string(forKey:"Date")!)
+            let savedate = defaults.string(forKey:"Date")
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ssZ"
+            print(now)
+
+            //   now = (dateFormatter.date(from: savedate!))?.addingTimeInterval(500)
+            let currentdate = (dateFormatter.date(from: savedate!))//NSDate()
+            let x = 2
+            let calendar = NSCalendar(calendarIdentifier: NSCalendar.Identifier.gregorian)
+            let dateComponent = NSDateComponents()
+
+            dateComponent.day = x
+            now = (calendar?.date(byAdding: dateComponent as DateComponents, to: currentdate as! Date, options:[])! as! NSDate) as Date!
+            print(now)
+        }
+
+        cf.delay(1){
+            let soon = Date()
+            print(self.now!,soon)
+            if(self.now! < soon){
+                self.cf.showUpdateWithForce()
+                self.defaults.set("\(soon)",forKey: "Date")
+            }
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -507,12 +538,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     }
 
     @IBAction func change_language(_ sender: Any) {
-//        if(itembarbutton.title == "English"){
-//        Bundle.setLanguage("en")
-//        let appDel = UIApplication.shared.delegate! as! AppDelegate
-//        appDel.start()
-//
-//        }
+
     }
     @IBAction func spanish(_ sender: Any) {
         if(itembarbutton.title == "English"){
@@ -522,16 +548,17 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             let appDel = UIApplication.shared.delegate! as! AppDelegate
             appDel.start()
         }else if(itembarbutton.title == "Spanish"){
-        Bundle.setLanguage("es")
+            Bundle.setLanguage("es")
             defaults.set("es", forKey: "Language")
-        Vehicaldetails.sharedInstance.Language = "es-ES"
+            Vehicaldetails.sharedInstance.Language = "es-ES"
 
-        let appDel = UIApplication.shared.delegate! as! AppDelegate
+            let appDel = UIApplication.shared.delegate! as! AppDelegate
             appDel.start()
         }
     }
 
     @IBAction func goButtontapped(sender: AnyObject) {
+
         if(self.wifiNameTextField.text == ""){
             showAlert(message: NSLocalizedString("NoHoseselect", comment:""))
         }
@@ -596,11 +623,143 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                             }else if(ResponceText == "Busy"){
                                 print("ssID Match")
                                 Vehicaldetails.sharedInstance.TransactionId = 0;
-                                self.performSegue(withIdentifier: "GO", sender: self)
+                                if(IsVehicleNumberRequire == "True"){
+                                    self.performSegue(withIdentifier: "GO", sender: self)
+                                }
+                                else{
+
+                                    if(IsDepartmentRequire == "True"){
+                                        self.performSegue(withIdentifier: "dept", sender: self)
+                                    }
+                                    else{
+                                        if(IsPersonnelPINRequire == "True"){
+                                            self.performSegue(withIdentifier: "pin", sender: self)
+                                        }
+                                        else{
+                                            if(IsOtherRequire == "True"){
+                                                self.performSegue(withIdentifier: "other", sender: self)
+                                            }
+                                            else{
+                                                self.senddata(deptno: IsDepartmentRequire,ppin:IsPersonnelPINRequire,other:IsOtherRequire)
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
                 }
+            }
+        }
+    }
+
+    func senddata(deptno:String,ppin:String,other:String)
+    {
+        let odom = "0"
+        let odometer:Int! = Int(odom)!
+        let vehicle_no = Vehicaldetails.sharedInstance.vehicleno
+
+        let data = web.vehicleAuth(vehicle_no: vehicle_no,Odometer:odometer!,isdept:deptno,isppin:ppin,isother:other)
+        let Split = data.components(separatedBy: "#")
+        let reply = Split[0]
+        if (reply == "-1")
+        {
+            
+        }
+        else
+        {
+            //            countfailauth = 0
+            let data1:Data = reply.data(using: String.Encoding.utf8)!
+            do{
+                sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
+            }catch let error as NSError {
+                print ("Error: \(error.domain)")
+            }
+            print(sysdata)
+
+            let ResponceMessage = sysdata.value(forKey: "ResponceMessage") as! NSString
+            let ResponceText = sysdata.value(forKey: "ResponceText") as! NSString
+            let ValidationFailFor = sysdata.value(forKey: "ValidationFailFor") as! NSString
+
+
+            if(ResponceMessage == "success")
+            {
+                if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()){
+                    if #available(iOS 11.0, *) {
+                        self.web.wifisettings(pagename: "Odometer")
+                    } else {
+                        // Fallback on earlier versions
+
+                        let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertControllerStyle.alert)
+                        let backView = alertController.view.subviews.last?.subviews.last
+                        backView?.layer.cornerRadius = 10.0
+                        backView?.backgroundColor = UIColor.white
+
+                        let paragraphStyle = NSMutableParagraphStyle()
+                        paragraphStyle.alignment = NSTextAlignment.left
+
+                        let paragraphStyle1 = NSMutableParagraphStyle()
+                        paragraphStyle1.alignment = NSTextAlignment.left
+
+                        let attributedString = NSAttributedString(string:NSLocalizedString("Subtitle", comment:""), attributes: [
+                            NSAttributedStringKey.paragraphStyle:paragraphStyle1,
+                            NSAttributedStringKey.font : UIFont.systemFont(ofSize: 20), //your font here
+                            NSAttributedStringKey.foregroundColor : UIColor.black
+                            ])
+
+                        let formattedString = NSMutableAttributedString()
+                        formattedString
+                            .normal(NSLocalizedString("Step1", comment:""))
+                            .bold("\(Vehicaldetails.sharedInstance.SSId)")
+                            .normal(NSLocalizedString("Step2", comment:""))
+                            .bold("\(Vehicaldetails.sharedInstance.SSId)")
+                            .normal(NSLocalizedString("Step3", comment:""))
+
+                        alertController.setValue(formattedString, forKey: "attributedMessage")
+                        alertController.setValue(attributedString, forKey: "attributedTitle")
+                        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default){
+                            action in
+                            self.performSegue(withIdentifier: "fueling", sender: self)
+                        }
+                        alertController.addAction(action)
+
+                        self.present(alertController, animated: true, completion: nil)
+                    }
+                    //self.mainPage()
+
+                }
+
+                if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){
+                    self.performSegue(withIdentifier: "fueling", sender: self)
+                }
+                else{
+                    self.performSegue(withIdentifier: "fueling", sender: self)
+                }
+            }
+            else {
+
+                if(ResponceMessage == "fail")
+                {
+                    if(ValidationFailFor == "Vehicle") {
+                        // stoptimergotostart.invalidate()
+                        self.performSegue(withIdentifier: "Vehicle", sender: self)
+
+                    }else if(ValidationFailFor == "Dept")
+                    {
+                        //  stoptimergotostart.invalidate()
+                        self.performSegue(withIdentifier: "dept", sender: self)
+                    }else if(ValidationFailFor == "Odo")
+                    {
+                        //  stoptimergotostart.invalidate()
+                        self.performSegue(withIdentifier: "odometer", sender: self)
+                    }
+                    else if(ValidationFailFor == "Pin")
+                    {
+                        //  stoptimergotostart.invalidate()
+                        self.performSegue(withIdentifier: "pin", sender: self)
+                    }
+                }
+                showAlert(message: "\(ResponceText)")
             }
         }
     }
@@ -629,7 +788,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         return 0
     }
 
-   @objc func pickerView(_ pickerView: UIPickerView,titleForRow row: Int, forComponent component: Int)-> String?
+    @objc func pickerView(_ pickerView: UIPickerView,titleForRow row: Int, forComponent component: Int)-> String?
     {
         if(pickerView == pickerViewLocation)
         {
@@ -643,6 +802,8 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             let pulsartime_adjust = pulsartimeadjust[0]
             let isupgrade = Is_upgrade[0]
             let IsDefective = IFIsDefective[0]
+            let IsTLDCall = TLDCall[0]
+            Vehicaldetails.sharedInstance.IsTLDdata = IsTLDCall
             Vehicaldetails.sharedInstance.siteID = siteid
             Vehicaldetails.sharedInstance.SSId = ssId
             Vehicaldetails.sharedInstance.HoseID = hoseid
@@ -681,6 +842,9 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             IsBusy = IFISBusy[index]
             let pulsartime_adjust = pulsartimeadjust[index]
             let isupgrade = Is_upgrade[index]
+            let IsTLDCall = TLDCall[index]
+            print(IsTLDCall)
+            Vehicaldetails.sharedInstance.IsTLDdata = IsTLDCall
             Vehicaldetails.sharedInstance.siteID = siteid
             Vehicaldetails.sharedInstance.SSId = ssId
             Vehicaldetails.sharedInstance.HoseID = hoseid
@@ -691,7 +855,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             Vehicaldetails.sharedInstance.IsDefective = IFIsDefective[index]
             Vehicaldetails.sharedInstance.ReplaceableHoseName = ReplaceableHosename[index]
             Vehicaldetails.sharedInstance.IsHoseNameReplaced = Is_HoseNameReplaced[index]
-        print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced)
+            print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced)
             defaults.set(siteid, forKey: "SiteID")
 
             let Json = systemdata.value(forKey: "SSIDDataObj") as! NSArray

@@ -17,6 +17,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
     var confs = FuelquantityVC()
     var cf = Commanfunction()
     var sysdata:NSDictionary!
+    var sysdataLog:NSDictionary!
     var systemdata:NSDictionary!
     var sourcelat:Double!
     var sourcelong:Double!
@@ -59,50 +60,42 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        if(defaults.string(forKey: "Language") == "es"){
-            Bundle.setLanguage("es")
-            Vehicaldetails.sharedInstance.Language = "es-ES"
-            let appDel = UIApplication.shared.delegate! as! AppDelegate
-            appDel.start()
-        }
-        else if(defaults.string(forKey: "Language") == "en"){
 
-            Bundle.setLanguage("en")
-            Vehicaldetails.sharedInstance.Language = "en-US"
-            let appDel = UIApplication.shared.delegate! as! AppDelegate
-            appDel.start()
-        }
 
         version.text = "Version \(Version)"
         version_2.text = "Version \(Version)"
-        let urldisplay = web.Checkurl()
-        if(urldisplay == "-1"){
-            showAlert(message: NSLocalizedString("NoInternet", comment:""))
 
-        }else{
-        let data1:Data = urldisplay.data(using: String.Encoding.utf8)!
-        do {
-            sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
-        }catch let error as NSError {
-            print ("Error: \(error.domain)")
-        }
-        print(sysdata)
-        let Json = sysdata["App"] as! NSArray
-        let rowCount = Json.count
-        let index: Int = 0
-        for i in 0  ..< rowCount
-        {
-            let JsonRow = Json[i] as! NSDictionary
-            let appName = JsonRow["appName"] as! NSString
-            if(appName == "FluidSecure"){
-                let appLink = JsonRow["appLink"] as! NSString
-                print(appLink,appName)
-                
-                Vehicaldetails.sharedInstance.URL = appLink as String
-                break;
-            }
-        }
-        }
+
+        //        let urldisplay = web.Checkurl()
+        //        if(urldisplay == "-1"){
+        //            showAlert(message: NSLocalizedString("NoInternet", comment:""))
+        //
+        //        }else{
+        //        let data1:Data = urldisplay.data(using: String.Encoding.utf8)!
+        //        do {
+        //            sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+        //        }catch let error as NSError {
+        //            print ("Error: \(error.domain)")
+        //        }
+        //        print(sysdata)
+        //        let Json = sysdata["App"] as! NSArray
+        //        let rowCount = Json.count
+        //        let index: Int = 0
+        //        for i in 0  ..< rowCount
+        //        {
+        //            let JsonRow = Json[i] as! NSDictionary
+        //            let appName = JsonRow["appName"] as! NSString
+        //            if(appName == "FluidSecure"){
+        //                let appLink = JsonRow["appLink"] as! NSString
+        //                print(appLink,appName)
+        //
+        //                Vehicaldetails.sharedInstance.URL = appLink as String
+        //                break;
+        //            }
+        //        }
+        //        }
+
+        Vehicaldetails.sharedInstance.URL = "https://www.fluidsecure.net/" //"http://fluidsecure.cloudapp.net/" //"https://www.fluidsecure.net/"
         Vehicaldetails.sharedInstance.deptno = ""
         Vehicaldetails.sharedInstance.Personalpinno = ""
         Vehicaldetails.sharedInstance.Other = ""
@@ -207,7 +200,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
 
             let data1:Data = reply.data(using: String.Encoding.utf8)!
             do {
-                sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
             }catch let error as NSError {
                 print ("Error: \(error.domain)")
             }
@@ -330,6 +323,19 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
                 }
             }
         }
+        //        if(defaults.string(forKey: "Language") == "es"){
+        //            Bundle.setLanguage("es")
+        //            Vehicaldetails.sharedInstance.Language = "es-ES"
+        //            let appDel = UIApplication.shared.delegate! as! AppDelegate
+        //            appDel.start()
+        //        }
+        //        else if(defaults.string(forKey: "Language") == "en"){
+        //
+        //            Bundle.setLanguage("en")
+        //            Vehicaldetails.sharedInstance.Language = "en-US"
+        //            let appDel = UIApplication.shared.delegate! as! AppDelegate
+        //            appDel.start()
+        //        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -337,29 +343,29 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         // Dispose of any resources that can be recreated.
     }
 
-    func showAlert(message: String)
-    {
-        let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertControllerStyle.alert)
-
-        // Background color.
-        let backView = alertController.view.subviews.last?.subviews.last
-        backView?.layer.cornerRadius = 10.0
-        backView?.backgroundColor = UIColor.white
-
-        // Change Message With Color and Font
-        let message  = message
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = NSTextAlignment.left
-        var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [ NSAttributedStringKey.paragraphStyle: paragraphStyle,NSAttributedStringKey.font:UIFont(name: "Georgia", size: 24.0)!])
-        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
-        alertController.setValue(messageMutableString, forKey: "attributedMessage")
-
-        // Action.
-        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default, handler: nil)
-        alertController.addAction(action)
-        self.present(alertController, animated: true, completion: nil)
-    }
+    //    func showAlert(message: String)
+    //    {
+    //        let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertControllerStyle.alert)
+    //
+    //        // Background color.
+    //        let backView = alertController.view.subviews.last?.subviews.last
+    //        backView?.layer.cornerRadius = 10.0
+    //        backView?.backgroundColor = UIColor.white
+    //
+    //        // Change Message With Color and Font
+    //        let message  = message
+    //        let paragraphStyle = NSMutableParagraphStyle()
+    //        paragraphStyle.alignment = NSTextAlignment.left
+    //        var messageMutableString = NSMutableAttributedString()
+    //        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [ NSAttributedStringKey.paragraphStyle: paragraphStyle,NSAttributedStringKey.font:UIFont(name: "Georgia", size: 24.0)!])
+    //        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
+    //        alertController.setValue(messageMutableString, forKey: "attributedMessage")
+    //
+    //        // Action.
+    //        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default, handler: nil)
+    //        alertController.addAction(action)
+    //        self.present(alertController, animated: true, completion: nil)
+    //    }
 
     func openMapForPlace() {
 
@@ -386,10 +392,10 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         }
         else
         {
-            let reply = web.Login(Username.text!, PWD:PWD.text!, uuid: uuid)
+            let replylog = web.Login(Username.text!, PWD:PWD.text!, uuid: uuid)
 
 
-            if(reply == "-1")
+            if(replylog == "-1")
             {
                 if(Vehicaldetails.sharedInstance.reachblevia == "wificonn")
                 {
@@ -417,16 +423,16 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
                     refresh.isHidden = false            }
             }
             else {
-                let data1:Data = reply.data(using: String.Encoding.utf8)! 
+                let data1:Data = (replylog.data(using: String.Encoding.utf8)! as NSData) as Data
                 do {
-                    sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                    sysdataLog = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
                 }catch let error as NSError {
                     print ("Error: \(error.domain)")
                 }
-                print(sysdata)
+                print(sysdataLog)
 
-                let Message = sysdata["ResponceMessage"] as! NSString
-                let ResponseText = sysdata["ResponceText"] as! NSString?
+                let Message = sysdataLog["ResponceMessage"] as! NSString
+                let ResponseText = sysdataLog["ResponceText"] as! NSString?
                 if(Message == "success") {
                     defaults.set(1, forKey: "Login")
                     let appDel = UIApplication.shared.delegate! as! AppDelegate

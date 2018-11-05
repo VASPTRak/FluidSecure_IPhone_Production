@@ -22,6 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var jc = FuelquantityVC()
     var web = Webservices()
     var preauth = PreauthFuelquantity()
+    var unsync = Sync_Unsynctransactions()
     var backgroundUpdateTask: UIBackgroundTaskIdentifier!
     
     func beginBackgroundUpdateTask() {
@@ -40,13 +41,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         DispatchQueue.main.async(execute: {
             self.beginBackgroundUpdateTask()
             self.jc.stopbutton = true
-            _ = self.jc.unsyncTransaction()
+            _ = self.unsync.unsyncTransaction()
             _ = self.preauth.preauthunsyncTransaction()
             // End the background task.
             self.endBackgroundUpdateTask()
         })
     }
-    
+
+
+ 
+
     func displayAlert() {
         let note = UILocalNotification()
         note.alertBody = "Your Transaction is successfully completed."
@@ -139,10 +143,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         catch{
             print("some problem in assigning root VC")
         }
-        
+       
         let settings = UIUserNotificationSettings(types: [.alert, .badge , .sound], categories: nil)
         application.registerUserNotificationSettings(settings)
         application.registerForRemoteNotifications()
+
         return true
     }
     func preauthstart(){
@@ -210,7 +215,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         {
                             let storyboard = UIStoryboard(name: "PreauthStoryboard", bundle: nil)
                             Vehicaldetails.sharedInstance.AppType = "preAuthTransaction"
-                            let controller = storyboard.instantiateViewController(withIdentifier: "InitialController") as! PreauthVC
+                            let controller = storyboard.instantiateViewController(withIdentifier: "preauthInitialController") as! PreauthVC
                             let nav = UINavigationController(rootViewController: controller)
                             self.window?.rootViewController = nav
                         }
@@ -409,8 +414,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){
-            _ = jc.setralay0tcp()
-            _ = jc.setpulsar0tcp()
+//            _ = jc.setralay0tcp()
+//            _ = jc.setpulsar0tcp()
         }
         
         let TransactionId = Vehicaldetails.sharedInstance.TransactionId

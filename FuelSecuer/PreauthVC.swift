@@ -37,7 +37,8 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
     var results = [NSManagedObject]()
     var Transaction_ID = [NSManagedObject]()
     var cf = Commanfunction()
-    var ad = FuelquantityVC()
+    var unsync = Sync_Unsynctransactions()
+
     var sysdata:NSDictionary!
     var systemdata:NSDictionary!
     var pickerViewHose: UIPickerView = UIPickerView()
@@ -233,7 +234,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
             
             let data1:Data = reply.data(using: String.Encoding.utf8)! as Data
             do {
-                sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
             }catch let error as NSError {
                 print ("Error: \(error.domain)")
             }
@@ -295,7 +296,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                     //IF USER IF Approved Get information from server like site,ssid,pwd,hose
                     
                     do{
-                        systemdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                        systemdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
                     }catch let error as NSError {
                         print ("Error: \(error.domain)")
                         print ("Error: \(error)")
@@ -346,8 +347,8 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                             let FuelTypeId = JsonRow["FuelTypeId"] as! NSString
                             let Sitid = JsonRow["SiteId"] as! NSString
                             let pulsarstoptime = JsonRow["PulserStopTime"] as! NSString
-                            let PumpOffTime = JsonRow["PulserStopTime"] as! NSString
-                            let PumpOnTime = JsonRow["PulserStopTime"] as! NSString
+                            let PumpOffTime = JsonRow["PumpOffTime"] as! NSString
+                            let PumpOnTime = JsonRow["PumpOnTime"] as! NSString
                             
                             ssid.append(WifiSSId as String)
                             Ulocation = ssid.removeDuplicates()
@@ -487,7 +488,8 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                 warningLable.isHidden = false
                 refreshButton.isHidden = false
                 self.navigationItem.title = NSLocalizedString("Error",comment:"")//"Error"
-                warningLable.text = "Your Registration request is not approved yet. It is marked Inactive in the Company Software. Please contact your company’s administrator."
+                warningLable.text = NSLocalizedString("Regisration", comment:"")
+                //"Your Registration request is not approved yet. It is marked Inactive in the Company Software. Please contact your company’s administrator."
             } else if(ResponseText == "New Registration") {
                 performSegue(withIdentifier: "Register", sender: self)
             }
@@ -581,32 +583,12 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         if( cf.getSSID() != "" ) {
             print("SSID: \(cf.getSSID())")
         } else {}
-        _ = ad.unsyncTransaction()
+        _ = unsync.unsyncTransaction()
 
     }
     
     
-    func showAlert(message: String) {
-        let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertControllerStyle.alert)
-        // Background color.
-        let backView = alertController.view.subviews.last?.subviews.last
-        backView?.layer.cornerRadius = 10.0
-        backView?.backgroundColor = UIColor.white
-        // Change Message With Color and Font
-        let message  = message
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = NSTextAlignment.left
-        var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [ NSAttributedStringKey.paragraphStyle: paragraphStyle,NSAttributedStringKey.font:UIFont(name: "Georgia", size: 24.0)!])
-        
-        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
-        alertController.setValue(messageMutableString, forKey: "attributedMessage")
-        // Action.
-        let action = UIAlertAction(title:NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default, handler: nil)
-        alertController.addAction(action)
-        self.present(alertController, animated: true, completion: nil)
-    }
-    
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -759,7 +741,8 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
             Vehicaldetails.sharedInstance.PulseRatio = location[index]
             Vehicaldetails.sharedInstance.FuelTypeId = Pass[index]
             Vehicaldetails.sharedInstance.PulserStopTime = PulserStopTimelist[index]
-        print(Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.PulseRatio,Vehicaldetails.sharedInstance.FuelTypeId)
+            Vehicaldetails.sharedInstance.pumpoff_time = PumpOffTimelist[index]
+        print(Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.PulseRatio,Vehicaldetails.sharedInstance.FuelTypeId,Vehicaldetails.sharedInstance.pumpoff_time)
             defaults.set(siteid, forKey: "SiteID")
             
             let Json = systemdata.value(forKey: "SSIDDataObj") as! NSArray

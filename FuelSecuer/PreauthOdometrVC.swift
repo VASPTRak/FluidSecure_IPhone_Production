@@ -56,22 +56,7 @@ class PreauthOdometerVC: UIViewController,UITextFieldDelegate //
         // Dispose of any resources that can be recreated.
     }
     
-    func showAlert(message: String) {
-        let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertControllerStyle.alert)
-        // Background color.
-        let backView = alertController.view.subviews.last?.subviews.last
-        backView?.layer.cornerRadius = 10.0
-        backView?.backgroundColor = UIColor.white
-        let message  = message
-        var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
-        alertController.setValue(messageMutableString, forKey: "attributedMessage")
-        
-        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default, handler: nil)
-        alertController.addAction(action)
-        self.present(alertController, animated: true, completion: nil)
-    }
+
     
     @IBAction func odometer(_ sender: Any) {
         
@@ -89,39 +74,7 @@ class PreauthOdometerVC: UIViewController,UITextFieldDelegate //
         Odometer.text = ""
     }
     
-    func showAlertSetting(message: String)
-    {
-        let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertControllerStyle.alert)
-        // Background color.
-        let backView = alertController.view.subviews.last?.subviews.last
-        backView?.layer.cornerRadius = 10.0
-        backView?.backgroundColor = UIColor.white
-        
-        let message  = message
-        var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.lightGray, range: NSRange(location:0,length:message.count))
-        alertController.setValue(messageMutableString, forKey: "attributedMessage")
-        
-        // Action.
-        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default) { action in //self.//
-            if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
-            {
-                print("ssID Match")
-                self.performSegue(withIdentifier: "Go", sender: self)
-            }
-            else{
-                if #available(iOS 11.0, *) {
-                    self.web.wifisettings(pagename: "PreauthVehicle")
-                } else {
-                    // Fallback on earlier versions
-                }//self.wifisettings()
-            }
-        }
-        alertController.addAction(action)
-        self.present(alertController, animated: true, completion: nil)
-    }
-    
+
     func Action(sender:UIButton!)
     {
         self.dismiss(animated: true, completion: nil)

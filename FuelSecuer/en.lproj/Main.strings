@@ -250,3 +250,7 @@
 
 /* Class = "UINavigationItem"; title = "FluidSecure"; ObjectID = "zlB-rg-e5D"; */
 "zlB-rg-e5D.title" = "FluidSecure";
+
+
+/* Class = "UILabel"; text = "Please wait processing.... "; ObjectID = "oxp-Bp-ehc"; */
+"oxp-Bp-ehc.text" = "Please wait processing....";

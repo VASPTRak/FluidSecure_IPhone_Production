@@ -61,26 +61,7 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
         // Dispose of any resources that can be recreated.
     }
     
-    func showAlert(message: String) {
-        let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertControllerStyle.alert)
-        // Background color.
-        let backView = alertController.view.subviews.last?.subviews.last
-        backView?.layer.cornerRadius = 10.0
-        backView?.backgroundColor = UIColor.white
-        
-        // Change Message With Color and Font
-        let message  = message
-        var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
-        alertController.setValue(messageMutableString, forKey: "attributedMessage")
-        
-        // Action.
-        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default, handler: nil)
-        alertController.addAction(action)
-        self.present(alertController, animated: true, completion: nil)
-    }
-    
+
     @IBAction func odometer(_ sender: Any)
     {
         checkMaxLength(textField: Odometer, maxLength:6)
@@ -95,40 +76,6 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
     @IBAction func reset(sender: AnyObject) {
         Odometer.text = ""
         viewWillAppear(true)
-    }
-    
-    func showAlertSetting(message: String)
-    {
-        let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertControllerStyle.alert)
-        // Background color.
-        let backView = alertController.view.subviews.last?.subviews.last
-        backView?.layer.cornerRadius = 10.0
-        backView?.backgroundColor = UIColor.white
-        
-        let message  = message
-        var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.black, range: NSRange(location:0,length:message.count))
-        alertController.setValue(messageMutableString, forKey: "attributedMessage")
-        
-        // Action.
-        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default) { action in //self.//
-            if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
-            {
-                print("ssID Match")
-                self.performSegue(withIdentifier: "Go", sender: self)
-            }
-            else
-            {
-                if #available(iOS 11.0, *) {
-                    self.web.wifisettings(pagename: "Odometer")
-                } else {
-                    // Fallback on earlier versions
-                }
-            }
-        }
-        alertController.addAction(action)
-        self.present(alertController, animated: true, completion: nil)
     }
     
     func Action(sender:UIButton!)
@@ -190,7 +137,8 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
             let ResponceMessage = sysdata.value(forKey: "ResponceMessage") as! NSString
             let ResponceText = sysdata.value(forKey: "ResponceText") as! NSString
             let ValidationFailFor = sysdata.value(forKey: "ValidationFailFor") as! NSString
-            
+
+
             if(ResponceMessage == "success")
             {
                 if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()){
@@ -432,25 +380,30 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
                 else if (CheckOdometerReasonable == "False"){
                     if(odometer >= PreviousOdo)
                     {
-                        if(isdept == "True"){
-                            self.performSegue(withIdentifier: "dept", sender: self)
+                        if (hours == "True"){
+                            self.performSegue(withIdentifier: "hour", sender: self)
                         }
                         else{
-                            if(isPPin == "True"){
-                                self.performSegue(withIdentifier: "pin", sender: self)
+                            if(isdept == "True"){
+                                self.performSegue(withIdentifier: "dept", sender: self)
                             }
                             else{
-                                if(isother == "True"){
-                                    self.performSegue(withIdentifier: "other", sender: self)
+                                if(isPPin == "True"){
+                                    self.performSegue(withIdentifier: "pin", sender: self)
                                 }
                                 else{
-                                    let deptno = ""
-                                    let ppin = ""
-                                    let other = ""
-                                    Vehicaldetails.sharedInstance.deptno = ""
-                                    Vehicaldetails.sharedInstance.Personalpinno = ""
-                                    Vehicaldetails.sharedInstance.Other = ""
-                                    self.senddata(deptno: deptno,ppin:ppin,other:other)
+                                    if(isother == "True"){
+                                        self.performSegue(withIdentifier: "other", sender: self)
+                                    }
+                                    else{
+                                        let deptno = ""
+                                        let ppin = ""
+                                        let other = ""
+                                        Vehicaldetails.sharedInstance.deptno = ""
+                                        Vehicaldetails.sharedInstance.Personalpinno = ""
+                                        Vehicaldetails.sharedInstance.Other = ""
+                                        self.senddata(deptno: deptno,ppin:ppin,other:other)
+                                    }
                                 }
                             }
                         }

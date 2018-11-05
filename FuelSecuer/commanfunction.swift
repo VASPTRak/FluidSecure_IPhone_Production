@@ -11,10 +11,84 @@ import SystemConfiguration.CaptiveNetwork
 import NetworkExtension
 import Foundation
 
+
+extension UIViewController {
+
+
+    fileprivate func showAppUpdateAlert( Version : String, Force: Bool, AppURL: String) {
+
+        let bundleName = Bundle.main.infoDictionary!["CFBundleDisplayName"] as! String;
+        let alertMessage = "\(bundleName) Version \(Version) is available on AppStore."
+        let alertTitle = "New Version"
+
+
+        let alertController = UIAlertController(title: alertTitle, message: alertMessage, preferredStyle: .alert)
+
+
+//        if !Force {
+            let notNowButton = UIAlertAction(title: "Update Later", style: .default) { (action:UIAlertAction) in
+                print("Don't Call API");
+
+
+            }
+            alertController.addAction(notNowButton)
+//        }
+
+        let updateButton = UIAlertAction(title: "Update Now", style: .default) { (action:UIAlertAction) in
+            print("Call API");
+            print("No update")
+
+            guard let url = URL(string: AppURL) else {
+                return
+            }
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(url)
+            }
+        }
+        alertController.addAction(updateButton)
+        self.present(alertController, animated: true, completion: nil)
+    }
+
+    func showAlert(message: String)
+    {
+        let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertControllerStyle.alert)
+        // Background color.
+        let backView = alertController.view.subviews.last?.subviews.last
+        backView?.layer.cornerRadius = 10.0
+        backView?.backgroundColor = UIColor.white
+
+        // Change Message With Color and Font
+        let message  = message
+        var messageMutableString = NSMutableAttributedString()
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
+        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
+        alertController.setValue(messageMutableString, forKey: "attributedMessage")
+
+        // Action.
+        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default, handler: nil)
+        alertController.addAction(action)
+        self.present(alertController, animated: true, completion: nil)
+    }
+}
+
+class LookupResult: Decodable {
+    var results: [AppInfo]
+}
+
+class AppInfo: Decodable {
+    var version: String
+    var trackViewUrl: String
+}
+
+
 class Commanfunction {
 
+    var fuelquantity:Double!
     let fileManager: FileManager = FileManager()
     var currentSSID:String!
+    
     public var dateUpdated: String {
 
         let dateFormatterGet = DateFormatter()
@@ -52,6 +126,71 @@ class Commanfunction {
         }
     }
 
+
+    func getAppInfo(completion: @escaping (AppInfo?, Error?) -> Void) -> URLSessionDataTask? {
+        guard let identifier = Bundle.main.infoDictionary?["CFBundleIdentifier"] as? String,
+            let url = URL(string: "http://itunes.apple.com/lookup?bundleId=\(identifier)") else {
+                DispatchQueue.main.async {
+                    completion(nil, VersionError.invalidBundleInfo)
+                }
+                return nil
+        }
+        let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+            do {
+                if let error = error { throw error }
+                guard let data = data else { throw VersionError.invalidResponse }
+                let result = try JSONDecoder().decode(LookupResult.self, from: data)
+                guard let info = result.results.first else { throw VersionError.invalidResponse }
+
+                completion(info, nil)
+            } catch {
+                completion(nil, error)
+            }
+        }
+        task.resume()
+        return task
+    }
+    enum VersionError: Error {
+        case invalidBundleInfo, invalidResponse
+    }
+
+    func showUpdateWithForce() {
+        checkVersion()
+    }
+
+    func checkVersion() {
+        let info = Bundle.main.infoDictionary
+        let currentVersion = info?["CFBundleShortVersionString"] as? String
+        _ = getAppInfo { (info, error) in
+            let appStoreAppVersion = info?.version
+            if let error = error {
+                print(error)
+            } else if info?.version == currentVersion {
+                print("updated")
+            } else if appStoreAppVersion!.compare(currentVersion!, options: .numeric) == .orderedDescending {
+                print("needs update")
+                DispatchQueue.main.async {
+                    let topController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
+
+                    topController.showAppUpdateAlert(Version: (info?.version)!, Force: false, AppURL: (info?.trackViewUrl)!)
+                }
+            }
+        }
+    }
+
+    func calculate_fuelquantity(quantitycount: Int)-> Double
+    {
+        if(quantitycount == 0)
+        {
+            fuelquantity = 0
+        }
+        else{
+            Vehicaldetails.sharedInstance.pulsarCount = "\(quantitycount)"
+            let PulseRatio = Vehicaldetails.sharedInstance.PulseRatio
+            fuelquantity = (Double(quantitycount))/(PulseRatio as NSString).doubleValue
+        }
+        return fuelquantity
+    }
 
     func SaveTransaction_status(fileName: String, writeText: String,Path:String)
     {
@@ -117,6 +256,14 @@ class Commanfunction {
 
     func getSSID() -> String{
 
+//        guard let interfaces = CNCopySupportedInterfaces() as? [String] else { return nil }
+//        let key = kCNNetworkInfoKeySSID as String
+//        for interface in interfaces {
+//            guard let interfaceInfo = CNCopyCurrentNetworkInfo(interface as CFString) as NSDictionary? else { continue }
+//            return (interfaceInfo[key] as? String)!
+//        }
+//        return nil
+
         if let interfaces = CNCopySupportedInterfaces() as NSArray? {
             for interface in interfaces {
                 if let interfaceInfo = CNCopyCurrentNetworkInfo(interface as! CFString) as NSDictionary? {
@@ -132,31 +279,6 @@ class Commanfunction {
         return currentSSID!
     }
 
-    func getInterfaces() -> Bool {
-        guard let unwrappedCFArrayInterfaces = CNCopySupportedInterfaces() else {
-            print("this must be a simulator, no interfaces found")
-            return false
-        }
-        guard let swiftInterfaces = (unwrappedCFArrayInterfaces as NSArray) as? [String] else {
-            print("System error: did not come back as array of Strings")
-            return false
-        }
-        for interface in swiftInterfaces {
-            print("Looking up SSID info for \(interface)")
-            guard let unwrappedCFDictionaryForInterface = CNCopyCurrentNetworkInfo(interface as CFString) else {
-                print("System error: \(interface) has no information")
-                return false
-            }
-            guard let SSIDDict = (unwrappedCFDictionaryForInterface as NSDictionary) as? [String: AnyObject] else {
-                print("System error: interface information is not a string-keyed dictionary")
-                return false
-            }
-            for d in SSIDDict.keys {
-                print("\(d): \(SSIDDict[d]!)")
-            }
-        }
-        return true
-    }
 
     func saveBinFile(fileName: String, writeText: String)
     {
