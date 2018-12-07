@@ -46,19 +46,19 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
         super.viewWillDisappear(animated)
     }
 
-    override func viewDidAppear(_ animated: Bool)
+   override func viewDidAppear(_ animated: Bool)
     {
         self.navigationItem.title = "\(Vehicaldetails.sharedInstance.SSId)"
     }
 
-    @objc func gotostart()
+   @objc func gotostart()
     {
         self.web.sentlog(func_name: "Other_screen_timeout", errorfromserverorlink: "", errorfromapp: "")
         let appDel = UIApplication.shared.delegate! as! AppDelegate
         appDel.start()
     }
 
-    @objc func tapAction()
+   @objc func tapAction()
     {
         self.view.frame = CGRect(x: 0,y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height)
         self.oview.endEditing(true)
@@ -105,7 +105,7 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
         countfailauth += 1
         let vehicle_no = Vehicaldetails.sharedInstance.vehicleno
         let data = web.vehicleAuth(vehicle_no: vehicle_no,Odometer:odometer!,isdept:deptno,isppin:pin,isother:other!)
-
+       
         let Split = data.components(separatedBy: "#")
         let reply = Split[0]
         if (reply == "-1")
@@ -125,7 +125,7 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
             countfailauth = 0
             let data1:Data = reply.data(using: String.Encoding.utf8)!
             do{
-                sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
             }catch let error as NSError {
                 print ("Error: \(error.domain)")
             }
@@ -139,44 +139,44 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
                     if #available(iOS 11.0, *) {
                         self.web.wifisettings(pagename: "Other")
                     } else {
-                        // Fallback on earlier versions
+                    // Fallback on earlier versions
 
-                        let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertControllerStyle.alert)
-                        let backView = alertController.view.subviews.last?.subviews.last
-                        backView?.layer.cornerRadius = 10.0
-                        backView?.backgroundColor = UIColor.white
+                    let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertControllerStyle.alert)
+                    let backView = alertController.view.subviews.last?.subviews.last
+                    backView?.layer.cornerRadius = 10.0
+                    backView?.backgroundColor = UIColor.white
 
-                        let paragraphStyle = NSMutableParagraphStyle()
-                        paragraphStyle.alignment = NSTextAlignment.left
+                    let paragraphStyle = NSMutableParagraphStyle()
+                    paragraphStyle.alignment = NSTextAlignment.left
 
-                        let paragraphStyle1 = NSMutableParagraphStyle()
-                        paragraphStyle1.alignment = NSTextAlignment.left
+                    let paragraphStyle1 = NSMutableParagraphStyle()
+                    paragraphStyle1.alignment = NSTextAlignment.left
 
-                        let attributedString = NSAttributedString(string:NSLocalizedString("Subtitle", comment:""), attributes: [
-                            NSAttributedStringKey.paragraphStyle:paragraphStyle1,
-                            NSAttributedStringKey.font : UIFont.systemFont(ofSize: 20), //your font here
-                            NSAttributedStringKey.foregroundColor : UIColor.black
-                            ])
+                    let attributedString = NSAttributedString(string:NSLocalizedString("Subtitle", comment:""), attributes: [
+                        NSAttributedStringKey.paragraphStyle:paragraphStyle1,
+                        NSAttributedStringKey.font : UIFont.systemFont(ofSize: 20), //your font here
+                        NSAttributedStringKey.foregroundColor : UIColor.black
+                        ])
 
-                        let formattedString = NSMutableAttributedString()
-                        formattedString
-                            .normal(NSLocalizedString("Step1", comment:""))//("\nThe WiFi name is the name of the HOSE. Read Steps 1 to 5 below then click on Green bar below.\n\nFollow steps:\n1. Turn on the WiFi (it might already be on)\n\n2. Choose the WiFi \n named: ")
-                            .bold("\(Vehicaldetails.sharedInstance.SSId)")
-                            .normal(NSLocalizedString("Step2", comment:""))//(" \n\n3. First time it will ask for password,enter: 123456789\n\n4. It will have a check next to ")
-                            .bold("\(Vehicaldetails.sharedInstance.SSId)")
-                            .normal(NSLocalizedString("Step3", comment:""))//" and it will say \"No Internet Connection\" \n\n5.  Now, tap on the very top left corner that says \"FluidSecure\" - this returns you to allow fueling.\n\n\n\n\n")
+                    let formattedString = NSMutableAttributedString()
+                    formattedString
+                        .normal(NSLocalizedString("Step1", comment:""))//("\nThe WiFi name is the name of the HOSE. Read Steps 1 to 5 below then click on Green bar below.\n\nFollow steps:\n1. Turn on the WiFi (it might already be on)\n\n2. Choose the WiFi \n named: ")
+                        .bold("\(Vehicaldetails.sharedInstance.SSId)")
+                        .normal(NSLocalizedString("Step2", comment:""))//(" \n\n3. First time it will ask for password,enter: 123456789\n\n4. It will have a check next to ")
+                        .bold("\(Vehicaldetails.sharedInstance.SSId)")
+                        .normal(NSLocalizedString("Step3", comment:""))//" and it will say \"No Internet Connection\" \n\n5.  Now, tap on the very top left corner that says \"FluidSecure\" - this returns you to allow fueling.\n\n\n\n\n")
 
-                        alertController.setValue(formattedString, forKey: "attributedMessage")
-                        alertController.setValue(attributedString, forKey: "attributedTitle")
+                    alertController.setValue(formattedString, forKey: "attributedMessage")
+                    alertController.setValue(attributedString, forKey: "attributedTitle")
                         let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default){
                             action in
-                            self.performSegue(withIdentifier: "Go", sender: self)
+                        self.performSegue(withIdentifier: "Go", sender: self)
                         }
                         alertController.addAction(action)
 
-                        self.present(alertController, animated: true, completion: nil)
+                    self.present(alertController, animated: true, completion: nil)
 
-                    }
+                    }// wifisettings()
                     self.mainPage()
                 }
 
@@ -219,7 +219,7 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
             self.web.wifisettings(pagename: "Other")
         } else {
             // Fallback on earlier versions
-        }
+        }//wifisettings()
         mainPage()
     }
 

@@ -28,7 +28,7 @@ class TCPCommunication:NSObject,StreamDelegate
     var replydata:NSData!
 
 
-    //TCP Communication with the FS link using Follwing Method Functions.
+//TCP Communication with the FS link using Follwing Method Functions.
 
     func setralaytcp()->String{
         NetworkEnable()
@@ -87,18 +87,18 @@ class TCPCommunication:NSObject,StreamDelegate
         return outputdata
     }
 
-    func preauthsetSamplingtime()->String{
+        func preauthsetSamplingtime()->String{
 
-        NetworkEnable()
-        Vehicaldetails.sharedInstance.PulserTimingAdjust = "20"
-        let s:String = "{\"pulsar_status\":{\"sampling_time_ms\":\(Int(Vehicaldetails.sharedInstance.PulserTimingAdjust)!)}}"
-        print(s.count)
-        let datastring = "POST /config?command=pulsar HTTP/1.1\r\nContent-Type: application/json; charset=utf-8\r\nContent-Length: \(s.count))\r\nHost: 192.168.4.1\r\nConnection: Keep-Alive\r\nAccept-Encoding: gzip\r\nUser-Agent: okhttp/3.6.0\r\n\r\n{\"pulsar_status\":{\"sampling_time_ms\":\(Int(Vehicaldetails.sharedInstance.PulserTimingAdjust)!)}}"
-        let data : Data = datastring.data(using: String.Encoding.utf8)!
-        outStream?.write((data as NSData).bytes.bindMemory(to: UInt8.self, capacity: data.count), maxLength: data.count)
-        let outputdata = stringbuffer
-        return outputdata
-    }
+            NetworkEnable()
+            Vehicaldetails.sharedInstance.PulserTimingAdjust = "20"
+            let s:String = "{\"pulsar_status\":{\"sampling_time_ms\":\(Int(Vehicaldetails.sharedInstance.PulserTimingAdjust)!)}}"
+            print(s.count)
+            let datastring = "POST /config?command=pulsar HTTP/1.1\r\nContent-Type: application/json; charset=utf-8\r\nContent-Length: \(s.count))\r\nHost: 192.168.4.1\r\nConnection: Keep-Alive\r\nAccept-Encoding: gzip\r\nUser-Agent: okhttp/3.6.0\r\n\r\n{\"pulsar_status\":{\"sampling_time_ms\":\(Int(Vehicaldetails.sharedInstance.PulserTimingAdjust)!)}}"
+            let data : Data = datastring.data(using: String.Encoding.utf8)!
+            outStream?.write((data as NSData).bytes.bindMemory(to: UInt8.self, capacity: data.count), maxLength: data.count)
+            let outputdata = stringbuffer
+            return outputdata
+        }
 
 
     func setSamplingtime()->String{
@@ -200,7 +200,7 @@ class TCPCommunication:NSObject,StreamDelegate
             if(Split.count < 3){
                 _ = self.setralay0tcp()
                 _ = self.setpulsar0tcp()
-                // self.fq.error400(message:NSLocalizedString("CheckFSunit", comment:""))// "Please check your FS unit, and switch off power and back on.")
+               // self.fq.error400(message:NSLocalizedString("CheckFSunit", comment:""))// "Please check your FS unit, and switch off power and back on.")
             }    // got invalid respose do nothing
             else{
                 let reply = Split[1]
@@ -231,7 +231,8 @@ class TCPCommunication:NSObject,StreamDelegate
             else
             {
                 let objUserData = self.sysdata1.value(forKey: "tld") as! NSDictionary
-
+                let Response_code = objUserData.value(forKey: "Response_code") as! NSNumber
+                let checksum = objUserData.value(forKey: "Checksum") as! NSNumber
                 let LSB = objUserData.value(forKey: "LSB") as! NSNumber
                 let MSB = objUserData.value(forKey: "MSB") as! NSNumber
                 let Mac_address = objUserData.value(forKey: "Mac_address") as! NSString
@@ -245,16 +246,16 @@ class TCPCommunication:NSObject,StreamDelegate
                 dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
                 let dtt: String = dateFormatter.string(from: NSDate() as Date)
 
-                let bodyData = "{\"FromSiteId\":\(siteid),\"IMEI_UDID\":\"\((uuid!))\",\"LSB\":\"\(LSB)\",\"MSB\":\"\(MSB)\",\"TLDTemperature\":\"\(TLDTemperature)\",\"ReadingDateTime\":\"\(dtt)\",\"TLD\":\"\(Mac_address)\"}"
+                let bodyData = try! JSONSerialization.data(withJSONObject: ["FromSiteId":siteid,"IMEI_UDID":uuid!,"LSB":LSB,"MSB":MSB,"TLDTemperature":TLDTemperature,"ReadingDateTime":dtt,"TLD":Mac_address,"Response_code":Response_code,"Checksum":checksum], options: [])
 
                 let reply = self.web.tldsendserver(bodyData: bodyData)
                 print(reply)
                 if (reply == "-1")
                 {
                     //let unsycnfileName =  dtt + "#" + "\(probereading)" + "#" + "\(siteid)"// + "#" + "SaveTankMonitorReading" //
-                    if(bodyData != ""){
-                        //  cf.SaveTextFile(fileName: unsycnfileName, writeText: bodyData)
-                    }
+//                    if(bodyData != ""){
+//                        //  cf.SaveTextFile(fileName: unsycnfileName, writeText: bodyData)
+//                    }
                 }
             }
         }
@@ -381,7 +382,7 @@ class TCPCommunication:NSObject,StreamDelegate
         request.setValue("\(self.bindata.length)", forHTTPHeaderField: "Content-Length")
         request.httpMethod = "POST"
         request.httpBody = (self.bindata! as Data)
-        // self.lable.text = "Start Upgrade...."
+       // self.lable.text = "Start Upgrade...."
         let session = Foundation.URLSession.shared
         let semaphore = DispatchSemaphore(value: 0)
         let task = session.dataTask(with: request as URLRequest) { data, response, error in
@@ -409,7 +410,7 @@ class TCPCommunication:NSObject,StreamDelegate
         let semaphore = DispatchSemaphore(value: 0)
         let task =  session.dataTask(with: request as URLRequest) { data, response, error in
             if let data = data {
-                //                print(data,String(data: data, encoding: String.Encoding.utf8)!)
+//                print(data,String(data: data, encoding: String.Encoding.utf8)!)
                 self.replydata = data as NSData
             } else {
                 print(error!)

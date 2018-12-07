@@ -1,6 +1,4 @@
 
-
-
 import UIKit
 import CoreLocation
 import SystemConfiguration.CaptiveNetwork
@@ -258,7 +256,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
     }
 
     func getinfo() -> String {
-
+        //cf.delay(1){
         let Url:String = "http://192.168.4.1:80/client?command=info"
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string:Url)!)
         request.httpMethod = "GET"
@@ -340,6 +338,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
     }
 
 
+
     func savetrans(lastpulsarcount:String,lasttransID:String) {
 
         let PulseRatio = Vehicaldetails.sharedInstance.PulseRatio
@@ -367,12 +366,12 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
             formatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZ";
             start.isEnabled = false
             IsStartbuttontapped = true
-
+            //viewDidAppear(true)
             stoptimergotostart.invalidate()
             self.cancel.isHidden = true
-
+            //cf.delay(0.5){
             self.timerview.invalidate()
-
+            //self.cf.delay(0.5){
             if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()) //check selected wifi and connected wifi is not same
             {
                 self.web.sentlog(func_name: "In Preauthorized Transaction startButtontapped lost Wifi connection with the link", errorfromserverorlink: self.cf.getSSID(), errorfromapp:"\(Vehicaldetails.sharedInstance.SSId)")
@@ -683,7 +682,23 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                 let appDel = UIApplication.shared.delegate! as! AppDelegate
                 // Call a method on the CustomController property of the AppDelegate
 
-                self.cf.delay(1) {
+                self.cf.delay(1) {     // takes a Double value for the delay in seconds
+                    //                if(self.ifstartpulsar_status == 1)
+                    //                {
+                    //                    // put the delayed action/function here
+                    //                    _ = self.setralay0tcp()
+                    //                    _ = self.setpulsar0tcp()
+                    //                    self.BusyStatuschange()
+                    //                    self.web.sentlog(func_name: "Preauth cancelButtonTapped", errorfromserverorlink: "", errorfromapp: "")
+                    //                    appDel.start()
+                    //                }
+                    //                else if(self.ifstartpulsar_status == 0)
+                    //                { _ = self.setralay0tcp()
+                    //                    _ = self.setpulsar0tcp()
+                    //
+                    //                }
+                    //                // put the delayed action/function here
+                    //                self.BusyStatuschange()
                     self.web.sentlog(func_name: "cancelButtonTapped", errorfromserverorlink: "", errorfromapp: "")
                     appDel.start()
                     self.Activity.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray;
@@ -777,7 +792,6 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
                         self.web.sentlog(func_name: "Go button Tapped user Joins \(Vehicaldetails.sharedInstance.SSId) wifi Automatically from FuelquantityVC Page", errorfromserverorlink: " \(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())",errorfromapp: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)" + " Connected link: \(self.cf.getSSID())")
                         // self.showSuccess()
                         print("Connected")
-
 
                     }
                 }
@@ -1149,11 +1163,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
 
                                 self.cf.delay(1){
                                     self.Transaction(fuelQuantity: self.fuelquantity)
-//                                    print(Vehicaldetails.sharedInstance.MacAddress,Vehicaldetails.sharedInstance.FS_MacAddress)
-//                                    if(Vehicaldetails.sharedInstance.FS_MacAddress == Vehicaldetails.sharedInstance.MacAddress){}
-//                                    else{
-//
-//                                    }
+
                                 }
                                 self.cf.delay(10){
                                     if (self.stopdelaytime == true){}
@@ -1201,11 +1211,7 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
 
                                 self.cf.delay(1){
                                     self.Transaction(fuelQuantity: self.fuelquantity)
-//                                    print(Vehicaldetails.sharedInstance.MacAddress,Vehicaldetails.sharedInstance.FS_MacAddress)
-//                                    if(Vehicaldetails.sharedInstance.FS_MacAddress == Vehicaldetails.sharedInstance.MacAddress){}
-//                                    else{
-//
-//                                    }
+
                                 }
                                 self.cf.delay(10){
                                     if (self.stopdelaytime == true){}
@@ -1943,7 +1949,8 @@ class PreauthFuelquantity: UIViewController,StreamDelegate,UITextFieldDelegate,U
         scrollview.isHidden = false
         dataview.isHidden = true
         OKWait.isHidden = false
-
+       // Waitp.isHidden = false
+//viewdata.isHidden = true
         timer.invalidate()
         stoptimergotostart.invalidate()
         self.cf.delay(0.1){

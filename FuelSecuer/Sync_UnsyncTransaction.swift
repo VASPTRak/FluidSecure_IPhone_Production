@@ -24,7 +24,11 @@ class Sync_Unsynctransactions : NSObject
     let defaults = UserDefaults.standard
 
 
-    func unsyncTransaction() 
+    func unsyncTransaction() //-> String
+    {
+        //        if(stopbutton == true){
+        //            s1 = string
+        //            print(s1)
 
         if (Vehicaldetails.sharedInstance.reachblevia == "cellular")
         {
@@ -128,6 +132,8 @@ class Sync_Unsynctransactions : NSObject
                 }
             }
         }
+        //stopbutton = false
+        //  }
     }
 
 
@@ -158,7 +164,7 @@ class Sync_Unsynctransactions : NSObject
                 //"\(self.reply)"
                 let data1 = self.reply.data(using: String.Encoding.utf8)!
                 do{
-                    self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                    self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
                 }catch let error as NSError {
                     print ("Error: \(error.domain)")
                 }

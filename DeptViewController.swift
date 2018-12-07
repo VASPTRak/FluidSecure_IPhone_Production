@@ -50,7 +50,7 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
         appDel.start()
     }
 
-    @objc func tapAction() {
+   @objc func tapAction() {
         self.view.frame = CGRect(x: 0,y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height)
         self.oview.endEditing(true)
     }
@@ -110,7 +110,7 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
             countfailauth = 0
             let data1:Data = reply.data(using: String.Encoding.utf8)! as Data
             do{
-                sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
             }catch let error as NSError {
                 print ("Error: \(error.domain)")
             }
@@ -157,8 +157,8 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
                         alertController.setValue(attributedString, forKey: "attributedTitle")
 
                         let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default){
-                            action in
-                            self.performSegue(withIdentifier: "Go", sender: self)
+                         action in
+                        self.performSegue(withIdentifier: "Go", sender: self)
                         }
                         alertController.addAction(action)
 

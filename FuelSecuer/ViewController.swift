@@ -192,7 +192,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                     {
                         reply = web.checkApprove(uuid: uuid,lat:"\(0)",long:"\(0)")
                     }else{
-                        reply = web.checkApprove(uuid: uuid,lat:"\(sourcelat)",long:"\(sourcelong)")
+                        reply = web.checkApprove(uuid: uuid,lat:"\(sourcelat!)",long:"\(sourcelong!)")
                     }
 
                     if(reply == "-1")
@@ -211,7 +211,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             cf.CreateTextFile(fileName: "getSites.txt", writeText: reply)
             let data1:Data = reply.data(using: String.Encoding.utf8)!
             do {
-                sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
             }catch let error as NSError {
                 
                 print ("Error: \(error.domain)")
@@ -244,6 +244,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                 else if(IsVehicleNumberRequire == "True"){
 
                 }
+
 
                 infotext.text =  NSLocalizedString("Name", comment:"") + ": \(PersonName)\n" + NSLocalizedString("Mobile", comment:"") + ":\(PhoneNumber)\n" + NSLocalizedString("Email", comment:"") + ": \(Email)"
                 Vehicaldetails.sharedInstance.CollectDiagnosticLogs = CollectDiagnosticLogs as String
@@ -287,7 +288,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
 
                     //IF USER IF Approved Get information from server like site,ssid,pwd,hose
                     do{
-                        systemdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                        systemdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
                     }catch let error as NSError {
                         print ("Error: \(error.domain)")
                         print ("Error: \(error)")
@@ -501,13 +502,15 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             print(now)
         }
 
+        //now = (dateFormatter.date(from:"\(defaults.string(forKey:"Date")!)")?.addingTimeInterval(1))!
         cf.delay(1){
-            let soon = Date()
+        let soon = Date()
             print(self.now!,soon)
             if(self.now! < soon){
                 self.cf.showUpdateWithForce()
                 self.defaults.set("\(soon)",forKey: "Date")
             }
+          //  self.cf.showUpdateWithForce()
         }
     }
 
@@ -538,7 +541,12 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     }
 
     @IBAction func change_language(_ sender: Any) {
-
+        //        if(itembarbutton.title == "English"){
+        //        Bundle.setLanguage("en")
+        //        let appDel = UIApplication.shared.delegate! as! AppDelegate
+        //        appDel.start()
+        //
+        //        }
     }
     @IBAction func spanish(_ sender: Any) {
         if(itembarbutton.title == "English"){
@@ -558,7 +566,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     }
 
     @IBAction func goButtontapped(sender: AnyObject) {
-
+        //  cf.checkVersion()
         if(self.wifiNameTextField.text == ""){
             showAlert(message: NSLocalizedString("NoHoseselect", comment:""))
         }
@@ -609,7 +617,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                         }else{
                             let data1:NSData = reply.data(using: String.Encoding.utf8)! as NSData
                             do{
-                                sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                                sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
                             }catch let error as NSError {
                                 print ("Error: \(error.domain)")
                             }
@@ -642,10 +650,10 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                             else{
                                                 self.senddata(deptno: IsDepartmentRequire,ppin:IsPersonnelPINRequire,other:IsOtherRequire)
                                             }
-                                        }
-                                    }
-                                }
+                                       }
                             }
+                        }
+}
                         }
                     }
                 }
@@ -658,13 +666,18 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         let odom = "0"
         let odometer:Int! = Int(odom)!
         let vehicle_no = Vehicaldetails.sharedInstance.vehicleno
-
+        //countfailauth += 1
         let data = web.vehicleAuth(vehicle_no: vehicle_no,Odometer:odometer!,isdept:deptno,isppin:ppin,isother:other)
         let Split = data.components(separatedBy: "#")
         let reply = Split[0]
         if (reply == "-1")
         {
-            
+            //            if(countfailauth>2)
+            //            {
+            //                showAlert(message: NSLocalizedString("CheckyourInternet", comment:""))
+            //            }else{
+            //                self.senddata(deptno: deptno,ppin:ppin,other:other)
+            //            }
         }
         else
         {
@@ -680,7 +693,6 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             let ResponceMessage = sysdata.value(forKey: "ResponceMessage") as! NSString
             let ResponceText = sysdata.value(forKey: "ResponceText") as! NSString
             let ValidationFailFor = sysdata.value(forKey: "ValidationFailFor") as! NSString
-
 
             if(ResponceMessage == "success")
             {
@@ -725,8 +737,6 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
 
                         self.present(alertController, animated: true, completion: nil)
                     }
-                    //self.mainPage()
-
                 }
 
                 if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){

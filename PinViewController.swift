@@ -110,7 +110,7 @@ class PinViewController: UIViewController,UITextFieldDelegate {
         {   countfailauth = 0
             let data1:Data = reply.data(using: String.Encoding.utf8)!
             do{
-                sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
             }catch let error as NSError {
                 print ("Error: \(error.domain)")
             }
@@ -119,7 +119,6 @@ class PinViewController: UIViewController,UITextFieldDelegate {
             let ResponceMessage = sysdata.value(forKey: "ResponceMessage") as! NSString
             let ResponceText = sysdata.value(forKey: "ResponceText") as! NSString
             let ValidationFailFor = sysdata.value(forKey: "ValidationFailFor") as! NSString
-
             
             if(ResponceMessage == "success")
             {

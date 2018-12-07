@@ -296,7 +296,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                     //IF USER IF Approved Get information from server like site,ssid,pwd,hose
                     
                     do{
-                        systemdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
+                        systemdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
                     }catch let error as NSError {
                         print ("Error: \(error.domain)")
                         print ("Error: \(error)")
@@ -588,7 +588,27 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
     }
     
     
-
+//    func showAlert(message: String) {
+//        let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertControllerStyle.alert)
+//        // Background color.
+//        let backView = alertController.view.subviews.last?.subviews.last
+//        backView?.layer.cornerRadius = 10.0
+//        backView?.backgroundColor = UIColor.white
+//        // Change Message With Color and Font
+//        let message  = message
+//        let paragraphStyle = NSMutableParagraphStyle()
+//        paragraphStyle.alignment = NSTextAlignment.left
+//        var messageMutableString = NSMutableAttributedString()
+//        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [ NSAttributedStringKey.paragraphStyle: paragraphStyle,NSAttributedStringKey.font:UIFont(name: "Georgia", size: 24.0)!])
+//        
+//        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
+//        alertController.setValue(messageMutableString, forKey: "attributedMessage")
+//        // Action.
+//        let action = UIAlertAction(title:NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default, handler: nil)
+//        alertController.addAction(action)
+//        self.present(alertController, animated: true, completion: nil)
+//    }
+//    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

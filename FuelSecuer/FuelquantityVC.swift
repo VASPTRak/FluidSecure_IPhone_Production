@@ -318,7 +318,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
     }
 
     override func viewWillAppear(_ animated: Bool) {
-      
+
         UIApplication.shared.isIdleTimerDisabled = true
         stoptimergotostart.invalidate()
         start.isEnabled = false
@@ -447,7 +447,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                 }else{
                     let data1:Data = self.reply.data(using: String.Encoding.utf8)!
                     do{
-                        self.setrelaysysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                        self.setrelaysysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
                     }catch let error as NSError {
                         print ("Error: \(error.domain)")
                         let text = error.localizedDescription + error.debugDescription
@@ -494,7 +494,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                                     self.web.sentlog(func_name: "startButtontapped lost Wifi connection with the link after setpulsaroffTime.", errorfromserverorlink: self.cf.getSSID(), errorfromapp:"\(Vehicaldetails.sharedInstance.SSId)")
 
                                     self.timerview.invalidate()
-                                    self.showAlertSetting(message: NSLocalizedString("WarningselectWifi", comment:"") + "\(Vehicaldetails.sharedInstance.SSId)" + NSLocalizedString("Wifi", comment:""))//"Please select \(Vehicaldetails.sharedInstance.SSId) Wi-Fi.")
+                                    self.showAlertSetting(message: NSLocalizedString("WarningselectWifi", comment:"") + "\(Vehicaldetails.sharedInstance.SSId)" + NSLocalizedString("Wifi", comment:""))
 
                                 }else {
 
@@ -608,7 +608,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                                                                         let outputdata = "{" +  reply + "{" + setrelay1 + "}" + "}"
                                                                         let data1:Data = outputdata.data(using: String.Encoding.utf8)!
                                                                         do{
-                                                                            self.sysdata1 = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                                                                            self.sysdata1 = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
                                                                         }catch let error as NSError {
                                                                             print ("Error: \(error.domain)")
                                                                         }
@@ -662,7 +662,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                                                                                         print("getresponse relay on" + self.cf.dateUpdated)
                                                                                         let data1:NSData = outputdata.data(using: String.Encoding.utf8)! as NSData
                                                                                         do{
-                                                                                            self.setrelaysysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                                                                                            self.setrelaysysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
                                                                                         }catch let error as NSError {
                                                                                             print ("Error: \(error.domain)")
                                                                                         }
@@ -1023,7 +1023,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                             let outputdata = "{" +  reply + "{" + setrelay1 + "}" + "}"
                             let data1 = outputdata.data(using: String.Encoding.utf8)!
                             do{
-                                self.sysdata1 = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                                self.sysdata1 = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
                             }
                             catch let error as NSError {
                                 print ("Error: \(error.domain)")
@@ -1085,7 +1085,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                                                 let outputdata = "{" +  reply + "{" + setrelay1 + "}" + "}"
                                                 let data1 = outputdata.data(using: String.Encoding.utf8)!
                                                 do{
-                                                    self.sysdata1 = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                                                    self.sysdata1 = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
                                                 }catch let error as NSError {
                                                     print ("Error: \(error.domain)")
                                                 }
@@ -1158,7 +1158,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                                                                     //     print("before set tldlevel" + self.cf.dateUpdated)
                                                                     self.Transaction(fuelQuantity: self.fuelquantity)
 
-//                                                                       let replytld = self.tcpcon.tlddata()
+                                                                    //                                                                       let replytld = self.tcpcon.tlddata()
                                                                     self.tcpcon.setdefault()
                                                                     self.tcpcon.closestreams()
                                                                     if(Vehicaldetails.sharedInstance.IsTLDdata == "True")
@@ -1260,7 +1260,15 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                         self.cf.delay(0.5){
                             self.Transaction(fuelQuantity: self.fuelquantity)
                             self.tcpcon.setdefault()
-                            let replytld = self.tcpcon.tlddata()
+                            if(Vehicaldetails.sharedInstance.IsTLDdata == "True")
+                            {
+                                let replytld = self.web.tldlevel()
+                                if(replytld == "" || replytld == "nil"){}
+                                else{
+                                    self.tcpcon.sendtld(replytld: replytld)
+                                }
+                            }
+                            //let replytld = self.tcpcon.tlddata()
 
                             self.wait.isHidden = true
                             self.waitactivity.isHidden = true
@@ -1362,6 +1370,8 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
         print(Wifyssid)
         print(Odomtr)
         let bodyData = "{\"TransactionId\":\(TransactionId),\"FuelQuantity\":\((fuelQuantity)),\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\",\"Transaction\":\"Current_Transaction\"}"
+        //try! JSONSerialization.data(withJSONObject: ["TransactionId":TransactionId,"FuelQuantity":fuelQuantity,"Pulses":pusercount,"TransactionFrom":"I","versionno":Version,"Device Type":UIDevice().type,"iOS":UIDevice.current.systemVersion,"Transaction":"Current_Transaction"], options:[])
+        //"{\"TransactionId\":\(TransactionId),\"FuelQuantity\":\((fuelQuantity)),\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\",\"Transaction\":\"Current_Transaction\"}"
 
         let reply = "-1"//web.Transaction_details(bodyData: bodyData)
         if (reply == "-1")
@@ -1380,7 +1390,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
             Warning.isHidden = true
             let data1:NSData = reply.data(using: String.Encoding.utf8)! as NSData
             do{
-                sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
             }catch let error as NSError {
                 print ("Error: \(error.domain)")
             }
@@ -1471,7 +1481,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
             timer_noConnection_withlink.invalidate()
             let data1 = self.reply1.data(using: String.Encoding.utf8)!
             do{
-                self.sysdata1 = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                self.sysdata1 = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
             }catch let error as NSError {
                 let text = error.localizedDescription + error.debugDescription
                 let test = String((text.filter { !" \n".contains($0) }))
@@ -1619,9 +1629,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
                                 print ("Error: \(error.domain)")
                                 self.web.sentlog(func_name: "stoprelay", errorfromserverorlink: "\(error)", errorfromapp:"Error: \(error.domain)")
                             }
-                            // self.stoprelay()
                         }
-                        //                            }
                     }
                     else{
                         let v = self.quantity.count
@@ -1661,7 +1669,7 @@ class FuelquantityVC: UIViewController,StreamDelegate,UITextFieldDelegate,URLSes
 
 
                 self.timer.invalidate()
-                 self.web.sentlog(func_name: "stoprelay stopIspulsarcountsame", errorfromserverorlink: "", errorfromapp:"")
+                self.web.sentlog(func_name: "stoprelay stopIspulsarcountsame", errorfromserverorlink: "", errorfromapp:"")
                 _ = self.tcpcon.setralay0tcp()
                 _ = self.tcpcon.setpulsar0tcp()
                 self.displaytime.text = NSLocalizedString("autostop", comment:"")//"app autostop because pulsecount getting is same."

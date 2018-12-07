@@ -440,9 +440,11 @@ class Webservices:NSObject {
         request.httpMethod = "POST"
         
         request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
-        let bodyData = "{\"IMEIUDID\":\"\(uuid!)\",\"VehicleNumber\":\"\(vehicle_no)\",\"WifiSSId\":\"\(wifiSSID)\",\"SiteId\":\"\(siteid)\"}"
+        let bodyData = try! JSONSerialization.data(withJSONObject: ["IMEIUDID": uuid,
+                                                                    "VehicleNumber": vehicle_no,
+                                                                    "WifiSSId": wifiSSID,"SiteId":siteid], options: [])//"{\"IMEIUDID\":\"\(uuid!)\",\"VehicleNumber\":\"\(vehicle_no)\",\"WifiSSId\":\"\(wifiSSID)\",\"SiteId\":\"\(siteid)\"}"
         print(bodyData)
-        request.httpBody = bodyData.data(using: String.Encoding.utf8)
+        request.httpBody = bodyData//.data(using: String.Encoding.utf8)
         request.timeoutInterval = 10
 
         let semaphore = DispatchSemaphore(value: 0)
@@ -525,7 +527,7 @@ class Webservices:NSObject {
                         let dtt: String = dateFormatter.string(from: NSDate() as Date)
                         let dataString = String(data: contents, encoding: String.Encoding.utf8)
                         let newString = dataString?.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
-                        print(newString)
+                        print(newString!)
                         let bodyData = "\n\n{\"Collectedlogs\":\"\(dtt1),\(String(describing: newString!))\",\"LogFrom\":\"iPhone\",\"FileName\":\"\(dtt) DiagnosticLogs_iPhone\"}"
                         request.httpBody = bodyData.data(using: String.Encoding.utf8)
                         //request.timeoutInterval = 2
@@ -536,7 +538,7 @@ class Webservices:NSObject {
                                 print(self.replysentlog)
                                 let data1 = self.replysentlog.data(using: String.Encoding.utf8)!
                                 do{
-                                    self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                                    self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
                                 }catch let error as NSError {
                                     print ("Error: \(error.domain)")
                                 }
@@ -633,10 +635,27 @@ class Webservices:NSObject {
         request.httpMethod = "POST"
         
         request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
-        let bodyData = "{\"IMEIUDID\":\"\(uuid!)\",\"IsVehicleNumberRequire\":\"\(Vehicaldetails.sharedInstance.IsVehicleNumberRequire)\",\"VehicleNumber\":\"\(vehicle_no)\",\"OdoMeter\":\"\(Odometer)\",\"WifiSSId\":\"\(wifiSSID)\",\"SiteId\":\"\(siteid)\",\"DepartmentNumber\":\"\(isdept)\",\"PersonnelPIN\":\"\(isPPin)\",\"Other\":\"\(isother)\",\"Hours\":\"\(hour)\",\"CurrentLat\":\"\(Vehicaldetails.sharedInstance.Lat)\",\"CurrentLng\":\"\(Vehicaldetails.sharedInstance.Long)\",\"RequestFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\"}"
+        let bodyData = try! JSONSerialization.data(withJSONObject: ["IMEIUDID":uuid,
+                                                                    "IsVehicleNumberRequire":"\(Vehicaldetails.sharedInstance.IsVehicleNumberRequire)",
+            "VehicleNumber": vehicle_no,
+            "WifiSSId":wifiSSID,
+            "SiteId":siteid,
+            "DepartmentNumber":isdept,
+            "PersonnelPIN":"\(isPPin)",
+            "Other":"\(isother)",
+            "Hours":"\(hour)",
+            "CurrentLat":"\(Vehicaldetails.sharedInstance.Lat)",
+            "CurrentLng":"\(Vehicaldetails.sharedInstance.Long)",
+            "RequestFrom":"I",
+            "versionno":"\(Version)",
+            "Device Type":"\(UIDevice().type)",
+            "iOS": "\(UIDevice.current.systemVersion)",
+
+
+            ],options: [])
 
         print(bodyData)
-        request.httpBody = bodyData.data(using: String.Encoding.utf8)
+        request.httpBody = bodyData//.data(using: String.Encoding.utf8)
         request.timeoutInterval = 10
         
         let semaphore = DispatchSemaphore(value: 0)
@@ -652,7 +671,7 @@ class Webservices:NSObject {
                 self.sentlog(func_name: "AuthorizationSequence Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 let data1:Data = self.reply.data(using: String.Encoding.utf8)!
                 do{
-                    self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                    self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
                 }catch let error as NSError {
                     print ("Error: \(error.domain)")
                 }
@@ -796,7 +815,7 @@ class Webservices:NSObject {
     }
 
 
-    func tldsendserver(bodyData:String) -> String {
+    func tldsendserver(bodyData:Data) -> String {
         FSURL = Vehicaldetails.sharedInstance.URL + "/HandlerTrak.ashx"
         let Email = defaults.string(forKey: "address")
         let uuid = defaults.string(forKey: "uuid")
@@ -809,7 +828,7 @@ class Webservices:NSObject {
         request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
         request.timeoutInterval = 10
         print(bodyData)
-        request.httpBody = bodyData.data(using: String.Encoding.utf8)
+        request.httpBody = bodyData//.data(using: String.Encoding.utf8)
         
         let semaphore = DispatchSemaphore(value: 0)
         let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
@@ -1022,7 +1041,7 @@ class Webservices:NSObject {
                 self.sentlog(func_name: "Fueling Page Get Pulsar_LastQuantity Function", errorfromserverorlink: " Response from link \(newString)",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 let data1:NSData = self.pulsardata.data(using: String.Encoding.utf8)! as NSData
                 do{
-                    self.sysdata1 = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                    self.sysdata1 = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
                 }catch let error as NSError {
                     print ("Error: \(error.domain)")
                 }
@@ -1100,7 +1119,7 @@ class Webservices:NSObject {
                 self.sentlog(func_name: "Fueling Page Getinfo Function", errorfromserverorlink: " Response from link $$\(newString)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 let data1:Data = self.reply.data(using: String.Encoding.utf8)!
                 do{
-                    self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                    self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
                     let Version = self.sysdata.value(forKey: "Version") as! NSDictionary
 
                     let iot_version = Version.value(forKey: "iot_version") as! NSString

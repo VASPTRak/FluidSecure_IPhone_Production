@@ -128,7 +128,7 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
             countfailauth = 0
             let data1:Data = reply.data(using: String.Encoding.utf8)! 
             do{
-                sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
             }catch let error as NSError {
                 print ("Error: \(error.domain)")
             }
@@ -384,28 +384,28 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
                             self.performSegue(withIdentifier: "hour", sender: self)
                         }
                         else{
-                            if(isdept == "True"){
-                                self.performSegue(withIdentifier: "dept", sender: self)
+                        if(isdept == "True"){
+                            self.performSegue(withIdentifier: "dept", sender: self)
+                        }
+                        else{
+                            if(isPPin == "True"){
+                                self.performSegue(withIdentifier: "pin", sender: self)
                             }
                             else{
-                                if(isPPin == "True"){
-                                    self.performSegue(withIdentifier: "pin", sender: self)
+                                if(isother == "True"){
+                                    self.performSegue(withIdentifier: "other", sender: self)
                                 }
                                 else{
-                                    if(isother == "True"){
-                                        self.performSegue(withIdentifier: "other", sender: self)
-                                    }
-                                    else{
-                                        let deptno = ""
-                                        let ppin = ""
-                                        let other = ""
-                                        Vehicaldetails.sharedInstance.deptno = ""
-                                        Vehicaldetails.sharedInstance.Personalpinno = ""
-                                        Vehicaldetails.sharedInstance.Other = ""
-                                        self.senddata(deptno: deptno,ppin:ppin,other:other)
-                                    }
+                                    let deptno = ""
+                                    let ppin = ""
+                                    let other = ""
+                                    Vehicaldetails.sharedInstance.deptno = ""
+                                    Vehicaldetails.sharedInstance.Personalpinno = ""
+                                    Vehicaldetails.sharedInstance.Other = ""
+                                    self.senddata(deptno: deptno,ppin:ppin,other:other)
                                 }
                             }
+                        }
                         }
                     }
                     else{
