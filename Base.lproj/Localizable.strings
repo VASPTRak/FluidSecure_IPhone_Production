@@ -13,7 +13,7 @@
 "MessageFueling" = "Please insert the nozzle into the tank \n Then tap start";
 "MessageFueling1" = "Please wait while your connection is being established With FS link";
 "LostWifi" = "WiFi Connection lost with mobile.";
-"Touch to select Site" = "Touch to select Site";
+"Touch to select Site" = "Touch Here to Select Site";
 "Regisration" = "Your Registration request is not approved yet. It is marked Inactive in the Company Software. Please contact your company’s administrator.";
 "Helptext" = "Please select Site & then Proceed";
 "HelptextSelectedSite" = "If you are using this hose for the first time you will need to enter the password when redirected to the WiFi screen. The password is ";
@@ -49,7 +49,7 @@
 "wificonnection1" = " is lost. Please select ";
 "CheckFSunit" = "Please check your FS unit, and switch off power and back on.";
 "ThankyouMSG" = "Thank you for using \nFluidSecure.";
-"NoQuantity" = "No Quantity received. Transaction ended.";
+"NoQuantity" = "No Quantity is Received as Your Connection with Link is Lost";//"No Quantity received. Transaction ended.";
 "ZeroQuantity" = "Quantity is zero. Transaction is stopped.";
 "Notify" = "Your Transaction is Successfully Completed at ";
 "autostop" = "app autostop because pulsecount getting is same.";
@@ -77,6 +77,6 @@
 "No_Pre-auth_transaction" = "Available Pre-Authorized transactions - ";
 "BacktoHome" = "Back to Home";
 "ConnectWifi" = "Connect Wifi";
-"Warningfueling" = "Do not leave this screen while fueling - pump may turn off if you do.";
+"Warningfueling" = "Caution: Do NOT leave this screen while Fueling, Pump May turn OFF!";
 
 

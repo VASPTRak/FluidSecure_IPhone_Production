@@ -34,18 +34,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func endBackgroundUpdateTask() {
         UIApplication.shared.endBackgroundTask(self.backgroundUpdateTask)
-        self.backgroundUpdateTask = UIBackgroundTaskInvalid
+        self.backgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
     }
     
     func doBackgroundTask() {
-        DispatchQueue.main.async(execute: {
-            self.beginBackgroundUpdateTask()
-            self.jc.stopbutton = true
-            _ = self.unsync.unsyncTransaction()
-            _ = self.preauth.preauthunsyncTransaction()
-            // End the background task.
-            self.endBackgroundUpdateTask()
-        })
+//        DispatchQueue.main.async(execute: {
+//            self.beginBackgroundUpdateTask()
+//            self.jc.stopbutton = true
+//            _ = self.unsync.unsyncTransaction()
+//            _ = self.preauth.preauthunsyncTransaction()
+//            // End the background task.
+//
+//            self.endBackgroundUpdateTask()
+//        })
     }
 
 
@@ -58,7 +59,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UIApplication.shared.scheduleLocalNotification(note)
     }
     
-     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
          doBackgroundTask()
         do {
             reachability = try Reachability.init()
@@ -124,7 +125,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         else {
                             let siteid = defaults.array(forKey: "SiteID")
                             let sid = siteid![id]
-                            print(sid,id)
+                      //      print(sid,id)
                             Vehicaldetails.sharedInstance.siteID = sid as! String
                             
                             print("root VC if condition")
@@ -196,7 +197,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     }
                     else{
                         do
-                        { let uid = try defaults.array(forKey: "SSID")
+                        { let uid = defaults.array(forKey: "SSID")
                             let rowCount =  uid!.count
                             for i in 0  ..< rowCount
                             {
@@ -210,7 +211,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                     wificonnection = "False"
                                 }
                             }
-                        } catch let error as NSError {}
+                        } //catch let error as NSError {}
+                        
                         if(defaults.string(forKey: "Login") == "1")
                         {
                             let storyboard = UIStoryboard(name: "PreauthStoryboard", bundle: nil)
@@ -388,10 +390,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationDidEnterBackground(_ application: UIApplication)
     {
-         doBackgroundTask()
-        self.web.sentlog(func_name: "Application Enter In Background", errorfromserverorlink:  "Selected Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
+        // doBackgroundTask()
+       // self.web.sentlog(func_name: "Application Enter In Background", errorfromserverorlink:  "Selected Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
 
-        sleep(10)
+        //sleep(10)
 
 //                cf.delay(10){
 //        //            self.doBackgroundTask()
@@ -402,8 +404,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
-        self.web.sentlog(func_name: "Application Enter In Foreground", errorfromserverorlink: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
-        doBackgroundTask()
+//        self.web.sentlog(func_name: "Application Enter In Foreground", errorfromserverorlink: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
+       // doBackgroundTask()
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
@@ -524,11 +526,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if reachability.isReachableViaWiFi {
                 print("Reachable via WiFi......")
                 Vehicaldetails.sharedInstance.reachblevia = "wificonn"
-                doBackgroundTask()
+               // doBackgroundTask()
             } else {
                 print("Reachable via Cellular......")
                 Vehicaldetails.sharedInstance.reachblevia = "cellular"
-                doBackgroundTask()
+                //doBackgroundTask()
             }
         } else {
             print("Not reachable..........")

@@ -14,7 +14,7 @@ class PreauthOdometerVC: UIViewController,UITextFieldDelegate //
     @IBOutlet var Odometer: UITextField!
     
     var cf = Commanfunction()
-    var countdata = 0
+//    var countdata = 0
     var web = Webservices()
     
     override func viewDidLoad() {
@@ -23,12 +23,18 @@ class PreauthOdometerVC: UIViewController,UITextFieldDelegate //
         Odometer.delegate = self
         Odometer.font = UIFont(name: Odometer.font!.fontName, size: 40)
         let doneButton:UIButton = UIButton (frame: CGRect(x: 100, y: 100, width: 100, height: 44));
-        doneButton.setTitle(NSLocalizedString("Return", comment:""), for: UIControlState.normal)
-        doneButton.addTarget(self, action: #selector(OdometerVC.tapAction), for: UIControlEvents.touchUpInside);
+        doneButton.setTitle(NSLocalizedString("Return", comment:""), for: UIControl.State.normal)
+        doneButton.addTarget(self, action: #selector(OdometerVC.tapAction), for: UIControl.Event.touchUpInside);
         doneButton.backgroundColor = UIColor .black
         Odometer.returnKeyType = .done
         Odometer.inputAccessoryView = doneButton
         Odometer.autocapitalizationType = UITextAutocapitalizationType.allCharacters
+
+        var myMutableStringTitle = NSMutableAttributedString()
+        let Name  = "Enter Odometer Reading" // PlaceHolderText
+        myMutableStringTitle = NSMutableAttributedString(string:Name, attributes: [NSAttributedString.Key.font:UIFont(name: "Georgia", size: 30.0)!]) // Font
+        myMutableStringTitle.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white, range:NSRange(location:0,length:Name.count))    // Color
+        Odometer.attributedPlaceholder = myMutableStringTitle
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
@@ -160,7 +166,7 @@ class PreauthOdometerVC: UIViewController,UITextFieldDelegate //
             } else {
                 // Fallback on earlier versions
 
-                let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertControllerStyle.alert)
+                let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertController.Style.alert)
                 let backView = alertController.view.subviews.last?.subviews.last
                 backView?.layer.cornerRadius = 10.0
                 backView?.backgroundColor = UIColor.white
@@ -172,9 +178,9 @@ class PreauthOdometerVC: UIViewController,UITextFieldDelegate //
                 paragraphStyle1.alignment = NSTextAlignment.left
 
                 let attributedString = NSAttributedString(string:NSLocalizedString("Subtitle", comment:""), attributes: [
-                    NSAttributedStringKey.paragraphStyle:paragraphStyle1,
-                    NSAttributedStringKey.font : UIFont.systemFont(ofSize: 20), //your font here
-                    NSAttributedStringKey.foregroundColor : UIColor.black
+                    NSAttributedString.Key.paragraphStyle:paragraphStyle1,
+                    NSAttributedString.Key.font : UIFont.systemFont(ofSize: 20), //your font here
+                    NSAttributedString.Key.foregroundColor : UIColor.black
                     ])
 
                 let formattedString = NSMutableAttributedString()
@@ -187,7 +193,7 @@ class PreauthOdometerVC: UIViewController,UITextFieldDelegate //
 
                 alertController.setValue(formattedString, forKey: "attributedMessage")
                 alertController.setValue(attributedString, forKey: "attributedTitle")
-                let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default){
+                let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertAction.Style.default){
                     action in
                     self.performSegue(withIdentifier: "Go", sender: self)
                 }

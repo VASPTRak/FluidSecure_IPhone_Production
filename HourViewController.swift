@@ -10,9 +10,11 @@ class HourViewController: UIViewController,UITextFieldDelegate {
 
     @IBOutlet var oview: UIView!
     @IBOutlet var Hour: UITextField!
+    @IBOutlet var Activity: UIActivityIndicatorView!
+    @IBOutlet var Go: UIButton!
+    @IBOutlet var Hourlabel: UILabel!
 
     var web = Webservices()
-    var confs = FuelquantityVC()
     var sysdata:NSDictionary!
     var cf = Commanfunction()
     var stoptimergotostart:Timer = Timer()
@@ -26,18 +28,40 @@ class HourViewController: UIViewController,UITextFieldDelegate {
         Hour.delegate = self
         Hour.font = UIFont(name: Hour.font!.fontName, size: 40)
         Hour.text = Vehicaldetails.sharedInstance.hours
+
+        if(Vehicaldetails.sharedInstance.Language == "es-ES")
+         {
+             Hourlabel.text = "Ingrese  \(Vehicaldetails.sharedInstance.ScreenNameForHours)"
+         }
+         else{
+        Hourlabel.text = "Enter \(Vehicaldetails.sharedInstance.ScreenNameForHours)"
+         }
+
+        var myMutableStringTitle = NSMutableAttributedString()
+        var Name  = "Enter \(Vehicaldetails.sharedInstance.ScreenNameForHours)" // PlaceHolderText
+        if(Vehicaldetails.sharedInstance.Language == "es-ES")
+        {
+            Name = "Ingrese  \(Vehicaldetails.sharedInstance.ScreenNameForHours)"
+        }
+        myMutableStringTitle = NSMutableAttributedString(string:Name, attributes: [NSAttributedString.Key.font:UIFont(name: "Georgia", size: 30.0)!]) // Font
+        myMutableStringTitle.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white, range:NSRange(location:0,length:Name.count))    // Color
+        Hour.attributedPlaceholder = myMutableStringTitle
+
         let doneButton:UIButton = UIButton (frame: CGRect(x: 100, y: 100, width: 100, height: 44));
-        doneButton.setTitle(NSLocalizedString("Return", comment:""), for: UIControlState())
-        doneButton.addTarget(self, action: #selector(tapAction), for: UIControlEvents.touchUpInside);
+        doneButton.setTitle(NSLocalizedString("Return", comment:""), for: UIControl.State())
+        doneButton.addTarget(self, action: #selector(tapAction), for: UIControl.Event.touchUpInside);
         doneButton.backgroundColor = UIColor .black
         Hour.returnKeyType = .done
         Hour.inputAccessoryView = doneButton
         Hour.autocapitalizationType = UITextAutocapitalizationType.allCharacters
+        Activity.isHidden = true
     }
 
     override func viewWillAppear(_ animated: Bool) {
         stoptimergotostart.invalidate()
         stoptimergotostart = Timer.scheduledTimer(timeInterval: (Double(1)*60), target: self, selector: #selector(HourViewController.gotostart), userInfo: nil, repeats: false)
+        Go.isEnabled = true
+        Activity.isHidden = true
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -89,7 +113,7 @@ class HourViewController: UIViewController,UITextFieldDelegate {
         let odom = "0"
         let odometer = Int(odom)
         let vehicle_no = Vehicaldetails.sharedInstance.vehicleno
-        let data = web.vehicleAuth(vehicle_no: vehicle_no,Odometer:odometer!,isdept:deptno,isppin:ppin,isother:other)
+        let data = web.vehicleAuth(vehicle_no: vehicle_no,Odometer:odometer!,isdept:deptno,isppin:ppin,isother:other,Barcodescanvalue:Vehicaldetails.sharedInstance.Barcodescanvalue)
         countfailauth += 1
         let Split = data.components(separatedBy: "#")
         let reply = Split[0] 
@@ -97,6 +121,8 @@ class HourViewController: UIViewController,UITextFieldDelegate {
         {
             if(countfailauth>2)
             {
+                self.Activity.stopAnimating()
+                self.Activity.isHidden = true
                 showAlert(message: NSLocalizedString("CheckyourInternet", comment:""))
             }else{
 
@@ -112,20 +138,22 @@ class HourViewController: UIViewController,UITextFieldDelegate {
             }catch let error as NSError {
                 print ("Error: \(error.domain)")
             }
-            print(sysdata)
+           // print(sysdata)
             let ResponceMessage = sysdata.value(forKey: "ResponceMessage") as! NSString
             let ResponceText = sysdata.value(forKey: "ResponceText") as! NSString
             let ValidationFailFor = sysdata.value(forKey: "ValidationFailFor") as! NSString
 
             if(ResponceMessage == "success")
             {
+                self.Activity.stopAnimating()
+                self.Activity.isHidden = true
                 if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()){
                     if #available(iOS 11.0, *) {
                         self.web.wifisettings(pagename: "Hour")
                     } else {
                         // Fallback on earlier versions
 
-                        let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertControllerStyle.alert)
+                        let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertController.Style.alert)
                         let backView = alertController.view.subviews.last?.subviews.last
                         backView?.layer.cornerRadius = 10.0
                         backView?.backgroundColor = UIColor.white
@@ -137,9 +165,9 @@ class HourViewController: UIViewController,UITextFieldDelegate {
                         paragraphStyle1.alignment = NSTextAlignment.left
 
                         let attributedString = NSAttributedString(string:NSLocalizedString("Subtitle", comment:""), attributes: [
-                            NSAttributedStringKey.paragraphStyle:paragraphStyle1,
-                            NSAttributedStringKey.font : UIFont.systemFont(ofSize: 20), //your font here
-                            NSAttributedStringKey.foregroundColor : UIColor.black
+                            NSAttributedString.Key.paragraphStyle:paragraphStyle1,
+                            NSAttributedString.Key.font : UIFont.systemFont(ofSize: 20), //your font here
+                            NSAttributedString.Key.foregroundColor : UIColor.black
                             ])
 
                         let formattedString = NSMutableAttributedString()
@@ -152,7 +180,7 @@ class HourViewController: UIViewController,UITextFieldDelegate {
 
                         alertController.setValue(formattedString, forKey: "attributedMessage")
                         alertController.setValue(attributedString, forKey: "attributedTitle")
-                        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default){
+                        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertAction.Style.default){
                             action in
                             self.performSegue(withIdentifier: "Go", sender: self)
                         }
@@ -168,6 +196,8 @@ class HourViewController: UIViewController,UITextFieldDelegate {
                 }
             }
             else {
+                self.Activity.stopAnimating()
+                self.Activity.isHidden = true
                 if(ResponceMessage == "fail")
                 {
                     if(ValidationFailFor == "Vehicle") {
@@ -206,86 +236,84 @@ class HourViewController: UIViewController,UITextFieldDelegate {
     }
 
     @IBAction func saveButtontapped(sender: AnyObject) {
-        IsSavebuttontapped = true
-        stoptimergotostart.invalidate()
-        tapAction()
-        if(Hour.text == "")
-        {
-            showAlert(message: NSLocalizedString("EnterHour", comment:""))
-            stoptimergotostart.invalidate()
-            viewWillAppear(true)
-        }
-        else
-        {
-            if(Int(Hour.text!) == nil)
+        Activity.startAnimating()
+        Activity.isHidden = false
+        Go.isEnabled = false
+        cf.delay(1){
+            self.IsSavebuttontapped = true
+            self.stoptimergotostart.invalidate()
+            self.tapAction()
+            if(self.Hour.text == "")
             {
-                showAlert(message: NSLocalizedString("EnterHour_Eng", comment:""))
-                
+                self.Activity.stopAnimating()
+                self.Activity.isHidden = true
+                if(Vehicaldetails.sharedInstance.Language == "es-ES")
+                 {
+                      self.showAlert(message:NSLocalizedString("EneterHour", comment:""))
+                 }
+                 else{
+               self.showAlert(message: "Enter \(Vehicaldetails.sharedInstance.ScreenNameForHours)")
+                 }
+
+                self.stoptimergotostart.invalidate()
+                self.viewWillAppear(true)
             }
-            else{
-                let hour:Int! = Int(Hour.text!)
-                Vehicaldetails.sharedInstance.hours = "\(hour!)"
-                let hours = Vehicaldetails.sharedInstance.IsHoursrequirs
-                let isdept = Vehicaldetails.sharedInstance.IsDepartmentRequire
-                let isPPin = Vehicaldetails.sharedInstance.IsPersonnelPINRequire
-                let isother = Vehicaldetails.sharedInstance.IsOtherRequire
-                let CheckOdometerReasonable = Vehicaldetails.sharedInstance.CheckOdometerReasonable
-                let OdometerReasonabilityConditions = Vehicaldetails.sharedInstance.OdometerReasonabilityConditions
-                let Hourlimit:Int = Vehicaldetails.sharedInstance.HoursLimit
-                let Previoushours:Int = Vehicaldetails.sharedInstance.PreviousHours
+            else
+            {
+                if(Int(self.Hour.text!) == nil)
+                {
+                    self.Activity.stopAnimating()
+                    self.Activity.isHidden = true
+                    self.showAlert(message: NSLocalizedString("EnterHour_Eng", comment:""))
 
-                if(CheckOdometerReasonable == "True"){
+                }
+                else{
+                    let hour:Int! = Int(self.Hour.text!)
+                    Vehicaldetails.sharedInstance.hours = "\(hour!)"
 
-                    if(OdometerReasonabilityConditions == "1"){
+                    let IsExtraOther = Vehicaldetails.sharedInstance.IsExtraOther
+//                   // let hours = Vehicaldetails.sharedInstance.IsHoursrequirs
+                    let isdept = Vehicaldetails.sharedInstance.IsDepartmentRequire
+                    let isPPin = Vehicaldetails.sharedInstance.IsPersonnelPINRequire
+                    let isother = Vehicaldetails.sharedInstance.IsOtherRequire
+                    let CheckOdometerReasonable = Vehicaldetails.sharedInstance.CheckOdometerReasonable
+                    let OdometerReasonabilityConditions = Vehicaldetails.sharedInstance.OdometerReasonabilityConditions
+                    let Hourlimit:Int = Vehicaldetails.sharedInstance.HoursLimit
+                    let Previoushours:Int = Vehicaldetails.sharedInstance.PreviousHours
 
-                        if(Hourlimit >= hour && hour >= Previoushours)
-                        {
-                            if(isdept == "True"){
-                                countdata = 0
-                                stoptimergotostart.invalidate()
-                                self.performSegue(withIdentifier: "dept", sender: self)
-                            }
-                            else{
-                                if(isPPin == "True"){
-                                    countdata = 0
-                                    stoptimergotostart.invalidate()
-                                    self.performSegue(withIdentifier: "pin", sender: self)
-                                }
-                                else{
-                                    if(isother == "True"){
-                                        countdata = 0
-                                        stoptimergotostart.invalidate()
-                                        self.performSegue(withIdentifier: "other", sender: self)
-                                    }
-                                    else{
-                                        let deptno = ""
-                                        let ppin = ""
-                                        let other = ""
-                                        Vehicaldetails.sharedInstance.deptno = ""
-                                        Vehicaldetails.sharedInstance.Personalpinno = ""
-                                        Vehicaldetails.sharedInstance.Other = ""
-                                        self.senddata(deptno: deptno,ppin:ppin,other:other)
-                                    }
-                                }
-                            }
-                        }
-                        else{
-                            countdata += 1
+                    if(CheckOdometerReasonable == "True"){
 
-                            if(countdata >  3){
+                        if(OdometerReasonabilityConditions == "1"){
 
+                            if(Hourlimit >= hour && hour >= Previoushours)
+                            {
+
+                                if (IsExtraOther == "True"){
+                                    self.performSegue(withIdentifier: "otherVehicle", sender: self)
+                                    self.Activity.stopAnimating()
+                                    self.Activity.isHidden = true
+                                }else
                                 if(isdept == "True"){
-                                    countdata = 0
+                                    self.countdata = 0
+                                    self.stoptimergotostart.invalidate()
+                                    self.Activity.stopAnimating()
+                                    self.Activity.isHidden = true
                                     self.performSegue(withIdentifier: "dept", sender: self)
                                 }
                                 else{
                                     if(isPPin == "True"){
-                                        countdata = 0
+                                        self.countdata = 0
+                                        self.stoptimergotostart.invalidate()
+                                        self.Activity.stopAnimating()
+                                        self.Activity.isHidden = true
                                         self.performSegue(withIdentifier: "pin", sender: self)
                                     }
                                     else{
                                         if(isother == "True"){
-                                            countdata = 0
+                                            self.Activity.stopAnimating()
+                                            self.Activity.isHidden = true
+                                            self.countdata = 0
+                                            self.stoptimergotostart.invalidate()
                                             self.performSegue(withIdentifier: "other", sender: self)
                                         }
                                         else{
@@ -301,33 +329,78 @@ class HourViewController: UIViewController,UITextFieldDelegate {
                                 }
                             }
                             else{
-                                showAlert(message: NSLocalizedString("Hour_Reasonability", comment:""))
-                                viewWillAppear(true)
-                                print(countdata)
+                                self.countdata += 1
+
+                                if(self.countdata >  3){
+                                    if (IsExtraOther == "True"){
+                                        self.performSegue(withIdentifier: "otherVehicle", sender: self)
+                                        self.Activity.stopAnimating()
+                                        self.Activity.isHidden = true
+                                    }else
+                                    if(isdept == "True"){
+                                        self.countdata = 0
+                                        self.performSegue(withIdentifier: "dept", sender: self)
+                                    }
+                                    else{
+                                        if(isPPin == "True"){
+                                            self.countdata = 0
+                                            self.performSegue(withIdentifier: "pin", sender: self)
+                                        }
+                                        else{
+                                            if(isother == "True"){
+                                                self.countdata = 0
+                                                self.performSegue(withIdentifier: "other", sender: self)
+                                            }
+                                            else{
+                                                let deptno = ""
+                                                let ppin = ""
+                                                let other = ""
+                                                Vehicaldetails.sharedInstance.deptno = ""
+                                                Vehicaldetails.sharedInstance.Personalpinno = ""
+                                                Vehicaldetails.sharedInstance.Other = ""
+                                                self.senddata(deptno: deptno,ppin:ppin,other:other)
+                                            }
+                                        }
+                                    }
+                                }
+                                else{
+                                    self.Activity.stopAnimating()
+                                    self.Activity.isHidden = true
+                                    self.showAlert(message: NSLocalizedString("Hour_Reasonability", comment:""))
+                                    self.viewWillAppear(true)
+                                    print(self.countdata)
+                                }
                             }
-                        }
 
-                    } else if(OdometerReasonabilityConditions == "2"){
+                        } else if(OdometerReasonabilityConditions == "2"){
 
-                        if(Hourlimit >= hour && hour >= Previoushours)
-                        {
-//                            if (hours == "True"){
-//                                self.performSegue(withIdentifier: "hour", sender: self)
-//                            }
-//                            else{
+                            if(Hourlimit >= hour && hour >= Previoushours)
+                            {
+
                                 Vehicaldetails.sharedInstance.hours = ""
+                                if (IsExtraOther == "True"){
+                                    self.performSegue(withIdentifier: "otherVehicle", sender: self)
+                                    self.Activity.stopAnimating()
+                                    self.Activity.isHidden = true
+                                }else
                                 if(isdept == "True"){
-                                    countdata = 0
+                                    self.countdata = 0
+                                    self.Activity.stopAnimating()
+                                    self.Activity.isHidden = true
                                     self.performSegue(withIdentifier: "dept", sender: self)
                                 }
                                 else{
                                     if(isPPin == "True"){
-                                        countdata = 0
+                                        self.countdata = 0
+                                        self.Activity.stopAnimating()
+                                        self.Activity.isHidden = true
                                         self.performSegue(withIdentifier: "pin", sender: self)
                                     }
                                     else{
                                         if(isother == "True"){
-                                            countdata = 0
+                                            self.countdata = 0
+                                            self.Activity.stopAnimating()
+                                            self.Activity.isHidden = true
                                             self.performSegue(withIdentifier: "other", sender: self)
                                         }
                                         else{
@@ -341,25 +414,28 @@ class HourViewController: UIViewController,UITextFieldDelegate {
                                         }
                                     }
                                 }
-//                            }
-                        }
-                        else{
-                            showAlert(message: NSLocalizedString("Hour_Reasonability", comment:""))
-                            viewWillAppear(true)
+
+                            }
+                            else{
+                                self.Activity.stopAnimating()
+                                self.Activity.isHidden = true
+                                self.showAlert(message: NSLocalizedString("Hour_Reasonability", comment:""))
+                                self.viewWillAppear(true)
+                            }
                         }
                     }
-                }
-                else if (CheckOdometerReasonable == "False"){
-                    if(hour >= Previoushours)
-                    {
+                    else if (CheckOdometerReasonable == "False"){
+                        if (IsExtraOther == "True"){
+                            self.performSegue(withIdentifier: "otherVehicle", sender: self)
+                        }else
                         if(isdept == "True"){
                             self.performSegue(withIdentifier: "dept", sender: self)
                         }
-                        else{
+                        else//{
                             if(isPPin == "True"){
                                 self.performSegue(withIdentifier: "pin", sender: self)
                             }
-                            else{
+                            else//{
                                 if(isother == "True"){
                                     self.performSegue(withIdentifier: "other", sender: self)
                                 }
@@ -371,18 +447,20 @@ class HourViewController: UIViewController,UITextFieldDelegate {
                                     Vehicaldetails.sharedInstance.Personalpinno = ""
                                     Vehicaldetails.sharedInstance.Other = ""
                                     self.senddata(deptno: deptno,ppin:ppin,other:other)
-                                }
-                            }
                         }
                     }
+
                     else{
-                        showAlert(message: NSLocalizedString("Hour_Reasonability", comment:""))
-                        viewWillAppear(true)
+                        self.Activity.stopAnimating()
+                        self.Activity.isHidden = true
+                        self.showAlert(message: NSLocalizedString("Hour_Reasonability", comment:""))
+                        self.viewWillAppear(true)
                     }
                 }
             }
         }
     }
 }
+
 
 

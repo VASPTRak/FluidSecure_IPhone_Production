@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DA0529CF22BA3B0600675743 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA0529CE22BA3B0600675743 /* ExternalAccessory.framework */; };
 		DA0BA0751D8971E00050831C /* commanfunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0BA0741D8971E00050831C /* commanfunction.swift */; };
+		DA1015C421C2977F00E2174C /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA1015C321C2977F00E2174C /* KeychainService.swift */; };
 		DA15066A20DA24630077288C /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA15066920DA24620077288C /* NetworkExtension.framework */; };
 		DA26F43920EE106400CABF4E /* BundleEx.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA26F43820EE106400CABF4E /* BundleEx.swift */; };
 		DA29DE3B2101AD2A00B9F77D /* PreauthStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DA29DE3D2101AD2A00B9F77D /* PreauthStoryboard.storyboard */; };
@@ -44,6 +46,7 @@
 		DA71DA891CA9078500AD06DD /* FuelSecuerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA71DA881CA9078500AD06DD /* FuelSecuerUITests.swift */; };
 		DA71DAA91CA93CD400AD06DD /* VehiclenoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA71DAA81CA93CD400AD06DD /* VehiclenoVC.swift */; };
 		DA7A40A81F7633AF00D889D6 /* Transaction_id.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7A40A71F7633AF00D889D6 /* Transaction_id.swift */; };
+		DA82ACFE22EC33560084B4B3 /* OtherVehicleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA82ACFD22EC33560084B4B3 /* OtherVehicleViewController.swift */; };
 		DA9444631F7398E1006F9804 /* PreauthFuelquantity.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9444621F7398E1006F9804 /* PreauthFuelquantity.swift */; };
 		DA9F948A1F14F42E00BFE62B /* checkbox-checked.png in Resources */ = {isa = PBXBuildFile; fileRef = DA9F94881F14F42E00BFE62B /* checkbox-checked.png */; };
 		DA9F948B1F14F42E00BFE62B /* checkbox-unchecked.png in Resources */ = {isa = PBXBuildFile; fileRef = DA9F94891F14F42E00BFE62B /* checkbox-unchecked.png */; };
@@ -52,12 +55,15 @@
 		DAC41CEB2136A14D00B1B9C1 /* TCPcommunication.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAC41CEA2136A14D00B1B9C1 /* TCPcommunication.swift */; };
 		DAC41CED2136CDE100B1B9C1 /* Sync_UnsyncTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAC41CEC2136CDE100B1B9C1 /* Sync_UnsyncTransaction.swift */; };
 		DACD13461E924F6D002784CC /* fuel_secure_lock.png in Resources */ = {isa = PBXBuildFile; fileRef = DACD13451E924F6D002784CC /* fuel_secure_lock.png */; };
+		DAD5CB1A221FFC3900CE163D /* iconfinder_barcode_scanner_172089.png in Resources */ = {isa = PBXBuildFile; fileRef = DAD5CB19221FFC3800CE163D /* iconfinder_barcode_scanner_172089.png */; };
+		DAD5CB1C221FFD3300CE163D /* ScanbarcodeviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD5CB1B221FFD3300CE163D /* ScanbarcodeviewController.swift */; };
 		DAE2E4411F0678C1004A9480 /* HourViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE2E4401F0678C1004A9480 /* HourViewController.swift */; };
 		DAE2E4431F0678EC004A9480 /* DeptViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE2E4421F0678EC004A9480 /* DeptViewController.swift */; };
 		DAE2E4451F067914004A9480 /* PinViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE2E4441F067914004A9480 /* PinViewController.swift */; };
 		DAE2E4471F067925004A9480 /* OtherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE2E4461F067925004A9480 /* OtherViewController.swift */; };
 		DAEC17291F4ECC0300714D1A /* Button-Green.png in Resources */ = {isa = PBXBuildFile; fileRef = DAEC17281F4ECC0300714D1A /* Button-Green.png */; };
 		DAF349B020BD7F8900236AF9 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DAF349B220BD7F8900236AF9 /* Localizable.strings */; };
+		DAF48A3E21DF418400B5810E /* Last10Transactions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF48A3D21DF418400B5810E /* Last10Transactions.swift */; };
 		DAF9DFA41EEFCD5A00D70BD0 /* LaunchScreenvc.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF9DFA31EEFCD5A00D70BD0 /* LaunchScreenvc.swift */; };
 /* End PBXBuildFile section */
 
@@ -92,7 +98,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		DA0529CE22BA3B0600675743 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
 		DA0BA0741D8971E00050831C /* commanfunction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = commanfunction.swift; sourceTree = "<group>"; };
+		DA1015C321C2977F00E2174C /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		DA15066920DA24620077288C /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		DA26F43820EE106400CABF4E /* BundleEx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleEx.swift; sourceTree = "<group>"; };
 		DA29DE47210205A200B9F77D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/PreauthStoryboard.storyboard; sourceTree = "<group>"; };
@@ -146,6 +154,7 @@
 		DA71DA8A1CA9078500AD06DD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DA71DAA81CA93CD400AD06DD /* VehiclenoVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VehiclenoVC.swift; sourceTree = "<group>"; };
 		DA7A40A71F7633AF00D889D6 /* Transaction_id.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transaction_id.swift; sourceTree = "<group>"; };
+		DA82ACFD22EC33560084B4B3 /* OtherVehicleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherVehicleViewController.swift; sourceTree = "<group>"; };
 		DA9444621F7398E1006F9804 /* PreauthFuelquantity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreauthFuelquantity.swift; sourceTree = "<group>"; };
 		DA9F94881F14F42E00BFE62B /* checkbox-checked.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "checkbox-checked.png"; sourceTree = "<group>"; };
 		DA9F94891F14F42E00BFE62B /* checkbox-unchecked.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "checkbox-unchecked.png"; sourceTree = "<group>"; };
@@ -154,12 +163,15 @@
 		DAC41CEA2136A14D00B1B9C1 /* TCPcommunication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPcommunication.swift; sourceTree = "<group>"; };
 		DAC41CEC2136CDE100B1B9C1 /* Sync_UnsyncTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync_UnsyncTransaction.swift; sourceTree = "<group>"; };
 		DACD13451E924F6D002784CC /* fuel_secure_lock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fuel_secure_lock.png; path = FuelSecuer/Assets.xcassets/fuel_secure_lock.png; sourceTree = "<group>"; };
+		DAD5CB19221FFC3800CE163D /* iconfinder_barcode_scanner_172089.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconfinder_barcode_scanner_172089.png; sourceTree = SOURCE_ROOT; };
+		DAD5CB1B221FFD3300CE163D /* ScanbarcodeviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanbarcodeviewController.swift; sourceTree = "<group>"; };
 		DAE2E4401F0678C1004A9480 /* HourViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HourViewController.swift; sourceTree = "<group>"; };
 		DAE2E4421F0678EC004A9480 /* DeptViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeptViewController.swift; sourceTree = "<group>"; };
 		DAE2E4441F067914004A9480 /* PinViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PinViewController.swift; sourceTree = "<group>"; };
 		DAE2E4461F067925004A9480 /* OtherViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OtherViewController.swift; sourceTree = "<group>"; };
 		DAEC17281F4ECC0300714D1A /* Button-Green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Button-Green.png"; path = "Assets.xcassets/Button-Green.png"; sourceTree = "<group>"; };
 		DAF349B320BD7F9200236AF9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
+		DAF48A3D21DF418400B5810E /* Last10Transactions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Last10Transactions.swift; sourceTree = "<group>"; };
 		DAF9DFA31EEFCD5A00D70BD0 /* LaunchScreenvc.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LaunchScreenvc.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -168,6 +180,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DA0529CF22BA3B0600675743 /* ExternalAccessory.framework in Frameworks */,
 				DA15066A20DA24630077288C /* NetworkExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -192,6 +205,7 @@
 		DA71DA591CA9078500AD06DD = {
 			isa = PBXGroup;
 			children = (
+				DA1015C321C2977F00E2174C /* KeychainService.swift */,
 				DA26F43820EE106400CABF4E /* BundleEx.swift */,
 				DAF349B220BD7F8900236AF9 /* Localizable.strings */,
 				DA30BEB61F739F9600004336 /* transid.swift */,
@@ -229,6 +243,7 @@
 		DA71DA641CA9078500AD06DD /* FuelSecure */ = {
 			isa = PBXGroup;
 			children = (
+				DAD5CB19221FFC3800CE163D /* iconfinder_barcode_scanner_172089.png */,
 				DA30BEB81F73FE8D00004336 /* FuelSecure.entitlements */,
 				DAEC17281F4ECC0300714D1A /* Button-Green.png */,
 				DA9F948C1F14FF9200BFE62B /* WiFI.png */,
@@ -268,6 +283,9 @@
 				DA9444621F7398E1006F9804 /* PreauthFuelquantity.swift */,
 				DA7A40A71F7633AF00D889D6 /* Transaction_id.swift */,
 				DAC41CEC2136CDE100B1B9C1 /* Sync_UnsyncTransaction.swift */,
+				DAF48A3D21DF418400B5810E /* Last10Transactions.swift */,
+				DAD5CB1B221FFD3300CE163D /* ScanbarcodeviewController.swift */,
+				DA82ACFD22EC33560084B4B3 /* OtherVehicleViewController.swift */,
 			);
 			name = FuelSecure;
 			path = FuelSecuer;
@@ -294,6 +312,7 @@
 		DAA9164820860130006A5F27 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DA0529CE22BA3B0600675743 /* ExternalAccessory.framework */,
 				DA15066920DA24620077288C /* NetworkExtension.framework */,
 			);
 			name = Frameworks;
@@ -381,16 +400,20 @@
 							com.apple.HotspotConfiguration = {
 								enabled = 1;
 							};
+							com.apple.NearFieldCommunicationTagReading = {
+								enabled = 0;
+							};
 							com.apple.Push = {
 								enabled = 0;
 							};
 							com.apple.WAC = {
-								enabled = 0;
+								enabled = 1;
 							};
 						};
 					};
 					DA71DA781CA9078500AD06DD = {
 						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = 398Q9X5345;
 						LastSwiftMigration = 0940;
 						ProvisioningStyle = Automatic;
 						TestTargetID = DA71DA611CA9078500AD06DD;
@@ -409,6 +432,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 				es,
@@ -447,6 +471,7 @@
 				DA4BAF9A1CAD3334002A5C63 /* Table-H1.png in Resources */,
 				DA62068E1D4235D80008344D /* _refresh.png in Resources */,
 				DA9F948B1F14F42E00BFE62B /* checkbox-unchecked.png in Resources */,
+				DAD5CB1A221FFC3900CE163D /* iconfinder_barcode_scanner_172089.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -477,7 +502,9 @@
 				DAE2E4451F067914004A9480 /* PinViewController.swift in Sources */,
 				DA30BEB21F739E9F00004336 /* TransactionID+CoreDataClass.m in Sources */,
 				DA434DA91F693EB100FF83E1 /* PreauthVC.swift in Sources */,
+				DAD5CB1C221FFD3300CE163D /* ScanbarcodeviewController.swift in Sources */,
 				DA434DA71F69309200FF83E1 /* PreauthOdometrVC.swift in Sources */,
+				DAF48A3E21DF418400B5810E /* Last10Transactions.swift in Sources */,
 				DAE2E4431F0678EC004A9480 /* DeptViewController.swift in Sources */,
 				DA30BEB71F739F9600004336 /* transid.swift in Sources */,
 				DA62827B1CF2CD770057D1CF /* Fuelsecure.m in Sources */,
@@ -497,6 +524,8 @@
 				DA26F43920EE106400CABF4E /* BundleEx.swift in Sources */,
 				DA71DAA91CA93CD400AD06DD /* VehiclenoVC.swift in Sources */,
 				DAC41CED2136CDE100B1B9C1 /* Sync_UnsyncTransaction.swift in Sources */,
+				DA82ACFE22EC33560084B4B3 /* OtherVehicleViewController.swift in Sources */,
+				DA1015C421C2977F00E2174C /* KeychainService.swift in Sources */,
 				DA30BEB51F739ED000004336 /* Transactionid.swift in Sources */,
 				DAF9DFA41EEFCD5A00D70BD0 /* LaunchScreenvc.swift in Sources */,
 				DAC3E4981E1D20F60012E65F /* LoginViewController.swift in Sources */,
@@ -714,11 +743,14 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = LY75MT5XE6;
 				ENABLE_BITCODE = NO;
+				ENABLE_ON_DEMAND_RESOURCES = YES;
 				INFOPLIST_FILE = FuelSecuer/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.15.56;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Trakengg.Fluidsecure;
 				PRODUCT_NAME = FuelSecure;
 				PROVISIONING_PROFILE = "";
@@ -726,7 +758,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "FuelSecuer/FuelSecuer-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -739,18 +771,21 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = LY75MT5XE6;
 				ENABLE_BITCODE = NO;
+				ENABLE_ON_DEMAND_RESOURCES = YES;
 				INFOPLIST_FILE = FuelSecuer/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.15.56;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Trakengg.Fluidsecure;
 				PRODUCT_NAME = FuelSecure;
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "FuelSecuer/FuelSecuer-Bridging-Header.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -760,7 +795,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 398Q9X5345;
 				INFOPLIST_FILE = FuelSecuerTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.VASPLLP.FuelSecuerTests;
@@ -778,7 +813,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 398Q9X5345;
 				INFOPLIST_FILE = FuelSecuerTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.VASPLLP.FuelSecuerTests;

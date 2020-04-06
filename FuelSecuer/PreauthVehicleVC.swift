@@ -14,15 +14,10 @@ class PreauthVehiclenoVC: UIViewController,UITextFieldDelegate {
     @IBOutlet var cancel: UIButton!
     @IBOutlet var save: UIButton!
     
-    var odometervc = OdometerVC()
+
     var cf = Commanfunction()
     var web = Webservices()
-    var sysdata:NSDictionary!
-    var RData:NSDictionary!
-    var buttontype:String!
-    var button = UIButton(type: UIButtonType.custom)
-    let doneButton:UIButton = UIButton (frame: CGRect(x: 150, y: 150, width: 50, height: 44));
-    let doneButton1:UIButton = UIButton (frame: CGRect(x: 150, y: 150, width: 50, height: 44));
+
     
     
     override func viewDidLoad()
@@ -34,6 +29,12 @@ class PreauthVehiclenoVC: UIViewController,UITextFieldDelegate {
         Vehicleno.textColor = UIColor.white
         Vehicleno.delegate = self
         save.isEnabled = false
+
+        var myMutableStringTitle = NSMutableAttributedString()
+        let Name  = "Enter Vehicle Number" // PlaceHolderText
+        myMutableStringTitle = NSMutableAttributedString(string:Name, attributes: [NSAttributedString.Key.font:UIFont(name: "Georgia", size: 30.0)!]) // Font
+        myMutableStringTitle.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white, range:NSRange(location:0,length:Name.count))    // Color
+        Vehicleno.attributedPlaceholder = myMutableStringTitle
         
     }
     
@@ -49,7 +50,7 @@ class PreauthVehiclenoVC: UIViewController,UITextFieldDelegate {
 
     @IBAction func Vno(_ sender: Any) {
 
-        checkMaxLength(textField: Vehicleno,maxLength: 10)
+        checkMaxLength(textField: Vehicleno,maxLength: 20)
         if(Vehicleno.text != "0"){
             save.isEnabled = true
         }
@@ -201,7 +202,7 @@ class PreauthVehiclenoVC: UIViewController,UITextFieldDelegate {
             let vehicle_no = Vehicleno.text
             Vehicaldetails.sharedInstance.vehicleno = vehicle_no!
             self.performSegue(withIdentifier: "odometer", sender: self)
-            NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+            NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
             self.web.sentlog(func_name: "Preauthorized Transaction Vehicle number entered \(Vehicaldetails.sharedInstance.vehicleno)", errorfromserverorlink: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
 
         }

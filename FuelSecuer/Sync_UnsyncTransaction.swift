@@ -15,7 +15,7 @@ class Sync_Unsynctransactions : NSObject
     var web = Webservices()
     var cf = Commanfunction()
 
-
+    var ConcateJsonString:String = ""
     var ResponceMessageUpload:String = ""
     var string_data = ""
     var reply :String!
@@ -33,6 +33,7 @@ class Sync_Unsynctransactions : NSObject
         if (Vehicaldetails.sharedInstance.reachblevia == "cellular")
         {
             web.sentlogFile()
+            web.unsyncUpgradeTransactionStatus()
             let logdata = self.cf.ReadFile(fileName: "Sendlog.txt")
             print(logdata)
 
@@ -57,7 +58,7 @@ class Sync_Unsynctransactions : NSObject
                     let quantity = Split[2]
                     let siteName = Split[3]
                     if(quantity == "0" ){
-                        web.UpgradeTransactionStatus(Transaction_id:Transaction_id,Status: "1")
+                        //web.UpgradeTransactionStatus(Transaction_id:Transaction_id,Status: "1")
                         self.cf.DeleteReportTextFile(fileName: filename, writeText: "")
                     }else if(quantity == "" ){
                         self.cf.DeleteReportTextFile(fileName: filename, writeText: "")
@@ -83,6 +84,9 @@ class Sync_Unsynctransactions : NSObject
 
         else if(Vehicaldetails.sharedInstance.reachblevia == "wificonn")
         {
+            web.sentlogFile()
+            web.unsyncUpgradeTransactionStatus()
+            
             var reportsArray: [AnyObject]!
             let fileManager: FileManager = FileManager()
             let readdata = cf.getDocumentsURL().appendingPathComponent("data/test/")!
@@ -107,7 +111,7 @@ class Sync_Unsynctransactions : NSObject
                     let siteName = Split[3]
 
                     if(quantity == "0" ){
-                        web.UpgradeTransactionStatus(Transaction_id:Transaction_id,Status: "1")
+                        //web.UpgradeTransactionStatus(Transaction_id:Transaction_id,Status: "1")
                         self.cf.DeleteReportTextFile(fileName: filename, writeText: "")
                     }else if(quantity == "" ){
                         self.cf.DeleteReportTextFile(fileName: filename, writeText: "")
@@ -158,9 +162,9 @@ class Sync_Unsynctransactions : NSObject
         let semaphore = DispatchSemaphore(value: 0)
         let task = session.dataTask(with: request as URLRequest) { data, response, error in
             if let data = data {
-                print(String(data: data, encoding: String.Encoding.utf8)!)
+               // print(String(data: data, encoding: String.Encoding.utf8)!)
                 self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
-                print(self.reply)
+                //print(self.reply)
                 //"\(self.reply)"
                 let data1 = self.reply.data(using: String.Encoding.utf8)!
                 do{
@@ -168,7 +172,7 @@ class Sync_Unsynctransactions : NSObject
                 }catch let error as NSError {
                     print ("Error: \(error.domain)")
                 }
-                print(self.sysdata)
+               // print(self.sysdata)
 
                 let ResponceText = self.sysdata.value(forKey: "ResponceText") as! NSString
                 self.ResponceMessageUpload = (self.sysdata.value(forKey: "ResponceMessage") as! NSString) as String
@@ -181,9 +185,12 @@ class Sync_Unsynctransactions : NSObject
                 }
                 if(self.ResponceMessageUpload == "success"){
                     self.cf.DeleteReportTextFile(fileName: filename, writeText: "")
+                    if(siteName == "TransactionComplete"){
+                      //  self.Send10trans()
+                    }
                 }
             } else {
-                print(error as Any)
+               // print(error as Any)
                 self.reply = "-1"
             }
             semaphore.signal()
@@ -192,6 +199,83 @@ class Sync_Unsynctransactions : NSObject
         _ = semaphore.wait(timeout: DispatchTime.distantFuture)
     }
 
+
+    func convertStringToBase64(string: String) -> String
+    {
+        let utf8str = string.data(using: String.Encoding.utf8)!
+        let base64str = utf8str.base64EncodedString(options: NSData.Base64EncodingOptions.endLineWithLineFeed)
+        return base64str
+    }
+
+
+    func Send10trans() {
+        FSURL = Vehicaldetails.sharedInstance.URL + "/HandlerTrak.ashx"
+        let Email = defaults.string(forKey: "address")
+        let uuid = defaults.string(forKey: "uuid")
+        let Url:String = FSURL
+        let string = uuid! + ":" + Email! + ":" + "SaveMultipleTransactions"
+        let Base64 = convertStringToBase64(string: string)
+        let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
+
+        request.httpMethod = "POST"
+        if(Vehicaldetails.sharedInstance.Last10transactions.count == 0){}
+        else {
+        for i in 0  ..< Vehicaldetails.sharedInstance.Last10transactions.count
+        {
+            let obj : Last10Transactions = Vehicaldetails.sharedInstance.Last10transactions[i] as! Last10Transactions
+            let Transid = obj.Transaction_id
+            let pulse = obj.Pulses
+            let quantity = obj.FuelQuantity
+
+            request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
+            let bodyData = try! JSONSerialization.data(withJSONObject:["TransactionId":Transid,
+                                                                       "Pulses":pulse,
+                                                                       "FuelQuantity":"\(quantity)",
+                ],options: [])
+            if let JSONString = String(data: bodyData, encoding: String.Encoding.utf8) {
+                print(JSONString)
+
+                ConcateJsonString += JSONString + ","
+
+            }
+            print(ConcateJsonString)
+        }
+        print(ConcateJsonString)
+        print(ConcateJsonString.dropLast())
+        let JSONdata = ConcateJsonString.dropLast()
+            let bodyData = "{cmtxtnid_10_record:[" + "\(JSONdata)" + "]}"
+        print(bodyData)
+        request.httpBody = bodyData.data(using: String.Encoding.utf8)
+        //        RequestFrom":"I",
+        //        "Device Type":"\(UIDevice().type)",
+        //        "iOS": "\(UIDevice.current.systemVersion)"
+        request.timeoutInterval = 10
+
+        let session = Foundation.URLSession.shared
+        let semaphore = DispatchSemaphore(value: 0)
+        let task = session.dataTask(with: request as URLRequest) { data, response, error in
+            if let data = data {
+              //  print(String(data: data, encoding: String.Encoding.utf8)!)
+                self.reply = NSString(data: data, encoding:String.Encoding.utf8.rawValue)! as String
+              //  print(self.reply)
+
+            } else {
+              //  print(error!)
+                let text = (error?.localizedDescription)! + error.debugDescription
+                let test = String((text.filter { !" \n".contains($0) }))
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+             //   print(newString)
+//                self.sentlog(func_name: "Transactiondetails TransactionComplete Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                self.reply = "-1"
+            }
+            semaphore.signal()
+        }
+        task.resume()
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
+        //        return reply
+        }
+
+    }
 
     func notify(site:String) {
 

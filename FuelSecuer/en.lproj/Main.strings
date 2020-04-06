@@ -156,7 +156,7 @@
 "ab3-Ej-L6w.text" = "Support:support@trakeng.com or 850-878-4585";
 
 /* Class = "UITextField"; placeholder = "Touch to select Site"; ObjectID = "ahm-rc-XyY"; */
-"ahm-rc-XyY.placeholder" = "Touch to select Site";
+"ahm-rc-XyY.placeholder" = "Touch Here to Select Site";
 
 /* Class = "UITextField"; placeholder = "Enter Odometer Reading"; ObjectID = "evt-sq-fRo"; */
 "evt-sq-fRo.placeholder" = "Enter Odometer Reading";

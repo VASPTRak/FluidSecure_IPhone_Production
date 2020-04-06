@@ -18,17 +18,14 @@ import UIKit
 class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,UIPickerViewDelegate,StreamDelegate {
     var web = Webservices()
     var currentlocation :CLLocation!
-    var originCoordinate: CLLocationCoordinate2D!
-    var destinationCoordinate: CLLocationCoordinate2D!
+
     let locationManager = CLLocationManager()
     var sourcelat:Double!
     var sourcelong:Double!
-    var locationName:NSString!
-    var currentSSID:String!
-    var cmd:NEHotspotHelperCommand!
+
     let defaults = UserDefaults.standard
     var timer:Timer = Timer()
-    var readData:String!
+
     var reply:String!
     var IsDepartmentRequire:String!
     var IsPersonnelPINRequire:String!
@@ -41,12 +38,12 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
 
     var sysdata:NSDictionary!
     var systemdata:NSDictionary!
-    var pickerViewHose: UIPickerView = UIPickerView()
+
     var pickerViewLocation: UIPickerView = UIPickerView()
     var ssid = [String]()
     var Pass = [String]()
     var location = [String]()
-    var ReplaceableHosename = [String]()
+
     var PulserStopTimelist = [String]()
     var PumpOffTimelist = [String]()
     var PumpOnTimelist = [String]()
@@ -57,10 +54,11 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
     var Uhosenumber = [String]()
     var IsOdoMeterRequire:String!
     var IsLoginRequire:String!
-    var IsBusy :String!
+
     var notransactionid :String!
     
 
+    @IBOutlet var Companylogo: UIImageView!
     @IBOutlet var selecthose: UILabel!
     @IBOutlet var version_2: UILabel!
     @IBOutlet var itembarbutton: UIBarButtonItem!
@@ -70,14 +68,14 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
     @IBOutlet var go: UIButton!
     @IBOutlet var datetime: UILabel!
     @IBOutlet var viewlable: UIView!
-    @IBOutlet var datepicker: UIDatePicker!
-    @IBOutlet var realyon: UIButton!
+//    @IBOutlet var datepicker: UIDatePicker!
+//    @IBOutlet var realyon: UIButton!
     @IBOutlet var warningLable: UILabel!
     @IBOutlet var scrollview: UIScrollView!
     @IBOutlet var refreshButton: UIButton!
     @IBOutlet var infotext: UILabel!
     @IBOutlet var wifiNameTextField: UITextField!
-    @IBOutlet var help: UIButton!
+//    @IBOutlet var help: UIButton!
     @IBAction func preAuthentication(sender: AnyObject) {
         
         let storyboard = UIStoryboard(name: "PreauthStoryboard", bundle: nil)
@@ -86,6 +84,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         self.present(controller, animated: true, completion: nil)
         
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         version_2.text = "Version \(Version)"
@@ -103,8 +102,8 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
 
         selecthose.text = NSLocalizedString("Select Hose to use", comment:"")
         let doneButton:UIButton = UIButton (frame: CGRect(x: 100, y: 100, width: 100, height: 44));
-        doneButton.setTitle(NSLocalizedString("Return", comment:""), for: UIControlState())
-        doneButton.addTarget(self, action: #selector(tapAction), for: UIControlEvents.touchUpInside);
+        doneButton.setTitle(NSLocalizedString("Return", comment:""), for: UIControl.State())
+        doneButton.addTarget(self, action: #selector(tapAction), for: UIControl.Event.touchUpInside);
         doneButton.backgroundColor = UIColor .black
         wifiNameTextField.returnKeyType = .done
         wifiNameTextField.inputAccessoryView = doneButton
@@ -120,13 +119,23 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         locationManager.desiredAccuracy=kCLLocationAccuracyBest
         locationManager.startUpdatingLocation()
         currentlocation = locationManager.location
-        let uuid:String = UIDevice.current.identifierForVendor!.uuidString
-        print(uuid)
+
+        let uuid:String //= UIDevice.current.identifierForVendor!.uuidString
+        let password = KeychainService.loadPassword()
+        if(password == nil){
+            uuid = UIDevice.current.identifierForVendor!.uuidString
+            KeychainService.savePassword(token: uuid as NSString)
+        }
+        else{
+            let password = KeychainService.loadPassword()
+            print(password!)// password = "Pa55worD"
+            uuid = password! as String
+        }
         var myMutableStringTitle = NSMutableAttributedString()
         let Name  = "Enter Title" // PlaceHolderText
         
-        myMutableStringTitle = NSMutableAttributedString(string:Name, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 20.0)!]) // Font
-        myMutableStringTitle.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.red, range:NSRange(location:0,length:Name.count))    // Color
+        myMutableStringTitle = NSMutableAttributedString(string:Name, attributes: [NSAttributedString.Key.font:UIFont(name: "Georgia", size: 30.0)!]) // Font
+        myMutableStringTitle.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white, range:NSRange(location:0,length:Name.count))    // Color
         wifiNameTextField.attributedPlaceholder = myMutableStringTitle
         _ = defaults.array(forKey: "SSID")
         var reply:String!
@@ -154,7 +163,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         else {
             sourcelat = currentlocation.coordinate.latitude
             sourcelong = currentlocation.coordinate.longitude
-            print (sourcelat,sourcelong)
+            //print (sourcelat,sourcelong)
             Vehicaldetails.sharedInstance.Lat = sourcelat
             Vehicaldetails.sharedInstance.Long = sourcelong
             let data = web.checkApprove(uuid: uuid,lat:"\(sourcelat!)",long:"\(sourcelong!)")
@@ -238,7 +247,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
             }catch let error as NSError {
                 print ("Error: \(error.domain)")
             }
-            print(sysdata)
+           /// print(sysdata)
             
             let Message = sysdata["ResponceMessage"] as! NSString
             let ResponseText = sysdata["ResponceText"] as! NSString
@@ -269,7 +278,22 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                 defaults.set(1, forKey: "Register")
                 
                 print(IMEI_UDID,IsApproved,PhoneNumber,PersonName,Email)
-                
+                _ = (objUserData.value(forKey: "CompanyBrandLogoLink") as! NSString) as String
+                    //    Get Image from Document Directory :
+                    
+                    
+                    let fileManager = FileManager.default
+                    
+                    let imagePAth = (cf.getDirectoryPath() as NSString).appendingPathComponent("logoimage.jpg")
+                    
+                    if fileManager.fileExists(atPath: imagePAth){
+                        
+                        self.Companylogo.image = UIImage(contentsOfFile: imagePAth)
+                        
+                    }else{
+                        
+                        print("No Image")
+                    }
             }
             else if(Message == "fail"){ }
             
@@ -296,12 +320,12 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                     //IF USER IF Approved Get information from server like site,ssid,pwd,hose
                     
                     do{
-                        systemdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                        systemdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
                     }catch let error as NSError {
                         print ("Error: \(error.domain)")
                         print ("Error: \(error)")
                     }
-                    print(systemdata)
+                //    print(systemdata)
                     ssid = []
                     Vehicaldetails.sharedInstance.Transaction_id = []
                     
@@ -342,7 +366,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                             {}
                             
                             let WifiSSId = JsonRow["WifiSSId"] as! NSString
-                            let PulserRatio = JsonRow["PulserRatio"] as! NSString
+//                            let PulserRatio = JsonRow["PulserRatio"] as! NSString
                             let DecimalPulserRatio = JsonRow["DecimalPulserRatio"] as! NSNumber
                             let FuelTypeId = JsonRow["FuelTypeId"] as! NSString
                             let Sitid = JsonRow["SiteId"] as! NSString
@@ -546,7 +570,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         self.navigationController?.navigationBar.barTintColor = UIColor(red: 31.0/255.0, green: 77.0/255.0, blue: 153.0/255.0, alpha: 1.0)//UIColor.blueColor()
         self.navigationItem.title = "FluidSecure"
         self.navigationController?.navigationBar.tintColor = UIColor.white
-        self.navigationController!.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
+        self.navigationController!.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
 
         let index = Transaction_Id.count//Vehicaldetails.sharedInstance.Transaction_id.count
         if(index == 0){
@@ -664,8 +688,19 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
     @IBAction func refreshButtontappd(sender: AnyObject) {
         if(Vehicaldetails.sharedInstance.reachblevia == "wificonn" || Vehicaldetails.sharedInstance.reachblevia == "cellular")
         {
-        let uuid:String = UIDevice.current.identifierForVendor!.uuidString
-        print(uuid)
+        let uuid:String// = UIDevice.current.identifierForVendor!.uuidString
+
+
+            let password = KeychainService.loadPassword()
+            if(password == nil){
+                uuid = UIDevice.current.identifierForVendor!.uuidString
+                KeychainService.savePassword(token: uuid as NSString)
+            }
+            else{
+                let password = KeychainService.loadPassword()
+                print(password!)// password = "Pa55worD"
+                uuid = password! as String
+            }
         let data = web.checkApprove(uuid: uuid,lat:"\(sourcelat!)",long:"\(sourcelong!)")
         let Split = data.components(separatedBy: "#")
         reply = Split[0]
@@ -801,7 +836,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
     }
     
     func shownotransId(message:String){
-        let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertControllerStyle.alert)
+        let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertController.Style.alert)
         // Background color.
         let backView = alertController.view.subviews.last?.subviews.last
         backView?.layer.cornerRadius = 10.0
@@ -809,12 +844,12 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         
         let message  = message
         var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.black, range: NSRange(location:0,length:message.count))
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedString.Key.font:UIFont(name: "Georgia", size: 25.0)!])
+        //messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.black, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
         
         // Action.
-        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default) { action in //self.//
+        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertAction.Style.default) { action in //self.//
             let appDel = UIApplication.shared.delegate! as! AppDelegate
             self.web.sentlog(func_name: "Preauth shownotransId", errorfromserverorlink: "", errorfromapp: "")
             appDel.start()
@@ -827,7 +862,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
     
     func showAlertSetting(message: String)
     {
-        let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertControllerStyle.alert)
+        let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertController.Style.alert)
         // Background color.
         let backView = alertController.view.subviews.last?.subviews.last
         backView?.layer.cornerRadius = 10.0
@@ -835,12 +870,12 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         
         let message  = message
         var messageMutableString = NSMutableAttributedString()
-        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
-        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.lightGray, range: NSRange(location:0,length:message.count))
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedString.Key.font:UIFont(name: "Georgia", size: 25.0)!])
+       // messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.lightGray, range: NSRange(location:0,length:message.count))
         alertController.setValue(messageMutableString, forKey: "attributedMessage")
         
         // Action.
-        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default) { action in //self.//
+        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertAction.Style.default) { action in //self.//
             self.wifisettings()
         }
         alertController.addAction(action)

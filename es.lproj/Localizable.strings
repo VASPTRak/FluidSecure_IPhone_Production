@@ -78,5 +78,6 @@
 "No_Pre-auth_transaction" = "transacciones pre autorizadas disponibles - ";
 "BacktoHome" = "Pagina Principal";
 "ConnectWifi" = "Conectar Wifi";
-"Warningfueling" = "No salgas de esta pantalla mientras abastece de combustible - la bomba puede apagarse si lo hace.";
+"Warningfueling" =
+"Precaución: ¡NO abandone esta pantalla mientras está cargando combustible, la bomba puede apagarse!";
 "Pulsardisconnected" = "Pulsar disconnected";

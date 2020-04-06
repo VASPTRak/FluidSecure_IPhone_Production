@@ -6,14 +6,18 @@
 
 import UIKit
 
-class PinViewController: UIViewController,UITextFieldDelegate {
+class PinViewController: UIViewController
+{
     
     @IBOutlet var oview: UIView!
     @IBOutlet var Pin: UITextField!
-    
+    @IBOutlet weak var Activity: UIActivityIndicatorView!
+    @IBOutlet var Go: UIButton!
+    @IBOutlet var personpinlabel: UILabel!
+
+
     var stoptimergotostart:Timer = Timer()
     var web = Webservices()
-    var confs = FuelquantityVC()
     var sysdata:NSDictionary!
     var cf = Commanfunction()
     var IsSavebuttontapped : Bool = false
@@ -21,13 +25,33 @@ class PinViewController: UIViewController,UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        Activity.isHidden = true
         self.navigationItem.title = "\(Vehicaldetails.sharedInstance.SSId)"
-        Pin.delegate = self
+        
         Pin.font = UIFont(name: Pin.font!.fontName, size: 40)
+        if(Vehicaldetails.sharedInstance.Language == "es-ES")
+         {
+             personpinlabel.text = "Ingrese PIN  \(Vehicaldetails.sharedInstance.ScreenNameForPersonnel)"
+         }
+         else{
+        personpinlabel.text = "Enter \(Vehicaldetails.sharedInstance.ScreenNameForPersonnel) Pin"
+         }
+
         Pin.text = Vehicaldetails.sharedInstance.Personalpinno
+        personpinlabel.text = "Enter \(Vehicaldetails.sharedInstance.ScreenNameForPersonnel) Pin"
+        var myMutableStringTitle = NSMutableAttributedString()
+        var Name  = "Enter \(Vehicaldetails.sharedInstance.ScreenNameForPersonnel) Pin" // PlaceHolderText
+        if(Vehicaldetails.sharedInstance.Language == "es-ES")
+        {
+            Name = "Ingrese PIN  \(Vehicaldetails.sharedInstance.ScreenNameForPersonnel)"
+        }
+        myMutableStringTitle = NSMutableAttributedString(string:Name, attributes: [NSAttributedString.Key.font:UIFont(name: "Georgia", size: 30.0)!]) // Font
+        myMutableStringTitle.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white, range:NSRange(location:0,length:Name.count))    // Color
+        Pin.attributedPlaceholder = myMutableStringTitle
+
         let doneButton:UIButton = UIButton (frame: CGRect(x: 100, y: 100, width: 100, height: 44));
-        doneButton.setTitle(NSLocalizedString("Return", comment:""), for: UIControlState.normal)
-        doneButton.addTarget(self, action: #selector(OdometerVC.tapAction), for: UIControlEvents.touchUpInside);
+        doneButton.setTitle(NSLocalizedString("Return", comment:""), for: UIControl.State.normal)
+        doneButton.addTarget(self, action: #selector(OdometerVC.tapAction), for: UIControl.Event.touchUpInside);
         doneButton.backgroundColor = UIColor.black
         Pin.returnKeyType = .done
         Pin.inputAccessoryView = doneButton
@@ -37,6 +61,7 @@ class PinViewController: UIViewController,UITextFieldDelegate {
     override func viewWillAppear(_ animated: Bool) {
         stoptimergotostart.invalidate()
         stoptimergotostart = Timer.scheduledTimer(timeInterval: (Double(1)*60), target: self, selector: #selector(PinViewController.gotostart), userInfo: nil, repeats: false)
+        Go.isEnabled = true
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -92,7 +117,7 @@ class PinViewController: UIViewController,UITextFieldDelegate {
         let deptno = ""
         let vehicle_no = Vehicaldetails.sharedInstance.vehicleno
         countfailauth += 1
-        let data = web.vehicleAuth(vehicle_no: vehicle_no,Odometer:odometer!,isdept:deptno,isppin:isppin!,isother:other)
+        let data = web.vehicleAuth(vehicle_no: vehicle_no,Odometer:odometer!,isdept:deptno,isppin:isppin!,isother:other,Barcodescanvalue:Vehicaldetails.sharedInstance.Barcodescanvalue)
         let Split = data.components(separatedBy: "#")
         let reply = Split[0]
         if (reply == "-1")
@@ -115,20 +140,23 @@ class PinViewController: UIViewController,UITextFieldDelegate {
                 print ("Error: \(error.domain)")
             }
             
-            print(sysdata)
+           // print(sysdata)
             let ResponceMessage = sysdata.value(forKey: "ResponceMessage") as! NSString
             let ResponceText = sysdata.value(forKey: "ResponceText") as! NSString
             let ValidationFailFor = sysdata.value(forKey: "ValidationFailFor") as! NSString
             
+            
             if(ResponceMessage == "success")
             {
+                Activity.stopAnimating()
+                Activity.isHidden = true
                 if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()){
                     if #available(iOS 11.0, *) {
                         self.web.wifisettings(pagename: "PersonalPin")
                     } else {
                         // Fallback on earlier versions
 
-                        let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertControllerStyle.alert)
+                        let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertController.Style.alert)
                         let backView = alertController.view.subviews.last?.subviews.last
                         backView?.layer.cornerRadius = 10.0
                         backView?.backgroundColor = UIColor.white
@@ -140,9 +168,9 @@ class PinViewController: UIViewController,UITextFieldDelegate {
                         paragraphStyle1.alignment = NSTextAlignment.left
 
                         let attributedString = NSAttributedString(string:NSLocalizedString("Subtitle", comment:""), attributes: [
-                            NSAttributedStringKey.paragraphStyle:paragraphStyle1,
-                            NSAttributedStringKey.font : UIFont.systemFont(ofSize: 20), //your font here
-                            NSAttributedStringKey.foregroundColor : UIColor.black
+                            NSAttributedString.Key.paragraphStyle:paragraphStyle1,
+                            NSAttributedString.Key.font : UIFont.systemFont(ofSize: 20), //your font here
+                            NSAttributedString.Key.foregroundColor : UIColor.black
                             ])
 
                         let formattedString = NSMutableAttributedString()
@@ -155,7 +183,7 @@ class PinViewController: UIViewController,UITextFieldDelegate {
 
                         alertController.setValue(formattedString, forKey: "attributedMessage")
                         alertController.setValue(attributedString, forKey: "attributedTitle")
-                        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default){
+                        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertAction.Style.default){
                             action in
                             self.performSegue(withIdentifier: "Go", sender: self)
                         }
@@ -176,6 +204,8 @@ class PinViewController: UIViewController,UITextFieldDelegate {
                 
                 if(ResponceMessage == "fail")
                 {
+                    Activity.stopAnimating()
+                    Activity.isHidden = true
                     if(ValidationFailFor == "Vehicle") {
                         stoptimergotostart.invalidate()
                         self.performSegue(withIdentifier: "Vehicle", sender: self)
@@ -208,32 +238,48 @@ class PinViewController: UIViewController,UITextFieldDelegate {
     }
     
     @IBAction func saveButtontapped(sender: AnyObject) {
-        IsSavebuttontapped = true
-        stoptimergotostart.invalidate()
-        
-        tapAction()
-        if(Pin.text == "")
-        {
-            showAlert(message: NSLocalizedString("EnterPin", comment:""))
-            stoptimergotostart.invalidate()
-            viewWillAppear(true)
-        }
-        else
-        {
-            let pinno = Pin.text!
-            Vehicaldetails.sharedInstance.Personalpinno = "\(pinno)"
-            Pin.text = Vehicaldetails.sharedInstance.Personalpinno
-            let isother = Vehicaldetails.sharedInstance.IsOtherRequire
-            
-            if(isother == "True")
+        Activity.startAnimating()
+        Activity.isHidden = false
+       
+        cf.delay(1){
+            self.IsSavebuttontapped = true
+            self.stoptimergotostart.invalidate()
+
+            self.tapAction()
+            if(self.Pin.text == "")
             {
-                stoptimergotostart.invalidate()
-                self.performSegue(withIdentifier: "other", sender: self)
+                if(Vehicaldetails.sharedInstance.Language == "es-ES")
+                {
+                   self.showAlert(message: NSLocalizedString("EnterPin", comment:""))
+                }
+                else{
+                self.showAlert(message:"Please Enter \(Vehicaldetails.sharedInstance.ScreenNameForPersonnel) Pin")
+                }
+
+                self.stoptimergotostart.invalidate()
+                self.viewWillAppear(true)
+                self.Activity.stopAnimating()
+                self.Activity.isHidden = true
             }
-            else{
-                let other = ""
-                Vehicaldetails.sharedInstance.Other = ""
-                self.senddata(other: other)
+            else
+            {
+                let pinno = self.Pin.text!
+                Vehicaldetails.sharedInstance.Personalpinno = "\(pinno)"
+                self.Pin.text = Vehicaldetails.sharedInstance.Personalpinno
+                let isother = Vehicaldetails.sharedInstance.IsOtherRequire
+
+                if(isother == "True")
+                { self.Activity.stopAnimating()
+                    self.Activity.isHidden = true
+                    self.stoptimergotostart.invalidate()
+                    self.Go.isEnabled = false
+                    self.performSegue(withIdentifier: "other", sender: self)
+                }
+                else{
+                    let other = ""
+                    Vehicaldetails.sharedInstance.Other = ""
+                    self.senddata(other: other)
+                }
             }
         }
     }

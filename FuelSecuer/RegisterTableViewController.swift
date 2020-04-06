@@ -41,34 +41,30 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
         mobileNoTextField.delegate = self
         self.registerButton.layer.cornerRadius = 5
         checked.isHidden = true
+
+        placeholderdata(name: "Enter Full Name", textfield: firstNameTextField)
+        placeholderdata(name: "Enter Email Address", textfield: emailTextField)
+        placeholderdata(name: "Enter Mobile Number", textfield: mobileNoTextField)
+        placeholderdata(name: "Enter Company Name", textfield: Company_Name)
+
+    }
+
+    func placeholderdata(name:String,textfield:UITextField )
+    {
+        var myMutableStringTitle = NSMutableAttributedString()
+        let Name  = name // PlaceHolderText
+        myMutableStringTitle = NSMutableAttributedString(string:Name, attributes: [NSAttributedString.Key.font:UIFont(name: "Arial", size: 30.0)!]) // Font
+        myMutableStringTitle.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white, range:NSRange(location:0,length:Name.count))    // Color
+        textfield.attributedPlaceholder = myMutableStringTitle
     }
 
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.navigationBar.barTintColor = UIColor(red: 31.0/255.0, green: 77.0/255.0, blue: 153.0/255.0, alpha: 1.0)//UIColor.blueColor()
         self.navigationController?.navigationBar.tintColor = UIColor.white
-        self.navigationController!.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
+        self.navigationController!.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
     }
 
-//     func showAlert(message: String)
-//    {
-//        let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertControllerStyle.alert)
-//        // Background color.
-//        let backView = alertController.view.subviews.last?.subviews.last
-//        backView?.layer.cornerRadius = 10.0
-//        backView?.backgroundColor = UIColor.white
-//
-//        // Change Message With Color and Font
-//        let message  = message
-//        var messageMutableString = NSMutableAttributedString()
-//        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedStringKey.font:UIFont(name: "Georgia", size: 25.0)!])
-//        messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
-//        alertController.setValue(messageMutableString, forKey: "attributedMessage")
-//
-//        // Action.
-//        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default, handler: nil)
-//        alertController.addAction(action)
-//        self.present(alertController, animated: true, completion: nil)
-//    }
+
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -80,8 +76,17 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
     }
 
     func register(){
-        let uuid:String = UIDevice.current.identifierForVendor!.uuidString
-        print(uuid)
+        let uuid:String //= //UIDevice.current.identifierForVendor!.uuidString
+       
+        let password = KeychainService.loadPassword()
+        if(password == nil){
+             uuid = UIDevice.current.identifierForVendor!.uuidString
+            KeychainService.savePassword(token: uuid as NSString)
+
+        }
+        else{
+            uuid = password! as String
+        }
         let Name = firstNameTextField.text
         let Email = emailTextField.text
         let string = uuid + ":" + Email! + ":" + "Register" + ":" + "\(Vehicaldetails.sharedInstance.Language)"
@@ -91,7 +96,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
         let data = web.registration(Name: Name!,Email:Email!,Base64:Base64,mobile:mobile!,uuid:uuid,company:Companyname!)
         let Split = data.components(separatedBy: "#")
         let reply = Split[0]
-        let error = Split[1]
+        _ = Split[1]
 
         print(reply)
         if(reply == "-1"){showAlert(message: NSLocalizedString("NoInternet", comment:""))
@@ -104,7 +109,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
             }catch let error as NSError {
                 print ("Error: \(error.domain)")
             }
-            print(sysdata)
+            //print(sysdata)
 
             let ResponceData = sysdata.value(forKey: "ResponceData") as! NSDictionary
             let MinLimit = ResponceData.value(forKey: "MinLimit") as! NSNumber
@@ -248,7 +253,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
         if (textField == mobileNoTextField)
         {
             let newString = (textField.text! as NSString).replacingCharacters(in: range, with: string)
-            let components = newString.components(separatedBy: CharacterSet.init(charactersIn: "0123456789+-()").inverted)// .decimalDigits.inverted)
+            let components = newString.components(separatedBy: CharacterSet.init(charactersIn: "0123456789+-().").inverted)// .decimalDigits.inverted)
             let decimalString = components.joined(separator: "") as NSString
             let length = decimalString.length
             let hasLeadingOne = length > 0 && decimalString.character(at: 0) == (1 as unichar)

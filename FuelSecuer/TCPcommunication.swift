@@ -104,6 +104,7 @@ class TCPCommunication:NSObject,StreamDelegate
     func setSamplingtime()->String{
 
         NetworkEnable()
+        
         let s:String = "{\"pulsar_status\":{\"sampling_time_ms\":\(Int(Vehicaldetails.sharedInstance.PulserTimingAdjust)!)}}"
         print(s.count)
         let datastring = "POST /config?command=pulsar HTTP/1.1\r\nContent-Type: application/json; charset=utf-8\r\nContent-Length: \(s.count))\r\nHost: 192.168.4.1\r\nConnection: Keep-Alive\r\nAccept-Encoding: gzip\r\nUser-Agent: okhttp/3.6.0\r\n\r\n{\"pulsar_status\":{\"sampling_time_ms\":\(Int(Vehicaldetails.sharedInstance.PulserTimingAdjust)!)}}"
@@ -200,7 +201,7 @@ class TCPCommunication:NSObject,StreamDelegate
             if(Split.count < 3){
                 _ = self.setralay0tcp()
                 _ = self.setpulsar0tcp()
-               // self.fq.error400(message:NSLocalizedString("CheckFSunit", comment:""))// "Please check your FS unit, and switch off power and back on.")
+              
             }    // got invalid respose do nothing
             else{
                 let reply = Split[1]
@@ -246,7 +247,8 @@ class TCPCommunication:NSObject,StreamDelegate
                 dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
                 let dtt: String = dateFormatter.string(from: NSDate() as Date)
 
-                let bodyData = try! JSONSerialization.data(withJSONObject: ["FromSiteId":siteid,"IMEI_UDID":uuid!,"LSB":LSB,"MSB":MSB,"TLDTemperature":TLDTemperature,"ReadingDateTime":dtt,"TLD":Mac_address,"Response_code":Response_code,"Checksum":checksum], options: [])
+                 let bodyData = try! JSONSerialization.data(withJSONObject: ["FromSiteId":siteid,"IMEI_UDID":uuid!,"LSB":LSB,"MSB":MSB,"TLDTemperature":TLDTemperature,"ReadingDateTime":dtt,"TLD":Mac_address,"Response_code":Response_code,"Checksum":checksum], options: [])
+               // let bodyData = "{\"FromSiteId\":\(siteid),\"IMEI_UDID\":\"\((uuid!))\",\"LSB\":\"\(LSB)\",\"MSB\":\"\(MSB)\",\"TLDTemperature\":\"\(TLDTemperature)\",\"ReadingDateTime\":\"\(dtt)\",\"TLD\":\"\(Mac_address)\"}"
 
                 let reply = self.web.tldsendserver(bodyData: bodyData)
                 print(reply)
@@ -378,7 +380,7 @@ class TCPCommunication:NSObject,StreamDelegate
         self.bindata = self.getbinfile()
         let Url:String = "http://192.168.4.1:80"
         let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
-        print(bindata)
+       // print(bindata)
         request.setValue("\(self.bindata.length)", forHTTPHeaderField: "Content-Length")
         request.httpMethod = "POST"
         request.httpBody = (self.bindata! as Data)
@@ -389,7 +391,7 @@ class TCPCommunication:NSObject,StreamDelegate
             if let data = data {
                 print(String(data: data, encoding: String.Encoding.utf8)!)
                 self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
-                print(self.reply)
+               // print(self.reply)
             }  else {
                 print(error!)
                 self.reply = "-1"
@@ -452,8 +454,8 @@ class TCPCommunication:NSObject,StreamDelegate
         inStream?.delegate = self
         outStream?.delegate = self
 
-        inStream?.schedule(in: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
-        outStream?.schedule(in: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
+        inStream?.schedule(in: RunLoop.current, forMode: RunLoop.Mode.default)//RunLoopMode.defaultRunLoopMode
+        outStream?.schedule(in: RunLoop.current, forMode: RunLoop.Mode.default)//RunLoopMode.defaultRunLoopMode
 
         inStream?.open()
         outStream?.open()
@@ -469,17 +471,17 @@ class TCPCommunication:NSObject,StreamDelegate
         case Stream.Event.endEncountered:
             print("EndEncountered")
             inStream?.close()
-            inStream?.remove(from: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
+            inStream?.remove(from: RunLoop.current, forMode: RunLoop.Mode.default)//RunLoopMode.defaultRunLoopMode
             outStream?.close()
             print("Stop outStream currentRunLoop")
-            outStream?.remove(from: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
+            outStream?.remove(from: RunLoop.current, forMode: RunLoop.Mode.default)
 
         case Stream.Event.errorOccurred:
             print("ErrorOccurred")
             inStream?.close()
-            inStream?.remove(from: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
+            inStream?.remove(from: RunLoop.current, forMode: RunLoop.Mode.default)
             outStream?.close()
-            outStream?.remove(from: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
+            outStream?.remove(from: RunLoop.current, forMode: RunLoop.Mode.default)
 
         case Stream.Event.hasBytesAvailable:
             print("HasBytesAvailable")

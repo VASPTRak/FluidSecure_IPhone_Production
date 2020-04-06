@@ -7,12 +7,14 @@
 //
 
 import UIKit
-private let _Vehicaldetails = Vehicaldetails(Vehicleno:"",Odometeno :"",deptno:"",Personalpinno:"",Other:"",hours:"",buttonset:Bool(),SiteID:"",MinLimit:"",PulseRatio:"",VehicleId:"",FuelTypeId:"",PersonId:"",PhoneNumber:"",SSId:"",reachblevia:"",odometerreq:"",IsPersonnelPINRequire:"",IsOtherRequire:"",IsDepartmentRequire:"",IsHoursrequirs:"",siteName:"",date:"",PulserStopTime:"",IsHoseNameReplaced:"",HoseID:"",gohome:Bool(),setrelay0:Bool(),CheckOdometerReasonable:"",OdometerReasonabilityConditions:"",PreviousOdo:Int(),OdoLimit:Int(),Lat:Double(),Long:Double(),TransactionId:Int(),FilePath:"",FirmwareVersion:"",IsFirmwareUpdate:Bool(),FinalQuantitycount:"",MacAddress:"",FS_MacAddress:"",Transaction_id:NSMutableArray(),IsUpgrade:"",password:"",TimeOut:"",Otherlable:"",pulsarCount:"",PulserTimingAdjust:"",IsBusy:"",IsDefective:"",CollectDiagnosticLogs:"",URL:"",Language:"",AppType:"",ReplaceableHoseName:"",HoursLimit:Int(),PreviousHours:Int(),pumpoff_time:"",IsVehicleNumberRequire:"",IsTLDdata:"")
+private let _Vehicaldetails = Vehicaldetails(Vehicleno:"",Barcodescanvalue:"",Odometeno :"",deptno:"", Personalpinno:"", Other:"", hours:"",buttonset:Bool(),SiteID:"",MinLimit:"",PulseRatio:"",VehicleId:"",FuelTypeId:"",PersonId:"",PhoneNumber:"",SSId:"",reachblevia:"",odometerreq:"",IsPersonnelPINRequire:"",IsOtherRequire:"",IsDepartmentRequire:"",IsHoursrequirs:"",siteName:"",date:"",PulserStopTime:"",IsHoseNameReplaced:"",HoseID:"",gohome:Bool(),setrelay0:Bool(),CheckOdometerReasonable:"",OdometerReasonabilityConditions:"",PreviousOdo:Int(),OdoLimit:Int(),Lat:Double(),Long:Double(),TransactionId:Int(),FilePath:"",FirmwareVersion:"",IsFirmwareUpdate:Bool(),FinalQuantitycount:"",MacAddress:"",FS_MacAddress:"",Transaction_id:NSMutableArray(),IsUpgrade:"",password:"",TimeOut:"",Otherlable:"",pulsarCount:"",PulserTimingAdjust:"",IsBusy:"",IsDefective:"",CollectDiagnosticLogs:"",URL:"",Language:"",AppType:"",ReplaceableHoseName:"",HoursLimit:Int(),PreviousHours:Int(),pumpoff_time:"",IsVehicleNumberRequire:"",IsTLDdata:"",Last10transactions:NSMutableArray(),Errorcode:"",CompanyBarndName:"",CompanyBrandLogoLink:"",SupportEmail:"", SupportPhonenumber:"",IsUseBarcode:"",fsSSId:"",IsExtraOther:"",ExtraOtherLabel:"",ExtraOther:"",checkSSIDwithLink:"",ScreenNameForVehicle:"", ScreenNameForPersonnel:"",ScreenNameForOdometer:"", ScreenNameForHours:"",pumpon_time:"")
 
 class Vehicaldetails {
 
     var vehicleno:String = ""
+    var Barcodescanvalue:String = ""
     var Odometerno :String = ""
+    var Errorcode:String = "0"
     var deptno :String = ""
     var Personalpinno :String = ""
     var Other:String = ""
@@ -28,6 +30,7 @@ class Vehicaldetails {
     var PersonId:String = ""
     var PhoneNumber:String = ""
     var SSId:String = ""
+    var fsSSId:String = ""
     var reachblevia:String = ""
     var odometerreq:String = ""
     var IsDepartmentRequire:String = ""
@@ -39,6 +42,7 @@ class Vehicaldetails {
     var date:String = ""
     var PulserStopTime:String = ""
     var pumpoff_time:String = ""
+    var pumpon_time:String = ""
     var IsHoseNameReplaced:String = ""
     var HoseID:String = ""
     var gohome:Bool!
@@ -71,15 +75,27 @@ class Vehicaldetails {
     var PreviousHours:Int = 0
     var IsVehicleNumberRequire:String = ""
     var IsTLDdata = ""
+    var Last10transactions:NSMutableArray!
+    var CompanyBarndName = ""
+    var CompanyBrandLogoLink = ""
+    var SupportEmail = ""
+    var SupportPhonenumber = ""
+    var IsUseBarcode = ""
+    var IsExtraOther = ""
+    var ExtraOtherLabel = ""
+    var ExtraOther = ""
+    var checkSSIDwithLink = ""
+    var ScreenNameForHours = ""
+    var ScreenNameForOdometer = ""
+    var ScreenNameForPersonnel = ""
+    var ScreenNameForVehicle = ""
 
-
-
-
-
-    init(Vehicleno:String!,Odometeno:String!,deptno:String,Personalpinno :String,Other:String,hours: String,buttonset:Bool!,SiteID:String,MinLimit:String,PulseRatio:String,VehicleId:String,FuelTypeId:String,PersonId:String,PhoneNumber:String,SSId:String,reachblevia:String,odometerreq:String,IsPersonnelPINRequire:String,IsOtherRequire:String,IsDepartmentRequire:String,IsHoursrequirs:String,siteName:String,date:String,PulserStopTime:String,IsHoseNameReplaced:String,HoseID:String,gohome:Bool!,setrelay0:Bool!,CheckOdometerReasonable:String,OdometerReasonabilityConditions:String,PreviousOdo:Int,OdoLimit:Int,Lat:Double,Long:Double,TransactionId:Int,FilePath:String,FirmwareVersion :String,IsFirmwareUpdate:Bool!,FinalQuantitycount:String,MacAddress:String,FS_MacAddress:String,Transaction_id:NSMutableArray,IsUpgrade:String,password:String,TimeOut:String,Otherlable:String,pulsarCount:String,PulserTimingAdjust:String,IsBusy:String,IsDefective:String,CollectDiagnosticLogs:String,URL:String,Language:String,AppType:String,ReplaceableHoseName:String,HoursLimit:Int,PreviousHours:Int,pumpoff_time:String,IsVehicleNumberRequire:String,IsTLDdata:String)
+    init(Vehicleno:String!,Barcodescanvalue:String,Odometeno:String!,deptno:String,Personalpinno :String,Other:String,hours: String,buttonset:Bool!,SiteID:String,MinLimit:String,PulseRatio:String,VehicleId:String,FuelTypeId:String,PersonId:String,PhoneNumber:String,SSId:String,reachblevia:String,odometerreq:String,IsPersonnelPINRequire:String,IsOtherRequire:String,IsDepartmentRequire:String,IsHoursrequirs:String,siteName:String,date:String,PulserStopTime:String,IsHoseNameReplaced:String,HoseID:String,gohome:Bool!,setrelay0:Bool!,CheckOdometerReasonable:String,OdometerReasonabilityConditions:String,PreviousOdo:Int,OdoLimit:Int,Lat:Double,Long:Double,TransactionId:Int,FilePath:String,FirmwareVersion :String,IsFirmwareUpdate:Bool!,FinalQuantitycount:String,MacAddress:String,FS_MacAddress:String,Transaction_id:NSMutableArray,IsUpgrade:String,password:String,TimeOut:String,Otherlable:String,pulsarCount:String,PulserTimingAdjust:String,IsBusy:String,IsDefective:String,CollectDiagnosticLogs:String,URL:String,Language:String,AppType:String,ReplaceableHoseName:String,HoursLimit:Int,PreviousHours:Int,pumpoff_time:String,IsVehicleNumberRequire:String,IsTLDdata:String,Last10transactions:NSMutableArray,Errorcode:String,CompanyBarndName:String,CompanyBrandLogoLink:String,SupportEmail:String,SupportPhonenumber:String,IsUseBarcode:String,fsSSId:String,IsExtraOther:String,ExtraOtherLabel:String,ExtraOther:String,checkSSIDwithLink:String,ScreenNameForVehicle:String,ScreenNameForPersonnel:String,ScreenNameForOdometer:String,ScreenNameForHours:String,pumpon_time:String)
     {
         self.Odometerno = Odometeno
+        self.Errorcode = Errorcode
         self.vehicleno = Vehicleno
+        self.Barcodescanvalue = Barcodescanvalue
         self.deptno = deptno
         self.Personalpinno = Personalpinno
         self.Other = Other
@@ -138,8 +154,22 @@ class Vehicaldetails {
         self.pumpoff_time = pumpoff_time
         self.IsVehicleNumberRequire = IsVehicleNumberRequire
         self.IsTLDdata = IsTLDdata
-
-        
+        self.Last10transactions = Last10transactions
+        self.CompanyBarndName = CompanyBarndName
+        self.CompanyBrandLogoLink = CompanyBrandLogoLink
+        self.SupportEmail = SupportEmail
+        self.SupportPhonenumber = SupportPhonenumber
+        self.IsUseBarcode = IsUseBarcode
+        self.fsSSId = fsSSId
+        self.ExtraOtherLabel = ExtraOtherLabel
+        self.IsExtraOther = IsExtraOther
+        self.ExtraOther = ExtraOther
+        self.checkSSIDwithLink = checkSSIDwithLink
+        self.ScreenNameForVehicle = ScreenNameForVehicle
+        self.ScreenNameForOdometer = ScreenNameForOdometer
+        self.ScreenNameForHours = ScreenNameForHours
+        self.ScreenNameForPersonnel = ScreenNameForPersonnel
+        self.pumpon_time = pumpon_time
 
     }
 

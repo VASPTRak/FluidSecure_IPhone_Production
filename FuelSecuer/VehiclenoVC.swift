@@ -13,8 +13,8 @@ extension NSMutableAttributedString {
     @discardableResult func bold(_ text:String) -> NSMutableAttributedString {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = NSTextAlignment.left
-        let boldString = NSMutableAttributedString(string: text, attributes: [NSAttributedStringKey.paragraphStyle: paragraphStyle,NSAttributedStringKey.font:UIFont(name: "Arial", size: 17)!])
-        boldString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.red, range: NSRange(location:0,length:text.count))
+        let boldString = NSMutableAttributedString(string: text, attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle,NSAttributedString.Key.font:UIFont(name: "Arial", size: 17)!])
+        boldString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: NSRange(location:0,length:text.count))
         self.append(boldString)
         return self
     }
@@ -22,7 +22,7 @@ extension NSMutableAttributedString {
     @discardableResult func normal(_ text:String)->NSMutableAttributedString {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = NSTextAlignment.left
-        let normal =  NSMutableAttributedString(string: text, attributes: [NSAttributedStringKey.paragraphStyle: paragraphStyle,NSAttributedStringKey.font:UIFont(name: "Arial", size: 15.0)!])
+        let normal =  NSMutableAttributedString(string: text, attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle,NSAttributedString.Key.font:UIFont(name: "Arial", size: 15.0)!])
         self.append(normal)
         return self
     }
@@ -34,23 +34,30 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
     @IBOutlet var Mview: UIView!
     @IBOutlet var cancel: UIButton!
     @IBOutlet var save: UIButton!
-    
+    @IBOutlet weak var Barcodevalue: UILabel!
+    @IBOutlet var barcodeimage: UIButton!
+
+    @IBOutlet var VehicleLabel: UILabel!
+    @IBOutlet weak var Activity: UIActivityIndicatorView!
+
+    var scanvehicle = ""
+    var Barcodescanvalue = ""
     var web = Webservices()
-    var confs = FuelquantityVC()
-    var odometervc = OdometerVC()
+
     var cf = Commanfunction()
     var sysdata:NSDictionary!
-    var RData:NSDictionary!
+
     var IsGobuttontapped : Bool = false
+    var IsScanBarcode : Bool = false
     var odo = Vehicaldetails.sharedInstance.odometerreq
     var isdept = Vehicaldetails.sharedInstance.IsDepartmentRequire
     var isPPin = Vehicaldetails.sharedInstance.IsPersonnelPINRequire
     var isother = Vehicaldetails.sharedInstance.IsOtherRequire
     var stoptimergotostart:Timer = Timer()
-    var buttontype:String!
-    var button = UIButton(type: UIButtonType.custom)
-    let doneButton:UIButton = UIButton (frame: CGRect(x: 150, y: 150, width: 50, height: 44))
-    let doneButton1:UIButton = UIButton (frame: CGRect(x: 150, y: 150, width: 50, height: 44))
+    var IsUseBarcode:String = ""
+
+    var button = UIButton(type: UIButton.ButtonType.custom)
+
     var countfailauth:Int = 0
     var counthourauth:Int = 0
     
@@ -59,16 +66,65 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
         Vehicleno.font = UIFont(name: Vehicleno.font!.fontName, size: 40)
         Vehicleno.textAlignment = NSTextAlignment.center
         Vehicleno.textColor = UIColor.white
+        if(Vehicaldetails.sharedInstance.Language == "es-ES")
+        {
+            VehicleLabel.text = "Ingrese Numero de " + "\(Vehicaldetails.sharedInstance.ScreenNameForVehicle)"
+        }
+        else{
+        VehicleLabel.text = "Enter " + "\(Vehicaldetails.sharedInstance.ScreenNameForVehicle)" + " Number"
+        }
+        var myMutableStringTitle = NSMutableAttributedString()
+         var Name = "Enter " + "\(Vehicaldetails.sharedInstance.ScreenNameForVehicle)" + " Number"
+        if(Vehicaldetails.sharedInstance.Language == "es-ES")
+        {
+             Name = "Ingrese Numero de " + "\(Vehicaldetails.sharedInstance.ScreenNameForVehicle)"
+        }
+        else{
+         Name = "Enter " + "\(Vehicaldetails.sharedInstance.ScreenNameForVehicle)" + " Number"
+        }
+//                   let Name  = "Enter " + "\(Vehicaldetails.sharedInstance.ScreenNameForVehicle)" + " Number" // PlaceHolderText
+        myMutableStringTitle = NSMutableAttributedString(string:Name, attributes: [NSAttributedString.Key.font:UIFont(name: "Georgia", size: 30.0)!]) // Font
+        myMutableStringTitle.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white, range:NSRange(location:0,length:Name.count))    // Color
+                   Vehicleno.attributedPlaceholder = myMutableStringTitle
         Vehicleno.delegate = self
-
+        Activity.isHidden = true
+        if(IsUseBarcode == "False")
+        {
+            barcodeimage.isHidden = true;
+            Barcodevalue.isHidden = true;
+        }
+        else if(IsUseBarcode == "True"){
+            barcodeimage.isHidden = false;
+            Barcodevalue.isHidden = false;
+        }
+        if(scanvehicle == ""){}
+        else
+        {
+            Barcodescanvalue = scanvehicle
+            Barcodevalue.text = "Barcode " + scanvehicle
+            Vehicaldetails.sharedInstance.Barcodescanvalue = Barcodescanvalue
+            Vehicaldetails.sharedInstance.odometerreq = "False"
+            odo = Vehicaldetails.sharedInstance.odometerreq
+            print(odo , Vehicaldetails.sharedInstance.odometerreq)
+            
+            self.getodometer()
+            Vehicleno.text = Vehicaldetails.sharedInstance.vehicleno
+            if(Vehicleno.text == ""){}
+            else{
+                IsScanBarcode = true
+                
+            }
+        }
         self.navigationItem.title = "\(Vehicaldetails.sharedInstance.SSId)"
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        
+        IsScanBarcode = false
         stoptimergotostart.invalidate()
         stoptimergotostart = Timer.scheduledTimer(timeInterval: (Double(1)*60), target: self, selector: #selector(VehiclenoVC.gotostart), userInfo: nil, repeats: false)
     }
+    
+    
     
     override func viewWillDisappear(_ animated: Bool) {
         
@@ -91,8 +147,9 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
     }
 
     @IBAction func Vno(_ sender: Any) {
-        checkMaxLength(textField: Vehicleno,maxLength: 10)
-        if(Vehicleno.text != "0"){
+        checkMaxLength(textField: Vehicleno,maxLength: 20)
+        if(Vehicleno.text != "0")
+        {
             save.isEnabled = true
         }
     }
@@ -147,9 +204,9 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
 
     func mainPage()
     {
-//        cf.delay(2){
-            self.performSegue(withIdentifier: "Go", sender: self)
-//        }
+        //        cf.delay(2){
+        self.performSegue(withIdentifier: "Go", sender: self)
+        //        }
     }
     
     func senddata(deptno:String,ppin:String,other:String)
@@ -157,8 +214,9 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
         let odom = "0"
         let odometer = Int(odom)
         let vehicle_no = Vehicleno.text
+        
         countfailauth += 1
-        let data = web.vehicleAuth(vehicle_no: vehicle_no!,Odometer:odometer!,isdept:deptno,isppin:ppin,isother:other)
+        let data = web.vehicleAuth(vehicle_no: vehicle_no!,Odometer:odometer!,isdept:deptno,isppin:ppin,isother:other,Barcodescanvalue: Barcodescanvalue)
         let Split = data.components(separatedBy: "#")
         let reply = Split[0]
         //let error = Split[1]
@@ -183,31 +241,11 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
                 print ("Error: \(error.domain)")
             }
             
-            print(sysdata)
+           // print(sysdata)
             
             let ResponceMessage = sysdata.value(forKey: "ResponceMessage") as! NSString
             let ResponceText = sysdata.value(forKey:"ResponceText") as! NSString
-            let ResponceData = sysdata.value(forKey:"ResponceData") as! NSDictionary
-            let MinLimit = ResponceData.value(forKey:"MinLimit") as! NSNumber
-            let PulseRatio = ResponceData.value(forKey:"PulseRatio") as! NSNumber
-            let VehicleId = ResponceData.value(forKey:"VehicleId") as! NSNumber
-            let FuelTypeId = ResponceData.value(forKey:"FuelTypeId") as! NSNumber
-            let PersonId = ResponceData.value(forKey:"PersonId") as! NSNumber
-            let PhoneNumber = ResponceData.value(forKey:"PhoneNumber") as! NSString
-           // let PulserStopTime = ResponceData.value(forKey:"PulserStopTime") as! NSString
-            let ServerDate = ResponceData.value(forKey:"ServerDate") as! String
-            let pumpoff_time = ResponceData.value(forKey: "PumpOffTime") as! String
-            print(MinLimit,PersonId,PhoneNumber,FuelTypeId,VehicleId,PulseRatio)
-            
-            Vehicaldetails.sharedInstance.MinLimit = "\(MinLimit)"
-            Vehicaldetails.sharedInstance.PulseRatio = "\(PulseRatio)"
-            Vehicaldetails.sharedInstance.VehicleId = "\(VehicleId)"
-            Vehicaldetails.sharedInstance.FuelTypeId = "\(FuelTypeId)"
-            Vehicaldetails.sharedInstance.PersonId = "\(PersonId)"
-            Vehicaldetails.sharedInstance.PhoneNumber = "\(PhoneNumber)"
-            Vehicaldetails.sharedInstance.pumpoff_time = "\(pumpoff_time)" //Send pump off time to pulsar off time.
-            Vehicaldetails.sharedInstance.date = "\(ServerDate)"
-            
+
             if(ResponceMessage == "success") {
                 if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()){
 
@@ -217,7 +255,7 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
                     } else {
                         // Fallback on earlier versions
 
-                        let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertControllerStyle.alert)
+                        let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertController.Style.alert)
                         let backView = alertController.view.subviews.last?.subviews.last
                         backView?.layer.cornerRadius = 10.0
                         backView?.backgroundColor = UIColor.white
@@ -229,9 +267,9 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
                         paragraphStyle1.alignment = NSTextAlignment.left
 
                         let attributedString = NSAttributedString(string:NSLocalizedString("Subtitle", comment:""), attributes: [
-                            NSAttributedStringKey.paragraphStyle:paragraphStyle1,
-                            NSAttributedStringKey.font : UIFont.systemFont(ofSize: 20), //your font here
-                            NSAttributedStringKey.foregroundColor : UIColor.black
+                            NSAttributedString.Key.paragraphStyle:paragraphStyle1,
+                            NSAttributedString.Key.font : UIFont.systemFont(ofSize: 20), //your font here
+                            NSAttributedString.Key.foregroundColor : UIColor.black
                             ])
 
                         let formattedString = NSMutableAttributedString()
@@ -244,7 +282,7 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
 
                         alertController.setValue(formattedString, forKey: "attributedMessage")
                         alertController.setValue(attributedString, forKey: "attributedTitle")
-                        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default){
+                        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertAction.Style.default){
                             action in
                             self.performSegue(withIdentifier: "Go", sender: self)
                         }
@@ -252,10 +290,11 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
 
                         self.present(alertController, animated: true, completion: nil)
                     }
-                   // self.mainPage()
+                    // self.mainPage()
                 }
                 
                 if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){
+
                     self.performSegue(withIdentifier: "Go", sender: self)
                     self.web.sentlog(func_name: "Vehicle number entered \(Vehicaldetails.sharedInstance.vehicleno)", errorfromserverorlink: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
 
@@ -279,6 +318,7 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
     }
     
     
+
     func Action(sender:UIButton!)
     {
         self.dismiss(animated: true, completion: nil)
@@ -297,7 +337,9 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
             _ = Int(odom)
             let vehicle_no = Vehicleno.text
             Vehicaldetails.sharedInstance.vehicleno = vehicle_no!
-            let data = web.checkhour_odometer(vehicle_no!)
+//             = Barcodescanvalue
+            print(Vehicaldetails.sharedInstance.Barcodescanvalue)
+            let data = web.checkhour_odometer(vehicle_no!,Vehicaldetails.sharedInstance.Barcodescanvalue)
             counthourauth += 1
             
             let Split = data.components(separatedBy: "#")
@@ -310,7 +352,15 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
                 }
                 else
                 {
-                    getodometer()
+                    if(IsScanBarcode == true){
+                    cf.delay(1){
+                        self.getodometer()
+                        }
+                    }
+                    else if(IsScanBarcode == false)
+                    {
+                        getodometer()
+                    }
                 }
                 showAlert(message: NSLocalizedString("Warningwait", comment:""))
                 stoptimergotostart.invalidate()
@@ -319,19 +369,21 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
             else
             {
                 counthourauth = 0
-                let data1:Data = reply.data(using: String.Encoding.utf8)!
+                let data1:Data = data.data(using: String.Encoding.utf8)!
                 do{
                     sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
                 }catch let error as NSError {
                     print ("Error: \(error.domain)")
                 }
 
-                print(sysdata)
+               // print(sysdata)
                 let ResponceMessage = sysdata.value(forKey: "ResponceMessage") as! NSString
                 let ResponceText = sysdata.value(forKey: "ResponceText") as! NSString
                 if(ResponceMessage == "success"){
                     self.web.sentlog(func_name: "Vehicle number entered \(Vehicaldetails.sharedInstance.vehicleno)", errorfromserverorlink: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
 
+                    let ExtraOtherLabel = sysdata.value(forKey: "ExtraOtherLabel") as! NSString
+                    let IsExtraOther = sysdata.value(forKey: "IsExtraOther") as! NSString
                     let IsHoursRequire = sysdata.value(forKey: "IsHoursRequire") as! NSString
                     let IsOdoMeterRequire = sysdata.value(forKey: "IsOdoMeterRequire") as! NSString
                     let CheckOdometerReasonable = sysdata.value(forKey: "CheckOdometerReasonable") as! NSString
@@ -340,8 +392,11 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
                     let OdoLimit = sysdata.value(forKey: "OdoLimit") as! NSString
                     let PreviousHours = sysdata.value(forKey: "PreviousHours") as! NSString
                     let HoursLimit = sysdata.value(forKey: "HoursLimit")  as! NSString
-
+                    let VehicleNumber = sysdata.value(forKey: "VehicleNumber") as! NSString
                     
+
+                    Vehicaldetails.sharedInstance.IsExtraOther = IsExtraOther as String
+                    Vehicaldetails.sharedInstance.ExtraOtherLabel = ExtraOtherLabel as String
                     Vehicaldetails.sharedInstance.odometerreq = IsOdoMeterRequire as String
                     Vehicaldetails.sharedInstance.IsHoursrequirs = IsHoursRequire as String
                     Vehicaldetails.sharedInstance.CheckOdometerReasonable = CheckOdometerReasonable as String
@@ -350,20 +405,29 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
                     Vehicaldetails.sharedInstance.OdoLimit = Int(OdoLimit as String)!
                     Vehicaldetails.sharedInstance.HoursLimit = Int(HoursLimit as String)!
                     Vehicaldetails.sharedInstance.PreviousHours = Int(PreviousHours as String)!
-                    
+                    Vehicaldetails.sharedInstance.vehicleno = VehicleNumber as String
+                    Activity.stopAnimating()
+                    Activity.isHidden = true
                     let isdept = Vehicaldetails.sharedInstance.IsDepartmentRequire
                     let isPPin = Vehicaldetails.sharedInstance.IsPersonnelPINRequire
                     let isother = Vehicaldetails.sharedInstance.IsOtherRequire
                     
                     if (IsOdoMeterRequire == "True"){
+
                         print(self.odo)
                         stoptimergotostart.invalidate()
+                        cf.delay(2){
                         self.performSegue(withIdentifier: "odometer", sender: self)
+                        }
                     }
                     else
                     {
                         if (IsHoursRequire == "True"){
                             self.performSegue(withIdentifier: "hours", sender: self)
+                        }
+                        else if(IsExtraOther == "True")
+                        {
+                            self.performSegue(withIdentifier: "OtherVehicle", sender: self)
                         }
                         else
                         {
@@ -398,14 +462,19 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
                             }
                         }
                     }
-                }
+               }
                 else {
                     
                     if(ResponceMessage == "fail")
                     {
-                        showAlert(message: "\(ResponceText)")
-                        stoptimergotostart.invalidate()
-                        viewWillAppear(true)
+                        cf.delay(1){
+                         self.showAlert(message: "\(ResponceText)")
+                            self.stoptimergotostart.invalidate()
+                         self.viewWillAppear(true)
+                         self.Activity.stopAnimating()
+                         self.Activity.isHidden = true
+                        }
+
                     }
                 }
             }
@@ -414,23 +483,40 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
         else if(odo == "True"){
             stoptimergotostart.invalidate()
             self.performSegue(withIdentifier: "odometer", sender: self)
-            NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+            NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+          
         }
     }
     
     @IBAction func saveBtntapped(sender: AnyObject) {
-        IsGobuttontapped = true
-        
-        stoptimergotostart.invalidate()
-        
-        if(Vehicleno.text == "")
-        {
-            showAlert(message: NSLocalizedString("Entervehicelno", comment:""))
-            viewWillAppear(true)
-        }
-        else{
-            getodometer()
-            Vehicaldetails.sharedInstance.vehicleno = Vehicleno.text!
+        Activity.startAnimating()
+        Activity.isHidden = false
+        save.isEnabled = false
+        cf.delay(1){
+
+            self.IsGobuttontapped = true
+            self.stoptimergotostart.invalidate()
+            if(self.Vehicleno.text == "")
+            {
+                if(Vehicaldetails.sharedInstance.Language == "es-ES")
+                {
+                     self.showAlert(message: NSLocalizedString("Entervehicelno", comment:""))
+                }
+                else{
+                self.showAlert(message:"Please Enter \(Vehicaldetails.sharedInstance.ScreenNameForVehicle) Number")
+                }
+
+                self.viewWillAppear(true)
+                self.Activity.stopAnimating()
+                self.Activity.isHidden = true
+            }
+            else{
+                if(self.IsScanBarcode == true){}
+                else{
+                self.getodometer()
+                Vehicaldetails.sharedInstance.vehicleno = self.Vehicleno.text!
+                }
+            }
         }
     }
 }

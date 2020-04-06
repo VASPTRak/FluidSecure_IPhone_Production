@@ -4,38 +4,10 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>CustumKeyBoard.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>1</integer>
-		</dict>
-		<key>FuelSecuer.xcscheme</key>
+		<key>FuelSecure.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
-		</dict>
-	</dict>
-	<key>SuppressBuildableAutocreation</key>
-	<dict>
-		<key>DA71DA611CA9078500AD06DD</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>DA71DA781CA9078500AD06DD</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>DA71DA831CA9078500AD06DD</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>DA71DA991CA9339A00AD06DD</key>
-		<dict>
-			<key>primary</key>
-			<true/>
 		</dict>
 	</dict>
 </dict>

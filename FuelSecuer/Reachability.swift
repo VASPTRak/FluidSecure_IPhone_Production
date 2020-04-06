@@ -138,7 +138,7 @@ public class Reachability {
     
     fileprivate var isRunningOnDevice: Bool = {
         
-        #if (arch(i386) || arch(x86_64)) && os(iOS)
+        #if targetEnvironment(simulator) //#if (arch(i386) || arch(x86_64)) && os(iOS)
         
         return false
         
