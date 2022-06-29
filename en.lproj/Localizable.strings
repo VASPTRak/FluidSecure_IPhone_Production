@@ -5,48 +5,52 @@
   Created by VASP on 5/29/18.
   Copyright © 2018 VASP. All rights reserved.
 */
-"Select Hose to use" = "Select Hose to use";
+"Select Hose to use" = "Select Hose To Use";
 "Date_Fueling" = "";
 "Name" = "Name";
 "Mobile" = "Mobile";
 "Email" = "Email";
 "Enter" = "Enter";
 "MessageFueling" = "Please insert the nozzle into the tank \n Then tap start";
-"MessageFueling1" = "Please wait while your connection is being established With FS link";
+"MessageFueling1" = "Please wait while your connection is being established";
 "LostWifi" = "WiFi Connection lost with mobile.";
-"Touch to select Site" = "Touch Here to Select Site";
-"Regisration" = "Your Registration request is not approved yet. It is marked Inactive in the Company Software. Please contact your company’s administrator.";
-"Helptext" = "Please select Site & then Proceed";
-"HelptextSelectedSite" = "If you are using this hose for the first time you will need to enter the password when redirected to the WiFi screen. The password is ";
-"warninghoseinused" = "\n Hose In Use \n Please try after sometime";
+"Touch to select Site" = "Touch Here To Select Site";
+"Touch to select Company" = "Touch Here To Select Company";
+"Regisration" = "Your registration has been submitted. Your Company Administrator will receive an email with instructions on how to approve your request. Please close the App and reopen it once approved or to receive updates regarding the registration.";
+"registration1" = "It is marked Inactive in the Company Software. Please contact your company’s administrator.";
+"HelptextSelectedCompany" = "Please Select Company & Then Proceed";
+"HelptextSelectedSite" = "Please Select Site & Then Proceed";
+"Helptext" = "If you are using this hose for the first time you will need to enter the password when redirected to the WiFi screen. The password is ";
+"warninghoseinused" = "Hose In Use, please stand by or select an alternate hose";//
 "warning_NoInternet_Connection" = "Cannot connect to cloud server. Please check your internet connection.";
 "Error" = "Error";
 "OK" = "OK";
 "NoInternet" = "Please check your internet connection and try again later.";
-"NoHoseselect" = "Please Select Hose to use.";
+"NoHoseselect" = "Please Select Hose To Use.";
+"NoCompanyselect" = "Please Select Company To Use.";
 "Hoseorder" = "Hose out of order";
-"EnterUserNamePWD" = "Please enter Username And Password";
+"EnterUserNamePWD" = "Please Enter Username And Password";
 "CheckyourInternet" = "Please wait momentarily check your internet connection & try again.";
 
 "Title" = "FluidSecure needs to connect to Hose via WiFi";
-"Message" = "Please Connect Wifi";
+"Message" = "Please Connect WiFi";
 "Subtitle" = "FluidSecure needs to connect to HOSE via WiFi\n";//"FluidSecure needs to connect to HOSE via WiFi\nYou will now be redirected to the WiFi setup";
 "Step1" = "1. Please connect to ";//"\nThe WiFi name is the name of the HOSE. Read Steps 1 to 5 below then click on Green bar below.\n\nFollow steps:\n1. Turn on the WiFi (it might already be on)\n\n2. Choose the WiFi \n named: ";
 "Step2" = " manually using the 'WIFI settings' screen.\n\n2. First time it will ask for password,enter: 123456789\n\n3. It will have a check next to ";//Then Come back to App and click on the 'START' button to continue."//" \n\n3. First time it will ask for password,enter: 123456789\n\n4. It will have a check next to ";
 "Step3" = " and it will say \"No Internet Connection\" \n\n4.  Then come back to app and click on the 'START' button to continue.";
 
 "ButtonNAME" = "Go To WiFi Settings";
-"WarningEmptytext" = "Please Enter something.";
+"WarningEmptytext" = "Please Enter Something.";
 "Warningwait" = "Please wait momentarily & try again.";
 "Entervehicelno" = "Please Enter Vehicle Number.";
 "EneterOdometer" = "Please Enter Odometer Number.";
-"Odometer_Reasonability" = "The odometer entered is not within the reasonability your administrator has assigned, please contact your administrator.";
-"Hour_Reasonability" = "The hour entered is not within the reasonability your administrator has assigned, please contact your administrator.";
+"Odometer_Reasonability" = " entered is not within the reasonability your manager has assigned, please try again or contact your manager.";
+"Hour_Reasonability" = "The hour entered is not within the reasonability your manager has assigned, please contact your manager.";
 
 "Return" = "Return";
 "WarningselectWifi" = "Please Connect ";
 "Wifi" = " Wi-Fi.";
-"CheckWifi" = "Please check your wifi connection";
+"CheckWifi" = "Please check your WiFi connection";
 "wificonnection" = "Your Connection with";
 "wificonnection1" = " is lost. Please select ";
 "CheckFSunit" = "Please check your FS unit, and switch off power and back on.";
@@ -54,33 +58,37 @@
 "NoQuantity" = "No Quantity is Received as Your Connection with Link is Lost";//"No Quantity received. Transaction ended.";
 "ZeroQuantity" = "Quantity is zero. Transaction is stopped.";
 "Notify" = "Your Transaction is Successfully Completed at ";
-"autostop" = "app autostop because pulsecount getting is same.";
+"autostop" = "Transaction ended because pulse count has not changed in allotted time.";
+//"app autostop because pulsecount getting is same.";
 "Fueldaylimit" = "You are fuel day limit reached.";
-"checkEmail" = "please enter valid email.";
-"ValidPhone" = "Please enter valid Phone number.";
+"Fueltnxlimit" = "You are fuel transaction limit reached";
+"checkEmail" = "Please Enter Valid Email.";
+"ValidPhone" = "Please Enter Valid Phone Number.";
 "Checkinternet" = "Please check your internet connection or Please contact your admin.";
 "SelectallFields" = "Please Select All Fields.";
 "EnterPin" = "Please Enter Personnel PIN Number.";
 "Enterdept" = "Please Enter Department Number.";
 "EnterHour" = "Please Enter Hour.";
 "EnterExtraother" = "Please Enter Other";
-"EnterHour_Eng" = "Please Enter Hour in Integer.";
-"NoInternet" = "Internet connection is not available.";
+"EnterHour_Eng" = "Please Enter Hour In Integer.";
+"NoInternet" = "Internet Connection Is Not Available.";
 "Preauthtrans" = "Pre-Authorized transactions are not Available.";
-"Preauthnointernet" = "Pre-authorized transactions not available for you. Please enabled your internet connection or Please contact your company’s administrator.";
+"Preauthnointernet" = "The system has detected that you do not have cellular service and offline options are not enabled. Please contact your Manger.";//"Pre-authorized transactions not available for you. Please enabled your internet connection or Please contact your company’s administrator.";
 "NoSSIdFound" = "SSID not found wifi is not connected.";
-"Pleasewait" = "Please wait ..... ";
+"Pleasewait" = "Please Wait ..... ";
 "Fueling" = "Fueling…...";
 "Fuelquantityzero" = "your transaction is not proceed you fuel quantity is 0 please try agian";
 "Cancelwarning" = "Are you sure you want to Cancel? Please wait while getting redirected to select hose page.";
 "NO" = "No";
 "YES" = "Yes";
 "Confirm" = "Confirm";
-"selectHose" = "Select hose to use";
+"selectHose" = "Select Hose To Use";
+"selectCompany" = "Select Company To Use";
 "No_Pre-auth_transaction" = "Available Pre-Authorized transactions - ";
 "BacktoHome" = "Back to Home";
-"ConnectWifi" = "Connect Wifi";
-"Warningfueling" = "Caution: Do NOT leave this screen while Fueling, Pump May turn OFF!";
+"ConnectWifi" = "Connect WiFi";
+"Warningfueling" = "Caution: Do NOT leave this screen while fueling. Pump may TURN OFF!";
 "Pulsardisconnected" = "Pulsar disconnected";
+
 
 

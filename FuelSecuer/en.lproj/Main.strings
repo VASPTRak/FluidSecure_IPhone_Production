@@ -122,6 +122,8 @@
 /* Class = "UILabel"; text = "Odometer:"; ObjectID = "V59-pK-qar"; */
 "V59-pK-qar.text" = "Odometer:";
 
+"D4e-Kw-lrd.normalTitle" = "HELP";
+
 /* Class = "UIButton"; normalTitle = "HELP"; ObjectID = "VSD-BS-IdT"; */
 "VSD-BS-IdT.normalTitle" = "HELP";
 
@@ -156,7 +158,7 @@
 "ab3-Ej-L6w.text" = "Support:support@trakeng.com or 850-878-4585";
 
 /* Class = "UITextField"; placeholder = "Touch to select Site"; ObjectID = "ahm-rc-XyY"; */
-"ahm-rc-XyY.placeholder" = "Touch Here to Select Site";
+"ahm-rc-XyY.placeholder" = "Touch Here to Select Hose";
 
 /* Class = "UITextField"; placeholder = "Enter Odometer Reading"; ObjectID = "evt-sq-fRo"; */
 "evt-sq-fRo.placeholder" = "Enter Odometer Reading";
@@ -199,6 +201,8 @@
 
 /* Class = "UIBarButtonItem"; title = "Back"; ObjectID = "mWq-Mr-X9k"; */
 "mWq-Mr-X9k.title" = "Back";
+
+"1zu-Kl-e2O.normalTitle" = "GO";
 
 /* Class = "UIButton"; normalTitle = "GO"; ObjectID = "mbr-lW-KO7"; */
 "mbr-lW-KO7.normalTitle" = "GO";

@@ -45,6 +45,10 @@ public class KeychainService: NSObject {
     public class func loadPassword() -> NSString? {
         return self.load(service: passwordKey as NSString)
     }
+    
+    public class func removeItemForKey(key: String) {
+        self.save(service: passwordKey as NSString, data: "")
+    }
 
     /**
      * Internal methods for querying the keychain.
@@ -67,7 +71,7 @@ public class KeychainService: NSObject {
         // Instantiate a new default keychain query
         // Tell the query to return a result
         // Limit our results to one item
-        let keychainQuery: NSMutableDictionary = NSMutableDictionary(objects: [kSecClassGenericPasswordValue, service, userAccount, kCFBooleanTrue, kSecMatchLimitOneValue], forKeys: [kSecClassValue, kSecAttrServiceValue, kSecAttrAccountValue, kSecReturnDataValue, kSecMatchLimitValue])
+        let keychainQuery: NSMutableDictionary = NSMutableDictionary(objects: [kSecClassGenericPasswordValue, service, userAccount, kCFBooleanTrue!, kSecMatchLimitOneValue], forKeys: [kSecClassValue, kSecAttrServiceValue, kSecAttrAccountValue, kSecReturnDataValue, kSecMatchLimitValue])
 
         var dataTypeRef :AnyObject?
 
@@ -80,6 +84,7 @@ public class KeychainService: NSObject {
                 contentsOfKeychain = NSString(data: retrievedData as Data, encoding: String.Encoding.utf8.rawValue)
             }
         } else {
+            contentsOfKeychain = "";
             print("Nothing was retrieved from the keychain. Status code \(status)")
         }
 

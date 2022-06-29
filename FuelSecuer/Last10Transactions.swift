@@ -13,12 +13,19 @@ class Last10Transactions
     var Transaction_id = ""
     var Pulses = ""
     var FuelQuantity = ""
+    var dflag = ""
+    var date = ""
+    var vehicle = ""
+    
 
-    init(Transaction_id :String,Pulses:String,FuelQuantity:String) {
+    init(Transaction_id :String,Pulses:String,FuelQuantity:String,vehicle:String,date:String,dflag:String) {
 
         self.Transaction_id = Transaction_id
         self.Pulses = Pulses
         self.FuelQuantity = FuelQuantity
+        self.vehicle = vehicle
+        self.date = date
+        self.dflag = dflag
 
     }
 }

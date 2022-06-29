@@ -14,16 +14,21 @@
 "MessageFueling" = "Por Favor Inserte La Manga Enel Tanque, Luego Oprima Listo";//"Inserta la boquilla en el tanque \ n Luego toca iniciar";
 "MessageFueling1" = "Por Favor de Espenrar Hasta Que Su Conecciun Sea Esta Milizada Con Ez FluidSecure Enlase.";//Espere mientras se establece su conexión Con el enlace FS";
 "LostWifi" = "Coneccion WiFi perdida en su Móvil.";
-"Touch to select Site" = "Toca para seleccionar Sitio";
-"Regisration" = "Su solicitud de registro aún no ha sido aprobada. Está marcado como Inactivo en el Software de la Compañía. Por favor, póngase en contacto con el administrador de su empresa.";
-"Helptext" = "Seleccione Sitio y luego proceda";
-"HelptextSelectedSite" = "Ingrese Contraseñ Cuando Sea Redirigido Ala Pantaila de WiFi. Contraseñ es ";
-"warninghoseinused" = "\ n Manguera en uso \ n Por favor intente después de algún tiempo";
+"Touch to select Site" = "Toque aquí para seleccionar la manguera";
+"Touch to select Company" = "Toque aquí para seleccionar la empresa";
+"Regisration" = "Su solicitud de registro aún no está aprobada";
+"registration1" = "Está marcado como Inactivo en el Software de la Compañía. Póngase en contacto con el administrador de su empresa.";
+//"Regisration" = "Su solicitud de registro aún no ha sido aprobada. Está marcado como Inactivo en el Software de la Compañía. Por favor, póngase en contacto con el administrador de su empresa.";
+"HelptextSelectedCompany" = "Seleccione Compañía y luego Continúe";
+"HelptextSelectedSite" = "Seleccione Sitio y luego proceda";
+"Helptext" = "Ingrese Contraseñ Cuando Sea Redirigido Ala Pantaila de WiFi. Contraseñ es ";
+"warninghoseinused" = "Manguera en uso, espere o seleccione una manguera alternativa";//\ n Manguera en uso \ n Por favor intente después de algún tiempo";
 "warning_NoInternet_Connection" = "No Tieme Coneccion con el Servidor de la Nube. \nConprobar su coneccion de Internet.";//"No se puede conectar al servidor de la nube. Por favor revise su conexion a internet.";
 "Error" = "Error";
 "OK" = "Bueno";
 "NoInternet" = "Verifique su conexión a Internet y vuelva a intentarlo más tarde.";
 "NoHoseselect" = "Favor Seleccione Manguera para usar.";
+"NoCompanyselect" = "Seleccione la empresa a utilizar.";
 "Hoseorder" = "Manguera fuera de servicio";
 "checkEmail" = "Ingrese Correco Electronico";
 "Title" = "FluidSecure necesita conectarse a Hose a través de WiFi";
@@ -37,7 +42,7 @@
 "Warningwait" = "Espere un momento y vuelva a intentarlo.";
 "Entervehicelno" = "Por favor ingrese el número del vehículo.";
 "EneterOdometer" = "Por favor ingrese el número del odómetro.";
-"Odometer_Reasonability" = "El odómetro introducido no está dentro de los límites razonables que su administrador le ha asignado, póngase en contacto con su administrador.";
+"Odometer_Reasonability" = " ingresado no está dentro de lo razonable que le ha asignado su gerente, comuníquese con su gerente.";
 "Hour_Reasonability" = "La hora ingresada no está dentro de lo razonable que su administrador le ha asignado, comuníquese con su administrador.";
 "CheckyourInternet" = "Favor de Esperar un memnto y comprobar la coneccion de Internet y trate otravéz";
 
@@ -64,7 +69,7 @@
 "EnterHour_Eng" = "Ingrese la hora en enteros";
 "NoInternet" = "La conexión a Internet no está disponible.";
 "Preauthtrans" = "Pre-Authorized transactions are not Available.";
-"Preauthnointernet" = "Transacciones pre autorizadas no Sun Disponible para usted Favor de Habilitar so coneccion de Internet o Contactese con el Administrador de la Empresa.";
+"Preauthnointernet" = "El sistema ha detectado que no tienes servicio celular y las opciones fuera de línea no están habilitadas. Póngase en contacto con su Gerente.";
 
 "NoSSIdFound" = "SSID no encontrado wifi no está conectado.";
 "Pleasewait" = "Por Favor de Esperar….... ";
@@ -75,6 +80,7 @@
 "YES" = "Si";
 "Confirm" = "Confirmar";
 "selectHose" = "Seleccionar Mavga Para Utilzar";
+"selectCompany" = "Seleccionar empresa para usar";
 "No_Pre-auth_transaction" = "transacciones pre autorizadas disponibles - ";
 "BacktoHome" = "Pagina Principal";
 "ConnectWifi" = "Conectar Wifi";

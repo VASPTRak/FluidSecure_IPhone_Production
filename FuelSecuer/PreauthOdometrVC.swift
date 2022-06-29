@@ -8,6 +8,7 @@
 
 import UIKit
 
+
 class PreauthOdometerVC: UIViewController,UITextFieldDelegate //
 {
     @IBOutlet var oview: UIView!
@@ -35,6 +36,11 @@ class PreauthOdometerVC: UIViewController,UITextFieldDelegate //
         myMutableStringTitle = NSMutableAttributedString(string:Name, attributes: [NSAttributedString.Key.font:UIFont(name: "Georgia", size: 30.0)!]) // Font
         myMutableStringTitle.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white, range:NSRange(location:0,length:Name.count))    // Color
         Odometer.attributedPlaceholder = myMutableStringTitle
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        
+        Odometer.becomeFirstResponder()
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
@@ -131,11 +137,11 @@ class PreauthOdometerVC: UIViewController,UITextFieldDelegate //
     func Action(sender:UIButton!)
     {
         self.dismiss(animated: true, completion: nil)
-        if #available(iOS 11.0, *) {
+        if #available(iOS 12.0, *) {
             self.web.wifisettings(pagename: "PreauthVehicle")
         } else {
             // Fallback on earlier versions
-        };if #available(iOS 11.0, *) {
+        };if #available(iOS 12.0, *) {
             self.web.wifisettings(pagename: "PreauthVehicle")
         } else {
             // Fallback on earlier versions
@@ -152,7 +158,7 @@ class PreauthOdometerVC: UIViewController,UITextFieldDelegate //
             self.performSegue(withIdentifier: "Go", sender: self)
         }
         else{
-             self.web.sentlog(func_name: "In Preauthorized Transaction Go button Tapped user need to select Wifi data Manually", errorfromserverorlink: " \(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())",errorfromapp: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)" + " Connected link: \(self.cf.getSSID())")
+             self.web.sentlog(func_name: "In Preauthorized Transaction Go button Tapped user need to select Wifi data Manually", errorfromserverorlink: " \(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())",errorfromapp: " Hose: \(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
             self.performSegue(withIdentifier: "Go", sender: self)
         }
     }
@@ -161,46 +167,47 @@ class PreauthOdometerVC: UIViewController,UITextFieldDelegate //
     {
         if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()){
 
-            if #available(iOS 11.0, *) {
+            if #available(iOS 12.0, *) {
                 self.web.wifisettings(pagename: "Odometer")
-            } else {
-                // Fallback on earlier versions
-
-                let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertController.Style.alert)
-                let backView = alertController.view.subviews.last?.subviews.last
-                backView?.layer.cornerRadius = 10.0
-                backView?.backgroundColor = UIColor.white
-
-                let paragraphStyle = NSMutableParagraphStyle()
-                paragraphStyle.alignment = NSTextAlignment.left
-
-                let paragraphStyle1 = NSMutableParagraphStyle()
-                paragraphStyle1.alignment = NSTextAlignment.left
-
-                let attributedString = NSAttributedString(string:NSLocalizedString("Subtitle", comment:""), attributes: [
-                    NSAttributedString.Key.paragraphStyle:paragraphStyle1,
-                    NSAttributedString.Key.font : UIFont.systemFont(ofSize: 20), //your font here
-                    NSAttributedString.Key.foregroundColor : UIColor.black
-                    ])
-
-                let formattedString = NSMutableAttributedString()
-                formattedString
-                    .normal(NSLocalizedString("Step1", comment:""))//("\nThe WiFi name is the name of the HOSE. Read Steps 1 to 5 below then click on Green bar below.\n\nFollow steps:\n1. Turn on the WiFi (it might already be on)\n\n2. Choose the WiFi \n named: ")
-                    .bold("\(Vehicaldetails.sharedInstance.SSId)")
-                    .normal(NSLocalizedString("Step2", comment:""))//(" \n\n3. First time it will ask for password,enter: 123456789\n\n4. It will have a check next to ")
-                    .bold("\(Vehicaldetails.sharedInstance.SSId)")
-                    .normal(NSLocalizedString("Step3", comment:""))//" and it will say \"No Internet Connection\" \n\n5.  Now, tap on the very top left corner that says \"FluidSecure\" - this returns you to allow fueling.\n\n\n\n\n")
-
-                alertController.setValue(formattedString, forKey: "attributedMessage")
-                alertController.setValue(attributedString, forKey: "attributedTitle")
-                let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertAction.Style.default){
-                    action in
-                    self.performSegue(withIdentifier: "Go", sender: self)
-                }
-                alertController.addAction(action)
-
-                self.present(alertController, animated: true, completion: nil)
             }
+//            else{
+//                // Fallback on earlier versions
+//
+//                let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertController.Style.alert)
+//                let backView = alertController.view.subviews.last?.subviews.last
+//                backView?.layer.cornerRadius = 10.0
+//                backView?.backgroundColor = UIColor.white
+//
+//                let paragraphStyle = NSMutableParagraphStyle()
+//                paragraphStyle.alignment = NSTextAlignment.left
+//
+//                let paragraphStyle1 = NSMutableParagraphStyle()
+//                paragraphStyle1.alignment = NSTextAlignment.left
+//
+//                let attributedString = NSAttributedString(string:NSLocalizedString("Subtitle", comment:""), attributes: [
+//                    NSAttributedString.Key.paragraphStyle:paragraphStyle1,
+//                    NSAttributedString.Key.font : UIFont.systemFont(ofSize: 20), //your font here
+//                    NSAttributedString.Key.foregroundColor : UIColor.black
+//                    ])
+//
+//                let formattedString = NSMutableAttributedString()
+//                formattedString
+//                    .normal(NSLocalizedString("Step1", comment:""))//("\nThe WiFi name is the name of the HOSE. Read Steps 1 to 5 below then click on Green bar below.\n\nFollow steps:\n1. Turn on the WiFi (it might already be on)\n\n2. Choose the WiFi \n named: ")
+//                    .bold("\(Vehicaldetails.sharedInstance.SSId)")
+//                    .normal(NSLocalizedString("Step2", comment:""))//(" \n\n3. First time it will ask for password,enter: 123456789\n\n4. It will have a check next to ")
+//                    .bold("\(Vehicaldetails.sharedInstance.SSId)")
+//                    .normal(NSLocalizedString("Step3", comment:""))//" and it will say \"No Internet Connection\" \n\n5.  Now, tap on the very top left corner that says \"FluidSecure\" - this returns you to allow fueling.\n\n\n\n\n")
+//
+//                alertController.setValue(formattedString, forKey: "attributedMessage")
+//                alertController.setValue(attributedString, forKey: "attributedTitle")
+//                let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertAction.Style.default){
+//                    action in
+//                    self.performSegue(withIdentifier: "Go", sender: self)
+//                }
+//                alertController.addAction(action)
+//
+//                self.present(alertController, animated: true, completion: nil)
+//            }
             self.mainPage()
 
         }
@@ -234,7 +241,7 @@ class PreauthOdometerVC: UIViewController,UITextFieldDelegate //
     
     @IBAction func saveButtontapped(sender: UIButton) {
         
-        tapAction()
+//        tapAction()
         Vehicaldetails.sharedInstance.MinLimit = "0"
        
         if(Odometer.text == "")
@@ -243,10 +250,46 @@ class PreauthOdometerVC: UIViewController,UITextFieldDelegate //
         }
         else
         {
-            let odometer:Int! = Int(Odometer.text!)
-                 Vehicaldetails.sharedInstance.Odometerno = "\(odometer!)"
-            Odometer.text = Vehicaldetails.sharedInstance.Odometerno
-            self.senddata()
+            let odometer:Int! = Int(self.Odometer.text!)
+            let PreviousOdo = Vehicaldetails.sharedInstance.PreviousOdo
+            let OdoLimit = Vehicaldetails.sharedInstance.OdoLimit
+//            if(OdoLimit >= odometer && odometer >= PreviousOdo)
+//            {
+//                Vehicaldetails.sharedInstance.Errorcode = "0"
+//                if(((LastTransQuantity)as NSString).doubleValue < 10)
+//                {
+//                    if(odometer < PreviousOdo){
+//                    self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.")
+//                    self.Activity.stopAnimating()
+//                    self.Activity.isHidden = true
+//                    self.viewWillAppear(true)
+//                    }
+//                    else
+//                    {
+//                        let odometer:Int! = Int(Odometer.text!)
+//                             Vehicaldetails.sharedInstance.Odometerno = "\(odometer!)"
+//                        Odometer.text = Vehicaldetails.sharedInstance.Odometerno
+//                        self.senddata()
+//
+//                    }
+//                }
+//                else{
+                    if(odometer <= PreviousOdo){
+                    self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.")
+//                    self.Activity.stopAnimating()
+//                    self.Activity.isHidden = true
+                    self.viewWillAppear(true)
+                    }
+                    else
+                    {
+                        let odometer:Int! = Int(Odometer.text!)
+                             Vehicaldetails.sharedInstance.Odometerno = "\(odometer!)"
+                        Odometer.text = Vehicaldetails.sharedInstance.Odometerno
+                        self.senddata()
+                    }
+//                }
+//           }
+            
         }
     }
 }

@@ -125,6 +125,7 @@
 /* Class = "UILabel"; text = "Odometer:"; ObjectID = "V59-pK-qar"; */
 "V59-pK-qar.text" = "Cuenta kilómetros:";
 
+"D4e-Kw-lrd.normalTitle" = "AYUDA";
 /* Class = "UIButton"; normalTitle = "HELP"; ObjectID = "VSD-BS-IdT"; */
 "VSD-BS-IdT.normalTitle" = "AYUDA";
 
@@ -202,6 +203,8 @@
 
 /* Class = "UIBarButtonItem"; title = "Back"; ObjectID = "mWq-Mr-X9k"; */
 "mWq-Mr-X9k.title" = "Espalda";
+
+"1zu-Kl-e2O.normalTitle" = "Listo";
 
 /* Class = "UIButton"; normalTitle = "GO"; ObjectID = "mbr-lW-KO7"; */
 "mbr-lW-KO7.normalTitle" = "Listo";

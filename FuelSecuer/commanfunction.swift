@@ -13,8 +13,8 @@ import Foundation
 import CoreLocation
 
 
+
 extension UIViewController {
-    
     
     fileprivate func showAppUpdateAlert( Version : String, Force: Bool, AppURL: String) {
         
@@ -22,17 +22,15 @@ extension UIViewController {
         let alertMessage = "\(bundleName) Version \(Version) is available on AppStore."
         let alertTitle = "New Version"
         
-        
         let alertController = UIAlertController(title: alertTitle, message: alertMessage, preferredStyle: .alert)
+                
         
-        
-        //        if !Force {
         let notNowButton = UIAlertAction(title: "Update Later", style: .default) { (action:UIAlertAction) in
             print("Don't Call API");
             
         }
         alertController.addAction(notNowButton)
-        //        }
+     
         
         let updateButton = UIAlertAction(title: "Update Now", style: .default) { (action:UIAlertAction) in
             print("Call API");
@@ -103,6 +101,32 @@ extension UIViewController {
         alertController.addAction(action)
         self.present(alertController, animated: true, completion: nil)
     }
+    
+//    func getSSID() -> String{
+//
+//            var currentSSID:String!
+//            if let interfaces = CNCopySupportedInterfaces() as NSArray? {
+//                for interface in interfaces {
+//                    if let interfaceInfo = CNCopyCurrentNetworkInfo(interface as! CFString) as NSDictionary? {
+//                        currentSSID = interfaceInfo[kCNNetworkInfoKeySSID as String] as? String
+//                        print(currentSSID!)
+//                        break
+//                    }
+//                    else {
+//                        currentSSID = ""
+//                    }
+//                }
+//            }
+//
+//            return currentSSID!.trimmingCharacters(in: .whitespacesAndNewlines)
+//        }
+    
+    
+    func delay(_ delay:Double, closure:@escaping ()->()) {
+           
+           DispatchQueue.main.asyncAfter(
+               deadline: DispatchTime.now() + Double(Int64(delay * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: closure)
+       }
 }
 
 class LookupResult: Decodable {
@@ -119,7 +143,7 @@ class Commanfunction {
     
     var fuelquantity:Double!
     let fileManager: FileManager = FileManager()
-    var currentSSID:String!
+   // var currentSSID:String!
     
     public var dateUpdated: String {
         
@@ -157,6 +181,9 @@ class Commanfunction {
             catch{print("error")}
         }
     }
+    
+    
+    
     
     func CreateunsyncFile(fileName: String, writeText: String)
     {
@@ -367,122 +394,152 @@ class Commanfunction {
     }
     
     func delay(_ delay:Double, closure:@escaping ()->()) {
-        
+
         DispatchQueue.main.asyncAfter(
             deadline: DispatchTime.now() + Double(Int64(delay * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: closure)
     }
     
-    var locationManager = CLLocationManager()
-    var currentNetworkInfos: Array<NetworkInfo>? {
-        get {
-            return SSID.fetchNetworkInfo()
-        }
-    }
+//    var locationManager = CLLocationManager()
+//    var currentNetworkInfos: Array<NetworkInfo>? {
+//        get {
+//            return SSID.fetchNetworkInfo()
+//        }
+//    }
     
-    public class SSID {
-        class func fetchNetworkInfo() -> [NetworkInfo]? {
-            if let interfaces: NSArray = CNCopySupportedInterfaces() {
-                var networkInfos = [NetworkInfo]()
-                for interface in interfaces {
-                    let interfaceName = interface as! String
-                    var networkInfo = NetworkInfo(interface: interfaceName,
-                                                  success: false,
-                                                  ssid: nil)
-                    
-                    if let dict = CNCopyCurrentNetworkInfo(interfaceName as CFString) as NSDictionary? {
-                        networkInfo.success = true
-                        networkInfo.ssid = dict[kCNNetworkInfoKeySSID as String] as? String
-                        //networkInfo.bssid = dict[kCNNetworkInfoKeyBSSID as String] as? String
-                    }
-                    networkInfos.append(networkInfo)
-                }
-                return networkInfos
-            }
-            return nil
-        }
-    }
+//    public class SSID {
+//        class func fetchNetworkInfo() -> [NetworkInfo]? {
+//            if let interfaces: NSArray = CNCopySupportedInterfaces() {
+//                var networkInfos = [NetworkInfo]()
+//                for interface in interfaces {
+//                    let interfaceName = interface as! String
+//                    var networkInfo = NetworkInfo(interface: interfaceName,
+//                                                  success: false,
+//                                                  ssid: nil)
+//
+//                    if let dict = CNCopyCurrentNetworkInfo(interfaceName as CFString) as NSDictionary? {
+//                        networkInfo.success = true
+//                        networkInfo.ssid = dict[kCNNetworkInfoKeySSID as String] as? String
+//                        //networkInfo.bssid = dict[kCNNetworkInfoKeyBSSID as String] as? String
+//                    }
+//                    networkInfos.append(networkInfo)
+//                }
+//                return networkInfos
+//            }
+//            return nil
+//        }
+//    }
+//
+//
     
     
-    func getSSID() -> String {
-        var ssid = ""
-        if #available(iOS 13.0, *) {
-            let status = CLLocationManager.authorizationStatus()
-            if status == .authorizedWhenInUse {
-                ssid = updateWiFi()
-                if(Vehicaldetails.sharedInstance.SSId == ssid)
-                {
-                    Vehicaldetails.sharedInstance.checkSSIDwithLink = "false"
-                    return ssid
-                }else
-                {
-                    if(ssid == "")
-                    {
-                        
-                        if(Vehicaldetails.sharedInstance.checkSSIDwithLink == "true"){
-                            return Vehicaldetails.sharedInstance.SSId
-                        }
-                    }
-                    // return Vehicaldetails.sharedInstance.SSId
-                }
-                
-            } else {
-                locationManager.delegate = self as? CLLocationManagerDelegate
-                locationManager.requestWhenInUseAuthorization()
-                
-            }
-        } else {
-            ssid = updateWiFi()
-            return ssid
-        }
-        if(ssid == "")
-        {
+//    func getSSID() -> String {
+//        var ssid = ""
+//        if #available(iOS 13.0, *) {
+//            let status = CLLocationManager.authorizationStatus()
+//            if status == .authorizedWhenInUse {
+//                ssid = updateWiFi()
+//                if(Vehicaldetails.sharedInstance.SSId == ssid)
+//                {
+//                    Vehicaldetails.sharedInstance.checkSSIDwithLink = "false"
+//                    return ssid
+//                }else
+//                {
+//                    if(ssid == "")
+//                    {
+//
+//                        if(Vehicaldetails.sharedInstance.checkSSIDwithLink == "true"){
+//                            return Vehicaldetails.sharedInstance.SSId
+//                        }
+//                    }
+//                    // return Vehicaldetails.sharedInstance.SSId
+//                }
+//
+//            } else {
+//                locationManager.delegate = self as? CLLocationManagerDelegate
+//                locationManager.requestWhenInUseAuthorization()
+//
+//            }
+//        } else {
+//            ssid = updateWiFi()
+//            return ssid
+//        }
+//        if(ssid == "")
+//        {
+//
+//            if(Vehicaldetails.sharedInstance.checkSSIDwithLink == "true"){
+//                return Vehicaldetails.sharedInstance.SSId
+//            }
+//        }
+//
+//        return ssid
+//    }
+//
+//    struct NetworkInfo {
+//        var interface: String
+//        var success: Bool = false
+//        var ssid: String?
+//        //  var bssid: String?
+//    }
+    //        }
+    
+//    func updateWiFi() -> String {
+//        if(currentNetworkInfos?.first?.ssid == nil){
+//            return ""
+//        }else{
+//            print("SSID: \(currentNetworkInfos?.first?.ssid ?? "")")
+//                   // print(currentNetworkInfos?.first?.ssid)
+//            //        print(currentNetworkInfos?.first?.bssid)
+//            if(currentNetworkInfos?.first?.ssid == nil){
+//                return ""
+//            }else{
+//                return (currentNetworkInfos?.first?.ssid)!
+//            }}}
+//
+        func getSSID() -> String{
             
-            if(Vehicaldetails.sharedInstance.checkSSIDwithLink == "true"){
-                return Vehicaldetails.sharedInstance.SSId
+            var currentSSID:String!
+            if let interfaces = CNCopySupportedInterfaces() as NSArray? {
+                for interface in interfaces {
+                    if let interfaceInfo = CNCopyCurrentNetworkInfo(interface as! CFString) as NSDictionary? {
+                        currentSSID = interfaceInfo[kCNNetworkInfoKeySSID as String] as? String
+                        
+//                        print(interfaceInfo)
+                        break
+                    }
+                    else {
+                        currentSSID = ""
+                    }
+                }
             }
+    
+            if(currentSSID == nil)
+            {
+                print(Vehicaldetails.sharedInstance.MacAddress, Vehicaldetails.sharedInstance.MacAddressfromlink)
+                if(Vehicaldetails.sharedInstance.MacAddress == Vehicaldetails.sharedInstance.MacAddressfromlink)
+                {
+                    if(Vehicaldetails.sharedInstance.MacAddress != "")
+                    {
+                        currentSSID = Vehicaldetails.sharedInstance.SSId
+//                        self.web.sentlog(func_name: "Connected link SSID getting nil, Mac Address from link \(Vehicaldetails.sharedInstance.MacAddressfromlink),Mac address from cloud\(Vehicaldetails.sharedInstance.MacAddress)", errorfromserverorlink: " "/* Response from Server $$ \(newString)!!*/, errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.getSSID())")
+                    }
+                    else
+                    {
+                        currentSSID = ""
+                    }
+                }
+                
+                   else{
+                currentSSID = ""
+            }
+               
+                       
+            }
+            
+            return currentSSID!.trimmingCharacters(in: .whitespacesAndNewlines)
         }
-        
-        return ssid
-    }
+//    
+//    
     
-    struct NetworkInfo {
-        var interface: String
-        var success: Bool = false
-        var ssid: String?
-        //  var bssid: String?
-    }
-    //        }
-    
-    func updateWiFi() -> String {
-        if(currentNetworkInfos?.first?.ssid == nil){
-            return ""
-        }else{
-            print("SSID: \(currentNetworkInfos?.first?.ssid ?? "")")
-                   // print(currentNetworkInfos?.first?.ssid)
-            //        print(currentNetworkInfos?.first?.bssid)
-            if(currentNetworkInfos?.first?.ssid == nil){
-                return ""
-            }else{
-                return (currentNetworkInfos?.first?.ssid)!
-            }}}
-    
-    //    func getSSID() -> String{
-    //
-    //        if let interfaces = CNCopySupportedInterfaces() as NSArray? {
-    //            for interface in interfaces {
-    //                if let interfaceInfo = CNCopyCurrentNetworkInfo(interface as! CFString) as NSDictionary? {
-    //                    currentSSID = interfaceInfo[kCNNetworkInfoKeySSID as String] as? String
-    //                    print(currentSSID)
-    //                    break
-    //                }
-    //                else {
-    //                    currentSSID = ""
-    //                }
-    //            }
-    //        }
-    //
-    //        return currentSSID!.trimmingCharacters(in: .whitespacesAndNewlines)
-    //    }
     
     //    func getInterfaces() -> Bool {
     //        guard let unwrappedCFArrayInterfaces = CNCopySupportedInterfaces() else {
@@ -565,6 +622,21 @@ class Commanfunction {
             }
             catch
             {print("error")}
+        }
+    }
+    
+    func SaveLogFilesdata(fileName: String, writeText: String)
+    {
+        let readdata = getDocumentsURL().appendingPathComponent("data/filedata/" + fileName)
+        let fromPath: URL = URL(fileURLWithPath: readdata!.path)
+        
+        do {
+            let fileHandle = try FileHandle(forWritingTo: fromPath)
+            fileHandle.seekToEndOfFile()
+            fileHandle.write(writeText.data(using: .utf8)!)
+            fileHandle.closeFile()
+        } catch {
+            print("Error writing to file \(error)")
         }
     }
     
@@ -745,6 +817,9 @@ class Commanfunction {
         let base64String = plainData?.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
         return base64String!
     }
+    
+    
+    
 }
 
 

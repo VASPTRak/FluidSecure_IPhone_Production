@@ -6,6 +6,7 @@
 
 import UIKit
 
+
 class OdometerVC: UIViewController,UITextFieldDelegate //
 {
     @IBOutlet var oview: UIView!
@@ -21,8 +22,9 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
     var countdata = 0
     
     var IsGobuttontapped : Bool = false
-    var stoptimergotostart:Timer = Timer()
+    var odostoptimergotostart:Timer = Timer()
     var countfailauth:Int = 0
+    var appison_odometer = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,21 +61,32 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        stoptimergotostart.invalidate()
-        stoptimergotostart = Timer.scheduledTimer(timeInterval: (Double(1)*60), target: self, selector: #selector(OdometerVC.gotostart), userInfo: nil, repeats: false)
+        Odometer.becomeFirstResponder()
+        odostoptimergotostart.invalidate()
+        odostoptimergotostart = Timer.scheduledTimer(timeInterval: (Double(1)*60), target: self, selector: #selector(OdometerVC.gotostart), userInfo: nil, repeats: false)
         Go.isEnabled = true
         Activity.isHidden = true
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        stoptimergotostart.invalidate()
+        odostoptimergotostart.invalidate()
         super.viewWillDisappear(animated)
+        appison_odometer = false
+        odostoptimergotostart.invalidate()
     }
     
     @objc func gotostart(){
+        
+        if(appison_odometer == true){
         self.web.sentlog(func_name: "Odometer", errorfromserverorlink: "", errorfromapp: "")
         let appDel = UIApplication.shared.delegate! as! AppDelegate
         appDel.start()
+        }
+        else
+        {
+            odostoptimergotostart.invalidate()
+        }
+       
     }
     
     @objc func tapAction() {
@@ -107,7 +120,7 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
     {
         self.dismiss(animated: true, completion: nil)
         
-        if #available(iOS 11.0, *) {
+        if #available(iOS 12.0, *) {
             self.web.wifisettings(pagename: "Odometer")
         } else {
             // Fallback on earlier versions
@@ -119,14 +132,26 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
     
     func mainPage()
     {
-        if(Vehicaldetails.sharedInstance.SSId == cf.getSSID())
+        if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
         {
+            if(Vehicaldetails.sharedInstance.HubLinkCommunication == "UDP")
+            {
+                self.performSegue(withIdentifier: "GoUDP", sender: self)
+            }
+            else{
             self.performSegue(withIdentifier: "Go", sender: self)
+            }
         }
         else
         {
-            self.web.sentlog(func_name: "Go button Tapped user need to select Wifi data Manually", errorfromserverorlink: " \(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())",errorfromapp: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)" + " Connected link: \(self.cf.getSSID())")
+            self.web.sentlog(func_name: "Go button Tapped user need to select Wifi data Manually", errorfromserverorlink: " \(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())",errorfromapp: " Hose : \(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+            if(Vehicaldetails.sharedInstance.HubLinkCommunication == "UDP")
+            {
+                self.performSegue(withIdentifier: "GoUDP", sender: self)
+            }
+            else{
             self.performSegue(withIdentifier: "Go", sender: self)
+            }
         }
     }
     
@@ -137,7 +162,7 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
         let vehicle_no = Vehicaldetails.sharedInstance.vehicleno
         countfailauth += 1
         let data = web.vehicleAuth(vehicle_no: vehicle_no,Odometer:odometer!,isdept:deptno,isppin:ppin,isother:other,Barcodescanvalue:Vehicaldetails.sharedInstance.Barcodescanvalue)
-        let Split = data.components(separatedBy: "#")
+        let Split = data.components(separatedBy: "#@*%*@#")
         let reply = Split[0]
         if (reply == "-1")
         {
@@ -158,7 +183,10 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
                 print ("Error: \(error.domain)")
             }
           //  print(sysdata)
-            
+            if(sysdata == nil){
+                
+            }
+            else{
             let ResponceMessage = sysdata.value(forKey: "ResponceMessage") as! NSString
             let ResponceText = sysdata.value(forKey: "ResponceText") as! NSString
             let ValidationFailFor = sysdata.value(forKey: "ValidationFailFor") as! NSString
@@ -167,10 +195,15 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
             {
                 self.Activity.stopAnimating()
                 self.Activity.isHidden = true
+                
                 if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()){
-                    if #available(iOS 11.0, *) {
+                   
+                    if #available(iOS 12.0, *) {
+                        if (Vehicaldetails.sharedInstance.HubLinkCommunication == "HTTP") {
                         self.web.wifisettings(pagename: "Odometer")
-                    } else {
+                    }
+                    }
+                    else {
                         // Fallback on earlier versions
                         
                         let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertController.Style.alert)
@@ -202,7 +235,13 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
                         alertController.setValue(attributedString, forKey: "attributedTitle")
                         let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertAction.Style.default){
                             action in
+                            if(Vehicaldetails.sharedInstance.HubLinkCommunication == "UDP")
+                            {
+                                self.performSegue(withIdentifier: "GoUDP", sender: self)
+                            }
+                            else{
                             self.performSegue(withIdentifier: "Go", sender: self)
+                            }
                         }
                         alertController.addAction(action)
                         
@@ -213,7 +252,13 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
                 }
                 
                 if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){
+                    if(Vehicaldetails.sharedInstance.HubLinkCommunication == "UDP")
+                    {
+                        self.performSegue(withIdentifier: "GoUDP", sender: self)
+                    }
+                    else{
                     self.performSegue(withIdentifier: "Go", sender: self)
+                    }
                 }
             }
             else {
@@ -223,21 +268,21 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
                     self.Activity.stopAnimating()
                     self.Activity.isHidden = true
                     if(ValidationFailFor == "Vehicle") {
-                        stoptimergotostart.invalidate()
+                        odostoptimergotostart.invalidate()
                         self.performSegue(withIdentifier: "Vehicle", sender: self)
                         
                     }else if(ValidationFailFor == "Dept")
                     {
-                        stoptimergotostart.invalidate()
+                        odostoptimergotostart.invalidate()
                         self.performSegue(withIdentifier: "dept", sender: self)
                     }else if(ValidationFailFor == "Odo")
                     {
-                        stoptimergotostart.invalidate()
+                        odostoptimergotostart.invalidate()
                         self.performSegue(withIdentifier: "odometer", sender: self)
                     }
                     else if(ValidationFailFor == "Pin")
                     {
-                        stoptimergotostart.invalidate()
+                        odostoptimergotostart.invalidate()
                         self.performSegue(withIdentifier: "pin", sender: self)
                     }
                 }
@@ -245,28 +290,90 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
             }
         }
     }
+    }
     
     func switchValueDidChange(sender:UISwitch!){
         
         print("Switch Value : \(sender.isOn))")
+    }
+    //#1750 test the app
+    func send_data()
+    {
+        self.web.sentlog(func_name: "LastQuantity from server is \(Vehicaldetails.sharedInstance.LastTransactionFuelQuantity)", errorfromserverorlink: "", errorfromapp: "")
+        let hours = Vehicaldetails.sharedInstance.IsHoursrequirs
+        let IsExtraOther = Vehicaldetails.sharedInstance.IsExtraOther
+        let isdept = Vehicaldetails.sharedInstance.IsDepartmentRequire
+        let isPPin = Vehicaldetails.sharedInstance.IsPersonnelPINRequire
+        let isother = Vehicaldetails.sharedInstance.IsOtherRequire
+       
+        
+        //    parameter name: ErrorCode
+        //  Value : 1 (This for attempting odometer more than 3)
+        Vehicaldetails.sharedInstance.Errorcode = "1"
+        if (hours == "True"){
+            self.performSegue(withIdentifier: "hour", sender: self)
+            self.Activity.stopAnimating()
+            self.Activity.isHidden = true
+        }
+        else
+            if (IsExtraOther == "True"){
+                self.performSegue(withIdentifier: "otherVehicle", sender: self)
+                self.Activity.stopAnimating()
+                self.Activity.isHidden = true
+        }else{
+            Vehicaldetails.sharedInstance.hours = ""
+            if(isdept == "True"){
+                self.countdata = 0
+                self.performSegue(withIdentifier: "dept", sender: self)
+                self.Activity.stopAnimating()
+                self.Activity.isHidden = true
+            }
+            else{
+                if(isPPin == "True"){
+                    self.countdata = 0
+                    self.performSegue(withIdentifier: "pin", sender: self)
+                    self.Activity.stopAnimating()
+                    self.Activity.isHidden = true
+                }
+                else{
+                    if(isother == "True"){
+                        self.countdata = 0
+                        self.performSegue(withIdentifier: "other", sender: self)
+                        self.Activity.stopAnimating()
+                        self.Activity.isHidden = true
+                    }
+                    else{
+                        let deptno = ""
+                        let ppin = ""
+                        let other = ""
+                        Vehicaldetails.sharedInstance.deptno = ""
+                        Vehicaldetails.sharedInstance.Personalpinno = ""
+                        Vehicaldetails.sharedInstance.Other = ""
+                        self.senddata(deptno: deptno,ppin:ppin,other:other)
+                    }
+                }
+            }
+        }
     }
     
     @IBAction func saveButtontapped(sender: UIButton) {
         Activity.startAnimating()
         Activity.isHidden = false
         Go.isEnabled = false
-        cf.delay(1){
-            self.tapAction()
-            self.stoptimergotostart.invalidate()
+        let LastTransQuantity = Vehicaldetails.sharedInstance.LastTransactionFuelQuantity
+        print(LastTransQuantity)
+        delay(1){
+            //self.tapAction()
+            self.odostoptimergotostart.invalidate()
             self.IsGobuttontapped = true
             if(self.Odometer.text == "")
             {
                 if(Vehicaldetails.sharedInstance.Language == "es-ES")
                                {
-                                    self.showAlert(message:NSLocalizedString("EneterOdometer", comment:""))
+                    self.showAlert(message:NSLocalizedString("EneterOdometer", comment:""))
                                }
                                else{
-                              self.showAlert(message: "Enter \(Vehicaldetails.sharedInstance.ScreenNameForOdometer) Reading")
+                                self.showAlert(message: "Enter \(Vehicaldetails.sharedInstance.ScreenNameForOdometer) Reading")
                                }
                 //
                 self.Activity.stopAnimating()
@@ -301,51 +408,30 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
                             if(OdoLimit >= odometer && odometer >= PreviousOdo)
                             {
                                 Vehicaldetails.sharedInstance.Errorcode = "0"
-                                if (hours == "True"){
-                                    self.performSegue(withIdentifier: "hour", sender: self)
+                                if(((LastTransQuantity)as NSString).doubleValue < 10)
+                                {
+                                    if(odometer < PreviousOdo){
+                                    self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.")
                                     self.Activity.stopAnimating()
                                     self.Activity.isHidden = true
-                                }else
-                                    if (IsExtraOther == "True"){
-                                        self.performSegue(withIdentifier: "otherVehicle", sender: self)
-                                        self.Activity.stopAnimating()
-                                        self.Activity.isHidden = true
+                                    self.viewWillAppear(true)
                                     }
+                                    else
+                                    {
+                                        self.send_data()
+
+                                    }
+                                }
                                 else{
-                                    Vehicaldetails.sharedInstance.hours = ""
-                                    if(isdept == "True"){
-                                        self.countdata = 0
-                                        self.stoptimergotostart.invalidate()
-                                        self.performSegue(withIdentifier: "dept", sender: self)
-                                        self.Activity.stopAnimating()
-                                        self.Activity.isHidden = true
+                                    if(odometer <= PreviousOdo){
+                                    self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.")
+                                    self.Activity.stopAnimating()
+                                    self.Activity.isHidden = true
+                                    self.viewWillAppear(true)
                                     }
-                                    else{
-                                        if(isPPin == "True"){
-                                            self.countdata = 0
-                                            self.stoptimergotostart.invalidate()
-                                            self.performSegue(withIdentifier: "pin", sender: self)
-                                            self.Activity.stopAnimating()
-                                            self.Activity.isHidden = true
-                                        }
-                                        else{
-                                            if(isother == "True"){
-                                                self.countdata = 0
-                                                self.stoptimergotostart.invalidate()
-                                                self.performSegue(withIdentifier: "other", sender: self)
-                                                self.Activity.stopAnimating()
-                                                self.Activity.isHidden = true
-                                            }
-                                            else{
-                                                let deptno = ""
-                                                let ppin = ""
-                                                let other = ""
-                                                Vehicaldetails.sharedInstance.deptno = ""
-                                                Vehicaldetails.sharedInstance.Personalpinno = ""
-                                                Vehicaldetails.sharedInstance.Other = ""
-                                                self.senddata(deptno: deptno,ppin:ppin,other:other)
-                                            }
-                                        }
+                                    else
+                                    {
+                                        self.send_data()
                                     }
                                 }
                             }
@@ -353,110 +439,93 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
                                 self.countdata += 1
                                 
                                 if(self.countdata > 3){
+                                    //#1750 
+                                    if(((LastTransQuantity)as NSString).doubleValue < 10)
+                                    {
+                                        if(odometer < PreviousOdo){
+                                            self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager." )
+                                        self.Activity.stopAnimating()
+                                        self.Activity.isHidden = true
+                                        self.viewWillAppear(true)
+                                        }
+                                        else
+                                        {
+                                            self.send_data()
+
+                                        }
+                                    }
+                                    else{
+                                        if(odometer <= PreviousOdo){
+                                            self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager." )
+                                        self.Activity.stopAnimating()
+                                        self.Activity.isHidden = true
+                                        self.viewWillAppear(true)
+                                        }
+                                        else
+                                        {
+                                            self.send_data()
+                                        }
                                     //    parameter name: ErrorCode
                                     //  Value : 1 (This for attempting odometer more than 3)
                                     Vehicaldetails.sharedInstance.Errorcode = "1"
-                                    if (hours == "True"){
-                                        self.performSegue(withIdentifier: "hour", sender: self)
-                                        self.Activity.stopAnimating()
-                                        self.Activity.isHidden = true
-                                    }
-                                    else
-                                        if (IsExtraOther == "True"){
-                                            self.performSegue(withIdentifier: "otherVehicle", sender: self)
-                                            self.Activity.stopAnimating()
-                                            self.Activity.isHidden = true
-                                    }else{
-                                        Vehicaldetails.sharedInstance.hours = ""
-                                        if(isdept == "True"){
-                                            self.countdata = 0
-                                            self.performSegue(withIdentifier: "dept", sender: self)
-                                            self.Activity.stopAnimating()
-                                            self.Activity.isHidden = true
-                                        }
-                                        else{
-                                            if(isPPin == "True"){
-                                                self.countdata = 0
-                                                self.performSegue(withIdentifier: "pin", sender: self)
-                                                self.Activity.stopAnimating()
-                                                self.Activity.isHidden = true
-                                            }
-                                            else{
-                                                if(isother == "True"){
-                                                    self.countdata = 0
-                                                    self.performSegue(withIdentifier: "other", sender: self)
-                                                    self.Activity.stopAnimating()
-                                                    self.Activity.isHidden = true
-                                                }
-                                                else{
-                                                    let deptno = ""
-                                                    let ppin = ""
-                                                    let other = ""
-                                                    Vehicaldetails.sharedInstance.deptno = ""
-                                                    Vehicaldetails.sharedInstance.Personalpinno = ""
-                                                    Vehicaldetails.sharedInstance.Other = ""
-                                                    self.senddata(deptno: deptno,ppin:ppin,other:other)
-                                                }
-                                            }
-                                        }
+//
                                     }
                                 }
                                 else{
+                                    
+                                    if(odometer < PreviousOdo){
+                                    self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.")
+                                    self.Activity.stopAnimating()
+                                    self.Activity.isHidden = true
+                                    self.viewWillAppear(true)
+                                    }
+                                    else{
+                                    
                                     Vehicaldetails.sharedInstance.Errorcode = "0"
                                     self.Activity.stopAnimating()
                                     self.Activity.isHidden = true
-                                    self.showAlert(message: NSLocalizedString("Odometer_Reasonability", comment:""))
+                                    if(Vehicaldetails.sharedInstance.Language == "es-ES")
+                                    {
+                                        self.showAlert(message: "El \(Vehicaldetails.sharedInstance.ScreenNameForOdometer)" + NSLocalizedString("Odometer_Reasonability", comment:"") )
+                                    }
+                                    else{
+                                        self.showAlert(message: "The \(Vehicaldetails.sharedInstance.ScreenNameForOdometer)" + NSLocalizedString("Odometer_Reasonability", comment:"") )
+                                    }
                                     self.viewWillAppear(true)
                                     print(self.countdata)
                                 }
+                            }
                             }
                             
                         } else if(OdometerReasonabilityConditions == "2"){
                             Vehicaldetails.sharedInstance.Errorcode = "0"
                             if(OdoLimit >= odometer && odometer >= PreviousOdo)
                             {
-                                if (hours == "True"){
-                                    self.performSegue(withIdentifier: "hour", sender: self)
+                                
+                                if(((LastTransQuantity)as NSString).doubleValue < 10)
+                                {
+                                    if(odometer < PreviousOdo){
+                                    self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.")
                                     self.Activity.stopAnimating()
                                     self.Activity.isHidden = true
-                                }else
-                                    if (IsExtraOther == "True"){
-                                        self.performSegue(withIdentifier: "otherVehicle", sender: self)
-                                        self.Activity.stopAnimating()
-                                        self.Activity.isHidden = true
+                                    self.viewWillAppear(true)
                                     }
+                                    else
+                                    {
+                                        self.send_data()
+
+                                    }
+                                }
                                 else{
-                                    Vehicaldetails.sharedInstance.hours = ""
-                                    if(isdept == "True"){
-                                        self.countdata = 0
-                                        self.performSegue(withIdentifier: "dept", sender: self)
-                                        self.Activity.stopAnimating()
-                                        self.Activity.isHidden = true
+                                    if(odometer <= PreviousOdo){
+                                    self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.")
+                                    self.Activity.stopAnimating()
+                                    self.Activity.isHidden = true
+                                    self.viewWillAppear(true)
                                     }
-                                    else{
-                                        if(isPPin == "True"){
-                                            self.countdata = 0
-                                            self.performSegue(withIdentifier: "pin", sender: self)
-                                            self.Activity.stopAnimating()
-                                            self.Activity.isHidden = true
-                                        }
-                                        else{
-                                            if(isother == "True"){
-                                                self.countdata = 0
-                                                self.performSegue(withIdentifier: "other", sender: self)
-                                                self.Activity.stopAnimating()
-                                                self.Activity.isHidden = true
-                                            }
-                                            else{
-                                                let deptno = ""
-                                                let ppin = ""
-                                                let other = ""
-                                                Vehicaldetails.sharedInstance.deptno = ""
-                                                Vehicaldetails.sharedInstance.Personalpinno = ""
-                                                Vehicaldetails.sharedInstance.Other = ""
-                                                self.senddata(deptno: deptno,ppin:ppin,other:other)
-                                            }
-                                        }
+                                    else
+                                    {
+                                        self.send_data()
                                     }
                                 }
                             }
@@ -464,48 +533,77 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
                                 Vehicaldetails.sharedInstance.Errorcode = "0"
                                 self.Activity.stopAnimating()
                                 self.Activity.isHidden = true
-                                self.showAlert(message: NSLocalizedString("Odometer_Reasonability", comment:""))
+                                
+                                if(odometer < PreviousOdo){
+                                self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.")
+                                self.Activity.stopAnimating()
+                                self.Activity.isHidden = true
                                 self.viewWillAppear(true)
+                                }
+                                else{
+                                
+                                if(Vehicaldetails.sharedInstance.Language == "es-ES")
+                                {
+                                    self.showAlert(message: "El \(Vehicaldetails.sharedInstance.ScreenNameForOdometer)" + NSLocalizedString("Odometer_Reasonability", comment:"") )
+                                }
+                                else{
+                                    self.showAlert(message: "The \(Vehicaldetails.sharedInstance.ScreenNameForOdometer)" + NSLocalizedString("Odometer_Reasonability", comment:"") )
+                                }
+                                self.viewWillAppear(true)
+                               
+                                }
                             }
                         }
                     }
                     else if (CheckOdometerReasonable == "False"){
-                        
-                        if (hours == "True"){
-                            self.performSegue(withIdentifier: "hour", sender: self)
-                        }else
-                            if (IsExtraOther == "True"){
-                                self.performSegue(withIdentifier: "otherVehicle", sender: self)
-                             
-                            }
-                        else
-                            if(isdept == "True"){
-                                self.performSegue(withIdentifier: "dept", sender: self)
+                        //#1750
+                        if(((LastTransQuantity)as NSString).doubleValue < 10)
+                        {
+                            if(odometer < PreviousOdo){
+                                self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager." )
+                            self.Activity.stopAnimating()
+                            self.Activity.isHidden = true
+                            self.viewWillAppear(true)
                             }
                             else
-                                if(isPPin == "True"){
-                                    self.performSegue(withIdentifier: "pin", sender: self)
-                                }
-                                else
-                                    if(isother == "True"){
-                                        self.performSegue(withIdentifier: "other", sender: self)
-                                    }
-                                    else{
-                                        let deptno = ""
-                                        let ppin = ""
-                                        let other = ""
-                                        Vehicaldetails.sharedInstance.deptno = ""
-                                        Vehicaldetails.sharedInstance.Personalpinno = ""
-                                        Vehicaldetails.sharedInstance.Other = ""
-                                        self.senddata(deptno: deptno,ppin:ppin,other:other)
+                            {
+                                self.send_data()
+
+                            }
                         }
-                        
+                        else{
+                            if(odometer <= PreviousOdo){
+                            self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager." )
+                            self.Activity.stopAnimating()
+                            self.Activity.isHidden = true
+                            self.viewWillAppear(true)
+                            }
+                            else
+                            {
+                                self.send_data()
+                            }
+                        }
                     }
                     else{
                         self.Activity.stopAnimating()
                         self.Activity.isHidden = true
-                        self.showAlert(message: NSLocalizedString("Odometer_Reasonability", comment:""))
+                        
+                        if(odometer < PreviousOdo){
+                        self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.")
+                        self.Activity.stopAnimating()
+                        self.Activity.isHidden = true
                         self.viewWillAppear(true)
+                        }
+                        else{
+                        if(Vehicaldetails.sharedInstance.Language == "es-ES")
+                        {
+                            self.showAlert(message: "El \(Vehicaldetails.sharedInstance.ScreenNameForOdometer)" + NSLocalizedString("Odometer_Reasonability", comment:""))
+                        }
+                        else{
+                            self.showAlert(message: "The \(Vehicaldetails.sharedInstance.ScreenNameForOdometer)" + NSLocalizedString("Odometer_Reasonability", comment:""))
+                        }
+                        self.viewWillAppear(true)
+                        }
                     }
                 }
             }

@@ -20,5 +20,13 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Allowing access to your location, you can get your nearest Fueling Sites. </string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Allowing access to your location, you can get your nearest Fueling Sites. </string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Allowing Access your Bluetooth</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Allowing Access your Bluetooth</string>
 </dict>
 </plist>

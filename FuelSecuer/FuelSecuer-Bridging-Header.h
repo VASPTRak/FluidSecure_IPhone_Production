@@ -9,7 +9,8 @@
 //extern const NSString *FSURL;
 extern const NSString *Get;
 //extern const NSString *LogURL;
-extern const NSString *URL;
+//extern const NSString *URL;
 extern const NSString *Version;
+extern const NSString *brandname;
 //extern const NSString *BlueColor;
 #endif

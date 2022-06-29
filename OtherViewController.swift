@@ -6,6 +6,7 @@
 
 import UIKit
 
+
 class OtherViewController: UIViewController,UITextFieldDelegate{
 
     @IBOutlet var oview: UIView!
@@ -14,14 +15,16 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
     @IBOutlet weak var Activity: UIActivityIndicatorView!
     @IBOutlet var Go: UIButton!
 
-    var stoptimergotostart:Timer = Timer()
+    //var stoptimergotostart:Timer = Timer()
+    var otherstoptimergotostart:Timer = Timer()
     var web = Webservices()
     var sysdata:NSDictionary!
     var cf = Commanfunction()
     var IsSavebuttontapped : Bool = false
     var countfailauth:Int = 0
     var otherlbl:String = ""
-
+    var appisonother = true
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationItem.title = "\(Vehicaldetails.sharedInstance.SSId)"
@@ -29,7 +32,7 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
         Otherlable.text = "\(NSLocalizedString("Enter", comment:"")) " + Vehicaldetails.sharedInstance.Otherlable
         Other.font = UIFont(name: Other.font!.fontName, size: 40)
         Other.text = Vehicaldetails.sharedInstance.Other
-//        Other.keyboardType = UIKeyboardType.numberPad
+        Other.keyboardType = UIKeyboardType.asciiCapable
         let doneButton:UIButton = UIButton (frame: CGRect(x: 100, y: 100, width: 100, height: 44));
         doneButton.setTitle(NSLocalizedString("Return", comment:""), for: UIControl.State())
         doneButton.addTarget(self, action: #selector(OdometerVC.tapAction), for: UIControl.Event.touchUpInside);
@@ -51,14 +54,25 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        stoptimergotostart.invalidate()
-        stoptimergotostart = Timer.scheduledTimer(timeInterval: (Double(1)*60), target: self, selector: #selector(OtherViewController.gotostart), userInfo: nil, repeats: false)
+        Other.becomeFirstResponder()
+        otherstoptimergotostart.invalidate()
+        otherstoptimergotostart = Timer.scheduledTimer(timeInterval: (Double(1)*60), target: self, selector: #selector(OtherViewController.gotostart), userInfo: nil, repeats: false)
         Go.isEnabled = true
     }
 
     override func viewWillDisappear(_ animated: Bool) {
-        stoptimergotostart.invalidate()
+        otherstoptimergotostart.invalidate()
         super.viewWillDisappear(animated)
+        otherstoptimergotostart.invalidate()
+        appisonother = false
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        otherstoptimergotostart.invalidate()
+        
+        super.viewWillDisappear(animated)
+        appisonother = false
+        otherstoptimergotostart.invalidate()
     }
 
    override func viewDidAppear(_ animated: Bool)
@@ -67,12 +81,18 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
     }
 
    @objc func gotostart()
-    {
-        self.web.sentlog(func_name: "Other_screen_timeout", errorfromserverorlink: "", errorfromapp: "")
-        let appDel = UIApplication.shared.delegate! as! AppDelegate
-        appDel.start()
+    {   //
+        if(appisonother == true){
+            self.web.sentlog(func_name: "Other_screen_timeout", errorfromserverorlink: "", errorfromapp: "")
+            let appDel = UIApplication.shared.delegate! as! AppDelegate
+            appDel.start()
+        }
+        else
+        {
+            otherstoptimergotostart.invalidate()
+        }
     }
-
+/////it may contains memory leak
    @objc func tapAction()
     {
         self.view.frame = CGRect(x: 0,y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height)
@@ -97,7 +117,7 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
     }
 
     @IBAction func reset(sender: AnyObject) {
-        stoptimergotostart.invalidate()
+        otherstoptimergotostart.invalidate()
         viewWillAppear(true)
         Other.text = ""
     }
@@ -107,7 +127,13 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
 
     func mainPage()
     {
+        if(Vehicaldetails.sharedInstance.HubLinkCommunication == "UDP")
+        {
+          self.performSegue(withIdentifier: "GoUDP", sender: self)
+        }
+        else{
         self.performSegue(withIdentifier: "Go", sender: self)
+        }
     }
 
     func senddata()
@@ -121,7 +147,7 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
         let vehicle_no = Vehicaldetails.sharedInstance.vehicleno
         let data = web.vehicleAuth(vehicle_no: vehicle_no,Odometer:odometer!,isdept:deptno,isppin:pin,isother:other!,Barcodescanvalue:Vehicaldetails.sharedInstance.Barcodescanvalue)
        
-        let Split = data.components(separatedBy: "#")
+        let Split = data.components(separatedBy: "#@*%*@#")
         let reply = Split[0]
         if (reply == "-1")
         {
@@ -132,7 +158,7 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
 
                 self.senddata()
             }
-            stoptimergotostart.invalidate()
+            otherstoptimergotostart.invalidate()
             viewWillAppear(true)
         }
         else
@@ -152,14 +178,35 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
             let ResponceMessage = sysdata.value(forKey: "ResponceMessage") as! NSString
             let ResponceText = sysdata.value(forKey: "ResponceText") as! NSString
             let ValidationFailFor = sysdata.value(forKey: "ValidationFailFor") as! NSString
-
+//            let ResponceData = sysdata.value(forKey:"ResponceData") as! NSDictionary
+//            let MinLimit = ResponceData.value(forKey:"MinLimit") as! NSNumber
+//            let PulseRatio = ResponceData.value(forKey:"PulseRatio") as! NSNumber
+//            let VehicleId = ResponceData.value(forKey:"VehicleId") as! NSNumber
+//            let FuelTypeId = ResponceData.value(forKey:"FuelTypeId") as! NSNumber
+//            let PersonId = ResponceData.value(forKey:"PersonId") as! NSNumber
+//            let PhoneNumber = ResponceData.value(forKey:"PhoneNumber") as! NSString
+//            // let PulserStopTime = ResponceData.value(forKey:"PulserStopTime") as! NSString
+//            let ServerDate = ResponceData.value(forKey:"ServerDate") as! String
+//            let pumpoff_time = ResponceData.value(forKey: "PumpOffTime") as! String
+//
+//            print(MinLimit,PersonId,PhoneNumber,FuelTypeId,VehicleId,PulseRatio)
+//
+//            Vehicaldetails.sharedInstance.MinLimit = "\(MinLimit)"
+//            Vehicaldetails.sharedInstance.PulseRatio = "\(PulseRatio)"
+//            Vehicaldetails.sharedInstance.VehicleId = "\(VehicleId)"
+//            Vehicaldetails.sharedInstance.FuelTypeId = "\(FuelTypeId)"
+//            Vehicaldetails.sharedInstance.PersonId = "\(PersonId)"
+//            Vehicaldetails.sharedInstance.PhoneNumber = "\(PhoneNumber)"
+//            Vehicaldetails.sharedInstance.pumpoff_time = "\(pumpoff_time)" //Send pump off time to pulsar off time.
+//            Vehicaldetails.sharedInstance.date = "\(ServerDate)"
             if(ResponceMessage == "success") {
                 Activity.stopAnimating()
                 Activity.isHidden = true
                 if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()){
-                    if #available(iOS 11.0, *) {
+                    if #available(iOS 12.0, *) {
                         self.web.wifisettings(pagename: "Other")
-                    } else {
+                    }
+                    else {
                     // Fallback on earlier versions
 
                         let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertController.Style.alert)
@@ -191,7 +238,13 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
                     alertController.setValue(attributedString, forKey: "attributedTitle")
                         let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertAction.Style.default){
                             action in
+                            if(Vehicaldetails.sharedInstance.HubLinkCommunication == "UDP")
+                            {
+                                self.performSegue(withIdentifier: "GoUDP", sender: self)
+                            }
+                            else{
                         self.performSegue(withIdentifier: "Go", sender: self)
+                            }
                         }
                         alertController.addAction(action)
 
@@ -202,7 +255,13 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
                 }
 
                 if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){
+                    if(Vehicaldetails.sharedInstance.HubLinkCommunication == "UDP")
+                    {
+                        self.performSegue(withIdentifier: "GoUDP", sender: self)
+                    }
+                    else{
                     self.performSegue(withIdentifier: "Go", sender: self)
+                    }
                 }
             }
             else {
@@ -212,25 +271,25 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
                     Activity.isHidden = true
                     
                     if(ValidationFailFor == "Vehicle") {
-                        stoptimergotostart.invalidate()
+                        otherstoptimergotostart.invalidate()
                         self.performSegue(withIdentifier: "Vehicle", sender: self)
 
                     }else if(ValidationFailFor == "Dept")
                     {
-                        stoptimergotostart.invalidate()
+                        otherstoptimergotostart.invalidate()
                         self.performSegue(withIdentifier: "Dept", sender: self)
                     }else if(ValidationFailFor == "Odo")
                     {
-                        stoptimergotostart.invalidate()
+                        otherstoptimergotostart.invalidate()
                         self.performSegue(withIdentifier: "Odo", sender: self)
                     }
                     else if(ValidationFailFor == "Pin")
                     {
-                        stoptimergotostart.invalidate()
+                        otherstoptimergotostart.invalidate()
                         self.performSegue(withIdentifier: "Pin", sender: self)
                     }
                     showAlert(message: "\(ResponceText)")
-                    stoptimergotostart.invalidate()
+                    otherstoptimergotostart.invalidate()
                 }
             }
             }
@@ -240,7 +299,7 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
     func Action(sender:UIButton!)
     {
         self.dismiss(animated: true, completion: nil)
-        if #available(iOS 11.0, *) {
+        if #available(iOS 12.0, *) {
             self.web.wifisettings(pagename: "Other")
         } else {
             // Fallback on earlier versions
@@ -252,15 +311,15 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
         Activity.startAnimating()
         Activity.isHidden = false
          Go.isEnabled = false
-        cf.delay(1){
+            delay(1){
             self.tapAction()
-            self.stoptimergotostart.invalidate()
+            self.otherstoptimergotostart.invalidate()
             self.IsSavebuttontapped = true
 
             if(self.Other.text == "")
         {
-            self.showAlert(message: NSLocalizedString("WarningEmptytext", comment:""))// "Please Enter something.")
-            self.stoptimergotostart.invalidate()
+                self.showAlert(message: NSLocalizedString("WarningEmptytext", comment:""))// "Please Enter something.")
+            self.otherstoptimergotostart.invalidate()
             self.viewWillAppear(true)
             self.Activity.stopAnimating()
             self.Activity.isHidden = true

@@ -6,12 +6,12 @@
 //  Copyright © 2016 VASP. All rights reserved.
 //
 
-import Foundation
-import CoreData
-
-
-class Wifidetails: NSManagedObject {
-
-// Insert code here to add functionality to your managed object subclass
-
-}
+//import Foundation
+//import CoreData
+//
+//
+//class Wifidetails: NSManagedObject {
+//
+//// Insert code here to add functionality to your managed object subclass
+//
+//}

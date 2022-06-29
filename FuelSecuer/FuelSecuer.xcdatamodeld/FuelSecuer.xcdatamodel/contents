@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14135" systemVersion="17E199" minimumToolsVersion="Xcode 7.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19574" systemVersion="21C52" minimumToolsVersion="Xcode 7.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
+    <entity name="Transactiondata" syncable="YES">
+        <attribute name="pulsequantity" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="pulseratio" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="transactionid" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="TransactionID" representedClassName="TransactionID" syncable="YES">
         <attribute name="isactive" optional="YES" attributeType="String" defaultValueString="false" syncable="YES"/>
         <attribute name="transactionid" optional="YES" attributeType="String" syncable="YES"/>
@@ -18,5 +23,6 @@
     <elements>
         <element name="TransactionID" positionX="-63" positionY="54" width="128" height="75"/>
         <element name="Wifidetails" positionX="-63" positionY="-18" width="128" height="180"/>
+        <element name="Transactiondata" positionX="-63" positionY="54" width="128" height="74"/>
     </elements>
 </model>

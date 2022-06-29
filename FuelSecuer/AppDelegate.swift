@@ -1,72 +1,81 @@
 //  AppDelegate.swift
 //  FuelSecuer
-//
+
 //  Created by VASP on 3/28/16.
 //  Copyright © 2016 VASP. All rights reserved.
 
 import UIKit
 import CoreData
 
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
     var reachability: Reachability!
-    var reg = RegisterTableViewController()
+   // var reg = RegisterTableViewController()
+    //var vc = ViewController()
+    //var wificonn:String!
+    //var jc = FuelquantityVC()
+       var web = Webservices()
+    // var unsync = Sync_Unsynctransactions()
+    // var backgroundUpdateTask: UIBackgroundTaskIdentifier!
+    
+    //var tcpcon = TCPCommunication()
     var cf = Commanfunction()
-    var vc = ViewController()
+    
     var wificonnection:String = "False"
-    var wificonn:String!
+    
     let defaults = UserDefaults.standard
     var id:Int!
-    var jc = FuelquantityVC()
-    var web = Webservices()
-    var preauth = PreauthFuelquantity()
-    var unsync = Sync_Unsynctransactions()
-    var backgroundUpdateTask: UIBackgroundTaskIdentifier!
+   
+    //var preauth = PreauthFuelquantity()
+   
     
-    func beginBackgroundUpdateTask() {
-        self.backgroundUpdateTask = UIApplication.shared.beginBackgroundTask(expirationHandler: {
-            //print(var backgroundTimeRemaining: TimeInterval { get })
-            self.endBackgroundUpdateTask()
-        })
-    }
-    
-    func endBackgroundUpdateTask() {
-        UIApplication.shared.endBackgroundTask(self.backgroundUpdateTask)
-        self.backgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-    }
-    
-    func doBackgroundTask() {
-//        DispatchQueue.main.async(execute: {
-//            self.beginBackgroundUpdateTask()
-//            self.jc.stopbutton = true
-//            _ = self.unsync.unsyncTransaction()
-//            _ = self.preauth.preauthunsyncTransaction()
-//            // End the background task.
-//
+//    func beginBackgroundUpdateTask() {
+//        self.backgroundUpdateTask = UIApplication.shared.beginBackgroundTask(expirationHandler: {
+//            //print(var backgroundTimeRemaining: TimeInterval { get })
 //            self.endBackgroundUpdateTask()
 //        })
-    }
+//    }
+//
+//    func endBackgroundUpdateTask() {
+//        UIApplication.shared.endBackgroundTask(self.backgroundUpdateTask)
+//        self.backgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
+//    }
+    
+//    func doBackgroundTask() {
+////        DispatchQueue.main.async(execute: {
+////            self.beginBackgroundUpdateTask()
+////            self.jc.stopbutton = true
+////            _ = self.unsync.unsyncTransaction()
+////            _ = self.preauth.preauthunsyncTransaction()
+////            // End the background task.
+////
+////            self.endBackgroundUpdateTask()
+////        })
+//
+//    }
 
 
  
 
-    func displayAlert() {
-        let note = UILocalNotification()
-        note.alertBody = "Your Transaction is successfully completed."
-        note.soundName = UILocalNotificationDefaultSoundName
-        UIApplication.shared.scheduleLocalNotification(note)
-    }
+//    func displayAlert() {
+//        let note = UILocalNotification()
+//        note.alertBody = "Your Transaction is successfully completed."
+//        note.soundName = UILocalNotificationDefaultSoundName
+//        UIApplication.shared.scheduleLocalNotification(note)
+//    }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-         doBackgroundTask()
+        // doBackgroundTask()
         do {
-            reachability = try Reachability.init()
-        } catch {
-            print("Unable to create Reachability")
-            return true;
+            reachability = Reachability.init()
         }
+//        catch {
+//            print("Unable to create Reachability")
+//            return true;
+//        }
         reachability = Reachability()!
         NotificationCenter.default.addObserver(self, selector: #selector(AppDelegate.reachabilityChanged),name: ReachabilityChangedNotification,object: reachability)
         do {
@@ -141,9 +150,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
-        catch{
-            print("some problem in assigning root VC")
-        }
+//        catch{
+//            print("some problem in assigning root VC")
+//        }
        
         let settings = UIUserNotificationSettings(types: [.alert, .badge , .sound], categories: nil)
         application.registerUserNotificationSettings(settings)
@@ -151,9 +160,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         return true
     }
+    
+    
+    
     func preauthstart(){
         do{
-            self.web.sentlog(func_name: "Appdelegate Start()", errorfromserverorlink: "", errorfromapp: "")
+            //self.web.sentlog(func_name: "Appdelegate Start()", errorfromserverorlink: "", errorfromapp: "")
 
             if(defaults.string(forKey: "Register") == nil) {
 
@@ -251,23 +263,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             let nav =  UINavigationController(rootViewController: controller)
                             
                             self.window?.rootViewController = nav
-                            self.web.sentlog(func_name: "Appdelegate Start goto select hose screen", errorfromserverorlink: "", errorfromapp: "")
+                          //  self.web.sentlog(func_name: "Appdelegate Start goto select hose screen", errorfromserverorlink: "", errorfromapp: "")
                             //self.window?.makeKeyAndVisible()
                         }
                     }
                 }
             }
         }
-        catch let error as NSError {
-            print ("Error: \(error.domain)")
-        }
+//        catch let error as NSError {
+//            print ("Error: \(error.domain)")
+//        }
 
     }
     
     func start()
     {
         do{
-        self.web.sentlog(func_name: "Appdelegate Start()", errorfromserverorlink: "", errorfromapp: "")
+      //  self.web.sentlog(func_name: "Appdelegate Start()", errorfromserverorlink: "", errorfromapp: "")
 
             if(defaults.string(forKey: "Register") == nil) {
                 
@@ -304,10 +316,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             let nav =  UINavigationController(rootViewController: loginViewController)
                             self.window?.rootViewController = nav
                         }
+                        if(defaults.string(forKey: "Companyname") == "Company2")
+                        {
+                            let secondViewController: UIViewController = storyBoard.instantiateViewController(withIdentifier: "CompanyVC") as! CompanyViewController
+                            let nav =  UINavigationController(rootViewController: secondViewController)
+                            self.window?.rootViewController = nav
+                        }
+                        else if(defaults.string(forKey: "Companyname") != "Company1")
+                        {
+                            let secondViewController: UIViewController = storyBoard.instantiateViewController(withIdentifier: "thirdVC") as! ViewController
+                            let nav =  UINavigationController(rootViewController: secondViewController)
+                            self.window?.rootViewController = nav
+                        }
+                        
                     }
                     else{
                         do
-                        { let uid = try defaults.array(forKey: "SSID")
+                        {
+                        let uid = try defaults.array(forKey: "SSID")
                         let rowCount =  uid!.count
                         for i in 0  ..< rowCount
                         {
@@ -315,6 +341,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             {
                                 wificonnection = "True"
                                 id = i
+//                                break
                             }
                             else
                             {
@@ -324,14 +351,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         } catch let error as NSError {}
                         if(defaults.string(forKey: "Login") == "1")
                         {
+                            let nav =  UINavigationController(rootViewController: loginViewController)
+                            self.window?.rootViewController = nav
+//                            let secondViewController: UIViewController = storyBoard.instantiateViewController(withIdentifier: "thirdVC") as! ViewController
+//                            let nav = UINavigationController(rootViewController: secondViewController)
+//                            self.window?.rootViewController = nav
+                        }
+                        else{
                             let secondViewController: UIViewController = storyBoard.instantiateViewController(withIdentifier: "thirdVC") as! ViewController
                             let nav = UINavigationController(rootViewController: secondViewController)
                             self.window?.rootViewController = nav
-                        }
-                        else{
+                            
                             print("root VC else condition")
-                            let nav =  UINavigationController(rootViewController: loginViewController)
-                            self.window?.rootViewController = nav
+//                            let nav =  UINavigationController(rootViewController: loginViewController)
+//                            self.window?.rootViewController = nav
                         }
                         
                         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
@@ -364,8 +397,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             print("root VC else condition")
                             let nav =  UINavigationController(rootViewController: secondViewController)
                             self.window?.rootViewController = nav
-                            self.web.sentlog(func_name: "Appdelegate Start goto select hose screen", errorfromserverorlink: "", errorfromapp: "")
+                           // self.web.sentlog(func_name: "Appdelegate Start goto select hose screen", errorfromserverorlink: "", errorfromapp: "")
                             //self.window?.makeKeyAndVisible()
+                        }
+                        if(defaults.string(forKey: "Companyname") == "Company2")
+                        {
+                            let Company_ViewController: UIViewController = storyBoard.instantiateViewController(withIdentifier: "CompanyVC") as! CompanyViewController
+                            let nav =  UINavigationController(rootViewController: Company_ViewController)
+                            self.window?.rootViewController = nav
+                        }
+                        else if(defaults.string(forKey: "Companyname") != "Company1")
+                        {
+                            let secondViewController: UIViewController = storyBoard.instantiateViewController(withIdentifier: "thirdVC") as! ViewController
+                            let nav =  UINavigationController(rootViewController: secondViewController)
+                            self.window?.rootViewController = nav
                         }
                     }
                 }
@@ -376,12 +421,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
-    func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
-        application.registerUserNotificationSettings(UIUserNotificationSettings(types: [UIUserNotificationType.sound, UIUserNotificationType.alert, UIUserNotificationType.badge], categories: nil))
-        let settings = UIUserNotificationSettings(types: [.alert, .badge , .sound], categories: nil)
-        application.registerUserNotificationSettings(settings)
-        application.registerForRemoteNotifications()
-    }
+//    func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
+//        application.registerUserNotificationSettings(UIUserNotificationSettings(types: [UIUserNotificationType.sound, UIUserNotificationType.alert, UIUserNotificationType.badge], categories: nil))
+//        let settings = UIUserNotificationSettings(types: [.alert, .badge , .sound], categories: nil)
+//        application.registerUserNotificationSettings(settings)
+//        application.registerForRemoteNotifications()
+//    }
     
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -390,13 +435,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationDidEnterBackground(_ application: UIApplication)
     {
-        // doBackgroundTask()
-       // self.web.sentlog(func_name: "Application Enter In Background", errorfromserverorlink:  "Selected Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
-
-        //sleep(10)
-
-//                cf.delay(10){
-//        //            self.doBackgroundTask()
+        
+    
 //        //        }// Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
 //        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
 //        }
@@ -405,7 +445,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
 //        self.web.sentlog(func_name: "Application Enter In Foreground", errorfromserverorlink: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
-       // doBackgroundTask()
+     //   doBackgroundTask()
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
@@ -415,9 +455,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func applicationWillTerminate(_ application: UIApplication) {
-        if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){
-//            _ = jc.setralay0tcp()
-//            _ = jc.setpulsar0tcp()
+//        if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){
+////            _ = jc.setralay0tcp()
+////            _ = jc.setpulsar0tcp()
+//        }
+        
+        if(Vehicaldetails.sharedInstance.ifStartbuttontapped == true){}  /// Is Start button tapped is true then do nothing
+        else {
+        
+            if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
+            {
+                let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "7")//did not press start (start appeared, was never pressed):  User did not Press Start
+            }
+            else if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID())
+            {
+                let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6") //unable to start (start never appeared): Potential Wifi Connection Issue
+                //potentialfix()
+            }
         }
         
         let TransactionId = Vehicaldetails.sharedInstance.TransactionId
@@ -437,7 +493,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             else if(Vehicaldetails.sharedInstance.AppType == "preAuthTransaction"){
 
-                preauth.Transaction(fuelQuantity: (Double(pusercount))!/(PulseRatio as NSString).doubleValue)
+               // preauth.Transaction(fuelQuantity: (Double(pusercount))!/(PulseRatio as NSString).doubleValue)
             }
 
             let dtt1: String = dateFormatter.string(from: NSDate() as Date)
@@ -447,8 +503,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 cf.SaveTextFile(fileName: unsycnfileName, writeText: bodyData)
             }
         }
-
-        self.web.sentlog(func_name: "Application Will Terminate", errorfromserverorlink: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
+        if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT"){
+            let pulsercount = Vehicaldetails.sharedInstance.pulsarCount
+            if(pulsercount == "")
+            {
+                let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6")
+            }
+       // jc.Stopconnection()
+        }
+        self.web.sentlog(func_name: "Application Will Terminate", errorfromserverorlink: " Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected link : \(self.cf.getSSID())")
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         // Saves changes in the application's managed object context before the application terminates.
         sleep(5)

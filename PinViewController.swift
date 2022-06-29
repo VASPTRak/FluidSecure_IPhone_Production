@@ -6,6 +6,7 @@
 
 import UIKit
 
+
 class PinViewController: UIViewController
 {
     
@@ -16,12 +17,14 @@ class PinViewController: UIViewController
     @IBOutlet var personpinlabel: UILabel!
 
 
-    var stoptimergotostart:Timer = Timer()
+    var Pinstoptimergotostart:Timer = Timer()
     var web = Webservices()
     var sysdata:NSDictionary!
     var cf = Commanfunction()
     var IsSavebuttontapped : Bool = false
     var countfailauth:Int = 0
+    var appisonPersonalpin = true
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,20 +62,35 @@ class PinViewController: UIViewController
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        stoptimergotostart.invalidate()
-        stoptimergotostart = Timer.scheduledTimer(timeInterval: (Double(1)*60), target: self, selector: #selector(PinViewController.gotostart), userInfo: nil, repeats: false)
+        Pinstoptimergotostart.invalidate()
+        Pin.becomeFirstResponder()
+        Pinstoptimergotostart.invalidate()
+        Pinstoptimergotostart = Timer.scheduledTimer(timeInterval: (Double(1)*60), target: self, selector: #selector(PinViewController.gotostart), userInfo: nil, repeats: false)
         Go.isEnabled = true
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        stoptimergotostart.invalidate()
+        Pinstoptimergotostart.invalidate()
         super.viewWillDisappear(animated)
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        Pinstoptimergotostart.invalidate()
+        
+        super.viewWillDisappear(animated)
+        appisonPersonalpin = false
+        Pinstoptimergotostart.invalidate()
     }
     
     @objc func gotostart(){
+        if(appisonPersonalpin == true){
         self.web.sentlog(func_name: "Personalpin_screen_timeout", errorfromserverorlink: "", errorfromapp: "")
         let appDel = UIApplication.shared.delegate! as! AppDelegate
         appDel.start()
+        }
+        else
+        {
+            Pinstoptimergotostart.invalidate()
+        }
     }
     
     @objc func tapAction() {
@@ -96,7 +114,7 @@ class PinViewController: UIViewController
     }
     
     @IBAction func reset(sender: AnyObject) {
-        stoptimergotostart.invalidate()
+        Pinstoptimergotostart.invalidate()
         viewWillAppear(true)
         Pin.text = ""
     }
@@ -106,7 +124,16 @@ class PinViewController: UIViewController
     
     func mainPage()
     {
+        Pinstoptimergotostart.invalidate()
+        if(Vehicaldetails.sharedInstance.HubLinkCommunication == "UDP")
+        {
+            Pinstoptimergotostart.invalidate()
+            self.performSegue(withIdentifier: "GoUDP", sender: self)
+        }
+        else{
+            Pinstoptimergotostart.invalidate()
         self.performSegue(withIdentifier: "Go", sender: self)
+        }
     }
     
     func senddata(other:String)
@@ -118,7 +145,7 @@ class PinViewController: UIViewController
         let vehicle_no = Vehicaldetails.sharedInstance.vehicleno
         countfailauth += 1
         let data = web.vehicleAuth(vehicle_no: vehicle_no,Odometer:odometer!,isdept:deptno,isppin:isppin!,isother:other,Barcodescanvalue:Vehicaldetails.sharedInstance.Barcodescanvalue)
-        let Split = data.components(separatedBy: "#")
+        let Split = data.components(separatedBy: "#@*%*@#")
         let reply = Split[0]
         if (reply == "-1")
         {
@@ -128,7 +155,7 @@ class PinViewController: UIViewController
             }else{
                 self.senddata(other:other)
             }
-            stoptimergotostart.invalidate()
+            Pinstoptimergotostart.invalidate()
             viewWillAppear(true)
         }
         else
@@ -141,6 +168,10 @@ class PinViewController: UIViewController
             }
             
            // print(sysdata)
+            if(sysdata == nil){
+                
+            }
+            else{
             let ResponceMessage = sysdata.value(forKey: "ResponceMessage") as! NSString
             let ResponceText = sysdata.value(forKey: "ResponceText") as! NSString
             let ValidationFailFor = sysdata.value(forKey: "ValidationFailFor") as! NSString
@@ -150,10 +181,12 @@ class PinViewController: UIViewController
             {
                 Activity.stopAnimating()
                 Activity.isHidden = true
+                Pinstoptimergotostart.invalidate()
                 if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()){
-                    if #available(iOS 11.0, *) {
+                    if #available(iOS 12.0, *) {
                         self.web.wifisettings(pagename: "PersonalPin")
-                    } else {
+                    }
+                    else {
                         // Fallback on earlier versions
 
                         let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertController.Style.alert)
@@ -185,7 +218,15 @@ class PinViewController: UIViewController
                         alertController.setValue(attributedString, forKey: "attributedTitle")
                         let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertAction.Style.default){
                             action in
+                            if(Vehicaldetails.sharedInstance.HubLinkCommunication == "UDP")
+                            {
+                                self.Pinstoptimergotostart.invalidate()
+                                self.performSegue(withIdentifier: "GoUDP", sender: self)
+                            }
+                            else{
+                                self.Pinstoptimergotostart.invalidate()
                             self.performSegue(withIdentifier: "Go", sender: self)
+                            }
                         }
                         alertController.addAction(action)
 
@@ -197,7 +238,14 @@ class PinViewController: UIViewController
                 }
                 
                 if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){
+                   
+                    if(Vehicaldetails.sharedInstance.HubLinkCommunication == "UDP")
+                    {
+                        self.performSegue(withIdentifier: "GoUDP", sender: self)
+                    }
+                    else{
                     self.performSegue(withIdentifier: "Go", sender: self)
+                    }
                 }
             }
             else {
@@ -207,29 +255,30 @@ class PinViewController: UIViewController
                     Activity.stopAnimating()
                     Activity.isHidden = true
                     if(ValidationFailFor == "Vehicle") {
-                        stoptimergotostart.invalidate()
+                        Pinstoptimergotostart.invalidate()
                         self.performSegue(withIdentifier: "Vehicle", sender: self)
                         
                     }else if(ValidationFailFor == "Dept")
                     {
-                        stoptimergotostart.invalidate()
+                        Pinstoptimergotostart.invalidate()
                         self.performSegue(withIdentifier: "Dept", sender: self)
                     }else if(ValidationFailFor == "Odo")
                     {
-                        stoptimergotostart.invalidate()
+                        Pinstoptimergotostart.invalidate()
                         self.performSegue(withIdentifier: "Odo", sender: self)
                     }
                     showAlert(message: "\(ResponceText)")
-                    stoptimergotostart.invalidate()
+                    Pinstoptimergotostart.invalidate()
                 }
             }
+        }
         }
     }
     
     func Action(sender:UIButton!)
     {
         self.dismiss(animated: true, completion: nil)
-        if #available(iOS 11.0, *) {
+        if #available(iOS 12.0, *) {
             self.web.wifisettings(pagename: "PersonalPin")
         } else {
             // Fallback on earlier versions
@@ -240,23 +289,25 @@ class PinViewController: UIViewController
     @IBAction func saveButtontapped(sender: AnyObject) {
         Activity.startAnimating()
         Activity.isHidden = false
-       
-        cf.delay(1){
+        Pinstoptimergotostart.invalidate()
+        Go.isEnabled = false
+            delay(1){
             self.IsSavebuttontapped = true
-            self.stoptimergotostart.invalidate()
+            self.Pinstoptimergotostart.invalidate()
+                
 
             self.tapAction()
             if(self.Pin.text == "")
             {
                 if(Vehicaldetails.sharedInstance.Language == "es-ES")
                 {
-                   self.showAlert(message: NSLocalizedString("EnterPin", comment:""))
+                    self.showAlert(message: NSLocalizedString("EnterPin", comment:""))
                 }
                 else{
-                self.showAlert(message:"Please Enter \(Vehicaldetails.sharedInstance.ScreenNameForPersonnel) Pin")
+                    self.showAlert(message:"Please Enter \(Vehicaldetails.sharedInstance.ScreenNameForPersonnel) Pin")
                 }
 
-                self.stoptimergotostart.invalidate()
+                self.Pinstoptimergotostart.invalidate()
                 self.viewWillAppear(true)
                 self.Activity.stopAnimating()
                 self.Activity.isHidden = true
@@ -271,7 +322,7 @@ class PinViewController: UIViewController
                 if(isother == "True")
                 { self.Activity.stopAnimating()
                     self.Activity.isHidden = true
-                    self.stoptimergotostart.invalidate()
+                    self.Pinstoptimergotostart.invalidate()
                     self.Go.isEnabled = false
                     self.performSegue(withIdentifier: "other", sender: self)
                 }

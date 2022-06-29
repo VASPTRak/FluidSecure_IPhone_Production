@@ -16,22 +16,35 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
     @IBOutlet weak var registerButton: UIButton!
     @IBOutlet var firstNameTextField: UITextField!
     @IBOutlet var Company_Name: UITextField!
-    @IBOutlet var checked: UIButton!
-    @IBOutlet var unchecked: UIButton!
+//    @IBOutlet var checked: UIButton!
+//    @IBOutlet var unchecked: UIButton!
+    @IBOutlet weak var activityindicator: UIActivityIndicatorView!
     var web = Webservices()
     var sysdata:NSDictionary!
     let locationManager = CLLocationManager()
     var currentlocation :CLLocation!
     let defaults = UserDefaults.standard
     var checkedstatus: Bool = false
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        print(Vehicaldetails.sharedInstance.Language)
+        activityindicator.isHidden = true
         version.text = "Version \(Version)"
         if(Vehicaldetails.sharedInstance.Language == "es-ES"){
             itembarbutton.title = "English"
-        }else  if(Vehicaldetails.sharedInstance.Language == ""){
+                    placeholderdata(name: "Ingrese su nombre completo", textfield: firstNameTextField)
+                    placeholderdata(name: "Introducir la dirección de correo electrónico", textfield: emailTextField)
+                    placeholderdata(name: "Ingrese el número de celular", textfield: mobileNoTextField)
+                    placeholderdata(name: "Ingrese el nombre de la empresa", textfield: Company_Name)
+
+        }else  if(Vehicaldetails.sharedInstance.Language == "") ||  (Vehicaldetails.sharedInstance.Language == "en-US"){
             itembarbutton.title = "Spanish"
+                    placeholderdata(name: "Enter Full Name", textfield: firstNameTextField)
+                    placeholderdata(name: "Enter Email Address", textfield: emailTextField)
+                    placeholderdata(name: "Enter Mobile Number", textfield: mobileNoTextField)
+                    placeholderdata(name: "Enter Company Name", textfield: Company_Name)
+
         }
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
@@ -40,12 +53,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
         currentlocation = locationManager.location
         mobileNoTextField.delegate = self
         self.registerButton.layer.cornerRadius = 5
-        checked.isHidden = true
-
-        placeholderdata(name: "Enter Full Name", textfield: firstNameTextField)
-        placeholderdata(name: "Enter Email Address", textfield: emailTextField)
-        placeholderdata(name: "Enter Mobile Number", textfield: mobileNoTextField)
-        placeholderdata(name: "Enter Company Name", textfield: Company_Name)
+//        checked.isHidden = true
 
     }
 
@@ -59,34 +67,65 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        self.navigationController?.navigationBar.barTintColor = UIColor(red: 31.0/255.0, green: 77.0/255.0, blue: 153.0/255.0, alpha: 1.0)//UIColor.blueColor()
-        self.navigationController?.navigationBar.tintColor = UIColor.white
-        self.navigationController!.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        if #available(iOS 13.0, *) {
+            let appearance = UINavigationBarAppearance()
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = UIColor(red: 31.0/255.0, green: 77.0/255.0, blue: 153.0/255.0, alpha: 1.0)
+            appearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.white]
+            let textAttributes = [NSAttributedString.Key.foregroundColor:UIColor.white]
+            navigationController?.navigationBar.titleTextAttributes = textAttributes
+            
+            self.navigationController?.navigationBar.tintColor = UIColor.white
+            self.navigationController!.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+            let attrs: [NSAttributedString.Key: Any] = [
+                .foregroundColor: UIColor.white,
+                .font: UIFont.monospacedSystemFont(ofSize: 20, weight: .black)
+            ]
+            appearance.largeTitleTextAttributes = attrs
+            navigationController?.navigationBar.standardAppearance = appearance
+            navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        } else {
+                    self.navigationController?.navigationBar.barTintColor = UIColor(red: 31.0/255.0, green: 77.0/255.0, blue: 153.0/255.0, alpha: 1.0)
+                    self.navigationController?.navigationBar.tintColor = UIColor.white
+                    self.navigationController!.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        }
+    
+//        self.navigationController?.navigationBar.barTintColor = UIColor(red: 31.0/255.0, green: 77.0/255.0, blue: 153.0/255.0, alpha: 1.0)//UIColor.blueColor()
+//        self.navigationController?.navigationBar.tintColor = UIColor.white
+//        self.navigationController!.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
     }
 
 
-
     override func didReceiveMemoryWarning() {
+        
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
 
     @IBAction func registerButtonClicked(sender: AnyObject) {
+        activityindicator.isHidden = false
+        activityindicator.startAnimating()
         self.registerUser()
     }
 
-    func register(){
-        let uuid:String //= //UIDevice.current.identifierForVendor!.uuidString
-       
-        let password = KeychainService.loadPassword()
-        if(password == nil){
-             uuid = UIDevice.current.identifierForVendor!.uuidString
-            KeychainService.savePassword(token: uuid as NSString)
 
-        }
-        else{
-            uuid = password! as String
-        }
+    func register(){
+//        var uuid:String //= //UIDevice.current.identifierForVendor!.uuidString
+        var uuid = UUID().uuidString
+        KeychainService.savePassword(token: uuid as NSString)
+        //activityindicator.sizeToFit()
+        activityindicator.isHidden = false
+        activityindicator.startAnimating()
+        
+//        let password = KeychainService.loadPassword()
+//        if(password == nil){
+//             uuid = UIDevice.current.identifierForVendor!.uuidString
+//            KeychainService.savePassword(token: uuid as NSString)
+//
+//        }
+//        else{
+//            uuid = password! as String
+//        }
         let Name = firstNameTextField.text
         let Email = emailTextField.text
         let string = uuid + ":" + Email! + ":" + "Register" + ":" + "\(Vehicaldetails.sharedInstance.Language)"
@@ -96,10 +135,11 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
         let data = web.registration(Name: Name!,Email:Email!,Base64:Base64,mobile:mobile!,uuid:uuid,company:Companyname!)
         let Split = data.components(separatedBy: "#")
         let reply = Split[0]
-        _ = Split[1]
+       // _ = Split[1]
 
         print(reply)
-        if(reply == "-1"){showAlert(message: NSLocalizedString("NoInternet", comment:""))
+        if(reply == "-1"){
+            showAlert(message: NSLocalizedString("NoInternet", comment:"") )
 
         }//"Internet connection is not available.\(error)")}
         else {
@@ -110,7 +150,10 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                 print ("Error: \(error.domain)")
             }
             //print(sysdata)
-
+            if(sysdata == nil){
+                
+            }
+            else{
             let ResponceData = sysdata.value(forKey: "ResponceData") as! NSDictionary
             let MinLimit = ResponceData.value(forKey: "MinLimit") as! NSNumber
             let PulseRatio = ResponceData.value(forKey: "PulseRatio") as! NSNumber
@@ -124,28 +167,44 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
             let ResponseText = sysdata["ResponceText"] as! NSString
 
             defaults.set(firstNameTextField.text, forKey: "firstName")
-            defaults.set(mobileNoTextField.text, forKey: "address")
-            defaults.set(emailTextField.text, forKey: "mobile")
-            defaults.set(uuid, forKey: "uuid")
+            defaults.set(mobileNoTextField.text, forKey: "mobile")
+            defaults.set(emailTextField.text, forKey: "address")
+            //defaults.set(uuid, forKey: "uuid")
+            defaults.set(uuid,forKey: "\(brandname)")
+            
+            
+            if(brandname == "FluidSecure"){
+            if(defaults.string(forKey: "\(brandname)") != nil) {
+                uuid = defaults.string(forKey: "\(brandname)")!//UUID().uuidString
+            }
+                KeychainService.savePassword(token: uuid as NSString)
+            }
 
             if(Message == "success") {
-                showAlert(message: "\(ResponseText)")
+                showAlert(message: "\(ResponseText)" )
                 defaults.set(0, forKey: "Login")
                 defaults.set(1, forKey: "Register")
                 let appDel = UIApplication.shared.delegate! as! AppDelegate
                 appDel.start()
             }
             else if(Message == "fail") {
-                self.showAlert(message: "\(ResponseText)")
+                self.showAlert(message: "\(ResponseText)" )
+                activityindicator.isHidden = true
+                activityindicator.stopAnimating()
                 if(ResponseText == "Please enter valid company.")
                 {
-                    self.showAlert(message: "\(ResponseText)")
+                    self.showAlert(message: "\(ResponseText)" )
+                    activityindicator.stopAnimating()
+                    activityindicator.isHidden = true
                 }
             }
             else
             {
-                showAlert(message: NSLocalizedString("Checkinternet", comment:""))//"Please check your check your internet connection or Please contact your admin.")
+                activityindicator.isHidden = true
+                activityindicator.stopAnimating()
+                showAlert(message: NSLocalizedString("Checkinternet", comment:"") )//"Please check your check your internet connection or Please contact your admin.")
             }
+        }
         }
     }
 
@@ -168,19 +227,21 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
 
 
     func registerUser()  {
-        print(checkedstatus)
-        if(checkedstatus == true){
-            let email_id = isValidEmail(testStr: emailTextField.text!)
-            if(email_id != false){
-                register()
-            }
-            else{
-                showAlert(message: NSLocalizedString("checkEmail", comment:""))//"please enter valid email.")
-            }
-        }
-        else if(checkedstatus == false){
+//        print(checkedstatus)
+//        if(checkedstatus == true){
+//            let email_id = isValidEmail(testStr: emailTextField.text!)
+//            if(email_id != false){
+//                register()
+//            }
+//            else{
+//                showAlert(message: NSLocalizedString("checkEmail", comment:"") )//"please enter valid email.")
+//            }
+//        }
+//        else if(checkedstatus == false){
             if(firstNameTextField.text == "" || mobileNoTextField.text == "" ||  emailTextField.text == "" || Company_Name.text == "") {
-                showAlert(message: NSLocalizedString("SelectallFields", comment:""))//"Please Select All Fields.")
+                showAlert(message: NSLocalizedString("SelectallFields", comment:"") )//"Please Select All Fields.")
+                activityindicator.stopAnimating()
+                activityindicator.isHidden = true
 
             }
             else
@@ -194,38 +255,42 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                     }
                     else
                     {
-                        showAlert(message: NSLocalizedString("ValidPhone", comment:""))//"Please enter valid Phone number.")
+                        showAlert(message: NSLocalizedString("ValidPhone", comment:"") )//"Please enter valid Phone number.")
+                        activityindicator.stopAnimating()
+                        activityindicator.isHidden = true
                     }
                 }
                 else{
-                    showAlert(message: NSLocalizedString("checkEmail", comment:""))//"please enter valid email.")
+                    showAlert(message: NSLocalizedString("checkEmail", comment:"") )//"please enter valid email.")
+                    activityindicator.stopAnimating()
+                    activityindicator.isHidden = true
                 }
             }
-        }
+        //}
     }
 
-    @IBAction func uncheckedButtontapped(sender: AnyObject) {
-        checked.isHidden = false
-        unchecked.isHidden = true
-        firstNameTextField.isHidden = true
-        mobileNoTextField.isHidden = true
-        Company_Name.isHidden = true
-        checkedstatus = true
-    }
-
-    @IBAction func Checkedbuttontapped(sender: AnyObject) {
-        checked.isHidden = true
-        unchecked.isHidden = false
-        firstNameTextField.isHidden = false
-        mobileNoTextField.isHidden = false
-        Company_Name.isHidden = false
-        checkedstatus = false
-    }
+//    @IBAction func uncheckedButtontapped(sender: AnyObject) {
+//        checked.isHidden = false
+//        unchecked.isHidden = true
+//        firstNameTextField.isHidden = true
+//        mobileNoTextField.isHidden = true
+//        Company_Name.isHidden = false
+//        checkedstatus = true
+//    }
+//
+//    @IBAction func Checkedbuttontapped(sender: AnyObject) {
+//        checked.isHidden = true
+//        unchecked.isHidden = false
+//        firstNameTextField.isHidden = false
+//        mobileNoTextField.isHidden = false
+//        Company_Name.isHidden = false
+//        checkedstatus = false
+//    }
 
     func isValidEmail(testStr:String) -> Bool {
         if(testStr == "")
         {
-            showAlert(message: NSLocalizedString("checkEmail", comment:""))
+            showAlert(message: NSLocalizedString("checkEmail", comment:"") )
             return true
         }
         let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}"
@@ -235,15 +300,19 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
     }
 
     func validatephone(testStr:String) -> Bool {
+        if(mobileNoTextField.text!.trimmingCharacters(in: .whitespacesAndNewlines) == ""){}
+               else{
         if(mobileNoTextField.text!.count > 15) {
             return false
         }
         else if(mobileNoTextField.text!.count <=  15) {
-
+           
             let PHONE_REGEX = "^[- +()0-9]*$"
             let phoneTest = NSPredicate(format: "SELF MATCHES %@", PHONE_REGEX)
             let result =  phoneTest.evaluate(with: testStr)
             return result
+        }
+            
         }
         return false
     }

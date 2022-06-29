@@ -6,14 +6,16 @@
 
 import UIKit
 
+
 class DeptViewController: UIViewController,UITextFieldDelegate {
 
     @IBOutlet var oview: UIView!
     @IBOutlet var Dept: UITextField!
     @IBOutlet weak var Activity: UIActivityIndicatorView!  ///ActivityIndicator
+    @IBOutlet var Deptlabel: UILabel!
     @IBOutlet var GO: UIButton!
 
-    var stoptimergotostart:Timer = Timer()
+    var Deptstoptimergotostart:Timer = Timer()
     var web = Webservices()
     var sysdata:NSDictionary!
     var dept_data:NSDictionary!
@@ -21,6 +23,7 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
     var IsSavebuttontapped : Bool = false
     var countfailauth:Int = 0
     var counthourauth:Int = 0
+    var appisondept = true
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,13 +32,30 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
         Dept.delegate = self
         Dept.font = UIFont(name: Dept.font!.fontName, size: 40)
         Dept.text =  Vehicaldetails.sharedInstance.deptno
-
+        Deptlabel.text = "Enter " + "\(Vehicaldetails.sharedInstance.ScreenNameForDepartment)"
         var myMutableStringTitle = NSMutableAttributedString()
-        var Name  = "Enter Department" // PlaceHolderText
+        
         if(Vehicaldetails.sharedInstance.Language == "es-ES")
         {
-            Name = "Ingresar departamento"
+            Dept.text = "Ingresar " + "\(Vehicaldetails.sharedInstance.ScreenNameForDepartment)"
         }
+        else{
+//            Dept.text = "Enter " + "\(Vehicaldetails.sharedInstance.ScreenNameForDepartment)"
+        }
+       
+         var Name = "Enter " + "\(Vehicaldetails.sharedInstance.ScreenNameForDepartment)"
+        if(Vehicaldetails.sharedInstance.Language == "es-ES")
+        {
+             Name = "Ingresar" + "\(Vehicaldetails.sharedInstance.ScreenNameForDepartment)"
+        }
+        else{
+         Name = "Enter " + "\(Vehicaldetails.sharedInstance.ScreenNameForDepartment)"
+        }
+//        var Name  = "Enter Department" // PlaceHolderText
+//        if(Vehicaldetails.sharedInstance.Language == "es-ES")
+//        {
+//            Name = "Ingresar departamento"
+//        }
         myMutableStringTitle = NSMutableAttributedString(string:Name, attributes: [NSAttributedString.Key.font:UIFont(name: "Georgia", size: 30.0)!]) // Font
         myMutableStringTitle.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white, range:NSRange(location:0,length:Name.count))    // Color
         Dept.attributedPlaceholder = myMutableStringTitle
@@ -51,20 +71,35 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        stoptimergotostart.invalidate()
-        stoptimergotostart = Timer.scheduledTimer(timeInterval: (Double(1)*60), target: self, selector: #selector(DeptViewController.gotostart), userInfo: nil, repeats: false)
+        Dept.becomeFirstResponder()
+        Deptstoptimergotostart.invalidate()
+        Deptstoptimergotostart = Timer.scheduledTimer(timeInterval: (Double(1)*60), target: self, selector: #selector(DeptViewController.gotostart), userInfo: nil, repeats: false)
         GO.isEnabled = true
     }
 
     override func viewWillDisappear(_ animated: Bool) {
-        stoptimergotostart.invalidate()
+        Deptstoptimergotostart.invalidate()
         super.viewWillDisappear(animated)
+        appisondept = false
+        Deptstoptimergotostart.invalidate()
     }
 
+    override func viewDidDisappear(_ animated: Bool) {
+        Deptstoptimergotostart.invalidate()
+        super.viewWillDisappear(animated)
+        appisondept = false
+        Deptstoptimergotostart.invalidate()
+    }
     @objc func gotostart(){
+        if(appisondept == true){
         self.web.sentlog(func_name: "Department_screen_timeout", errorfromserverorlink: "", errorfromapp: "")
         let appDel = UIApplication.shared.delegate! as! AppDelegate
         appDel.start()
+        }
+        else
+        {
+            Deptstoptimergotostart.invalidate()
+        }
     }
 
     @objc func tapAction() {
@@ -89,7 +124,7 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
     }
 
     @IBAction func reset(sender: AnyObject) {
-        stoptimergotostart.invalidate()
+        Deptstoptimergotostart.invalidate()
         viewWillAppear(true)
         Dept.text = ""
     }
@@ -98,7 +133,15 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
 
     func mainPage()
     {
+        if(Vehicaldetails.sharedInstance.HubLinkCommunication == "UDP")
+        {
+            Deptstoptimergotostart.invalidate()
+            self.performSegue(withIdentifier: "GoUDP", sender: self)
+        }
+        else{
+            Deptstoptimergotostart.invalidate()
         self.performSegue(withIdentifier: "Go", sender: self)
+        }
     }
 
     func senddata(ppin:String,other:String)
@@ -109,7 +152,7 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
         let vehicle_no = Vehicaldetails.sharedInstance.vehicleno
         countfailauth += 1
         let data = web.vehicleAuth(vehicle_no: vehicle_no,Odometer:odometer,isdept:isdept!,isppin:ppin,isother:other,Barcodescanvalue:Vehicaldetails.sharedInstance.Barcodescanvalue)
-        let Split = data.components(separatedBy: "#")
+        let Split = data.components(separatedBy: "#@*%*@#")
         let reply = Split[0]
         if (reply == "-1")
         {
@@ -121,7 +164,7 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
             }else{
                 self.senddata(ppin:ppin,other:other)
             }
-            stoptimergotostart.invalidate()
+            Deptstoptimergotostart.invalidate()
             viewWillAppear(true)
         }
         else
@@ -134,6 +177,10 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
                 print ("Error: \(error.domain)")
             }
           //  print(sysdata)
+            if(sysdata == nil){
+                
+            }
+            else{
             let ResponceMessage = sysdata.value(forKey: "ResponceMessage") as! NSString
             let ResponceText = sysdata.value(forKey: "ResponceText") as! NSString
             let ValidationFailFor = sysdata.value(forKey: "ValidationFailFor") as! NSString
@@ -144,9 +191,10 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
                 self.Activity.isHidden = true
                 if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()){
 
-                    if #available(iOS 11.0, *) {
+                    if #available(iOS 12.0, *) {
                         self.web.wifisettings(pagename: "Department")
-                    } else {
+                    }
+                    else {
                         // Fallback on earlier versions
 
                         let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertController.Style.alert)
@@ -179,7 +227,13 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
 
                         let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertAction.Style.default){
                             action in
+                            if(Vehicaldetails.sharedInstance.HubLinkCommunication == "UDP")
+                            {
+                                self.performSegue(withIdentifier: "GoUDP", sender: self)
+                            }
+                            else{
                             self.performSegue(withIdentifier: "Go", sender: self)
+                            }
                         }
                         alertController.addAction(action)
 
@@ -189,7 +243,13 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
                 }
 
                 if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){
+                    if(Vehicaldetails.sharedInstance.HubLinkCommunication == "UDP")
+                    {
+                        self.performSegue(withIdentifier: "GoUDP", sender: self)
+                    }
+                    else{
                     self.performSegue(withIdentifier: "Go", sender: self)
+                    }
                 }
             }
             else {
@@ -199,30 +259,31 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
                     self.Activity.stopAnimating()
                     self.Activity.isHidden = true
                     if(ValidationFailFor == "Vehicle") {
-                        stoptimergotostart.invalidate()
+                        Deptstoptimergotostart.invalidate()
                         self.performSegue(withIdentifier: "Vehicle", sender: self)
 
                     }else if(ValidationFailFor == "Odo")
                     {
-                        stoptimergotostart.invalidate()
+                        Deptstoptimergotostart.invalidate()
                         self.performSegue(withIdentifier: "Odo", sender: self)
                     }
                     else if(ValidationFailFor == "Pin")
                     {
-                        stoptimergotostart.invalidate()
+                        Deptstoptimergotostart.invalidate()
                         self.performSegue(withIdentifier: "pin", sender: self)
                     }
                     showAlert(message: "\(ResponceText)")
-                    stoptimergotostart.invalidate()
+                    Deptstoptimergotostart.invalidate()
                 }
             }
+        }
         }
     }
 
     func Action(sender:UIButton!)
     {
         self.dismiss(animated: true, completion: nil)
-        if #available(iOS 11.0, *) {
+        if #available(iOS 12.0, *) {
             self.web.wifisettings(pagename: "Department")
         } else {
             // Fallback on earlier versions
@@ -245,12 +306,12 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
             }
             else
             {
-                cf.delay(1){
+                delay(1){
                     _ = self.validatedepartmentno()
                 }
             }
             showAlert(message: NSLocalizedString("Warningwait", comment:""))
-            stoptimergotostart.invalidate()
+            Deptstoptimergotostart.invalidate()
             viewWillAppear(true)
         }
         else
@@ -263,7 +324,7 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
                 print ("Error: \(error.domain)")
             }
 
-           // print(dept_data)
+            //print(dept_data)
             let ResponceMessage = dept_data.value(forKey: "ResponceMessage") as! NSString
             let ResponceText = dept_data.value(forKey: "ResponceText") as! NSString
             if(ResponceMessage == "success")
@@ -282,16 +343,24 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
         Activity.startAnimating()
         Activity.isHidden = false
         GO.isEnabled = false
-        cf.delay(1){
+        delay(1){
             self.IsSavebuttontapped = true
-            self.stoptimergotostart.invalidate()
+            self.Deptstoptimergotostart.invalidate()
             self.tapAction()
             if(self.Dept.text == "")
             {
-                self.showAlert(message: NSLocalizedString("Enterdept", comment:""))
+                if(Vehicaldetails.sharedInstance.Language == "es-ES")
+                {
+                    self.showAlert(message: NSLocalizedString("Enterdept", comment:""))
+                }
+                else{
+                    self.showAlert(message:"Please Enter \(Vehicaldetails.sharedInstance.ScreenNameForDepartment) ")
+                }
+
+                
                 self.Activity.stopAnimating()
                 self.Activity.isHidden = true
-                self.stoptimergotostart.invalidate()
+                self.Deptstoptimergotostart.invalidate()
                 self.viewWillAppear(true)
             }
             else {
@@ -306,14 +375,14 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
                     if(isPPin == "True"){
                         self.Activity.stopAnimating()
                         self.Activity.isHidden = true
-                        self.stoptimergotostart.invalidate()
+                        self.Deptstoptimergotostart.invalidate()
                         self.performSegue(withIdentifier: "pin", sender: self)
                     }
                     else{
                         if(isother == "True"){
                             self.Activity.stopAnimating()
                             self.Activity.isHidden = true
-                            self.stoptimergotostart.invalidate()
+                            self.Deptstoptimergotostart.invalidate()
                             self.performSegue(withIdentifier: "other", sender: self)
                         }
                         else{

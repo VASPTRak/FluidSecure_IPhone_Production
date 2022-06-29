@@ -7,9 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1842670F2657833E00C6B7A7 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA1015C321C2977F00E2174C /* KeychainService.swift */; };
+		18665770269C1BCA00F82C15 /* BLECommunication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1866576F269C1BCA00F82C15 /* BLECommunication.swift */; };
+		186CB7A726948A0B0026B5BE /* Ding.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 186CB7A626948A0B0026B5BE /* Ding.mp3 */; };
+		18861696258C90F0004CF056 /* CompanyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18861695258C90F0004CF056 /* CompanyViewController.swift */; };
+		18C883E525A5EBC900C9A231 /* FuelquantityVCUDP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C883E425A5EBC900C9A231 /* FuelquantityVCUDP.swift */; };
+		18F9DD79259DCD5B00918791 /* UDPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18F9DD78259DCD5B00918791 /* UDPClient.swift */; };
 		DA0529CF22BA3B0600675743 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA0529CE22BA3B0600675743 /* ExternalAccessory.framework */; };
 		DA0BA0751D8971E00050831C /* commanfunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0BA0741D8971E00050831C /* commanfunction.swift */; };
-		DA1015C421C2977F00E2174C /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA1015C321C2977F00E2174C /* KeychainService.swift */; };
 		DA15066A20DA24630077288C /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA15066920DA24620077288C /* NetworkExtension.framework */; };
 		DA26F43920EE106400CABF4E /* BundleEx.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA26F43820EE106400CABF4E /* BundleEx.swift */; };
 		DA29DE3B2101AD2A00B9F77D /* PreauthStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DA29DE3D2101AD2A00B9F77D /* PreauthStoryboard.storyboard */; };
@@ -54,7 +59,6 @@
 		DAC3E4981E1D20F60012E65F /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAC3E4971E1D20F60012E65F /* LoginViewController.swift */; };
 		DAC41CEB2136A14D00B1B9C1 /* TCPcommunication.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAC41CEA2136A14D00B1B9C1 /* TCPcommunication.swift */; };
 		DAC41CED2136CDE100B1B9C1 /* Sync_UnsyncTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAC41CEC2136CDE100B1B9C1 /* Sync_UnsyncTransaction.swift */; };
-		DACD13461E924F6D002784CC /* fuel_secure_lock.png in Resources */ = {isa = PBXBuildFile; fileRef = DACD13451E924F6D002784CC /* fuel_secure_lock.png */; };
 		DAD5CB1A221FFC3900CE163D /* iconfinder_barcode_scanner_172089.png in Resources */ = {isa = PBXBuildFile; fileRef = DAD5CB19221FFC3800CE163D /* iconfinder_barcode_scanner_172089.png */; };
 		DAD5CB1C221FFD3300CE163D /* ScanbarcodeviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD5CB1B221FFD3300CE163D /* ScanbarcodeviewController.swift */; };
 		DAE2E4411F0678C1004A9480 /* HourViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE2E4401F0678C1004A9480 /* HourViewController.swift */; };
@@ -85,6 +89,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		18F1FDA02615EE8700A5A50C /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DA71DAA51CA9339B00AD06DD /* Embed App Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -98,6 +112,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		181D40042621AE8B0093D7C9 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS7.2.sdk/System/Library/Frameworks/NetworkExtension.framework; sourceTree = DEVELOPER_DIR; };
+		1866576F269C1BCA00F82C15 /* BLECommunication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLECommunication.swift; sourceTree = "<group>"; };
+		186CB7A626948A0B0026B5BE /* Ding.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Ding.mp3; sourceTree = "<group>"; };
+		18861695258C90F0004CF056 /* CompanyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyViewController.swift; sourceTree = "<group>"; };
+		18C883E425A5EBC900C9A231 /* FuelquantityVCUDP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FuelquantityVCUDP.swift; sourceTree = "<group>"; };
+		18F9DD78259DCD5B00918791 /* UDPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UDPClient.swift; sourceTree = "<group>"; };
 		DA0529CE22BA3B0600675743 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
 		DA0BA0741D8971E00050831C /* commanfunction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = commanfunction.swift; sourceTree = "<group>"; };
 		DA1015C321C2977F00E2174C /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
@@ -162,7 +182,6 @@
 		DAC3E4971E1D20F60012E65F /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		DAC41CEA2136A14D00B1B9C1 /* TCPcommunication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPcommunication.swift; sourceTree = "<group>"; };
 		DAC41CEC2136CDE100B1B9C1 /* Sync_UnsyncTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync_UnsyncTransaction.swift; sourceTree = "<group>"; };
-		DACD13451E924F6D002784CC /* fuel_secure_lock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fuel_secure_lock.png; path = FuelSecuer/Assets.xcassets/fuel_secure_lock.png; sourceTree = "<group>"; };
 		DAD5CB19221FFC3800CE163D /* iconfinder_barcode_scanner_172089.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconfinder_barcode_scanner_172089.png; sourceTree = SOURCE_ROOT; };
 		DAD5CB1B221FFD3300CE163D /* ScanbarcodeviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanbarcodeviewController.swift; sourceTree = "<group>"; };
 		DAE2E4401F0678C1004A9480 /* HourViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HourViewController.swift; sourceTree = "<group>"; };
@@ -219,7 +238,6 @@
 				DAE2E4421F0678EC004A9480 /* DeptViewController.swift */,
 				DAE2E4401F0678C1004A9480 /* HourViewController.swift */,
 				DAF9DFA31EEFCD5A00D70BD0 /* LaunchScreenvc.swift */,
-				DACD13451E924F6D002784CC /* fuel_secure_lock.png */,
 				DA5DB9801CF8249A00C9A90E /* Wifidetails+CoreDataProperties.swift */,
 				DA5DB9811CF8249A00C9A90E /* Wifidetails.swift */,
 				DA71DA641CA9078500AD06DD /* FuelSecure */,
@@ -243,6 +261,7 @@
 		DA71DA641CA9078500AD06DD /* FuelSecure */ = {
 			isa = PBXGroup;
 			children = (
+				186CB7A626948A0B0026B5BE /* Ding.mp3 */,
 				DAD5CB19221FFC3800CE163D /* iconfinder_barcode_scanner_172089.png */,
 				DA30BEB81F73FE8D00004336 /* FuelSecure.entitlements */,
 				DAEC17281F4ECC0300714D1A /* Button-Green.png */,
@@ -262,6 +281,7 @@
 				DA71DA651CA9078500AD06DD /* AppDelegate.swift */,
 				DA71DA691CA9078500AD06DD /* Main.storyboard */,
 				DA71DA671CA9078500AD06DD /* ViewController.swift */,
+				18861695258C90F0004CF056 /* CompanyViewController.swift */,
 				DAC3E4971E1D20F60012E65F /* LoginViewController.swift */,
 				DA71DAA81CA93CD400AD06DD /* VehiclenoVC.swift */,
 				DA71DA6F1CA9078500AD06DD /* Assets.xcassets */,
@@ -286,6 +306,9 @@
 				DAF48A3D21DF418400B5810E /* Last10Transactions.swift */,
 				DAD5CB1B221FFD3300CE163D /* ScanbarcodeviewController.swift */,
 				DA82ACFD22EC33560084B4B3 /* OtherVehicleViewController.swift */,
+				18F9DD78259DCD5B00918791 /* UDPClient.swift */,
+				18C883E425A5EBC900C9A231 /* FuelquantityVCUDP.swift */,
+				1866576F269C1BCA00F82C15 /* BLECommunication.swift */,
 			);
 			name = FuelSecure;
 			path = FuelSecuer;
@@ -312,6 +335,7 @@
 		DAA9164820860130006A5F27 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				181D40042621AE8B0093D7C9 /* NetworkExtension.framework */,
 				DA0529CE22BA3B0600675743 /* ExternalAccessory.framework */,
 				DA15066920DA24620077288C /* NetworkExtension.framework */,
 			);
@@ -329,6 +353,7 @@
 				DA71DA5F1CA9078500AD06DD /* Frameworks */,
 				DA71DA601CA9078500AD06DD /* Resources */,
 				DA71DAA51CA9339B00AD06DD /* Embed App Extensions */,
+				18F1FDA02615EE8700A5A50C /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
@@ -381,7 +406,7 @@
 		DA71DA5A1CA9078500AD06DD /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0730;
+				LastSwiftUpdateCheck = 1240;
 				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = VASP;
 				TargetAttributes = {
@@ -454,13 +479,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				186CB7A726948A0B0026B5BE /* Ding.mp3 in Resources */,
 				DAF349B020BD7F8900236AF9 /* Localizable.strings in Resources */,
 				DA9F948D1F14FF9200BFE62B /* WiFI.png in Resources */,
 				DAEC17291F4ECC0300714D1A /* Button-Green.png in Resources */,
 				DA4BAF981CAD3334002A5C63 /* Button-Yellow.png in Resources */,
 				DA9F948A1F14F42E00BFE62B /* checkbox-checked.png in Resources */,
 				DA71DA731CA9078500AD06DD /* LaunchScreen.storyboard in Resources */,
-				DACD13461E924F6D002784CC /* fuel_secure_lock.png in Resources */,
 				DA29DE3B2101AD2A00B9F77D /* PreauthStoryboard.storyboard in Resources */,
 				DA4BAF991CAD3334002A5C63 /* Table-F.png in Resources */,
 				DA71DA701CA9078500AD06DD /* Assets.xcassets in Resources */,
@@ -508,11 +533,13 @@
 				DAE2E4431F0678EC004A9480 /* DeptViewController.swift in Sources */,
 				DA30BEB71F739F9600004336 /* transid.swift in Sources */,
 				DA62827B1CF2CD770057D1CF /* Fuelsecure.m in Sources */,
+				18861696258C90F0004CF056 /* CompanyViewController.swift in Sources */,
 				DA5DB9831CF8249A00C9A90E /* Wifidetails.swift in Sources */,
 				DA4BAF9D1CAD47C7002A5C63 /* Vehicaldetails.swift in Sources */,
 				DA9444631F7398E1006F9804 /* PreauthFuelquantity.swift in Sources */,
 				DA71DA6E1CA9078500AD06DD /* FuelSecuer.xcdatamodeld in Sources */,
 				DA7A40A81F7633AF00D889D6 /* Transaction_id.swift in Sources */,
+				18665770269C1BCA00F82C15 /* BLECommunication.swift in Sources */,
 				DA434DA51F692FEC00FF83E1 /* PreauthVehicleVC.swift in Sources */,
 				DAC41CEB2136A14D00B1B9C1 /* TCPcommunication.swift in Sources */,
 				DA6282761CF2CCF60057D1CF /* Webservices.swift in Sources */,
@@ -525,13 +552,15 @@
 				DA71DAA91CA93CD400AD06DD /* VehiclenoVC.swift in Sources */,
 				DAC41CED2136CDE100B1B9C1 /* Sync_UnsyncTransaction.swift in Sources */,
 				DA82ACFE22EC33560084B4B3 /* OtherVehicleViewController.swift in Sources */,
-				DA1015C421C2977F00E2174C /* KeychainService.swift in Sources */,
 				DA30BEB51F739ED000004336 /* Transactionid.swift in Sources */,
+				18F9DD79259DCD5B00918791 /* UDPClient.swift in Sources */,
 				DAF9DFA41EEFCD5A00D70BD0 /* LaunchScreenvc.swift in Sources */,
+				1842670F2657833E00C6B7A7 /* KeychainService.swift in Sources */,
 				DAC3E4981E1D20F60012E65F /* LoginViewController.swift in Sources */,
 				DA71DA661CA9078500AD06DD /* AppDelegate.swift in Sources */,
 				DA497B2D1CEC841F0058E218 /* RegisterTableViewController.swift in Sources */,
 				DA4BAF8F1CAD0652002A5C63 /* FuelquantityVC.swift in Sources */,
+				18C883E525A5EBC900C9A231 /* FuelquantityVCUDP.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -641,8 +670,9 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 398Q9X5345;
+				ENABLE_ON_DEMAND_RESOURCES = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
+				ENABLE_TESTABILITY = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -659,7 +689,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_PKGINFO_FILE = YES;
 				INFOPLIST_FILE = FuelSecuer/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRIVATE_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/PrivateHeaders";
@@ -708,6 +738,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 398Q9X5345;
 				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_ON_DEMAND_RESOURCES = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -719,7 +750,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_PKGINFO_FILE = YES;
 				INFOPLIST_FILE = FuelSecuer/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRIVATE_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/PrivateHeaders";
 				PRODUCT_BUNDLE_IDENTIFIER = com.VASPLLP.FuelSecuer;
@@ -728,7 +759,8 @@
 				PROVISIONING_PROFILE_SPECIFIER = "XC:*";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers";
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -745,19 +777,19 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = LY75MT5XE6;
-				ENABLE_BITCODE = NO;
+				ENABLE_BITCODE = YES;
 				ENABLE_ON_DEMAND_RESOURCES = YES;
 				INFOPLIST_FILE = FuelSecuer/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.15.56;
+				MARKETING_VERSION = 1.18.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Trakengg.Fluidsecure;
 				PRODUCT_NAME = FuelSecure;
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "FuelSecuer/FuelSecuer-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -773,18 +805,19 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = LY75MT5XE6;
-				ENABLE_BITCODE = NO;
+				ENABLE_BITCODE = YES;
 				ENABLE_ON_DEMAND_RESOURCES = YES;
 				INFOPLIST_FILE = FuelSecuer/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.15.56;
+				MARKETING_VERSION = 1.18.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Trakengg.Fluidsecure;
 				PRODUCT_NAME = FuelSecure;
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "FuelSecuer/FuelSecuer-Bridging-Header.h";
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

@@ -9,6 +9,7 @@
 import UIKit
 import AVFoundation
 
+
 class ScanbarcodeviewController: UIViewController,AVCaptureMetadataOutputObjectsDelegate {
     var captureSession: AVCaptureSession!
     private var captureDevice: AVCaptureDevice?
