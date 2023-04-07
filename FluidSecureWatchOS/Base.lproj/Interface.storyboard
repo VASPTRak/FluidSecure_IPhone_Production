@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="19529" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="A3Z-15-DZl">
+    <device id="watch44"/>
+    <dependencies>
+        <deployment identifier="watchOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="19514"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+    </dependencies>
+    <scenes>
+        <!--Fueling Screen-->
+        <scene sceneID="aou-V4-d1y">
+            <objects>
+                <controller identifier="Fueling" title="Fueling Screen" id="AgC-eL-Hgc" customClass="InterfaceController" customModule="FluidSecureWatchOS_Extension">
+                    <items>
+                        <label width="1" height="60" alignment="left" textAlignment="justified" numberOfLines="4" id="euU-pu-c67">
+                            <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <fontDescription key="font" type="system" weight="heavy" pointSize="14"/>
+                        </label>
+                        <label width="1" height="30" alignment="left" textAlignment="left" id="VrR-Fa-BJg">
+                            <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <fontDescription key="font" type="system" weight="heavy" pointSize="15"/>
+                        </label>
+                        <label width="1" height="30" alignment="left" textAlignment="left" id="tYQ-qe-aLg">
+                            <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <fontDescription key="font" type="system" weight="heavy" pointSize="15"/>
+                        </label>
+                        <button width="1" alignment="left" hidden="YES" title="GO" id="Cbv-uM-hLN">
+                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <color key="backgroundColor" name="AccentColor"/>
+                            <connections>
+                                <action selector="Gobuttontapped" destination="AgC-eL-Hgc" id="AFr-pw-cTv"/>
+                            </connections>
+                        </button>
+                        <button width="1" height="38" alignment="left" title="Start" id="dS8-Na-0xA">
+                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <color key="backgroundColor" red="0.40435290340000002" green="0.61495566369999999" blue="0.26217255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <fontDescription key="font" type="system" pointSize="20"/>
+                            <connections>
+                                <action selector="Startbuttontapped" destination="AgC-eL-Hgc" id="W2f-ff-rDn"/>
+                            </connections>
+                        </button>
+                        <button width="1" height="40" alignment="left" title="Stop" id="XKc-L9-t8c">
+                            <color key="backgroundColor" red="0.40435290340000002" green="0.61495566369999999" blue="0.26217255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <fontDescription key="font" type="system" pointSize="20"/>
+                            <connections>
+                                <action selector="stopButtontapped" destination="AgC-eL-Hgc" id="qnO-Fj-pcO"/>
+                            </connections>
+                        </button>
+                        <label width="1" height="70" alignment="left" textAlignment="left" numberOfLines="5" id="eOu-QJ-Ef3">
+                            <color key="textColor" red="0.8087962666123184" green="0.11492708696785715" blue="0.15310843789613229" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <fontDescription key="font" type="system" pointSize="12"/>
+                        </label>
+                        <button width="1" height="40" alignment="left" title="OK" id="bUF-0G-VS2">
+                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <color key="backgroundColor" red="0.40435290340000002" green="0.61495566369999999" blue="0.26217255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <fontDescription key="font" type="system" pointSize="20"/>
+                            <connections>
+                                <action selector="OKButtontapped" destination="AgC-eL-Hgc" id="9cq-IV-AuU"/>
+                                <segue destination="A3Z-15-DZl" kind="modal" id="AGn-tm-dmP"/>
+                            </connections>
+                        </button>
+                    </items>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <connections>
+                        <outlet property="GObutton" destination="Cbv-uM-hLN" id="gHr-gb-tSH"/>
+                        <outlet property="OKButton" destination="bUF-0G-VS2" id="Pdu-7W-CJc"/>
+                        <outlet property="TPulse" destination="tYQ-qe-aLg" id="eyk-2M-gsp"/>
+                        <outlet property="TQuantity" destination="VrR-Fa-BJg" id="W9Y-T6-7OS"/>
+                        <outlet property="causionmessage" destination="eOu-QJ-Ef3" id="HFH-Yl-LTS"/>
+                        <outlet property="labelres" destination="euU-pu-c67" id="qhm-lf-uUQ"/>
+                        <outlet property="startbutton" destination="dS8-Na-0xA" id="czD-Ev-6Oj"/>
+                        <outlet property="stopbutton" destination="XKc-L9-t8c" id="HTj-CI-S2w"/>
+                        <segue destination="A3Z-15-DZl" kind="relationship" relationship="nextPage" id="db8-mC-9A0"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="-600" y="-157"/>
+        </scene>
+        <!--Hose-->
+        <scene sceneID="Mak-L0-bSR">
+            <objects>
+                <controller identifier="Hose" id="A3Z-15-DZl" customClass="SelectHose" customModule="FluidSecureWatchOS_Extension">
+                    <items>
+                        <imageView width="150" height="60" alignment="center" image="1024" id="hZM-pI-l2x"/>
+                        <textField width="1" height="23" alignment="left" text="Select Hose To Use" id="Ir4-Im-7Bl">
+                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </textField>
+                        <picker height="60" alignment="left" focusStyle="stack" indicatorMode="shownWhileFocused" id="mwG-Sj-UhM">
+                            <connections>
+                                <action selector="Hose_List:" destination="A3Z-15-DZl" id="ghb-oR-8Dx"/>
+                            </connections>
+                        </picker>
+                        <button width="1" height="48" alignment="left" title="Refresh" id="uRm-lI-2Ig">
+                            <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <action selector="refresh" destination="A3Z-15-DZl" id="TO3-8K-uLS"/>
+                            </connections>
+                        </button>
+                        <button width="1" alignment="left" title="Please Register Now " id="Dsr-t8-h1M">
+                            <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <action selector="GotoRegister" destination="A3Z-15-DZl" id="Vbh-HV-xOs"/>
+                                <segue destination="OZ0-yV-kFO" kind="modal" id="27a-rs-G99"/>
+                            </connections>
+                        </button>
+                        <button width="1" height="40" alignment="left" title="GO" id="NbU-jj-Whw">
+                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <color key="backgroundColor" red="0.40435290340000002" green="0.61495566369999999" blue="0.26217255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <fontDescription key="font" type="system" pointSize="20"/>
+                            <connections>
+                                <action selector="GObuttontapped" destination="A3Z-15-DZl" id="NCd-bC-ay2"/>
+                                <segue destination="2TM-oO-Xxk" kind="push" id="6jl-9M-d9C"/>
+                            </connections>
+                        </button>
+                    </items>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <edgeInsets key="margins" left="1" right="1" top="0.0" bottom="0.0"/>
+                    <connections>
+                        <outlet property="GOButton" destination="NbU-jj-Whw" id="65u-wf-EOF"/>
+                        <outlet property="HoseList" destination="mwG-Sj-UhM" id="Ugp-6K-LXc"/>
+                        <outlet property="Label" destination="Ir4-Im-7Bl" id="sBt-EA-cjz"/>
+                        <outlet property="image" destination="hZM-pI-l2x" id="gL8-aZ-h2V"/>
+                        <outlet property="refreshscreen" destination="uRm-lI-2Ig" id="8Xb-Z4-tUW"/>
+                        <outlet property="register" destination="Dsr-t8-h1M" id="t4r-sd-AL3"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="-289" y="-225.40178571428572"/>
+        </scene>
+        <!--Registration-->
+        <scene sceneID="cxf-Su-EuH">
+            <objects>
+                <controller identifier="Registration" title="Registration" id="OZ0-yV-kFO" customClass="Registrationpage" customModule="FluidSecureWatchOS_Extension">
+                    <items>
+                        <textField width="1" alignment="left" placeholder="Enter Your Name" textContentType="name" id="0hH-79-Sfl">
+                            <connections>
+                                <action selector="userName:" destination="OZ0-yV-kFO" id="ueE-Bd-QFV"/>
+                            </connections>
+                        </textField>
+                        <textField width="1" alignment="left" placeholder="Enter Your  Email" textContentType="email" id="Utm-EG-kwd">
+                            <connections>
+                                <action selector="userEmail:" destination="OZ0-yV-kFO" id="LHh-wQ-gH3"/>
+                            </connections>
+                        </textField>
+                        <textField width="1" alignment="left" placeholder="Enter Your Mobile" textContentType="tel" id="ON5-HW-b2H">
+                            <connections>
+                                <action selector="userPhone:" destination="OZ0-yV-kFO" id="cHl-Jv-Hgh"/>
+                            </connections>
+                        </textField>
+                        <textField width="1" alignment="left" placeholder="Enter Your Company" textContentType="organization" id="fxN-nC-U9K">
+                            <connections>
+                                <action selector="Company:" destination="OZ0-yV-kFO" id="PQ7-xN-Gza"/>
+                            </connections>
+                        </textField>
+                        <button width="1" height="40" alignment="left" title="Register" backgroundImage="Button-Green" id="Qhi-VH-UlX">
+                            <fontDescription key="font" type="system" pointSize="20"/>
+                            <connections>
+                                <action selector="Register" destination="OZ0-yV-kFO" id="gEM-Bu-u2D"/>
+                            </connections>
+                        </button>
+                    </items>
+                    <connections>
+                        <segue destination="A3Z-15-DZl" kind="relationship" relationship="nextPage" id="Toj-cQ-96j"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="-26.60869565217391" y="-211.74107142857144"/>
+        </scene>
+        <!--vehicle-->
+        <scene sceneID="fbE-0h-3td">
+            <objects>
+                <controller identifier="vehicle" id="2TM-oO-Xxk" customClass="Vehicleviewcontroller" customModule="FluidSecureWatchOS_Extension">
+                    <items>
+                        <label width="200" height="50" alignment="left" text="Please Enter Vehicle" textAlignment="center" id="7SB-im-t4P">
+                            <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <fontDescription key="font" type="system" pointSize="14"/>
+                        </label>
+                        <textField width="1" alignment="left" placeholder="Enter Vehicle Number" textContentType="postal-code" id="cnO-Cb-Qdj">
+                            <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <action selector="vehiclenumbertext:" destination="2TM-oO-Xxk" id="5EE-DH-vZv"/>
+                            </connections>
+                        </textField>
+                        <button width="1" height="40" alignment="left" title="GO" id="bSA-Kb-Apl">
+                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <color key="backgroundColor" red="0.40435290340000002" green="0.61495566369999999" blue="0.26217255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <fontDescription key="font" type="system" pointSize="20"/>
+                            <connections>
+                                <action selector="gobuttontapped" destination="2TM-oO-Xxk" id="05E-PO-VVG"/>
+                            </connections>
+                        </button>
+                    </items>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <connections>
+                        <outlet property="vehiclenolable" destination="cnO-Cb-Qdj" id="jpw-Gd-7Cd"/>
+                        <outlet property="vehiclepagetitle" destination="7SB-im-t4P" id="wVG-na-lZ5"/>
+                        <segue destination="AgC-eL-Hgc" kind="relationship" relationship="nextPage" id="63U-bM-Bdl"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="-343.695652173913" y="141.91964285714286"/>
+        </scene>
+    </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="AGn-tm-dmP"/>
+    </inferredMetricsTieBreakers>
+    <resources>
+        <image name="1024" width="21.09375" height="5.0625"/>
+        <image name="Button-Green" width="146.25" height="24"/>
+        <namedColor name="AccentColor">
+            <color red="0.0" green="0.46000000000000002" blue="0.89000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>

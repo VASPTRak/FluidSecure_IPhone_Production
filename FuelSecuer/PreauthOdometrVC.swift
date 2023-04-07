@@ -13,10 +13,14 @@ class PreauthOdometerVC: UIViewController,UITextFieldDelegate //
 {
     @IBOutlet var oview: UIView!
     @IBOutlet var Odometer: UITextField!
+    @IBOutlet weak var Activity: UIActivityIndicatorView!
+    @IBOutlet var Go: UIButton!
+    @IBOutlet var OdometerLabel: UILabel!
     
     var cf = Commanfunction()
-//    var countdata = 0
+    var countdata = 0
     var web = Webservices()
+    var countfailauth:Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -163,57 +167,142 @@ class PreauthOdometerVC: UIViewController,UITextFieldDelegate //
         }
     }
     
-    func senddata()
+    func senddata(deptno:String,ppin:String,other:String)
     {
-        if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()){
-
-            if #available(iOS 12.0, *) {
-                self.web.wifisettings(pagename: "Odometer")
-            }
-//            else{
-//                // Fallback on earlier versions
-//
-//                let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertController.Style.alert)
-//                let backView = alertController.view.subviews.last?.subviews.last
-//                backView?.layer.cornerRadius = 10.0
-//                backView?.backgroundColor = UIColor.white
-//
-//                let paragraphStyle = NSMutableParagraphStyle()
-//                paragraphStyle.alignment = NSTextAlignment.left
-//
-//                let paragraphStyle1 = NSMutableParagraphStyle()
-//                paragraphStyle1.alignment = NSTextAlignment.left
-//
-//                let attributedString = NSAttributedString(string:NSLocalizedString("Subtitle", comment:""), attributes: [
-//                    NSAttributedString.Key.paragraphStyle:paragraphStyle1,
-//                    NSAttributedString.Key.font : UIFont.systemFont(ofSize: 20), //your font here
-//                    NSAttributedString.Key.foregroundColor : UIColor.black
-//                    ])
-//
-//                let formattedString = NSMutableAttributedString()
-//                formattedString
-//                    .normal(NSLocalizedString("Step1", comment:""))//("\nThe WiFi name is the name of the HOSE. Read Steps 1 to 5 below then click on Green bar below.\n\nFollow steps:\n1. Turn on the WiFi (it might already be on)\n\n2. Choose the WiFi \n named: ")
-//                    .bold("\(Vehicaldetails.sharedInstance.SSId)")
-//                    .normal(NSLocalizedString("Step2", comment:""))//(" \n\n3. First time it will ask for password,enter: 123456789\n\n4. It will have a check next to ")
-//                    .bold("\(Vehicaldetails.sharedInstance.SSId)")
-//                    .normal(NSLocalizedString("Step3", comment:""))//" and it will say \"No Internet Connection\" \n\n5.  Now, tap on the very top left corner that says \"FluidSecure\" - this returns you to allow fueling.\n\n\n\n\n")
-//
-//                alertController.setValue(formattedString, forKey: "attributedMessage")
-//                alertController.setValue(attributedString, forKey: "attributedTitle")
-//                let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertAction.Style.default){
-//                    action in
-//                    self.performSegue(withIdentifier: "Go", sender: self)
-//                }
-//                alertController.addAction(action)
-//
-//                self.present(alertController, animated: true, completion: nil)
+        let odom = "0"
+        let odometer:Int! = Int(odom)!
+        let vehicle_no = Vehicaldetails.sharedInstance.vehicleno
+        countfailauth += 1
+//        Vehicaldetails.sharedInstance.MinLimit = "0"
+//        let data = web.vehicleAuth(vehicle_no: vehicle_no,Odometer:odometer!,isdept:deptno,isppin:ppin,isother:other,Barcodescanvalue:Vehicaldetails.sharedInstance.Barcodescanvalue)
+//        let Split = data.components(separatedBy: "#@*%*@#")
+//        let reply = Split[0]
+//        if (reply == "-1")
+//        {
+//            if(countfailauth>2)
+//            {
+//                showAlert(message: NSLocalizedString("CheckyourInternet", comment:""))
+//            }else{
+//                self.senddata(deptno: deptno,ppin:ppin,other:other)
 //            }
-            self.mainPage()
-
-        }
-        else  if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){
-            self.performSegue(withIdentifier: "Go", sender: self)
-        }
+//        }
+//        else
+//        {
+//            countfailauth = 0
+//            let data1:Data = reply.data(using: String.Encoding.utf8)!
+//            do{
+//                sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
+//            }catch let error as NSError {
+//                print ("Error: \(error.domain)")
+//            }
+//          //  print(sysdata)
+//            if(sysdata == nil){
+//
+//            }
+//            else{
+//            let ResponceMessage = sysdata.value(forKey: "ResponceMessage") as! NSString
+//            let ResponceText = sysdata.value(forKey: "ResponceText") as! NSString
+//            let ValidationFailFor = sysdata.value(forKey: "ValidationFailFor") as! NSString
+//
+//            if(ResponceMessage == "success")
+//            {
+//                self.Activity.stopAnimating()
+//                self.Activity.isHidden = true
+//
+//                if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID()){
+//
+//                    if #available(iOS 12.0, *) {
+//                        if (Vehicaldetails.sharedInstance.HubLinkCommunication == "HTTP") {
+//                        self.web.wifisettings(pagename: "Odometer")
+//                    }
+//                    }
+//                    else {
+//                        // Fallback on earlier versions
+//
+//                        let alertController = UIAlertController(title: NSLocalizedString("Title", comment:""), message: NSLocalizedString("Message", comment:"") + "\(Vehicaldetails.sharedInstance.SSId).", preferredStyle: UIAlertController.Style.alert)
+//                        let backView = alertController.view.subviews.last?.subviews.last
+//                        backView?.layer.cornerRadius = 10.0
+//                        backView?.backgroundColor = UIColor.white
+//
+//                        let paragraphStyle = NSMutableParagraphStyle()
+//                        paragraphStyle.alignment = NSTextAlignment.left
+//
+//                        let paragraphStyle1 = NSMutableParagraphStyle()
+//                        paragraphStyle1.alignment = NSTextAlignment.left
+//
+//                        let attributedString = NSAttributedString(string:NSLocalizedString("Subtitle", comment:""), attributes: [
+//                            NSAttributedString.Key.paragraphStyle:paragraphStyle1,
+//                            NSAttributedString.Key.font : UIFont.systemFont(ofSize: 20), //your font here
+//                            NSAttributedString.Key.foregroundColor : UIColor.black
+//                            ])
+//
+//                        let formattedString = NSMutableAttributedString()
+//                        formattedString
+//                            .normal(NSLocalizedString("Step1", comment:""))
+//                            .bold("\(Vehicaldetails.sharedInstance.SSId)")
+//                            .normal(NSLocalizedString("Step2", comment:""))
+//                            .bold("\(Vehicaldetails.sharedInstance.SSId)")
+//                            .normal(NSLocalizedString("Step3", comment:""))
+//
+//                        alertController.setValue(formattedString, forKey: "attributedMessage")
+//                        alertController.setValue(attributedString, forKey: "attributedTitle")
+//                        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertAction.Style.default){
+//                            action in
+//                            if(Vehicaldetails.sharedInstance.HubLinkCommunication == "UDP")
+//                            {
+//                                self.performSegue(withIdentifier: "GoUDP", sender: self)
+//                            }
+//                            else{
+//                            self.performSegue(withIdentifier: "Go", sender: self)
+//                            }
+//                        }
+//                        alertController.addAction(action)
+//
+//                        self.present(alertController, animated: true, completion: nil)
+//                    }
+//                    self.mainPage()
+//
+//                }
+//
+//                if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){
+//                    if(Vehicaldetails.sharedInstance.HubLinkCommunication == "UDP")
+//                    {
+//                        self.performSegue(withIdentifier: "GoUDP", sender: self)
+//                    }
+//                    else{
+                    self.performSegue(withIdentifier: "Go", sender: self)
+//                    }
+//                }
+//            }
+//            else {
+//
+//                if(ResponceMessage == "fail")
+//                {
+//                    self.Activity.stopAnimating()
+//                    self.Activity.isHidden = true
+//                    if(ValidationFailFor == "Vehicle") {
+//                        odostoptimergotostart.invalidate()
+//                        self.performSegue(withIdentifier: "Vehicle", sender: self)
+//
+//                    }else if(ValidationFailFor == "Dept")
+//                    {
+//                        odostoptimergotostart.invalidate()
+//                        self.performSegue(withIdentifier: "dept", sender: self)
+//                    }else if(ValidationFailFor == "Odo")
+//                    {
+//                        odostoptimergotostart.invalidate()
+//                        self.performSegue(withIdentifier: "odometer", sender: self)
+//                    }
+//                    else if(ValidationFailFor == "Pin")
+//                    {
+//                        odostoptimergotostart.invalidate()
+//                        self.performSegue(withIdentifier: "pin", sender: self)
+//                    }
+//                }
+//                showAlert(message: "\(ResponceText)")
+//            }
+//        }
+//    }
     }
     
     func createSwitch() -> UISwitch{
@@ -239,10 +328,75 @@ class PreauthOdometerVC: UIViewController,UITextFieldDelegate //
         print("Switch Value : \(sender.isOn))")
     }
     
+    func send_data()
+    {
+        self.web.sentlog(func_name: "Last fueling Quantity of vehicle for reasonability checking : \(Vehicaldetails.sharedInstance.LastTransactionFuelQuantity)", errorfromserverorlink: "", errorfromapp: "")
+        let hours = Vehicaldetails.sharedInstance.IsHoursrequirs
+        let IsExtraOther = Vehicaldetails.sharedInstance.IsExtraOther
+        let isdept = Vehicaldetails.sharedInstance.IsDepartmentRequire
+        let isPPin = Vehicaldetails.sharedInstance.IsPersonnelPINRequire
+        let isother = Vehicaldetails.sharedInstance.IsOtherRequire
+       
+        if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
+        {
+            self.web.sentlog(func_name: "Odometer Entered : \(Vehicaldetails.sharedInstance.Odometerno)", errorfromserverorlink: " Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: "")
+        }
+        else{
+        self.web.sentlog(func_name: "Odometer Entered : \(Vehicaldetails.sharedInstance.Odometerno)", errorfromserverorlink: " Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected link : \(self.cf.getSSID())")
+        }
+        //    parameter name: ErrorCode
+        //  Value : 1 (This for attempting odometer more than 3)
+        Vehicaldetails.sharedInstance.Errorcode = "1"
+        if (hours == "Y"){
+            self.performSegue(withIdentifier: "hour", sender: self)
+//            self.Activity.stopAnimating()
+//            self.Activity.isHidden = true
+        }
+        else
+            if (IsExtraOther == "True"){
+                self.performSegue(withIdentifier: "otherVehicle", sender: self)
+//                self.Activity.stopAnimating()
+//                self.Activity.isHidden = true
+        }else{
+            Vehicaldetails.sharedInstance.hours = ""
+            if(isdept == "True"){
+                self.countdata = 0
+                self.performSegue(withIdentifier: "dept", sender: self)
+//                self.Activity.stopAnimating()
+//                self.Activity.isHidden = true
+            }
+            else{
+                if(isPPin == "True"){
+                    self.countdata = 0
+                    self.performSegue(withIdentifier: "pin", sender: self)
+//                    self.Activity.stopAnimating()
+//                    self.Activity.isHidden = true
+                }
+                else{
+                    if(isother == "True"){
+                        self.countdata = 0
+                        self.performSegue(withIdentifier: "other", sender: self)
+//                        self.Activity.stopAnimating()
+//                        self.Activity.isHidden = true
+                    }
+                    else{
+                        let deptno = ""
+                        let ppin = ""
+                        let other = ""
+                        Vehicaldetails.sharedInstance.deptno = ""
+                        Vehicaldetails.sharedInstance.Personalpinno = ""
+                        Vehicaldetails.sharedInstance.Other = ""
+                        self.senddata(deptno: deptno,ppin:ppin,other:other)
+                    }
+                }
+            }
+        }
+    }
+    
     @IBAction func saveButtontapped(sender: UIButton) {
         
 //        tapAction()
-        Vehicaldetails.sharedInstance.MinLimit = "0"
+//        Vehicaldetails.sharedInstance.MinLimit = "0"
        
         if(Odometer.text == "")
         {
@@ -250,9 +404,9 @@ class PreauthOdometerVC: UIViewController,UITextFieldDelegate //
         }
         else
         {
-            let odometer:Int! = Int(self.Odometer.text!)
-            let PreviousOdo = Vehicaldetails.sharedInstance.PreviousOdo
-            let OdoLimit = Vehicaldetails.sharedInstance.OdoLimit
+//            let odometer:Int! = Int(self.Odometer.text!)
+//            let PreviousOdo = Vehicaldetails.sharedInstance.PreviousOdo
+//            let OdoLimit = Vehicaldetails.sharedInstance.OdoLimit
 //            if(OdoLimit >= odometer && odometer >= PreviousOdo)
 //            {
 //                Vehicaldetails.sharedInstance.Errorcode = "0"
@@ -274,19 +428,19 @@ class PreauthOdometerVC: UIViewController,UITextFieldDelegate //
 //                    }
 //                }
 //                else{
-                    if(odometer <= PreviousOdo){
-                    self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.")
-//                    self.Activity.stopAnimating()
-//                    self.Activity.isHidden = true
-                    self.viewWillAppear(true)
-                    }
-                    else
-                    {
+//                  if(odometer <= PreviousOdo){
+//                    self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.")
+////                    self.Activity.stopAnimating()
+////                    self.Activity.isHidden = true
+//                    self.viewWillAppear(true)
+//                    }
+//                    else
+//                    {
                         let odometer:Int! = Int(Odometer.text!)
                              Vehicaldetails.sharedInstance.Odometerno = "\(odometer!)"
                         Odometer.text = Vehicaldetails.sharedInstance.Odometerno
-                        self.senddata()
-                    }
+                        self.send_data()
+//                    }
 //                }
 //           }
             

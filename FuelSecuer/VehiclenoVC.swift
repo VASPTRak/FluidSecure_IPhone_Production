@@ -56,7 +56,7 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
     var isother = Vehicaldetails.sharedInstance.IsOtherRequire
     var stoptimergotostart:Timer = Timer()
     var IsUseBarcode:String = ""
-
+    var appisonVehicle = true
     var button = UIButton(type: UIButton.ButtonType.custom)
 
     var countfailauth:Int = 0
@@ -134,14 +134,17 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
     override func viewWillDisappear(_ animated: Bool) {
         
         stoptimergotostart.invalidate()
+        appisonVehicle = false
         super.viewWillDisappear(animated)
+        stoptimergotostart.invalidate()
     }
     
     @objc func gotostart(){
-        
-        self.web.sentlog(func_name: "vehicle timeout", errorfromserverorlink: "", errorfromapp: "")
+        if(appisonVehicle == true){
+        self.web.sentlog(func_name: "vehicle timeout, back to home screen", errorfromserverorlink: "", errorfromapp: "")
         let appDel = UIApplication.shared.delegate! as! AppDelegate
         appDel.start()
+        }
     }
     
     func tapAction() {
@@ -341,9 +344,18 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
                     else{
                     self.performSegue(withIdentifier: "Go", sender: self)
                     }
-                    self.web.sentlog(func_name: "Vehicle number entered \(Vehicaldetails.sharedInstance.vehicleno)", errorfromserverorlink: " Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected link : \(self.cf.getSSID())")
+                    
+                    if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
+                    {
+                        self.web.sentlog(func_name: "Vehicle Number Entered : \(Vehicaldetails.sharedInstance.vehicleno)", errorfromserverorlink: " Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp:"")
+                        
+                        self.web.sentlog(func_name: "Go button Tapped.", errorfromserverorlink: " \(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())",errorfromapp: " Hose: \(Vehicaldetails.sharedInstance.SSId)")
+                    }
+                    else{
+                    self.web.sentlog(func_name: "Vehicle Number Entered : \(Vehicaldetails.sharedInstance.vehicleno)", errorfromserverorlink: " Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected link : \(self.cf.getSSID())")
 
-                    self.web.sentlog(func_name: "Go button Tapped NO need to select Wifi data Manually", errorfromserverorlink: " \(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())",errorfromapp: " Hose: \(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                    self.web.sentlog(func_name: "Go button Tapped.", errorfromserverorlink: " \(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())",errorfromapp: " Hose: \(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                    }
                 }
             }
             else {
@@ -430,8 +442,8 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
                 let ResponceMessage = sysdata.value(forKey: "ResponceMessage") as! NSString
                 let ResponceText = sysdata.value(forKey: "ResponceText") as! NSString
                 if(ResponceMessage == "success"){
-                    self.web.sentlog(func_name: "Vehicle number entered \(Vehicaldetails.sharedInstance.vehicleno)", errorfromserverorlink: " Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected link : \(self.cf.getSSID())")
-
+                    
+                    appisonVehicle = false
                     let ExtraOtherLabel = sysdata.value(forKey: "ExtraOtherLabel") as! NSString
                     let IsExtraOther = sysdata.value(forKey: "IsExtraOther") as! NSString
                     let IsHoursRequire = sysdata.value(forKey: "IsHoursRequire") as! NSString
@@ -547,32 +559,51 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
     }
     
     @IBAction func saveBtntapped(sender: AnyObject) {
-        Activity.startAnimating()
-        Activity.isHidden = false
-        save.isEnabled = false
-        delay(1){
-
-            self.IsGobuttontapped = true
-            self.stoptimergotostart.invalidate()
-            if(self.Vehicleno.text == "")
-            {
-                if(Vehicaldetails.sharedInstance.Language == "es-ES")
+        
+        if(self.cf.getSSID() != "" && Vehicaldetails.sharedInstance.SSId != self.cf.getSSID() && Vehicaldetails.sharedInstance.HubLinkCommunication == "HTTP") {
+            print("SSID: \(self.cf.getSSID())")
+            self.showAlert(message:NSLocalizedString("SwitchoffyourWiFi", comment:""))
+//            self.showAlert(message:"Please switch off your wifi before proceeding. \n To switch off the wifi you can use the shortcut.  If you have an iPhone with Touch ID, swipe up from the bottom of the screen. If you have an iPhone with Face ID, swipe down from the upper right. Then tap on the wifi icon to switch it off.")
+//            self.Activity.stopAnimating()
+//            self.Activity.isHidden = true
+           // self.go.isEnabled = true
+        }
+        else{
+            Activity.startAnimating()
+            Activity.isHidden = false
+            save.isEnabled = false
+            delay(1){
+                
+                self.IsGobuttontapped = true
+                self.stoptimergotostart.invalidate()
+                if(self.Vehicleno.text == "")
                 {
-                    self.showAlert(message: NSLocalizedString("Entervehicelno", comment:""))
+                    if(Vehicaldetails.sharedInstance.Language == "es-ES")
+                    {
+                        self.showAlert(message: NSLocalizedString("Entervehicelno", comment:""))
+                    }
+                    else{
+                        self.showAlert(message:"Please Enter \(Vehicaldetails.sharedInstance.ScreenNameForVehicle) Number")
+                    }
+                    
+                    self.viewWillAppear(true)
+                    self.Activity.stopAnimating()
+                    self.Activity.isHidden = true
                 }
                 else{
-                    self.showAlert(message:"Please Enter \(Vehicaldetails.sharedInstance.ScreenNameForVehicle) Number")
-                }
-
-                self.viewWillAppear(true)
-                self.Activity.stopAnimating()
-                self.Activity.isHidden = true
-            }
-            else{
-                if(self.IsScanBarcode == true){}
-                else{
-                self.getodometer()
-                Vehicaldetails.sharedInstance.vehicleno = self.Vehicleno.text!
+                    
+                    if(self.IsScanBarcode == true){}
+                    else{
+                        self.getodometer()
+                        Vehicaldetails.sharedInstance.vehicleno = self.Vehicleno.text!
+                        if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
+                        {
+                            self.web.sentlog(func_name: "Vehicle number Entered : \(Vehicaldetails.sharedInstance.vehicleno)", errorfromserverorlink: " Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: "")
+                        }
+                        else{
+                            self.web.sentlog(func_name: "Vehicle number Entered : \(Vehicaldetails.sharedInstance.vehicleno)", errorfromserverorlink: " Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected link : \(self.cf.getSSID())")
+                        }
+                    }
                 }
             }
         }

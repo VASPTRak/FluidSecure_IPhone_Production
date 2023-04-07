@@ -2,6 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.VASPLLP.FuelSecureTest.refresh</string>
+		<string>com.VASPLLP.FuelSecureTest.process</string>
+	</array>
 	<key>CFBundleDisplayName</key>
 	<string>FluidSecure</string>
 	<key>CFBundleExecutable</key>
@@ -47,24 +52,36 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
-	<true/>
+	<false/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Allowing Access your Bluetooth</string>
+	<string>Allow Access your Bluetooth to communicate the BLE device to Starts Fueling </string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Allowing Access your Bluetooth</string>
+	<string>Allow Access your Bluetooth to communicate the BLE device to Starts Fueling </string>
 	<key>NSCameraUsageDescription</key>
 	<string>Allow Camera Access to scan barcode</string>
 	<key>NSHumanReadableCopyright</key>
 	<string></string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Allowing access to your connect Local network. </string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Allowing access to your location, you can get your nearest Fueling Sites. </string>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+	</dict>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>processing</string>
+	</array>
 	<key>UIFileSharingEnabled</key>
-	<true/>
+	<false/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -77,6 +94,8 @@
 	<false/>
 	<key>UIRequiresPersistentWiFi</key>
 	<true/>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleLightContent</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

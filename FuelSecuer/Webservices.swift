@@ -63,10 +63,10 @@ extension NSMutableData {
 
 
 class Webservices:NSObject {
-    var reply :String!
+    var reply :String! = ""
     var replysentlog :String!
     var replygetpulsar :String!
-    
+    var replygetvehicledata :String!
     var sysdata:NSDictionary!
     var sysdata1:NSDictionary!
     var sysdataLast10trans:NSDictionary!
@@ -84,6 +84,7 @@ class Webservices:NSObject {
     var FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
     var isUpgradeCurrentiotVersiontoserver = false
     var backgroundUpdateTask: UIBackgroundTaskIdentifier!
+    
     func beginBackgroundUpdateTask() {
             self.backgroundUpdateTask = UIApplication.shared.beginBackgroundTask(expirationHandler: {
                
@@ -104,6 +105,10 @@ class Webservices:NSObject {
                     self.downloadthevehicles(url: URL(fileURLWithPath: Vehicaldetails.sharedInstance.PreAuthVehicleDataFilePath) as URL, completion:{_,_ in ((path:String?, error:NSError?) -> ()).self
                        
                     })
+                       
+                       self.downloadtheDepartment(url: URL(fileURLWithPath: Vehicaldetails.sharedInstance.PreAuthDepartmentDataFilePath) as URL, completion:{_,_ in ((path:String?, error:NSError?) -> ()).self
+                          
+                       })
                        // End the background task.
            
                        self.endBackgroundUpdateTask()
@@ -185,22 +190,30 @@ class Webservices:NSObject {
 ////                }
 ////            }
         }
-    
+    //UDP
         func wifi_settings_check(pagename:String)
         {
+            
             print(Vehicaldetails.sharedInstance.SSId)
             let hotspotConfig = NEHotspotConfiguration(ssid: Vehicaldetails.sharedInstance.SSId, passphrase: "123456789", isWEP: false)
             hotspotConfig.joinOnce = false
+            //print(hotspotConfig.signalStrength)
 
             NEHotspotConfigurationManager.shared.apply(hotspotConfig) {(error) in
 
+                if error?.localizedDescription == "already associated."
+                                {
+                                    print("Connected")
+                                }
                 if let error = error
                 {
                   print("Error\(error)")
+                    
                 }
                 else {
-                    self.sentlog(func_name: "Go button Tapped user Joins \(Vehicaldetails.sharedInstance.SSId) wifi Automatically from \(pagename) Page", errorfromserverorlink: " \(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())",errorfromapp: " Hose: \(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                    self.sentlog(func_name: "Connecting to \(Vehicaldetails.sharedInstance.SSId).", errorfromserverorlink: " \(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())",errorfromapp: " Hose: \(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                         print("Connected")
+                  
 
                 }
             }
@@ -208,25 +221,33 @@ class Webservices:NSObject {
 //
 //    //Live
 //
-        func wifisettings_check(pagename:String)
+        func wifisettings_check(pagename:String) //-> String
         {
+            
             print(Vehicaldetails.sharedInstance.SSId)
             let hotspotConfig = NEHotspotConfiguration(ssid: Vehicaldetails.sharedInstance.SSId, passphrase: "123456789", isWEP: false)
             hotspotConfig.joinOnce = true
 
             NEHotspotConfigurationManager.shared.apply(hotspotConfig) {(error) in
 
+                if error?.localizedDescription == "already associated."
+                                {
+                                    print("Connected")
+//                                    isconnected = "true"
+                                }
                 if let error = error
                 {
                   print("Error\(error)")
+                    //return isconnected
                 }
                 else {
-                    self.sentlog(func_name: "Go button Tapped user Joins \(Vehicaldetails.sharedInstance.SSId) wifi Automatically from \(pagename) Page", errorfromserverorlink: " \(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())",errorfromapp: " Hose: \(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                    self.sentlog(func_name: "Connecting to \(Vehicaldetails.sharedInstance.SSId)", errorfromserverorlink: " \(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())",errorfromapp: " Hose: \(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                         print("Connected")
-
+//                    isconnected = "true"
+                    //return isconnected
                 }
             }
-
+//            return isconnected
         }
     
     
@@ -354,6 +375,74 @@ class Webservices:NSObject {
         return reply// + "#" + ""
     }
     
+    func downloadtheDepartment(url: URL, completion: @escaping (String?, Error?) -> Void)
+    {
+
+        if(Vehicaldetails.sharedInstance.PreAuthDepartmentDataFilePath == ""){}
+        else{
+        let newString = Vehicaldetails.sharedInstance.PreAuthDepartmentDataFilePath.replacingOccurrences(of: " " , with: "%20", options: .literal, range: nil)
+        print(newString)
+        print(Vehicaldetails.sharedInstance.PreAuthDepartmentDataFilePath)
+        
+                    let url = URL(string: newString)!
+                    let documentsUrl =  FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+
+                    let destinationUrl = documentsUrl.appendingPathComponent(url.lastPathComponent)
+            print(destinationUrl)
+            let filename = url.lastPathComponent
+            
+            defaults.set(filename, forKey: "dateof_DownloadPreAuthDepartmentData")
+           
+
+//
+//                       // cf.DeleteFileInApp(fileName: destinationUrl.path)
+//                        if FileManager().fileExists(atPath: destinationUrl.path)
+//                        {
+//                            print("File already exists [\(destinationUrl.path)]")
+//                            completion(destinationUrl.path, nil)
+//                        }
+//                        else
+//                        {
+                         //let URL = URL(string: Vehicaldetails.sharedInstance.PreAuthVehicleDataFilePath)
+                        let session = URLSession(configuration: URLSessionConfiguration.default, delegate: nil, delegateQueue: nil)
+                        var request = URLRequest(url: url)
+                        request.httpMethod = "GET"
+                        let task = session.dataTask(with: request, completionHandler:
+                        {
+                            data, response, error in
+                            if error == nil
+                            {
+                                if let response = response as? HTTPURLResponse
+                                {
+                                    if response.statusCode == 200
+                                    {
+                                        if let data = data
+                                        {
+                                            
+                                            if let _ = try? data.write(to: destinationUrl, options: Data.WritingOptions.atomic)
+                                            {
+                                                completion(destinationUrl.path, error)
+                                            }
+                                            else
+                                            {
+                                                completion(destinationUrl.path, error)
+                                            }
+                                        }
+                                        else
+                                        {
+                                            completion(destinationUrl.path, error)
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                completion(destinationUrl.path, error)
+                            }
+                        })
+                        task.resume()
+                    }
+    }
     
         
         func downloadthevehicles(url: URL, completion: @escaping (String?, Error?) -> Void)
@@ -370,6 +459,10 @@ class Webservices:NSObject {
 
                         let destinationUrl = documentsUrl.appendingPathComponent(url.lastPathComponent)
                 print(destinationUrl)
+                let filename = url.lastPathComponent
+                
+                defaults.set(filename, forKey: "dateof_DownloadVehiclesForphonefilename")
+               
 
 //
 //                       // cf.DeleteFileInApp(fileName: destinationUrl.path)
@@ -422,11 +515,74 @@ class Webservices:NSObject {
                     }
 //    }
 
+    func GetDepartmentsForPhone()->String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd/MM/yyyy hhmmss"
+        dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
+        let startdate: String = dateFormatter.string(from: NSDate() as Date)
+
+        print("\(startdate) started GetDepartmentsForPhone")
+        var Email :String
+        if(defaults.string(forKey: "address") == nil){
+            Email = ""
+        }else {
+            Email = defaults.string(forKey: "address")!
+        }
         
+        let uuid = defaults.string(forKey: "uuid")
+        
+        let Url:String =  Vehicaldetails.sharedInstance.URL + "api/Offline/GetDepartments?Email=\(Email)&IMEI=\(uuid!)"
+        let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string:Url)!)
+        request.httpMethod = "GET"
+//        request.timeoutInterval = 1 //////timeout interval should be increased it is 4 earlier now i am convert it to 10
+        
+        let semaphore = DispatchSemaphore(value: 0)
+        
+        let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
+            if let data = data {
+                print(String(data: data, encoding: String.Encoding.utf8)!)
+                // DispatchQueue.main.async{
+                self.replygetvehicledata = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
+                self.doBackgroundTask()
+                
+                 print(self.replygetvehicledata)
+                if(self.replygetvehicledata.contains("success"))
+                {
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.dateFormat = "EEEE,dd/MM/yyyy"
+                    dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
+                    let dateofdownload: String = dateFormatter.string(from: NSDate() as Date)
+                    self.defaults.set(dateofdownload, forKey: "dateof_DownloadDepartmentsForphone")
+                    print("\(dateofdownload) dateofdownload")
+                }
+                
+                
+                
+            } else {
+                print(error!)
+                
+                let text = (error?.localizedDescription)! //+ error.debugDescription
+                let test = String((text.filter { !" \n".contains($0) }))
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+//                print(newString)
+                self.sentlog(func_name: "GetDepartmentsForPhone Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                self.replygetvehicledata = "-1" + "#" + "\(error!)"
+            }
+            semaphore.signal()
+        }
+        task.resume()
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
+        return replygetvehicledata + "#" + ""
+    }
    
     
     func GetVehiclesForPhone()->String {
-        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd/MM/yyyy hhmmss"
+        dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
+        let startdate: String = dateFormatter.string(from: NSDate() as Date)
+
+        print("\(startdate) started getvehiclesforPhone")
         var Email :String
         if(defaults.string(forKey: "address") == nil){
             Email = ""
@@ -439,7 +595,7 @@ class Webservices:NSObject {
         let Url:String =  Vehicaldetails.sharedInstance.URL + "/api/Offline/GetVehiclesForPhone?Email=\(Email)&IMEI=\(uuid!)"
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string:Url)!)
         request.httpMethod = "GET"
-        request.timeoutInterval = 30 //////timeout interval should be increased it is 4 earlier now i am convert it to 10
+//        request.timeoutInterval = 1 //////timeout interval should be increased it is 4 earlier now i am convert it to 10
         
         let semaphore = DispatchSemaphore(value: 0)
         
@@ -447,9 +603,21 @@ class Webservices:NSObject {
             if let data = data {
                 print(String(data: data, encoding: String.Encoding.utf8)!)
                 // DispatchQueue.main.async{
-                self.replygetpulsar = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
+                self.replygetvehicledata = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
                 self.doBackgroundTask()
-                 print(self.replygetpulsar)
+                
+                 print(self.replygetvehicledata)
+                if(self.replygetvehicledata.contains("success"))
+                {
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.dateFormat = "EEEE,dd/MM/yyyy"
+                    dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
+                    let dateofdownload: String = dateFormatter.string(from: NSDate() as Date)
+                    self.defaults.set(dateofdownload, forKey: "dateof_DownloadVehiclesForphone")
+                    print("\(dateofdownload) dateofdownload")
+                }
+                
+                
                 
             } else {
                 print(error!)
@@ -459,13 +627,13 @@ class Webservices:NSObject {
                 let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
 //                print(newString)
                 self.sentlog(func_name: "GetVehiclesForPhone Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-                self.replygetpulsar = "-1" + "#" + "\(error!)"
+                self.replygetvehicledata = "-1" + "#" + "\(error!)"
             }
             semaphore.signal()
         }
         task.resume()
         _ = semaphore.wait(timeout: DispatchTime.distantFuture)
-        return replygetpulsar + "#" + ""
+        return replygetvehicledata + "#" + ""
     }
     
     
@@ -484,15 +652,15 @@ class Webservices:NSObject {
         }
         if(uuid == "")
         {
-            print("checkApprove command sent to server from select hose page UUID Get \(uuid)")
-            self.sentlog(func_name: "checkApprove command sent to server from select hose page UUID:\(uuid))", errorfromserverorlink: "", errorfromapp: "")
+            print("checkApprove command sent to server UUID Get \(uuid)")
+            self.sentlog(func_name: "checkApprove command sent to server UUID:\(uuid))", errorfromserverorlink: "", errorfromapp: "")
         }
         else{
         let string = uuid + ":" + Email + ":" + "Other" + ":" + "\(Vehicaldetails.sharedInstance.Language)" + ":" + "\(brandname)"
 //        let string = uuid + ":" + Email + ":" + "Other" + ":" + "\(Vehicaldetails.sharedInstance.Language)"
         let Base64 = convertStringToBase64(string: string)
         print(Base64)
-        self.sentlog(func_name: "checkApprove command sent to server from select hose page", errorfromserverorlink: "", errorfromapp: "")
+        self.sentlog(func_name: "checkApprove command sent to server.", errorfromserverorlink: "", errorfromapp: "")
         let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
         request.httpMethod = "POST"
         request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
@@ -518,18 +686,18 @@ class Webservices:NSObject {
                 
                 let test = String((text?.filter { !" \n".contains($0) })!)
                 let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
-                //print(newString)
-                self.sentlog(func_name: "Check Approve Function with command:Authenticate:I: \(lat!),\(long!),Devicetype:\(UIDevice().type),uuid(\(uuid)),iOS_version:\(UIDevice.current.systemVersion) , App_version \(Version)", errorfromserverorlink: " ",errorfromapp: "")
+                print(newString)
+                self.sentlog(func_name: "<Check Approve> Authenticate:I: \(lat!),\(long!), Devicetype:\(UIDevice().type), uuid(\(uuid)), iOS_version:\(UIDevice.current.systemVersion) , App_version \(Version)", errorfromserverorlink: " ",errorfromapp: "")
                 //self.sentlog(func_name: "Check Approve Function with command:Authenticate:I: \(lat!),\(long!),Devicetype:\(UIDevice().type),uuid(\(uuid)),iOS_version:\(UIDevice.current.systemVersion) , App_version \(Version)", errorfromserverorlink: " ",errorfromapp: "Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 
             } else {
                 print(error!)
                 let text = (error?.localizedDescription)! //+ error.debugDescription
                 let test = String((text.filter { !" \n".contains($0) }))
-                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+//                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
                 //print(newString)
                
-                self.sentlog(func_name: "Check Approve Function with command:Authenticate:I: \(lat!),\(long!),Devicetype:\(UIDevice().type),uuid(\(uuid)),iOS_version:\(UIDevice.current.systemVersion) , App_version \(Version)", errorfromserverorlink: " ",errorfromapp: "")
+                self.sentlog(func_name: "<Check Approve> \(text) Authenticate:I: \(lat!),\(long!),Devicetype:\(UIDevice().type), uuid(\(uuid)), iOS_version:\(UIDevice.current.systemVersion) , App_version \(Version)", errorfromserverorlink: " ",errorfromapp: "")
                 self.reply = "-1"
             }
             semaphore.signal()
@@ -630,88 +798,94 @@ class Webservices:NSObject {
         FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
         let Email = defaults.string(forKey: "address")
         let uuid = defaults.string(forKey: "uuid")
-        let string = uuid! + ":" + Email! + ":" + "UpgradeTransactionStatus"
-        let Base64 = convertStringToBase64(string: string)
-        let Url:String = FSURL
-        let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
-        request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
-        request.httpMethod = "POST"
-        var reportsArray: [AnyObject]!
-        let fileManager: FileManager = FileManager()
-        let readdata = cf.getDocumentsURL().appendingPathComponent("data/unsyncTransstatus/")
-        let fromPath: String = (readdata!.path)
-        do{
-            do{ if(!FileManager.default.fileExists(atPath: fromPath))
-            {
-                do{ try FileManager.default.createDirectory(atPath: fromPath, withIntermediateDirectories: true, attributes: nil)
-                }
-                catch{print("error")}
-                }
-            }
-            reportsArray = fileManager.subpaths(atPath: fromPath)! as [AnyObject]
-            for x in 0  ..< reportsArray.count
-            {
-                let filename: String = "\(reportsArray[x])"
-                do {
-                    let JData: String = cf.ReadFile(fileName: "data/unsyncTransstatus/" + filename)
-                    if(JData != "")
+        if (uuid == nil)
+        {
+            
+        }
+        else{
+            let string = uuid! + ":" + Email! + ":" + "UpgradeTransactionStatus"
+            let Base64 = convertStringToBase64(string: string)
+            let Url:String = FSURL
+            let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
+            request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
+            request.httpMethod = "POST"
+            var reportsArray: [AnyObject]!
+            let fileManager: FileManager = FileManager()
+            let readdata = cf.getDocumentsURL().appendingPathComponent("data/unsyncTransstatus/")
+            let fromPath: String = (readdata!.path)
+            do{
+                do{ if(!FileManager.default.fileExists(atPath: fromPath))
                     {
-                        let dateFormatter = DateFormatter()
-                        dateFormatter.dateFormat = "MM/dd/yyyy HH:mm:ss a"
-                        //                               dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
-                        //                               let dtt1: String = dateFormatter.string(from: NSDate() as Date)
-                        //                               dateFormatter.dateFormat = "yyyy MM dd"
-                        //                               let dtt: String = dateFormatter.string(from: NSDate() as Date)
-                        //                               let dataString = String(data: contents, encoding: String.Encoding.utf8)
-                        //                               let newString = dataString?.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
-                        //                               print(newString!)
-                        let bodyData = JData
-                        request.httpBody = bodyData.data(using: String.Encoding.utf8)
-                        //request.timeoutInterval = 2
-                        let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
-                            if let data = data {
-                                //  print(String(data: data, encoding: String.Encoding.utf8)!)
-                                self.reply = NSString(data: data, encoding:String.Encoding.utf8.rawValue)! as String
-                                //  print(self.replysentlog)
-                                let data1 = self.reply.data(using: String.Encoding.utf8)!
-                                do{
-                                    self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
-                                }catch let error as NSError {
-                                    print ("Error: \(error.domain)")
-                                }
-                                print(self.sysdata)
-                                if(self.sysdata == nil){}
-                                else{
-                                let ResponceText = self.sysdata.value(forKey: "ResponceText") as! NSString
-                                let ResponceMessage = (self.sysdata.value(forKey: "ResponceMessage") as! NSString) as String
-                                
-                                if(ResponceMessage == "fail"){
+                    do{ try FileManager.default.createDirectory(atPath: fromPath, withIntermediateDirectories: true, attributes: nil)
+                    }
+                    catch{print("error")}
+                }
+                }
+                reportsArray = fileManager.subpaths(atPath: fromPath)! as [AnyObject]
+                for x in 0  ..< reportsArray.count
+                {
+                    let filename: String = "\(reportsArray[x])"
+                    do {
+                        let JData: String = cf.ReadFile(fileName: "data/unsyncTransstatus/" + filename)
+                        if(JData != "")
+                        {
+                            let dateFormatter = DateFormatter()
+                            dateFormatter.dateFormat = "MM/dd/yyyy HH:mm:ss a"
+                            //                               dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
+                            //                               let dtt1: String = dateFormatter.string(from: NSDate() as Date)
+                            //                               dateFormatter.dateFormat = "yyyy MM dd"
+                            //                               let dtt: String = dateFormatter.string(from: NSDate() as Date)
+                            //                               let dataString = String(data: contents, encoding: String.Encoding.utf8)
+                            //                               let newString = dataString?.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                            //                               print(newString!)
+                            let bodyData = JData
+                            request.httpBody = bodyData.data(using: String.Encoding.utf8)
+                            //request.timeoutInterval = 2
+                            let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
+                                if let data = data {
+                                    //  print(String(data: data, encoding: String.Encoding.utf8)!)
+                                    self.reply = NSString(data: data, encoding:String.Encoding.utf8.rawValue)! as String
+                                    //  print(self.replysentlog)
+                                    let data1 = self.reply.data(using: String.Encoding.utf8)!
+                                    do{
+                                        self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
+                                    }catch let error as NSError {
+                                        print ("Error: \(error.domain)")
+                                    }
+                                    print(self.sysdata)
+                                    if(self.sysdata == nil){}
+                                    else{
+                                        let ResponceText = self.sysdata.value(forKey: "ResponceText") as! NSString
+                                        let ResponceMessage = (self.sysdata.value(forKey: "ResponceMessage") as! NSString) as String
+                                        
+                                        if(ResponceMessage == "fail"){
+                                            
+                                        }
+                                        if(ResponceMessage == "success"){
+                                            self.cf.DeleteFileInApp(fileName: "data/unsyncTransstatus/" + filename)
+                                        }
+                                    }
+                                } else {
+                                    print(error!)
+                                    //                               // self.replysentlog = "-1" + "#" + "\(error?.localizedDescription)"
+                                    //                                let dateFormatter = DateFormatter()
+                                    //                                dateFormatter.dateFormat = "ddMMyyyy"
+                                    //                                dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
+                                    //                                let dtt2: String = dateFormatter.string(from: NSDate() as Date)
                                     
                                 }
-                                if(ResponceMessage == "success"){
-                                    self.cf.DeleteFileInApp(fileName: "data/unsyncTransstatus/" + filename)
-                                }
                             }
-                            } else {
-                                print(error!)
-//                               // self.replysentlog = "-1" + "#" + "\(error?.localizedDescription)"
-//                                let dateFormatter = DateFormatter()
-//                                dateFormatter.dateFormat = "ddMMyyyy"
-//                                dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
-//                                let dtt2: String = dateFormatter.string(from: NSDate() as Date)
-                                
-                            }
+                            task.resume()// contents
                         }
-                        task.resume()// contents
+                        //                            let url = URL(fileURLWithPath: fromPath + "/\(filename)")
+                        //                            contents = try Data(contentsOf: url)
+                        //                            print(contents)
+                        
+                    } catch let error as NSError {
+                        print ("Error: \(error.domain)")
+                        
+                        // contents could not be loaded
                     }
-                    //                            let url = URL(fileURLWithPath: fromPath + "/\(filename)")
-                    //                            contents = try Data(contentsOf: url)
-                    //                            print(contents)
-                    
-                } catch let error as NSError {
-                    print ("Error: \(error.domain)")
-                    
-                    // contents could not be loaded
                 }
             }
         }
@@ -798,7 +972,7 @@ class Webservices:NSObject {
                     let test = String((text.filter { !" \n".contains($0) }))
                     let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
                     // print(newString)
-                    self.sentlog(func_name: "UpgradeTransactionStatus UpgradeTransactionStatus Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                    self.sentlog(func_name: "UpgradeTransactionStatus Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                     self.reply = "-1"
                     if(self.reply == "-1"){
                         let jsonstring: String = bodyData
@@ -820,7 +994,7 @@ class Webservices:NSObject {
                         let test = String((text.filter { !" \n".contains($0) }))
                         let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
                         //  print(newString)
-                        self.sentlog(func_name: "UpgradeTransactionStatus UpgradeTransactionStatus Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                        self.sentlog(func_name: "UpgradeTransactionStatus Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                     }
                 }
             }
@@ -870,7 +1044,48 @@ class Webservices:NSObject {
     }
     
     
-    func SetHoseNameReplacedFlag() -> String{ //-- service
+    func UpdateSwitchTimeBounceForLink() -> String {
+        FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
+//        let Version = Vehicaldetails.sharedInstance.FirmwareVersion
+//        let HoseId = Vehicaldetails.sharedInstance.HoseID
+        
+        let Url:String = FSURL
+        let Email = defaults.string(forKey: "address")
+        let uuid = defaults.string(forKey: "uuid")
+        let string = uuid! + ":" + Email! + ":" + "UpdateSwitchTimeBounceForLink"
+        let Base64 = convertStringToBase64(string: string)
+        let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
+        
+        print(string)
+        request.httpMethod = "POST"
+        request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
+        let bodyData = "{\"SiteId\":\(Vehicaldetails.sharedInstance.siteID),\"IsResetSwitchTimeBounce\":0}"//
+        print(bodyData)
+        request.httpBody = bodyData.data(using: String.Encoding.utf8)
+        request.timeoutInterval = 10
+        
+        let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
+            if let data = data {
+                print(String(data: data, encoding: String.Encoding.utf8)!)
+                self.reply = NSString(data: data, encoding:String.Encoding.utf8.rawValue)! as String
+                 print(self.reply)
+                // print(response!)
+            } else {
+                //  print(error!)
+                let text = (error?.localizedDescription)! //+ error.debugDescription
+                let test = String((text.filter { !" \n".contains($0) }))
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                // print(newString)
+                self.sentlog(func_name: "Upgrade Current Version toserver UpdateSwitchTimeBounceForLink Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                self.reply = "-1" + "#" + "\(error!)"
+            }
+        }
+        task.resume()
+        return reply //+ "#" + ""
+    }
+    
+    func SetHoseNameReplacedFlag() //-> String
+    { //-- service
         FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
         let SiteId = Vehicaldetails.sharedInstance.siteID
         let HoseId = Vehicaldetails.sharedInstance.HoseID
@@ -913,7 +1128,7 @@ class Webservices:NSObject {
             }
         }
         task.resume()
-        return reply// + "#" + ""
+//        return reply// + "#" + ""
     }
     
     
@@ -955,14 +1170,28 @@ class Webservices:NSObject {
                 let test = String((text?.filter { !" \n".contains($0) })!)
                 let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
                 // print(newString)
-                self.sentlog(func_name: "checkhour_odometer CheckVehicleRequireOdometerEntryAndRequireHourEntry Service Function Success", errorfromserverorlink: " ", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
+                {
+                    self.sentlog(func_name: "check if odometer or hour required. Success", errorfromserverorlink: " ", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + "")
+                }
+                else
+                {
+                    self.sentlog(func_name: "check if odometer or hour required. Success", errorfromserverorlink: " ", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                }
+                
                 
             } else {
                 let text = (error?.localizedDescription)! //+ error.debugDescription
                 let test = String((text.filter { !" \n".contains($0) }))
                 let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
                 // print(newString)
-                self.sentlog(func_name: "checkhour_odometer CheckVehicleRequireOdometerEntryAndRequireHourEntry Service Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
+                {
+                self.sentlog(func_name: "check if odometer or hour required. fail \(newString)", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + "")
+                }else
+                {
+                    self.sentlog(func_name: "check if odometer or hour required. fail \(newString)", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                }
                 
                 self.reply = "-1" //+ "#" + "\(error!)"
             }
@@ -1297,13 +1526,26 @@ class Webservices:NSObject {
             dateFormatter.dateFormat = "MM/dd/yyyy HH:mm:ss a"
             dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
             let dtt1: String = dateFormatter.string(from: NSDate() as Date)
-            
+            var bodyData = ""
             var transactionID:String = "\(Vehicaldetails.sharedInstance.TransactionId)"
+         
+           
+            
             if(transactionID == "0"){
                 transactionID = "NA"
+                if(Vehicaldetails.sharedInstance.HubLinkCommunication == "")
+                {
+                    bodyData = "@#^@#^\"\(dtt1),\(func_name),\(errorfromserverorlink),\(errorfromapp)\""
+                }
+                else{
+                 bodyData = "@#^@#^\"\(dtt1),[TXTN-\(Vehicaldetails.sharedInstance.HubLinkCommunication)]  \(func_name),\(errorfromserverorlink),\(errorfromapp)\""
+                }
             }
+            else{
             
-            let bodyData = "\(dtt1), TXTN ID - \(transactionID)" + "\(func_name),\(errorfromserverorlink),\(errorfromapp)***** \n\n"
+             bodyData = "@#^@#^\"\(dtt1),[TXTN-\(Vehicaldetails.sharedInstance.HubLinkCommunication)] TXTN ID - \(transactionID)" + " \(func_name),\(errorfromserverorlink),\(errorfromapp)\""
+            }
+           
             print(bodyData)
             
             //2020 06 12 DiagnosticLogs_iPhone.txt
@@ -1338,13 +1580,23 @@ class Webservices:NSObject {
             dateFormatter.dateFormat = "MM/dd/yyyy HH:mm:ss a"
             dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
             let dtt1: String = dateFormatter.string(from: NSDate() as Date)
-            
+            var bodyData = ""
             var transactionID:String = "\(Vehicaldetails.sharedInstance.TransactionId)"
             if(transactionID == "0"){
                 transactionID = "NA"
+                
+                if(Vehicaldetails.sharedInstance.HubLinkCommunication == "")
+                {
+                    bodyData = "@#^@#^\"\(dtt1),\(func_name),\(errorfromserverorlink),\(errorfromapp)\""
+                }
+                else{
+                 bodyData = "@#^@#^\"\(dtt1),[TXTN-\(Vehicaldetails.sharedInstance.HubLinkCommunication)]  \(func_name),\(errorfromserverorlink),\(errorfromapp)\""
+                }
             }
+            else{
             
-            let bodyData = "@#^@#^\"\(dtt1), TXTN ID - \(transactionID)" + "\(func_name),\(errorfromserverorlink),\(errorfromapp)*****\""
+             bodyData = "@#^@#^\"\(dtt1),[TXTN-\(Vehicaldetails.sharedInstance.HubLinkCommunication)] TXTN ID - \(transactionID)" + " \(func_name),\(errorfromserverorlink),\(errorfromapp)\""
+            }
             print(bodyData)
             
             dateFormatter.dateFormat = "yyyy MM dd"
@@ -1354,6 +1606,7 @@ class Webservices:NSObject {
             if(self.cf.checkPath(fileName: "data/unsyncdata/\(dtt2) " + "DiagnosticLogs_iPhone.txt") == true) {
                 if(bodyData != ""){
                     self.cf.SaveLogFile(fileName: "\(dtt2) " + "DiagnosticLogs_iPhone.txt", writeText: bodyData) //save data into file.
+                    
                 }
                 //                let logdata = self.cf.ReadFile(fileName: "\(dtt2)" + "Sendlog.txt")
                 //                print(logdata)
@@ -1437,7 +1690,7 @@ class Webservices:NSObject {
         //        "{\"IMEIUDID\":\"\(uuid!)\",\"IsVehicleNumberRequire\":\"\(Vehicaldetails.sharedInstance.IsVehicleNumberRequire)\",\"VehicleNumber\":\"\(vehicle_no)\",\"OdoMeter\":\"\(Odometer)\",\"WifiSSId\":\"\(wifiSSID)\",\"SiteId\":\"\(siteid)\",\"DepartmentNumber\":\"\(isdept)\",\"PersonnelPIN\":\"\(isPPin)\",\"Other\":\"\(isother)\",\"Hours\":\"\(hour)\",\"CurrentLat\":\"\(Vehicaldetails.sharedInstance.Lat)\",\"CurrentLng\":\"\(Vehicaldetails.sharedInstance.Long)\",\"RequestFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\"}"
         print(bodyData)
         request.httpBody = bodyData//.data(using: String.Encoding.utf8)
-        request.timeoutInterval = 10
+        request.timeoutInterval = 20
         
         let semaphore = DispatchSemaphore(value: 0)
         let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
@@ -1501,6 +1754,7 @@ class Webservices:NSObject {
                         Vehicaldetails.sharedInstance.pumpon_time = "\(pumpon_time)" //Send pump off time to pulsar off time.
                         Vehicaldetails.sharedInstance.LimitReachedMessage = "\(LimitReachedMessage)"
                         Vehicaldetails.sharedInstance.IsFirstTimeUse = "\(IsFirstTimeUse)"
+                        self.sentlog(func_name: "Fuel limit \(Vehicaldetails.sharedInstance.MinLimit).", errorfromserverorlink:"", errorfromapp: "")
                     }
                     
                 }
@@ -1593,8 +1847,8 @@ class Webservices:NSObject {
                     print(String(data: data, encoding: String.Encoding.utf8)!)
                     self.reply = NSString(data: data, encoding:String.Encoding.utf8.rawValue)! as String
                     
-                    print(self.reply)
-                    self.sentlog(func_name: "UpdateInterrupted TransactionFlag Service Function", errorfromserverorlink: " Response from Server $$ \(self.reply!)!!", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//                    print(self.reply)
+                    self.sentlog(func_name: "UpdateInterrupted TransactionFlag Service Function IsInterrupted \(Flag)", errorfromserverorlink: " Response from Server $$ \(self.reply!)!!", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 } else {
                     print(error!)
                     let text = (error?.localizedDescription)!// + error.debugDescription
@@ -1834,8 +2088,13 @@ class Webservices:NSObject {
                 let test = String((text?.filter { !" \n".contains($0) })!)
                 let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
                 print(newString)
-                self.sentlog(func_name: "SendSiteID with command: UpgradeIsBusyStatus {SiteId:\(siteid)}", errorfromserverorlink: " Response from Server $$ \(newString)!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-                
+                if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
+                {
+                    self.sentlog(func_name: "<SendSiteID> set link busy on cloud {SiteId:\(siteid)}", errorfromserverorlink: " Response from Server \(newString).",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)")
+                }
+                else{
+                self.sentlog(func_name: "<SendSiteID> set link busy on cloud {SiteId:\(siteid)}", errorfromserverorlink: " Response from Server \(newString).",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                }
             } else {
                 print(error!)
                 self.reply = "-1"
@@ -1843,7 +2102,13 @@ class Webservices:NSObject {
                 let test = String((text.filter { !" \n".contains($0) }))
                 let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
                 print(newString)
-                self.sentlog(func_name: "SendSiteID with command: UpgradeIsBusyStatus {SiteId:\(siteid)}", errorfromserverorlink: " Response from Server $$ \(newString)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
+                {
+                self.sentlog(func_name: "<SendSiteID> set link busy on cloud {SiteId:\(siteid)}", errorfromserverorlink: " Response from Server $$ \(newString)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" )
+                }
+                else{
+                self.sentlog(func_name: "<SendSiteID> set link busy on cloud {SiteId:\(siteid)}", errorfromserverorlink: " Response from Server $$ \(newString)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                }
             }
             semaphore.signal()
         }
@@ -1870,7 +2135,7 @@ class Webservices:NSObject {
                 let test = String((text?.filter { !" \n".contains($0) })!)
                 let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
                 print(newString)
-                self.sentlog(func_name: "Start Button Tapped GetRelay Function", errorfromserverorlink: " Response from link $$ \(newString)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                self.sentlog(func_name: "Sent GetRelay Function \(Url)", errorfromserverorlink: " Response from link $$ \(newString)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 
             } else {
                 print(error!)
@@ -1878,7 +2143,7 @@ class Webservices:NSObject {
                 let test = String((text.filter { !" \n".contains($0) }))
                 let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
                 print(newString)
-                self.sentlog(func_name: "Start Button Tapped GetRelay Function", errorfromserverorlink: " Response from link $$ \(newString)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                self.sentlog(func_name: "Sent GetRelay Function \(Url)", errorfromserverorlink: " Response from link $$ \(newString)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 self.reply = "-1" + "#" + "\(error!)"
             }
             semaphore.signal()
@@ -1907,7 +2172,7 @@ class Webservices:NSObject {
                 
                 self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
                 // print(self.reply)
-                self.sentlog(func_name: "Send tldlevel Function to link", errorfromserverorlink:"",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                self.sentlog(func_name: "Sent tldlevel Function to link", errorfromserverorlink:"",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 let text = self.reply
                 let test = String((text?.filter { !" \n".contains($0) })!)
                 let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
@@ -1953,7 +2218,7 @@ class Webservices:NSObject {
                 let test = String((text?.filter { !" \n".contains($0) })!)
                 let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
                 print(newString)
-                self.sentlog(func_name: "Fueling Page Get LastTransaction_ID Function", errorfromserverorlink: " Response from link $$ \(newString)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                self.sentlog(func_name: "Get LastTransaction_ID Function", errorfromserverorlink: " Response from link $$ \(newString)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 
                 print("Response: \(String(describing: response))")
             } else {
@@ -1984,7 +2249,7 @@ class Webservices:NSObject {
                 let test = String((text?.filter { !" \n".contains($0) })!)
                 let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
                 print(newString)
-                self.sentlog(func_name: "Fueling Page Get Pulsar_LastQuantity Function", errorfromserverorlink: " Response from link \(newString)",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                self.sentlog(func_name: "Get Pulsar_LastQuantity Function", errorfromserverorlink: " Response from link \(newString)",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 let data1:NSData = self.pulsardata.data(using: String.Encoding.utf8)! as NSData
                 do{
                     self.sysdata1 = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
@@ -2038,7 +2303,7 @@ class Webservices:NSObject {
                  // print(self.pulsardata)
                 let text = self.pulsardata
                 let test = String((text?.filter { !" \n".contains($0) })!)
-                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil) //"{ cmtxtnid_10_record :{ 1:TXTNINFO: : 7347954-2270 , 2:TXTNINFO: : 7344714-2191 , 3:TXTNINFO: : 7344710-92 , 4:TXTNINFO: : 7343905--41959432 , 5:TXTNINFO: : 7343510-2146926431 , 6:TXTNINFO: : 7339831--49185 , 7:TXTNINFO: : 7339485--545260097 , 8:TXTNINFO: : 7339456--67371009 , 9:TXTNINFO: : 7338746--4194305 , 10:TXTNINFO: : 7330954-N/A }}"//
                 print(newString)
                 if(newString == ""){
                      Vehicaldetails.sharedInstance.Last_transactionformLast10 = ""
@@ -2057,7 +2322,7 @@ class Webservices:NSObject {
                 else{
                     
                     if(newString.contains("TXTNINFO")){
-                        //  print(self.sysdataLast10trans)
+                          print(self.sysdataLast10trans)
                         let objUserData = self.sysdataLast10trans.value(forKey: "cmtxtnid_10_record") as! NSDictionary
                         let txtninfo1 = objUserData.value(forKey: "1:TXTNINFO:") as! String
                         let txtninfo2 = objUserData.value(forKey: "2:TXTNINFO:") as! String
@@ -2084,7 +2349,7 @@ class Webservices:NSObject {
                     }
                     else {
                 
-                    //  print(self.sysdataLast10trans)
+                      print(self.sysdataLast10trans)
                     let objUserData = self.sysdataLast10trans.value(forKey: "cmtxtnid_10_record") as! NSDictionary
                     let txtninfo1 = objUserData.value(forKey:"1:") as! String
                     let txtninfo2 = objUserData.value(forKey:"2:") as! String
@@ -2125,17 +2390,27 @@ class Webservices:NSObject {
     
     
     func Splitedata1(trans_info:String){
+        if(trans_info.contains("--"))
+        {
+            
+        }
+        else{
         let Split = trans_info.components(separatedBy: "-")
         
         let transid = Split[0];
         //let pulses = Split[1];
         
         Vehicaldetails.sharedInstance.Last_transactionformLast10 = transid
-        
+        }
         
     }
     
     func Splitedata(trans_info:String){
+        if(trans_info.contains("--"))
+        {
+            
+        }
+        else{
         let Split = trans_info.components(separatedBy: "-")
         
         let transid = Split[0];
@@ -2145,6 +2420,7 @@ class Webservices:NSObject {
         let quantity = self.cf.calculate_fuelquantity(quantitycount: Int(pulses as String)!)
             let transaction_details = Last10Transactions(Transaction_id: transid, Pulses: pulses, FuelQuantity: "\(quantity)", vehicle:"", date:"", dflag: "")
         Vehicaldetails.sharedInstance.Last10transactions.add(transaction_details)
+    }
     }
     }
     
@@ -2373,11 +2649,11 @@ class Webservices:NSObject {
                 print(String(data: data, encoding: String.Encoding.utf8)!)
                 self.reply = NSString(data: data, encoding:String.Encoding.utf8.rawValue)! as String
                   print(self.reply)
-//                let text = self.reply
-//                let test = String((text?.filter { !" \n".contains($0) })!)
-//                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                let text = self.reply
+                let test = String((text?.filter { !" \n".contains($0) })!)
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
                 // print(newString)
-                self.sentlog(func_name: "UpdateMAC Address Function update \(Vehicaldetails.sharedInstance.MacAddressfromlink) to server.", errorfromserverorlink: " "/* Response from Server $$ \(newString)!!*/, errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                self.sentlog(func_name: "UpdateMAC Address Function update \(Vehicaldetails.sharedInstance.MacAddressfromlink) to server\(newString)!.", errorfromserverorlink: " "/* Response from Server $$ \(newString)!!*/, errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
 
             } else {
                 let text = (error?.localizedDescription)! //+ error.debugDescription
@@ -2446,9 +2722,28 @@ class Webservices:NSObject {
         return ""
     }
     
+//    private func getWifiStrengthOnDevicesExceptIphoneX() -> Int? {
+//        var rssi: Int?
+//        guard let statusBar = UIApplication.shared.value(forKey:"statusBar") as? UIView,
+//              let foregroundView = statusBar.value(forKey:"foregroundView") as? UIView else {
+//                  return rssi
+//        }
+//        for view in foregroundView.subviews {
+//            if let statusBarDataNetworkItemView = NSClassFromString("UIStatusBarDataNetworkItemView"),
+//               view.isKind(of: statusBarDataNetworkItemView) {
+//                  if let val = view.value(forKey:"wifiStrengthRaw") as? Int {
+//                      rssi = val
+//                      break
+//                  }
+//            }
+//        }
+//        return rssi
+//    }
+    
+    
     
     func getinfo() -> String {
-        
+//        let rssi = getWifiStrengthOnDevicesExceptIphoneX()
         let Url:String = "http://192.168.4.1:80/client?command=info"
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string:Url)!)
         request.httpMethod = "GET"
@@ -2468,7 +2763,8 @@ class Webservices:NSObject {
                 if(newString.contains("iot_version"))
                 {
 //                    self.showstartbutton = "true"
-                    self.sentlog(func_name: "Fueling Page Getinfo Function", errorfromserverorlink: " Response from link $$\(newString)!! Mac address from server \(Vehicaldetails.sharedInstance.MacAddress)",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//                    print(rssi,Signal strength \(rssi))
+                    self.sentlog(func_name: "Sent info command to Link:\(Url)", errorfromserverorlink: " Response from link $$\(newString)!! Mac address from server \(Vehicaldetails.sharedInstance.MacAddress)",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 }
 //                    else{
                     
@@ -2496,6 +2792,7 @@ class Webservices:NSObject {
                             }
                             else
                             {
+                                Vehicaldetails.sharedInstance.MacAddressfromlink = "\(mac_address)"
                                 if(Vehicaldetails.sharedInstance.MacAddress == "")
                                 {
                                     self.showstartbutton = "true"
@@ -2544,6 +2841,14 @@ class Webservices:NSObject {
 //                        self.showstartbutton = "true"
                         Vehicaldetails.sharedInstance.iotversion = iot_version as String
                         print(Vehicaldetails.sharedInstance.FirmwareVersion,iot_version)
+                        if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
+                        {
+                            if(Vehicaldetails.sharedInstance.FirmwareVersion == iot_version as String)
+                            {
+                                Vehicaldetails.sharedInstance.IsUpgrade = "N"
+                            }
+
+                        }
 //                        if(Vehicaldetails.sharedInstance.MacAddress == "\(mac_address)")
 //                        {
 //                            self.showstartbutton = "true"
@@ -2580,7 +2885,8 @@ class Webservices:NSObject {
                         let test = String((text.filter { !" \n".contains($0) }))
                         let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
                         print(newString)
-                        self.sentlog(func_name: "Fueling Page Getinfo Function", errorfromserverorlink: " Response from link $$ \(newString)!!",errorfromapp: "Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + "Connected link : \(self.cf.getSSID())")
+                        
+                        self.sentlog(func_name: "Sent info command to Link \(Url)", errorfromserverorlink: " Response from link $$ \(newString)!!",errorfromapp:" Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + "Connected link : \(self.cf.getSSID())")
                         self.isconect_toFS = "false"
                         if(self.isconect_toFS == "true"){
                             self.showstartbutton = "false"
@@ -2607,7 +2913,7 @@ class Webservices:NSObject {
                     
                 }
                 
-                self.sentlog(func_name: "Fueling Page Getinfo Function", errorfromserverorlink: " Response from link $$ \(newString)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                self.sentlog(func_name: "Sent info command to Link \(Url):", errorfromserverorlink: " Response from link $$ \(newString)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 
                 self.reply = "-1"
             }
@@ -2640,7 +2946,7 @@ class Webservices:NSObject {
                 if((text?.contains("Connect_Softap"))!)
                 {
                     //                    self.showstartbutton = "true"
-                    //                    self.sentlog(func_name: "Fueling Page Getinfo Function", errorfromserverorlink: " Response from link $$\(newString)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                                        self.sentlog(func_name: "Sent info command to Link \(Url):", errorfromserverorlink: " Response from link $$\(text)!!",errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                     //                }else{
                     
                     let data1:Data = self.reply.data(using: String.Encoding.utf8)!
@@ -2685,7 +2991,7 @@ class Webservices:NSObject {
                         let test = String((text.filter { !" \n".contains($0) }))
                         let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
                         print(newString)
-                        self.sentlog(func_name: "Fueling Page Getinfo Function", errorfromserverorlink: " Response from link $$ \(newString)!!",errorfromapp: "Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + "Connected link : \(self.cf.getSSID())")
+                        self.sentlog(func_name: "Sent info command to Link \(Url):", errorfromserverorlink: " Response from link $$ \(newString)!!",errorfromapp: "Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + "Connected link : \(self.cf.getSSID())")
                         self.isconect_toFS = "false"
                         if(self.isconect_toFS == "true"){
                             self.showstartbutton = "false"
@@ -2706,7 +3012,7 @@ class Webservices:NSObject {
                 let test = String((text.filter { !" \n".contains($0) }))
                 let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
                 print(newString)
-                self.sentlog(func_name: "Fueling Page Getinfo Function", errorfromserverorlink: " Response from link $$ \(newString)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                self.sentlog(func_name: "Sent info command to Link \(Url):", errorfromserverorlink: " Response from link $$ \(newString)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 
                 self.reply = "-1"
             }

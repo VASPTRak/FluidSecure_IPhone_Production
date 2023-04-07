@@ -25,7 +25,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
     let locationManager = CLLocationManager()
   
     var IsOdoMeterRequire:String!
-    var IsLoginRequire:String!
+    var IsLoginRequire:String = "False"
     var Email:String!
     var IsDepartmentRequire:String!
     var IsPersonnelPINRequire:String!
@@ -56,10 +56,10 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         super.viewDidLoad()
         Activity.isHidden = true
         //Save UUID for the device into the keychain Service if it is not saved previously.
-        
+        Vehicaldetails.sharedInstance.HubLinkCommunication = ""
 //        var uuid:String = ""
         if(brandname == "FluidSecure"){
-        if(defaults.string(forKey: "\(brandname)") != nil) {
+            if(defaults.string(forKey: "\(brandname)") != nil) {
             uuid = defaults.string(forKey: "\(brandname)")!//UUID().uuidString
             KeychainService.savePassword(token: uuid as NSString)
         }
@@ -67,11 +67,23 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         }
         var password = KeychainService.loadPassword()
         if(password == nil || password == ""){
-            uuid = UIDevice.current.identifierForVendor!.uuidString
-            KeychainService.savePassword(token: uuid as NSString)
+            self.web.sentlog(func_name: "keychain service get \(password) ", errorfromserverorlink: "", errorfromapp: "")
+            let preuuid = defaults.string(forKey: "uuid")
+            if(preuuid == nil){
+                 uuid = UIDevice.current.identifierForVendor!.uuidString
+                KeychainService.savePassword(token: uuid as NSString)
+            }
+            else
+            {
+                KeychainService.savePassword(token: preuuid! as NSString)
+                password = KeychainService.loadPassword()
+                print(password!)//used this paasword (uuid)
+                uuid = password! as String
+            }
         }
         else{
-             password = KeychainService.loadPassword()
+//            KeychainService.savePassword(token: "0B5C5D0B-70CE-4C75-8844-9E8938586489" as NSString)
+           // password = KeychainService.loadPassword()
             print(password!)//used this paasword (uuid)
             uuid = password! as String
         }
@@ -79,7 +91,8 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         version.text = "Version \(Version)"
         version_2.text = "Version \(Version)"
 
-//        Vehicaldetails.sharedInstance.URL = "http://sierravistatest.cloudapp.net/"//appLink as String testing
+//        Vehicaldetails.sharedInstance.URL = "http://fluidsecuretest.eastus.cloudapp.azure.com/"
+        //"http://sierravistatest.cloudapp.net/"//appLink as String testing
         Vehicaldetails.sharedInstance.URL = "https://www.fluidsecure.net/"//appLink as String testing"https://www.fluidsecure.net/"//"https://www.fluidsecure.net/" //Live
         Vehicaldetails.sharedInstance.deptno = ""
         Vehicaldetails.sharedInstance.Personalpinno = ""
@@ -99,7 +112,14 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         locationManager.startUpdatingLocation()
         currentlocation = locationManager.location
         var reply:String!
-        
+        if(IsLoginRequire == "False")
+        {
+            mview.isHidden = true
+            version.isHidden = false
+            warning.isHidden = false
+            self.warning.text = NSLocalizedString("Pleasewait", comment:"")
+            refresh.isHidden = true
+        }
         if(currentlocation == nil)
         {
             reply = web.checkApprove(uuid: uuid,lat:"\(0)",long:"\(0)")   // send check approve command if lat long is zero.
@@ -284,6 +304,13 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
                     IsDepartmentRequire = objUserData.value(forKey: "IsDepartmentRequire") as! NSString as String
                     IsPersonnelPINRequire = objUserData.value(forKey: "IsPersonnelPINRequire") as! NSString as String
                     IsOtherRequire = objUserData.value(forKey: "IsOtherRequire") as! NSString as String
+                    
+//                    let IsNonValidateVehicle = objUserData.value(forKey:"IsNonValidateVehicle") as!NSString as String
+//                    let IsNonValidateODOM = objUserData.value(forKey: "IsNonValidateODOM") as! NSString as String
+//                    defaults.set(IsNonValidateVehicle, forKey: "IsNonValidateVehicle")
+//                    defaults.set(IsOdoMeterRequire, forKey: "IsOdoMeterRequire")
+//                    defaults.set(IsNonValidateODOM, forKey: "IsNonValidateODOM")
+                    
                     Vehicaldetails.sharedInstance.SupportPhonenumber = (objUserData.value(forKey: "SupportPhonenumber") as! NSString) as String
                     Vehicaldetails.sharedInstance.SupportEmail = (objUserData.value(forKey: "SupportEmail") as! NSString) as String
                     Vehicaldetails.sharedInstance.CompanyBarndName = (objUserData.value(forKey: "CompanyBrandName") as! NSString) as String
@@ -429,8 +456,8 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
 
                 if(Message == "success") {
                     print(login)
-                    print(IsLoginRequire!)
-                    if (login == IsLoginRequire!){
+                    print(IsLoginRequire)
+                    if (login == IsLoginRequire){
                         mview.isHidden = false
                         version.isHidden = true
                         warning.isHidden = true
@@ -464,7 +491,26 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
             let appDel = UIApplication.shared.delegate! as! AppDelegate
             appDel.start()
         }
+       
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+//        if (login == IsLoginRequire){
+//            mview.isHidden = false
+//            version.isHidden = true
+//            warning.isHidden = true
+//            refresh.isHidden = true
+//            Username.text = Email
+//        }
+////        else if (IsLoginRequire == "False"){
+////        {
+////        mview.isHidden = true
+////        version.isHidden = false
+////        warning.isHidden = false
+////        self.warning.text = NSLocalizedString("warning_NoInternet_Connection", comment:"")
+////        refresh.isHidden = true
+////        }}
+        }
     
     func gotopreauth()
     {

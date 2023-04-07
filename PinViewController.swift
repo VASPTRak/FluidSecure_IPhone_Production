@@ -83,7 +83,7 @@ class PinViewController: UIViewController
     
     @objc func gotostart(){
         if(appisonPersonalpin == true){
-        self.web.sentlog(func_name: "Personalpin_screen_timeout", errorfromserverorlink: "", errorfromapp: "")
+        self.web.sentlog(func_name: "Personalpin_screen_timeout, back to home screen", errorfromserverorlink: "", errorfromapp: "")
         let appDel = UIApplication.shared.delegate! as! AppDelegate
         appDel.start()
         }
@@ -287,49 +287,65 @@ class PinViewController: UIViewController
     }
     
     @IBAction func saveButtontapped(sender: AnyObject) {
-        Activity.startAnimating()
-        Activity.isHidden = false
-        Pinstoptimergotostart.invalidate()
-        Go.isEnabled = false
+        if(self.cf.getSSID() != "" && Vehicaldetails.sharedInstance.SSId != self.cf.getSSID() && Vehicaldetails.sharedInstance.HubLinkCommunication == "HTTP") {
+            print("SSID: \(self.cf.getSSID())")
+            self.showAlert(message:NSLocalizedString("SwitchoffyourWiFi", comment:""))
+            //self.showAlert(message:"Please switch off your wifi before proceeding. \n To switch off the wifi you can use the shortcut.  If you have an iPhone with Touch ID, swipe up from the bottom of the screen. If you have an iPhone with Face ID, swipe down from the upper right. Then tap on the wifi icon to switch it off.")
+            //            self.Activity.stopAnimating()
+            //            self.Activity.isHidden = true
+            // self.go.isEnabled = true
+        }
+        else{
+            Activity.startAnimating()
+            Activity.isHidden = false
+            Pinstoptimergotostart.invalidate()
+            Go.isEnabled = false
             delay(1){
-            self.IsSavebuttontapped = true
-            self.Pinstoptimergotostart.invalidate()
-                
-
-            self.tapAction()
-            if(self.Pin.text == "")
-            {
-                if(Vehicaldetails.sharedInstance.Language == "es-ES")
-                {
-                    self.showAlert(message: NSLocalizedString("EnterPin", comment:""))
-                }
-                else{
-                    self.showAlert(message:"Please Enter \(Vehicaldetails.sharedInstance.ScreenNameForPersonnel) Pin")
-                }
-
+                self.IsSavebuttontapped = true
                 self.Pinstoptimergotostart.invalidate()
-                self.viewWillAppear(true)
-                self.Activity.stopAnimating()
-                self.Activity.isHidden = true
-            }
-            else
-            {
-                let pinno = self.Pin.text!
-                Vehicaldetails.sharedInstance.Personalpinno = "\(pinno)"
-                self.Pin.text = Vehicaldetails.sharedInstance.Personalpinno
-                let isother = Vehicaldetails.sharedInstance.IsOtherRequire
-
-                if(isother == "True")
-                { self.Activity.stopAnimating()
-                    self.Activity.isHidden = true
+                
+                
+                self.tapAction()
+                if(self.Pin.text == "")
+                {
+                    if(Vehicaldetails.sharedInstance.Language == "es-ES")
+                    {
+                        self.showAlert(message: NSLocalizedString("EnterPin", comment:""))
+                    }
+                    else{
+                        self.showAlert(message:"Please Enter \(Vehicaldetails.sharedInstance.ScreenNameForPersonnel) Pin")
+                    }
+                    
                     self.Pinstoptimergotostart.invalidate()
-                    self.Go.isEnabled = false
-                    self.performSegue(withIdentifier: "other", sender: self)
+                    self.viewWillAppear(true)
+                    self.Activity.stopAnimating()
+                    self.Activity.isHidden = true
                 }
-                else{
-                    let other = ""
-                    Vehicaldetails.sharedInstance.Other = ""
-                    self.senddata(other: other)
+                else
+                {
+                    let pinno = self.Pin.text!
+                    Vehicaldetails.sharedInstance.Personalpinno = "\(pinno)"
+                    self.Pin.text = Vehicaldetails.sharedInstance.Personalpinno
+                    let isother = Vehicaldetails.sharedInstance.IsOtherRequire
+                    if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
+                    {
+                        self.web.sentlog(func_name: "Personal Pin Number Entered : \(Vehicaldetails.sharedInstance.Personalpinno)", errorfromserverorlink: " Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: "")
+                    }
+                    else{
+                        self.web.sentlog(func_name: "Personal Pin Number Entered : \(Vehicaldetails.sharedInstance.Personalpinno)", errorfromserverorlink: " Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
+                    }
+                    if(isother == "True")
+                    { self.Activity.stopAnimating()
+                        self.Activity.isHidden = true
+                        self.Pinstoptimergotostart.invalidate()
+                        self.Go.isEnabled = false
+                        self.performSegue(withIdentifier: "other", sender: self)
+                    }
+                    else{
+                        let other = ""
+                        Vehicaldetails.sharedInstance.Other = ""
+                        self.senddata(other: other)
+                    }
                 }
             }
         }

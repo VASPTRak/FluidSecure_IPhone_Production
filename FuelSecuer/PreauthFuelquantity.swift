@@ -73,6 +73,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
     var RSSIs = [NSNumber]()
     var data = NSMutableData()
     var peripherals: [CBPeripheral] = []
+//    var kCBAdvDataLocalName = [String]()
     var ifSubscribed = false
     var isdisconnected = false
     var isDisconnect_Peripheral = false
@@ -123,10 +124,11 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
     
     var quantity = [String]()
     var quantitysavetime = [String]()
+    var kCBAdvData_LocalName = [String]()
     var counts:String!
     var reply_server:String = ""
     var isviewdidDisappear = false
-    
+    var localName = ""
     var replysentlog :String!
     var contents:Data!
     var countfromlink = 0
@@ -285,14 +287,14 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                         self.updateIncomingData()
                         NotificationCenter.default.removeObserver(self)
 //                        }
-                        self.web.sentlog(func_name: " Send info command to link", errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"")
+                        self.web.sentlog(func_name: " Send info command to link ", errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"")
                         self.AppconnectedtoBLE = true
                         if(self.appdisconnects_automatically == true)
                         {
                             if(self.AppconnectedtoBLE == true){
                                 self.getlast10transaction()
                                 self.BLErescount = 0
-                                self.web.sentlog(func_name: "Send Relay On Command to BT link LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
+                                self.web.sentlog(func_name: "Sent Relay On Command to BT link LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
                                 self.outgoingData(inputText: "LK_COMM=relay:12345=ON")
                                 NotificationCenter.default.removeObserver(self)
                                 self.updateIncomingData ()
@@ -364,7 +366,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                         if(self.AppconnectedtoBLE == true){
                             self.getlast10transaction()
                             self.BLErescount = 0
-                            self.web.sentlog(func_name: "Send Relay On Command to BT link LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
+                            self.web.sentlog(func_name: "Sent Relay On Command to BT link LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
                             self.outgoingData(inputText: "LK_COMM=relay:12345=ON")
                             NotificationCenter.default.removeObserver(self)
                             self.updateIncomingData ()
@@ -389,7 +391,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                     self.timerview.invalidate()
                     self.stoptimergotostart.invalidate()
                     self.stoptimer_gotostart.invalidate()
-                    self.web.sentlog(func_name: "Send transaction ID to BT link \(Vehicaldetails.sharedInstance.TransactionId)" , errorfromserverorlink: "", errorfromapp: "")
+                    self.web.sentlog(func_name: "Sent transaction ID to BT link \(Vehicaldetails.sharedInstance.TransactionId)" , errorfromserverorlink: "", errorfromapp: "")
                         
                         
                         let dateFormatter = DateFormatter()
@@ -400,9 +402,9 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                         NotificationCenter.default.removeObserver(self)
                     self.updateIncomingData()
                     self.stoptimergotostart.invalidate()
-                    self.stoptimergotostart = Timer.scheduledTimer(timeInterval: (Double(1)*60), target: self, selector: #selector(FuelquantityVC.gotostart), userInfo: nil, repeats: false)
+                    self.stoptimergotostart = Timer.scheduledTimer(timeInterval: (Double(1)*60), target: self, selector: #selector(PreauthFuelquantity.gotostart), userInfo: nil, repeats: false)
                     
-                    self.web.sentlog(func_name: "stoptimer gotostart starts, Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+                    self.web.sentlog(func_name: "Starts screen timeout timer.", errorfromserverorlink: "", errorfromapp: "")
                     
                 //    self.displaytime.text = NSLocalizedString("MessageFueling", comment:"")
                     }
@@ -493,9 +495,9 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                                         self.displaytime.text = NSLocalizedString("MessageFueling", comment:"")
                                                 //self.displaytime.textColor = UIColor.black
                                         //if the information from link get and start button Appeared but user not press the start button the after 60 sec app go to the on HomeScreen.
-                                        self.stoptimergotostart = Timer.scheduledTimer(timeInterval: (Double(1)*60), target: self, selector: #selector(FuelquantityVC.gotostart), userInfo: nil, repeats: false)
+                                        self.stoptimergotostart = Timer.scheduledTimer(timeInterval: (Double(1)*60), target: self, selector: #selector(PreauthFuelquantity.gotostart), userInfo: nil, repeats: false)
                                         
-                                        self.web.sentlog(func_name:" Stoptimer gotostart starts, Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+                                        self.web.sentlog(func_name:" Starts screen timeout timer.", errorfromserverorlink: "", errorfromapp: "")
                                             }
                                     }
                                     else
@@ -574,9 +576,9 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                                             self.stoptimergotostart.invalidate()
                                                 
                                             
-                                            self.stoptimergotostart = Timer.scheduledTimer(timeInterval: (Double(1)*60), target: self, selector: #selector(FuelquantityVC.gotostart), userInfo: nil, repeats: false)
+                                            self.stoptimergotostart = Timer.scheduledTimer(timeInterval: (Double(1)*60), target: self, selector: #selector(PreauthFuelquantity.gotostart), userInfo: nil, repeats: false)
                                             
-                                            self.web.sentlog(func_name:" Stoptimer gotostart starts, Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+                                            self.web.sentlog(func_name:" Starts screen timeout timer.", errorfromserverorlink: "", errorfromapp: "")
                                             
                                             self.displaytime.text = NSLocalizedString("MessageFueling1", comment:"")
                                                    // self.displaytime.textColor = UIColor.black//+ ". Selected Hose \(Vehicaldetails.sharedInstance.SSId) and connected Hose \(self.cf.getSSID()) name is not Matched. Please check again."
@@ -610,7 +612,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                                         } else if(self.showstart == "invalid")
                                         {
                                             self.timerview.invalidate()
-                                            self.error400(message: "Unable to verify the Connected link. Please try again later." )
+                                            self.error400(message: "Unable to verify the Connected link." )
                                         }
                                         }}
                                 }
@@ -670,7 +672,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
         self.timerview.invalidate()
         if(Cancel_Button_tapped == true)
         {
-            self.web.sentlog(func_name:" Go to start cancel_botto tapped", errorfromserverorlink: "", errorfromapp: "")
+            self.web.sentlog(func_name:" Go to start cancel_botton tapped", errorfromserverorlink: "", errorfromapp: "")
         }
         else{
             
@@ -720,7 +722,8 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
         if(Last_Count == nil ){
             Last_Count = "0"
         }
-        if(Int(Last_Count)! > 0 ){}
+        print(Last_Count!)
+        if(Float(Last_Count)! > 0 ){}
         else{
         if(Cancel_Button_tapped == true){}
         else{
@@ -766,6 +769,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
     override func viewWillAppear(_ animated: Bool) {
         disconnectFromDevice()
         self.peripherals = []
+//        self.kCBAdvDataLocalName = []
         print(Vehicaldetails.sharedInstance.PulseRatio)
         
         UIApplication.shared.isIdleTimerDisabled = true
@@ -850,8 +854,8 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
         }
         super.viewDidLoad()
         
-        callObserver.setDelegate(self, queue: nil)
-        self.web.sentlog(func_name: " Communication Method Type \(Vehicaldetails.sharedInstance.HubLinkCommunication)", errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"Connetced link \( self.cf.getSSID()) ")
+//        callObserver.setDelegate(self, queue: nil)
+//        self.web.sentlog(func_name: " Communication Method Type \(Vehicaldetails.sharedInstance.HubLinkCommunication)", errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"Connetced link \( self.cf.getSSID()) ")
         
         if(Vehicaldetails.sharedInstance.HubLinkCommunication == "HTTP")
         {
@@ -886,7 +890,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
         Vehicaldetails.sharedInstance.gohome = false
         let doneButton:UIButton = UIButton (frame: CGRect(x: 100, y: 100, width: 100, height: 44));
         doneButton.setTitle(NSLocalizedString("Return", comment:""), for: UIControl.State())
-        doneButton.addTarget(self, action: #selector(FuelquantityVC.tapAction), for: UIControl.Event.touchUpInside);
+        doneButton.addTarget(self, action: #selector(PreauthFuelquantity.tapAction), for: UIControl.Event.touchUpInside);
         doneButton.backgroundColor = UIColor.black
         
         FQ.isHidden = false
@@ -937,7 +941,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
     func savetrans(lastpulsarcount:String,lasttransID:String){
         let PulseRatio = Vehicaldetails.sharedInstance.PulseRatio
         let fuelquantity = (Double(lastpulsarcount))!/(PulseRatio as NSString).doubleValue
-        if(fuelquantity == 0.0 || lasttransID == "-1"){}
+        if(fuelquantity == 0.0 || lasttransID == "-1" || lasttransID == "0"){}
         else{
             let bodyData = "{\"TransactionId\":\(lasttransID),\"FuelQuantity\":\((fuelquantity)),\"Pulses\":\"\(lastpulsarcount)\",\"TransactionFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\",\"Transaction\":\"LastTransaction\"}"
             
@@ -1280,6 +1284,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
         
         if(Cancel_Button_tapped == true){}
         else{
+            
             //Start the fueling with buttontapped
             Vehicaldetails.sharedInstance.ifStartbuttontapped = true
             start.isEnabled = false
@@ -1289,10 +1294,11 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
             self.timerview.invalidate()
             Vehicaldetails.sharedInstance.pulsarCount = ""
             if(AppconnectedtoBLE == true){
+                
                 getlast10transaction()
                 IsStopbuttontappedBLE = false
                 BLErescount = 0
-                self.web.sentlog(func_name: "Send Relay On Command to BT link LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
+                self.web.sentlog(func_name: "Sent Relay On Command to BT link LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
                 outgoingData(inputText: "LK_COMM=relay:12345=ON")
                 NotificationCenter.default.removeObserver(self)
                 updateIncomingData ()
@@ -1308,8 +1314,10 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
             }
             else if(AppconnectedtoBLE == false)
             {
+                
                 if(self.connectedservice == "725e0bc8-6f00-4d2d-a4af-96138ce599b9")
                 {
+                    settransactionid()
                     self.consoleAsciiText = NSAttributedString(string: "")
                     self.newAsciiText = NSMutableAttributedString()
                     if(self.observationToken == nil){}
@@ -1318,7 +1326,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                     }
                     self.newAsciiText.mutableString.replaceOccurrences(of: "\n\n", with: "\n", options: [], range: NSMakeRange(0, self.newAsciiText.length))
                     outgoingData(inputText: "LK_COMM=relay:12345=ON")
-                    self.web.sentlog(func_name: "Send Relay On Command to BT link LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
+                    self.web.sentlog(func_name: "Sent Relay On Command to BT link LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
                     NotificationCenter.default.removeObserver(self)
                     updateIncomingData()
                     
@@ -1522,7 +1530,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
 
     func resumetimer(){
         self.timerview.invalidate()
-        self.timerview = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(FuelquantityVC.viewDidAppear(_:)), userInfo: nil, repeats: true)
+        self.timerview = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(PreauthFuelquantity.viewDidAppear(_:)), userInfo: nil, repeats: true)
     }
    
     func displaymessage(message: String)
@@ -1970,7 +1978,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                                                                         Vehicaldetails.sharedInstance.gohome = true
                                                                         self.timerview.invalidate()
                                                                         let appDel = UIApplication.shared.delegate! as! AppDelegate
-                                                                        self.web.sentlog(func_name: "stopButtontapped ", errorfromserverorlink: "", errorfromapp: "")
+//                                                                        self.web.sentlog(func_name: "stopButtontapped ", errorfromserverorlink: "", errorfromapp: "")
                                                                         appDel.start()
                                                                     }
                                                                     self.wait.isHidden = true
@@ -2022,10 +2030,30 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
             }else{}
             self.cf.delay(1){
                 self.fuelquantity = (Double(quantitycount))!/(PulseRatio as NSString).doubleValue
-                if(self.fuelquantity == nil){
-                    
-                    self.error400(message: NSLocalizedString("NoQuantity", comment:""))//"No Quantity received. Transaction ended.")
+                if(self.fuelquantity == nil || self.fuelquantity == 0.0){
+                    if(quantitycount == "0" || quantitycount == "0.0"){
+                        if(self.IsStartbuttontapped == true){
+                            self.error400(message: NSLocalizedString("Pump ON Time Reached", comment: ""))//"NoQuantity", comment:""))//"No Quantity received. Transaction ended.")
+                        }
+                       else if(self.Cancel_Button_tapped == true)
+                        {
+                        let appDel = UIApplication.shared.delegate! as! AppDelegate
+                        appDel.start()
+                        self.timerview.invalidate()
+                            self.stoptimergotostart.invalidate()
+                            self.stoptimer_gotostart.invalidate()
+                            self.timerview.invalidate()
+                            self.web.sentlog(func_name:" Go to start cancel_botton tapped", errorfromserverorlink: "", errorfromapp: "")
+                       
+                        self.stoptimer_gotostart.invalidate()
+                        self.stoptimergotostart.invalidate()
+                        self.timerview.invalidate()
+                        
+                    }
                 }
+            }
+//                    self.error400(message: NSLocalizedString("NoQuantity", comment:""))//"No Quantity received. Transaction ended.")
+                
                 else{
                     print(self.fuelquantity!)
                     if(self.fuelquantity > 0){
@@ -2079,7 +2107,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                                     Vehicaldetails.sharedInstance.gohome = true
                                     self.timerview.invalidate()
                                     let appDel = UIApplication.shared.delegate! as! AppDelegate
-                                    self.web.sentlog(func_name: "stoprelay function 30 delay ", errorfromserverorlink: "", errorfromapp: "")
+                                    //self.web.sentlog(func_name: "stoprelay function 30 delay ", errorfromserverorlink: "", errorfromapp: "")
                                     appDel.start()
                                 }
                             }
@@ -2095,7 +2123,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                                 self.timerview.invalidate()
                                     self.FDcheckBLEtimer.invalidate()
                                 let appDel = UIApplication.shared.delegate! as! AppDelegate
-                                self.web.sentlog(func_name: "stoprelay function ", errorfromserverorlink: "", errorfromapp: "")
+                                //self.web.sentlog(func_name: "stoprelay function ", errorfromserverorlink: "", errorfromapp: "")
                                 appDel.start()
                                 }
                             }
@@ -2108,7 +2136,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                     }
                     else
                     {
-                        self.error400(message: NSLocalizedString("NoQuantity", comment:""))//"No Quantity received. Transaction ended.")
+                        //self.error400(message: NSLocalizedString("NoQuantity", comment:""))//"No Quantity received. Transaction ended.")
                     }
                 }
             }
@@ -2203,7 +2231,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
             timer_quantityless_thanprevious.invalidate()
             stoptimergotostart.invalidate()
             stoptimer_gotostart.invalidate()
-            self.error400(message: NSLocalizedString("NoQuantity", comment:""))//"No Quantity received. Transaction ended.")
+            //self.error400(message: NSLocalizedString("NoQuantity", comment:""))//"No Quantity received. Transaction ended.")
         } else{
             let quantitycount = self.Last_Count! //Vehicaldetails.sharedInstance.pulsarCount
             let PulseRatio = Vehicaldetails.sharedInstance.PulseRatio
@@ -2274,8 +2302,19 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
             print(Wifyssid)
             print(Odomtr)
             print(Vehicaldetails.sharedInstance.vehicleno,sourcelat!,sourcelong!,Version,UIDevice().type,UIDevice.current.systemVersion)
-    
-            let bodyData = "{\"SiteId\":\(siteid),\"CurrentOdometer\":\(Odomtr),\"FuelQuantity\":\((fuelQuantity)),\"TransactionId\":\(TransactionId),\"FuelTypeId\":\(FuelTypeId),\"WifiSSId\":\"\(Wifyssid)\",\"TransactionDate\":\"\(dtt)\",\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"VehicleNumber\":\"\(Vehicaldetails.sharedInstance.vehicleno)\",\"CurrentLat\":\"\(sourcelat!)\",\"CurrentLng\":\"\(sourcelong!)\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\"}"
+            
+//            "ErrorCode":Errorcode,
+//            "FOBNumber":FOBNumber,
+//            "Barcode":Barcode,
+//            "WifiSSId":wifiSSID,
+//            "SiteId":siteid,
+//            "DepartmentNumber":isdept,
+//            "PersonnelPIN":"\(isPPin)",
+//            "Other":"\(isother)",
+//            "Hours":"\(hour)",
+//            "VehicleExtraOther": VehicleExtraOther,
+            
+            let bodyData = "{\"SiteId\":\(siteid),\"CurrentOdometer\":\(Odomtr),\"FuelQuantity\":\((fuelQuantity)),\"TransactionId\":\(TransactionId),\"FuelTypeId\":\(FuelTypeId),\"WifiSSId\":\"\(Wifyssid)\",\"TransactionDate\":\"\(dtt)\",\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"VehicleNumber\":\"\(Vehicaldetails.sharedInstance.vehicleno)\",\"ErrorCode\":\"\(Vehicaldetails.sharedInstance.Errorcode)\",\"DepartmentNumber\":\"\(Vehicaldetails.sharedInstance.deptno)\",\"Hours\":\"\(Vehicaldetails.sharedInstance.hours)\",\"VehicleExtraOther\":\"\(Vehicaldetails.sharedInstance.ExtraOther)\",\"Other\":\"\(Vehicaldetails.sharedInstance.Other)\",\"PersonnelPIN\":\"\(Vehicaldetails.sharedInstance.Personalpinno)\",\"CurrentLng\":\"\(sourcelong!)\",\"CurrentLat\":\"\(sourcelat!)\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\"}"
             print(bodyData)
     
             let reply = web.Transactiondetails(bodyData: bodyData)
@@ -2286,10 +2325,13 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                 dateFormatter.dateFormat = "ddMMyyyyhhmmss"
                 let dtt1: String = dateFormatter.string(from: Date())
     
-                let unsycnfileName =  dtt1 + "#" + "\(TransactionId)" + "#" + "\(fuelQuantity)" + "#" + Vehicaldetails.sharedInstance.SSId //Vehicaldetails.sharedInstance.siteName
-                cf.preauthSaveTextFile(fileName: unsycnfileName, writeText: jsonstring)
-                cf.delay(0.2){
-    
+                if(TransactionId == "0"){}
+                else{
+                    let unsycnfileName =  dtt1 + "#" + "\(TransactionId)" + "#" + "\(fuelQuantity)" + "#" + Vehicaldetails.sharedInstance.SSId //Vehicaldetails.sharedInstance.siteName
+                    cf.preauthSaveTextFile(fileName: unsycnfileName, writeText: jsonstring)
+                    cf.delay(0.2){
+                        
+                    }
                 }
             }
     
@@ -2660,14 +2702,14 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                         print(self.quantity[v-1],self.quantity[v-2])
                         if(self.quantity[v-1] == self.quantity[v-2]){
                             self.total_count += 1
-                            if(self.total_count == 3){
+                            if(self.total_count >= 3){
                                 Ispulsarcountsame = true
                                 stoptimerIspulsarcountsame.invalidate()
                                 Samecount = Last_Count
                                 
                                 
                                 Samecount = Last_Count
-                                self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpon_time as NSString).doubleValue, target: self, selector: #selector(FuelquantityVC.stopIspulsarcountsame), userInfo: nil, repeats: false)
+                                self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpon_time as NSString).doubleValue, target: self, selector: #selector(PreauthFuelquantity.stopIspulsarcountsame), userInfo: nil, repeats: false)
                                 
                                 self.web.sentlog(func_name:"Get pulse count was the same while fueling function pump on time - \(Vehicaldetails.sharedInstance.pumpon_time),Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
                             }}}
@@ -2786,7 +2828,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                                             Ispulsarcountsame = true
                                             stoptimerIspulsarcountsame.invalidate()
                                             Samecount = Last_Count
-                                            self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(FuelquantityVC.stopIspulsarcountsame), userInfo: nil, repeats: false)
+                                            self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(PreauthFuelquantity.stopIspulsarcountsame), userInfo: nil, repeats: false)
                                             
                                             self.web.sentlog(func_name: "get pulse count was the same while fueling function pump off time - \(Vehicaldetails.sharedInstance.pumpoff_time),Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
                                         }
@@ -2872,7 +2914,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                                         Ispulsarcountsame = true
                                         stoptimerIspulsarcountsame.invalidate()
                                         Samecount = Last_Count
-                                        self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(FuelquantityVC.stopIspulsarcountsame), userInfo: nil, repeats: false)
+                                        self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(PreauthFuelquantity.stopIspulsarcountsame), userInfo: nil, repeats: false)
                                         
                                         self.web.sentlog(func_name: "Get pulse count was the same while fueling function pump off  - after \(Vehicaldetails.sharedInstance.pumpoff_time) Seconds if you get the same count ,Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
                                     }
@@ -2929,64 +2971,64 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                         }
                         else{
                             timer_quantityless_thanprevious.invalidate()
-                            timer_quantityless_thanprevious = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(FuelquantityVC.stoprelay), userInfo: nil, repeats: false)
+                            timer_quantityless_thanprevious = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(PreauthFuelquantity.stoprelay), userInfo: nil, repeats: false)
                             self.web.sentlog(func_name: "Get Pulsar", errorfromserverorlink: "\("lower qty. than the prior one.")", errorfromapp: "")
                             print("lower qty. than the prior one.")
                         }
                         }
-                        if(pulsar_status == 0)
-                        {
-                           
-                            do{
-                                playAlarm()
-                                GetPulsarstartimer.invalidate()
-                                    displaytime.text = NSLocalizedString("Reconnect" , comment:"")//"Reconnecting to pump, please wait briefly. Do not turn pump off."
-                                    displaytime.textColor = UIColor.red
-                                    reinstatingtransaction = true
-                                    if(Last_Count == nil){
-                                        Last_Count = "0.0"
-                                    }
-                                    reinstatingtransactionattempts = reinstatingtransactionattempts + 1
-                                    
-                                    if(reinstatingtransactionattempts >= 3)
-                                    {
-                                        GetPulsarstartimer.invalidate()
-                                        displaytime.text = ""
-                                        try! stoprelay()
-                                        self.web.sentlog(func_name: " reinstating transaction attempts > 3 and pulsar_status == 0 auto stops transaction.", errorfromserverorlink: "\(Last_Count!)", errorfromapp: "")
-                                        
-                                    }
-                                    else{
-                                        
-                                    defaults.setValue(Last_Count, forKey: "reinstatingtransaction")
-                                        
-                                        self.web.sentlog(func_name: "pulse count\(Last_Count!) save to app and link resets because pulsar_status == 0. ,Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
-                                    appdisconnects_automatically = true
-                                    self.stoptimerIspulsarcountsame.invalidate()
-                                    self.timerview.invalidate()
-                                // self.GetPulsarstartimer.invalidate()
-                                    // self.GetPulsarstartimer.invalidate()
-                                    
-                                    timer_quantityless_thanprevious.invalidate()
-                                    stoptimergotostart.invalidate()
-                                    stoptimer_gotostart.invalidate()
-                                        cf.delay(0.1){
-                                            self.IsStartbuttontapped = false
-                                            self.resumetimer() /// reinstate the transaction.
-                                            self.viewDidAppear(true)
-                                            self.countwififailConn = 0
-//                                            self.resumetimer()
+//                        if(pulsar_status == 0)
+//                        {
+//
+//                            do{
+//                                playAlarm()
+//                                GetPulsarstartimer.invalidate()
+//                                    displaytime.text = NSLocalizedString("Reconnect" , comment:"")//"Reconnecting to pump, please wait briefly. Do not turn pump off."
+//                                    displaytime.textColor = UIColor.red
+//                                    reinstatingtransaction = true
+//                                    if(Last_Count == nil){
+//                                        Last_Count = "0.0"
+//                                    }
+//                                    reinstatingtransactionattempts = reinstatingtransactionattempts + 1
+//
+//                                    if(reinstatingtransactionattempts >= 3)
+//                                    {
+//                                        GetPulsarstartimer.invalidate()
+//                                        displaytime.text = ""
+//                                        try! stoprelay()
+//                                        self.web.sentlog(func_name: " reinstating transaction attempts > 3 and pulsar_status == 0 auto stops transaction.", errorfromserverorlink: "\(Last_Count!)", errorfromapp: "")
+//
+//                                    }
+//                                    else{
+//
+//                                    defaults.setValue(Last_Count, forKey: "reinstatingtransaction")
+//
+//                                        self.web.sentlog(func_name: "pulse count\(Last_Count!) save to app and link resets because pulsar_status == 0. ,Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+//                                    appdisconnects_automatically = true
+//                                    self.stoptimerIspulsarcountsame.invalidate()
+//                                    self.timerview.invalidate()
+//                                // self.GetPulsarstartimer.invalidate()
+//                                    // self.GetPulsarstartimer.invalidate()
+//
+//                                    timer_quantityless_thanprevious.invalidate()
+//                                    stoptimergotostart.invalidate()
+//                                    stoptimer_gotostart.invalidate()
+//                                        cf.delay(0.1){
+//                                            self.IsStartbuttontapped = false
+//                                            self.resumetimer() /// reinstate the transaction.
 //                                            self.viewDidAppear(true)
-                                        }
-                                    }
-                                 //try self.stoprelay()
-                            }
-                            catch let error as NSError {
-                                print ("Error: \(error.domain)")
-                                self.web.sentlog(func_name: "stoprelay", errorfromserverorlink: "\(error)", errorfromapp:"Error: \(error.domain)")
-                            }
-                            // self.stoprelay()
-                        }
+//                                            self.countwififailConn = 0
+////                                            self.resumetimer()
+////                                            self.viewDidAppear(true)
+//                                        }
+//                                    }
+//                                 //try self.stoprelay()
+//                            }
+//                            catch let error as NSError {
+//                                print ("Error: \(error.domain)")
+//                                self.web.sentlog(func_name: "stoprelay", errorfromserverorlink: "\(error)", errorfromapp:"Error: \(error.domain)")
+//                            }
+//                            // self.stoprelay()
+//                        }
                         //                            }
                         }//}
                     else{
@@ -3012,7 +3054,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                                     
                                     self.web.sentlog(func_name:  "Get pulse count was the same while fueling function, pump off  - after \(Vehicaldetails.sharedInstance.pumpoff_time) Seconds if you get the same count ,Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
                                     
-                                    self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(FuelquantityVC.stopIspulsarcountsame), userInfo: nil, repeats: false)
+                                    self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(PreauthFuelquantity.stopIspulsarcountsame), userInfo: nil, repeats: false)
                                 }
                             }
                         }
@@ -3044,8 +3086,9 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                     let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
                     self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "4")/////
                     Last_Count = "0.0"
+                    Samecount = "0.0"
                 }
-                //print(Last_Count,Samecount)
+                print(Last_Count,Samecount)
                 if(Samecount == Last_Count){
                     
                     self.GetPulsarstartimer.invalidate()
@@ -3155,8 +3198,8 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
             pusercount = self.Last_Count!
         }
         
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "ddMMyyyyhhmmss"
+        //let dateFormatter = DateFormatter()
+        //dateFormatter.dateFormat = "ddMMyyyyhhmmss"
         
         print(Wifyssid)
         print(Odomtr)
@@ -3321,7 +3364,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
         {
             if(iflinkison == false){
                 delay(0.2){
-                    self.web.sentlog(func_name: "Send Relay On Command to BT link again from FD check function because we not receive quantity in first attempt. LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
+                    self.web.sentlog(func_name: "Sent Relay On Command to BT link again from FD check function because we not receive quantity in first attempt. LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
                     self.outgoingData(inputText: "LK_COMM=relay:12345=ON")
                     NotificationCenter.default.removeObserver(self)
                     self.updateIncomingData()
@@ -3389,9 +3432,9 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                             stoptimerIspulsarcountsame.invalidate()
                             Samecount = Last_Count
                                                                                
-                            self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpon_time as NSString).doubleValue, target: self, selector: #selector(FuelquantityVC.stopIspulsarcountsame), userInfo: nil, repeats: false)
+                            self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpon_time as NSString).doubleValue, target: self, selector: #selector(PreauthFuelquantity.stopIspulsarcountsame), userInfo: nil, repeats: false)
                             
-                            self.web.sentlog(func_name: "get pulse count was the same while fueling function pump on time - \(Vehicaldetails.sharedInstance.pumpoff_time),Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+                            self.web.sentlog(func_name: "get pulse count was the same while fueling function pump on time - \(Vehicaldetails.sharedInstance.pumpon_time),Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
                         }
                     }
                 }
@@ -3500,7 +3543,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                                         Ispulsarcountsame = true
                                         stoptimerIspulsarcountsame.invalidate()
                                         Samecount = Last_Count
-                                        self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(FuelquantityVC.stopIspulsarcountsame), userInfo: nil, repeats: false)
+                                        self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(PreauthFuelquantity.stopIspulsarcountsame), userInfo: nil, repeats: false)
                                         
                                         self.web.sentlog(func_name: "get pulse count was the same while fueling function pump off time - \(Vehicaldetails.sharedInstance.pumpoff_time),Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
                                     }
@@ -3510,15 +3553,15 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                                     total_count = 0
                                     if(Int(Vehicaldetails.sharedInstance.MinLimit) == 0){}
                                     else{
-                                        
-                                        if(Int(Vehicaldetails.sharedInstance.MinLimit)! <= Int(FuelQuan)){
+                                        print(Vehicaldetails.sharedInstance.MinLimit)
+                                        if(Float(Vehicaldetails.sharedInstance.MinLimit)! <= Float(FuelQuan)){
                                             
-                                            _ = self.web.SetPulser0()
+//                                            _ = self.web.SetPulser0()
                                             print(Vehicaldetails.sharedInstance.MinLimit)
                                             if(Vehicaldetails.sharedInstance.LimitReachedMessage != ""){
                                             self.showAlert(message:"\(Vehicaldetails.sharedInstance.LimitReachedMessage)" )
                                             }
-                                            self.web.sentlog(func_name: " Stop Transaction fuel day limit reached \(Vehicaldetails.sharedInstance.MinLimit).", errorfromserverorlink:"", errorfromapp: "")
+                                            self.web.sentlog(func_name: " Stop Transaction fuel limit reached \(Vehicaldetails.sharedInstance.MinLimit).", errorfromserverorlink:"", errorfromapp: "")
                                             //self.showAlert(message: NSLocalizedString("Fueldaylimit", comment:"") )//"You are fuel day limit reached.")
                                             self.stopButtontapped()
                                         }
@@ -3574,7 +3617,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                                     Ispulsarcountsame = true
                                     stoptimerIspulsarcountsame.invalidate()
                                     Samecount = Last_Count
-                                    self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(FuelquantityVC.stopIspulsarcountsame), userInfo: nil, repeats: false)
+                                    self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(PreauthFuelquantity.stopIspulsarcountsame), userInfo: nil, repeats: false)
                                     
                                     self.web.sentlog(func_name: "get pulse count was the same while fueling function pump off time - \(Vehicaldetails.sharedInstance.pumpoff_time),Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
                                 }
@@ -3582,20 +3625,37 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                             else
                             {
                                 total_count = 0
-                                if(Int(Vehicaldetails.sharedInstance.MinLimit) == 0){}
+                                print(Int(Vehicaldetails.sharedInstance.MinLimit))
+                                if(Int(Vehicaldetails.sharedInstance.MinLimit) == 0)
+                                {}
                                 else{
-                                    
-                                    if(Int(Vehicaldetails.sharedInstance.MinLimit)! <= Int(FuelQuan)){
+                                    print(Vehicaldetails.sharedInstance.MinLimit)
+                                    if((Vehicaldetails.sharedInstance.MinLimit as NSString).doubleValue <= (FuelQuan)){
                                         
                                         _ = self.web.SetPulser0()
                                         print(Vehicaldetails.sharedInstance.MinLimit)
                                         if(Vehicaldetails.sharedInstance.LimitReachedMessage != ""){
                                         self.showAlert(message:"\(Vehicaldetails.sharedInstance.LimitReachedMessage)" )
                                         }
-                                        self.web.sentlog(func_name: " Stop Transaction fuel day limit reached \(Vehicaldetails.sharedInstance.MinLimit).", errorfromserverorlink:"", errorfromapp: "")
+                                        self.web.sentlog(func_name: " Stop Transaction fuel limit reached \(Vehicaldetails.sharedInstance.MinLimit).", errorfromserverorlink:"", errorfromapp: "")
                                         
-                                        //self.showAlert(message: NSLocalizedString("Fueldaylimit", comment:"") )//"You are fuel day limit reached.")
-                                        self.stopButtontapped()
+                                        
+                                        if(Vehicaldetails.sharedInstance.FuelLimitPerTnx == "FuelLimitPerTnx")
+                                        {
+                                            self.showAlert(message: NSLocalizedString("Fueltnxlimit", comment:"") )//"You are fuel day limit reached.")
+                                            self.stopButtontapped()
+                                        }
+                                        else if(Vehicaldetails.sharedInstance.FuelLimitPerDay == "FuelLimitPerDay")
+                                        {
+                                            self.showAlert(message: NSLocalizedString("Fueldaylimit", comment:"") )//"You are fuel day limit reached.")
+                                            self.stopButtontapped()
+                                        }
+                                        else if(Vehicaldetails.sharedInstance.FuelLimitPerMonth == "FuelLimitPerMonth")
+                                        {
+                                            self.showAlert(message: NSLocalizedString("Fuelmonthlylimit", comment:"") )//"You are fuel day limit reached.")
+                                            self.stopButtontapped()
+                                        }
+                                        
                                     }
                                 }
                             }
@@ -3635,7 +3695,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                                 
                                 self.web.sentlog(func_name: "get pulse count was the same while fueling function pump off time - \(Vehicaldetails.sharedInstance.pumpoff_time),Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
                                 
-                                self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(FuelquantityVC.stopIspulsarcountsame), userInfo: nil, repeats: false)
+                                self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(PreauthFuelquantity.stopIspulsarcountsame), userInfo: nil, repeats: false)
                             }
                         }
                     }
@@ -3646,8 +3706,10 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
     
 
     func sentTransactionID(){
-    
-        self.outgoingData(inputText: "LK_COMM=T:12345;D:2203211345;V:67890;")
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "ddMMyyyyhhmmss"
+        let dtt1: String = dateFormatter.string(from: NSDate() as Date)
+      self.outgoingData(inputText: "LK_COMM=T:\(Vehicaldetails.sharedInstance.TransactionId);D:\(dtt1);V:\(Vehicaldetails.sharedInstance.VehicleId);")//"LK_COMM=T:12345;D:2203211345;V:67890;")
         NotificationCenter.default.removeObserver(self)
         updateIncomingData()
     }
@@ -3658,7 +3720,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
         outgoingData(inputText: "LK_COMM=last1")
         NotificationCenter.default.removeObserver(self)
         updateIncomingData()
-        self.web.sentlog(func_name: " Send info command to link", errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"")
+//        self.web.sentlog(func_name: " Send info command to link", errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"")
         
     }
     
@@ -3749,8 +3811,12 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
         let data1:Data = jsonText.data(using: String.Encoding.utf8)!
             do{
                 //print(self.sysdata)
+                if(jsonText.contains("{\"notify\" : \"enabled\"}")){}
+                else{
                 self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
                  print(self.sysdata)
+                    self.web.sentlog(func_name: " BLE Response from link is \(jsonText)", errorfromserverorlink:"", errorfromapp: "")
+                  
                 let version = self.sysdata.value(forKey: "version") as! NSDictionary
                 let Linkversion = version.value(forKey: "version") as! NSString
                 let mac_address = self.sysdata.value(forKey: "mac_address") as! NSDictionary
@@ -3774,8 +3840,11 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                 }
                 gotLinkVersion = true
                 
-                settransactionid()
-                
+                    self.consoleAsciiText = NSAttributedString(string: "")
+                    self.newAsciiText = NSMutableAttributedString()
+                    
+//                settransactionid()
+                }
             }
             catch let error as NSError {
                 print ("Error: \(error.domain)")
@@ -3793,16 +3862,17 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
     func parsejsonLast1()
     {
         let Split = self.baseTextView.components(separatedBy: "records")
-        let Split1 = Split[1].components(separatedBy: "$$")
-        
-        let jsonText = "{" + "\"records" + Split1[0];
-//       let jsonText =  "{\"version\":{\"version\":\"1.0.0(s)\"},\"mac_address\":{\"bt\":\"10:52:1c:85:72:92\"}}"
-        print(jsonText)
-        let data1:Data = jsonText.data(using: String.Encoding.utf8)!
+        if(Split.count >= 2){
+            let Split1 = Split[1].components(separatedBy: "$$")
+            
+            let jsonText = "{" + "\"records" + Split1[0];
+            //       let jsonText =  "{\"version\":{\"version\":\"1.0.0(s)\"},\"mac_address\":{\"bt\":\"10:52:1c:85:72:92\"}}"
+            print(jsonText)
+            let data1:Data = jsonText.data(using: String.Encoding.utf8)!
             do{
                 //print(self.sysdata)
                 self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
-                 print(self.sysdata)
+                print(self.sysdata)
                 let record_data = self.sysdata.value(forKey: "records") as! NSArray
                 let rowCount = record_data.count
                 let index: Int = 0
@@ -3810,7 +3880,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                 {
                     
                     let JsonRow = record_data[i] as! NSDictionary
-                       
+                    
                     let date = JsonRow.value(forKey: "date") as! NSString
                     let dflag = JsonRow.value(forKey: "dflag") as! Bool
                     let pulse = JsonRow.value(forKey: "pulse") as! NSNumber
@@ -3821,9 +3891,9 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                     let transaction_details = Last10Transactions (Transaction_id: txtn as String, Pulses: "\(pulse)", FuelQuantity: "\(quantity)", vehicle: vehicle as String, date: date as String, dflag: "\(dflag)" )
                     self.web.sentlog(func_name: " BLE Response from link is \(jsonText)", errorfromserverorlink:"", errorfromapp: "")
                     Vehicaldetails.sharedInstance.Last10transactions.add(transaction_details)
-                print(date,dflag,pulse,txtn,vehicle)
+                    print(date,dflag,pulse,txtn,vehicle)
                 }
-               
+                
                 
             }
             catch let error as NSError {
@@ -3834,8 +3904,8 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                 print(newString)
                 
             }
-    
-    
+            
+        }
 }
 
     
@@ -4068,7 +4138,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                 centralManager?.connect(blePeripheral!, options: nil)
                 self.web.sentlog(func_name: "connect To BT link Device \(blePeripheral!)", errorfromserverorlink:"", errorfromapp: "")
                 AppconnectedtoBLE = true
-                //getBLEinfo()
+                self.getBLEinfo()
             }
         }
 
@@ -4234,8 +4304,8 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                 self.newAsciiText.append(NSAttributedString(string:(characteristicASCIIValue as String)))
                     if("\(self.newAsciiText)".contains("$$"))
                     {
-                    let jsondata = newAsciiText
-                    self.baseTextView = "\(jsondata)"
+                        let jsondata = newAsciiText
+                        self.baseTextView = "\(jsondata)"
                     }
     //                NotificationCenter.default.removeObserver(self.observationToken!)
                     //integrtedresponse = newAsciiText as String
@@ -4402,6 +4472,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
 //            else{
             self.web.sentlog(func_name: "Start BT Scan...for \(kBLEService_UUID)", errorfromserverorlink:"", errorfromapp: "\(peripherals)")
             self.peripherals = []
+//            self.kCBAdvDataLocalName = []
             let BLEService_UUID = CBUUID(string: kBLEService_UUID)
             print("Now Scanning...")
             self.GetPulsarstartimer.invalidate()
@@ -4459,6 +4530,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
 
                         self.web.sentlog(func_name: "App Not able to Connect and Subscribed peripheral Connection. Attempt \(countfailBLEConn)", errorfromserverorlink: "", errorfromapp: "")
                         Vehicaldetails.sharedInstance.HubLinkCommunication = "UDP"
+                        Vehicaldetails.sharedInstance.AppType = "preAuthTransaction"
                         self.performSegue(withIdentifier: "GoUDP", sender: self)
                         appconnecttoUDP = true
 
@@ -4466,7 +4538,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                     else{
                         if(ifSubscribed == true){}
                         else{
-                            self.web.sentlog(func_name: "Peripherals Found restart Scan...", errorfromserverorlink:"Number of Peripherals Found: \(peripherals.count)", errorfromapp: "\(self.peripherals)")
+                            self.web.sentlog(func_name: " Peripherals Found restart Scan...", errorfromserverorlink:"Number of Peripherals Found: \(peripherals.count)", errorfromapp: "\(self.peripherals)")
                             self.startScan()
                             if(onFuelingScreen == true){
                                 if(peripherals.count == 0)
@@ -4480,7 +4552,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                         }
                         }
                     }
-                    displaytime.text = "BT link not found. please try again later."
+//                    displaytime.text = "BT link not found. please try again later."
                     Vehicaldetails.sharedInstance.peripherals = self.peripherals
                     // AppconnectedtoBLE = false
                     cancel.isHidden = false
@@ -4503,8 +4575,11 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                         }
                         else{
                             let peripheral = self.peripherals[i]
-
-                            if( Vehicaldetails.sharedInstance.SSId == peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines))
+                           // let localName = self.kCBAdvDataLocalName[i]
+                            if(peripheral.name! == "nil" || peripheral.name! == "(null)")
+                            {}
+                            else{
+                            if( Vehicaldetails.sharedInstance.SSId.uppercased() == peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
                             {
                                 blePeripheral = self.peripherals[i]
                                 connectedperipheral = (blePeripheral?.name)!
@@ -4512,7 +4587,58 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
 
                                 break
                             }
+                            else
+                            if(Vehicaldetails.sharedInstance.SSId.uppercased() == localName.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                            {
+                                blePeripheral = self.peripherals[i]
+                                if(blePeripheral?.name == localName){
+                                
+                                connectedperipheral = (blePeripheral?.name)!
+                                
+                                connectToDevice()
+                                break
+                                }
+                            }
+                            
+                            else if(Vehicaldetails.sharedInstance.OriginalNamesOfLink.count > 0)
+                                {
+                                self.web.sentlog(func_name: "OriginalNamesOfLink name \(Vehicaldetails.sharedInstance.OriginalNamesOfLink).", errorfromserverorlink:"", errorfromapp: "")
+                                for ln in 0  ..< Vehicaldetails.sharedInstance.OriginalNamesOfLink.count
+                                {
+                                    if(peripheral.name! == "nil" || peripheral.name! == "(null)")
+                                    {}
+                                    else{
+                                        
+                                    if( "\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                    {
+                                        print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(peripheral.name!)")
+                                        blePeripheral = self.peripherals[i]
+                                        connectedperipheral = (blePeripheral?.name)!
+                                        defaults.set(blePeripheral?.name!, forKey: "LasttransactionSSID")
+                                        //                                defaults.set("\(blePeripheral!.identifier)", forKey: "Lasttransactionidentifier")
+                                        connectToDevice()
+                                        break
+                                        
+                                    }
+                                    else if("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased().components(separatedBy: .whitespacesAndNewlines).joined() == localName.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                    {
+                                        print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(localName)")
+                                        //blePeripheral = self.peripherals[i]
+                                        //                            if(peripheral.name! == BLEPeripheralforlocalname){
+                                        blePeripheral = self.peripherals[i]
+                                        connectedperipheral = (blePeripheral?.name)!
+                                        
+                                        connectToDevice()
+                                        break
+                                        
+                                    }
+                                }
+                            }
+                                }
+                                
+                            }
                         }
+                        
                     }
                     if(self.connectedperipheral == "")
                     {
@@ -4527,13 +4653,16 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                                 self.web.sentlog(func_name: "App Not able to Connect BT Link and Subscribed peripheral Connection. Attempt  \(countfailBLEConn)", errorfromserverorlink: "", errorfromapp: "")
 
                                 self.web.sentlog(func_name: "App Switches BT to UDP...", errorfromserverorlink: "", errorfromapp: "")
+                                Vehicaldetails.sharedInstance.AppType = "preAuthTransaction"
+                                Vehicaldetails.sharedInstance.HubLinkCommunication = "UDP"
                                 self.performSegue(withIdentifier: "GoUDP", sender: self)
+                                appconnecttoUDP = true
 
                             }
                             else{
                                 if(ifSubscribed == true){}
                                 else{
-                                    self.web.sentlog(func_name: "Peripherals Found restart Scan...", errorfromserverorlink:"Number of Peripherals Found: \(peripherals.count)", errorfromapp: "\(self.peripherals)")
+                                    self.web.sentlog(func_name: " Peripherals Found restart Scan...", errorfromserverorlink:"Number of Peripherals Found: \(peripherals.count)", errorfromapp: "\(self.peripherals)")
                                     self.startScan()
                                 }
                             }
@@ -4574,12 +4703,28 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
          Called when the central manager discovers a peripheral while scanning. Also, once peripheral is connected, cancel scanning.
          */
         func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral,advertisementData: [String : Any], rssi RSSI: NSNumber) {
-
-            blePeripheral = peripheral
-            self.peripherals.append(peripheral)
-            self.RSSIs.append(RSSI)
-            peripheral.delegate = self
-            //self.baseTableView.reloadData()
+            if(onFuelingScreen == true){
+                if(peripheral.name == "nil" || peripheral.name == "(null)")
+                {
+                    self.web.sentlog(func_name: "onFuelingScreen peripheral \(peripheral)", errorfromserverorlink: "Peripheral name: \(String(describing: peripheral.name))", errorfromapp:"")
+//                    self.web.sentlog(func_name: "Advertisement data \(advertisementData["kCBAdvDataLocalName"] as! String)", errorfromserverorlink: "Peripheral name: \(String(describing: peripheral.name))", errorfromapp:"")
+                    //showAlert(message: "Peripheral Not Found \(Vehicaldetails.sharedInstance.BTMacAddress)" )
+                }
+                
+                else{
+                    blePeripheral = peripheral
+                    self.peripherals.append(peripheral)
+                    self.RSSIs.append(RSSI)
+                   
+                    peripheral.delegate = self
+//                    localName = advertisementData["kCBAdvDataLocalName"] as! String
+//                    print(localName)
+//                    self.kCBAdvData_LocalName.append(localName)
+                    //        BLEPeripheralforlocalname = peripheral.name!
+                    
+//                    self.web.sentlog(func_name: "Advertisement data \(advertisementData["kCBAdvDataLocalName"] as! String)", errorfromserverorlink: "Peripheral name: \(String(describing: peripheral.name))", errorfromapp:"")
+                }
+            }
             if blePeripheral == nil {
                 print("Found new pheripheral devices with services")
                 print("Peripheral name: \(String(describing: peripheral.name))")
@@ -4954,7 +5099,7 @@ extension PreauthFuelquantity: CXCallObserverDelegate
 
             if (characteristic.isNotifying) {
                 ifSubscribed = true
-                web.sentlog(func_name: "Subscribed. Notification has begun for:", errorfromserverorlink: "\(characteristic.uuid)", errorfromapp: ""); print("Subscribed. Notification has begun for: \(characteristic.uuid)")
+                web.sentlog(func_name: "Connected to BT link, Subscribed. Set Notify enabled... to true in BLE transaction for ID:", errorfromserverorlink: "\(characteristic.uuid)", errorfromapp: ""); print("Subscribed. Notification has begun for: \(characteristic.uuid)")
                 if(IsStartbuttontapped == false)
                 {
                 getlast10transaction()

@@ -7,7 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1800C29129361C1900EEE7D1 /* Preauth_othervehicle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1800C29029361C1700EEE7D1 /* Preauth_othervehicle.swift */; };
 		1842670F2657833E00C6B7A7 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA1015C321C2977F00E2174C /* KeychainService.swift */; };
+		185E9067292F9B0F00386119 /* Preauth_OtherVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185E9065292F9B0900386119 /* Preauth_OtherVC.swift */; };
+		185E9068292F9B0F00386119 /* Preauth_persolnalpinVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185E9066292F9B0C00386119 /* Preauth_persolnalpinVC.swift */; };
+		185E906B292F9B2500386119 /* Preauth_DepartmentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185E9069292F9B2400386119 /* Preauth_DepartmentVC.swift */; };
+		185E906C292F9B2500386119 /* Preauth_HourVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185E906A292F9B2500386119 /* Preauth_HourVC.swift */; };
 		18665770269C1BCA00F82C15 /* BLECommunication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1866576F269C1BCA00F82C15 /* BLECommunication.swift */; };
 		186CB7A726948A0B0026B5BE /* Ding.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 186CB7A626948A0B0026B5BE /* Ding.mp3 */; };
 		18861696258C90F0004CF056 /* CompanyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18861695258C90F0004CF056 /* CompanyViewController.swift */; };
@@ -99,23 +104,29 @@
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DA71DAA51CA9339B00AD06DD /* Embed App Extensions */ = {
+		DA71DAA51CA9339B00AD06DD /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
 			);
-			name = "Embed App Extensions";
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1800C29029361C1700EEE7D1 /* Preauth_othervehicle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preauth_othervehicle.swift; sourceTree = "<group>"; };
 		181D40042621AE8B0093D7C9 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS7.2.sdk/System/Library/Frameworks/NetworkExtension.framework; sourceTree = DEVELOPER_DIR; };
+		185E9065292F9B0900386119 /* Preauth_OtherVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preauth_OtherVC.swift; sourceTree = "<group>"; };
+		185E9066292F9B0C00386119 /* Preauth_persolnalpinVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preauth_persolnalpinVC.swift; sourceTree = "<group>"; };
+		185E9069292F9B2400386119 /* Preauth_DepartmentVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preauth_DepartmentVC.swift; sourceTree = "<group>"; };
+		185E906A292F9B2500386119 /* Preauth_HourVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preauth_HourVC.swift; sourceTree = "<group>"; };
 		1866576F269C1BCA00F82C15 /* BLECommunication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLECommunication.swift; sourceTree = "<group>"; };
 		186CB7A626948A0B0026B5BE /* Ding.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Ding.mp3; sourceTree = "<group>"; };
 		18861695258C90F0004CF056 /* CompanyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyViewController.swift; sourceTree = "<group>"; };
+		18BFED4D28AE62BA006FD3FE /* FuelSecureDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FuelSecureDebug.entitlements; sourceTree = SOURCE_ROOT; };
 		18C883E425A5EBC900C9A231 /* FuelquantityVCUDP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FuelquantityVCUDP.swift; sourceTree = "<group>"; };
 		18F9DD78259DCD5B00918791 /* UDPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UDPClient.swift; sourceTree = "<group>"; };
 		DA0529CE22BA3B0600675743 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
@@ -261,6 +272,7 @@
 		DA71DA641CA9078500AD06DD /* FuelSecure */ = {
 			isa = PBXGroup;
 			children = (
+				18BFED4D28AE62BA006FD3FE /* FuelSecureDebug.entitlements */,
 				186CB7A626948A0B0026B5BE /* Ding.mp3 */,
 				DAD5CB19221FFC3800CE163D /* iconfinder_barcode_scanner_172089.png */,
 				DA30BEB81F73FE8D00004336 /* FuelSecure.entitlements */,
@@ -301,6 +313,10 @@
 				DA434DA41F692FEC00FF83E1 /* PreauthVehicleVC.swift */,
 				DA434DA61F69309200FF83E1 /* PreauthOdometrVC.swift */,
 				DA9444621F7398E1006F9804 /* PreauthFuelquantity.swift */,
+				185E9069292F9B2400386119 /* Preauth_DepartmentVC.swift */,
+				185E906A292F9B2500386119 /* Preauth_HourVC.swift */,
+				185E9065292F9B0900386119 /* Preauth_OtherVC.swift */,
+				185E9066292F9B0C00386119 /* Preauth_persolnalpinVC.swift */,
 				DA7A40A71F7633AF00D889D6 /* Transaction_id.swift */,
 				DAC41CEC2136CDE100B1B9C1 /* Sync_UnsyncTransaction.swift */,
 				DAF48A3D21DF418400B5810E /* Last10Transactions.swift */,
@@ -309,6 +325,7 @@
 				18F9DD78259DCD5B00918791 /* UDPClient.swift */,
 				18C883E425A5EBC900C9A231 /* FuelquantityVCUDP.swift */,
 				1866576F269C1BCA00F82C15 /* BLECommunication.swift */,
+				1800C29029361C1700EEE7D1 /* Preauth_othervehicle.swift */,
 			);
 			name = FuelSecure;
 			path = FuelSecuer;
@@ -352,7 +369,7 @@
 				DA71DA5E1CA9078500AD06DD /* Sources */,
 				DA71DA5F1CA9078500AD06DD /* Frameworks */,
 				DA71DA601CA9078500AD06DD /* Resources */,
-				DA71DAA51CA9339B00AD06DD /* Embed App Extensions */,
+				DA71DAA51CA9339B00AD06DD /* Embed Foundation Extensions */,
 				18F1FDA02615EE8700A5A50C /* Embed Watch Content */,
 			);
 			buildRules = (
@@ -407,7 +424,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1240;
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 1400;
 				ORGANIZATIONNAME = VASP;
 				TargetAttributes = {
 					DA71DA611CA9078500AD06DD = {
@@ -439,14 +456,14 @@
 					DA71DA781CA9078500AD06DD = {
 						CreatedOnToolsVersion = 7.2;
 						DevelopmentTeam = 398Q9X5345;
-						LastSwiftMigration = 0940;
+						LastSwiftMigration = "";
 						ProvisioningStyle = Automatic;
 						TestTargetID = DA71DA611CA9078500AD06DD;
 					};
 					DA71DA831CA9078500AD06DD = {
 						CreatedOnToolsVersion = 7.2;
 						DevelopmentTeam = 398Q9X5345;
-						LastSwiftMigration = 0940;
+						LastSwiftMigration = "";
 						ProvisioningStyle = Automatic;
 						TestTargetID = DA71DA611CA9078500AD06DD;
 					};
@@ -454,10 +471,9 @@
 			};
 			buildConfigurationList = DA71DA5D1CA9078500AD06DD /* Build configuration list for PBXProject "FuelSecure" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 				Base,
 				es,
@@ -524,6 +540,7 @@
 				DA71DA681CA9078500AD06DD /* ViewController.swift in Sources */,
 				DAE2E4471F067925004A9480 /* OtherViewController.swift in Sources */,
 				DAE2E4411F0678C1004A9480 /* HourViewController.swift in Sources */,
+				185E9068292F9B0F00386119 /* Preauth_persolnalpinVC.swift in Sources */,
 				DAE2E4451F067914004A9480 /* PinViewController.swift in Sources */,
 				DA30BEB21F739E9F00004336 /* TransactionID+CoreDataClass.m in Sources */,
 				DA434DA91F693EB100FF83E1 /* PreauthVC.swift in Sources */,
@@ -535,12 +552,14 @@
 				DA62827B1CF2CD770057D1CF /* Fuelsecure.m in Sources */,
 				18861696258C90F0004CF056 /* CompanyViewController.swift in Sources */,
 				DA5DB9831CF8249A00C9A90E /* Wifidetails.swift in Sources */,
+				185E9067292F9B0F00386119 /* Preauth_OtherVC.swift in Sources */,
 				DA4BAF9D1CAD47C7002A5C63 /* Vehicaldetails.swift in Sources */,
 				DA9444631F7398E1006F9804 /* PreauthFuelquantity.swift in Sources */,
 				DA71DA6E1CA9078500AD06DD /* FuelSecuer.xcdatamodeld in Sources */,
 				DA7A40A81F7633AF00D889D6 /* Transaction_id.swift in Sources */,
 				18665770269C1BCA00F82C15 /* BLECommunication.swift in Sources */,
 				DA434DA51F692FEC00FF83E1 /* PreauthVehicleVC.swift in Sources */,
+				1800C29129361C1900EEE7D1 /* Preauth_othervehicle.swift in Sources */,
 				DAC41CEB2136A14D00B1B9C1 /* TCPcommunication.swift in Sources */,
 				DA6282761CF2CCF60057D1CF /* Webservices.swift in Sources */,
 				DA5DB9821CF8249A00C9A90E /* Wifidetails+CoreDataProperties.swift in Sources */,
@@ -561,6 +580,8 @@
 				DA497B2D1CEC841F0058E218 /* RegisterTableViewController.swift in Sources */,
 				DA4BAF8F1CAD0652002A5C63 /* FuelquantityVC.swift in Sources */,
 				18C883E525A5EBC900C9A231 /* FuelquantityVCUDP.swift in Sources */,
+				185E906C292F9B2500386119 /* Preauth_HourVC.swift in Sources */,
+				185E906B292F9B2500386119 /* Preauth_DepartmentVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -660,6 +681,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -672,7 +694,7 @@
 				DEVELOPMENT_TEAM = 398Q9X5345;
 				ENABLE_ON_DEMAND_RESOURCES = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -689,7 +711,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_PKGINFO_FILE = YES;
 				INFOPLIST_FILE = FuelSecuer/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRIVATE_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/PrivateHeaders";
@@ -727,6 +749,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -750,7 +773,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_PKGINFO_FILE = YES;
 				INFOPLIST_FILE = FuelSecuer/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRIVATE_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/PrivateHeaders";
 				PRODUCT_BUNDLE_IDENTIFIER = com.VASPLLP.FuelSecuer;
@@ -771,18 +794,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = FuelSecure.entitlements;
+				CODE_SIGN_ENTITLEMENTS = FuelSecureDebug.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = LY75MT5XE6;
 				ENABLE_BITCODE = YES;
 				ENABLE_ON_DEMAND_RESOURCES = YES;
 				INFOPLIST_FILE = FuelSecuer/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				INFOPLIST_KEY_CFBundleDisplayName = FluidSecure;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.18.2;
+				MARKETING_VERSION = 1.18.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Trakengg.Fluidsecure;
 				PRODUCT_NAME = FuelSecure;
 				PROVISIONING_PROFILE = "";
@@ -803,14 +827,15 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = LY75MT5XE6;
-				ENABLE_BITCODE = YES;
+				ENABLE_BITCODE = NO;
 				ENABLE_ON_DEMAND_RESOURCES = YES;
 				INFOPLIST_FILE = FuelSecuer/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				INFOPLIST_KEY_CFBundleDisplayName = FluidSecure;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.18.2;
+				MARKETING_VERSION = 1.18.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Trakengg.Fluidsecure;
 				PRODUCT_NAME = FuelSecure;
 				PROVISIONING_PROFILE = "";
@@ -846,7 +871,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 398Q9X5345;
+				DEVELOPMENT_TEAM = LY75MT5XE6;
 				INFOPLIST_FILE = FuelSecuerTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.VASPLLP.FuelSecuerTests;

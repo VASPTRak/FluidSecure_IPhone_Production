@@ -10,7 +10,7 @@
 import UIKit
 import CoreBluetooth
 
-private let _Vehicaldetails = Vehicaldetails(Vehicleno:"",Barcodescanvalue:"",Odometeno :"",deptno:"", Personalpinno:"", Other:"", hours:"",buttonset:Bool(),SiteID:"",MinLimit:"",PulseRatio:"",VehicleId:"",FuelTypeId:"",PersonId:"",PhoneNumber:"",SSId:"",reachblevia:"",odometerreq:"",IsPersonnelPINRequire:"",IsOtherRequire:"",IsDepartmentRequire:"",IsHoursrequirs:"",siteName:"",date:"",PulserStopTime:"",IsHoseNameReplaced:"",HoseID:"",gohome:Bool(),setrelay0:Bool(),CheckOdometerReasonable:"",OdometerReasonabilityConditions:"",PreviousOdo:Int(),OdoLimit:Int(),Lat:Double(),Long:Double(),TransactionId:Int(),FilePath:"",FirmwareVersion:"",IsFirmwareUpdate:Bool(),FinalQuantitycount:"",MacAddress:"",BTMacAddress:"",Transaction_id:NSMutableArray(),IsUpgrade:"",password:"",TimeOut:"",Otherlable:"",pulsarCount:"",PulserTimingAdjust:"",IsBusy:"",IsDefective:"",CollectDiagnosticLogs:"",URL:"",Language:"",AppType:"",ReplaceableHoseName:"",HoursLimit:Int(),PreviousHours:Int(),pumpoff_time:"",IsVehicleNumberRequire:"",IsTLDdata:"",Last10transactions:NSMutableArray(),Errorcode:"",CompanyBarndName:"",CompanyBrandLogoLink:"",SupportEmail:"", SupportPhonenumber:"",IsUseBarcode:"",fsSSId:"",IsExtraOther:"",ExtraOtherLabel:"",ExtraOther:"",checkSSIDwithLink:"",ScreenNameForVehicle:"", ScreenNameForPersonnel:"",ScreenNameForOdometer:"", ScreenNameForHours:"",pumpon_time:"",FuelLimitPerTnx:"",FuelLimitPerDay:"",Last_transactionformLast10:"",PreAuthDataDwnldFreq:"",PreAuthDataDownloadDay:"",PreAuthVehicleDataFilePath:"", PreAuthDataDownloadTimeInHrs:"",PreAuthDataDownloadTimeInMin:"",PreAuthVehicleDataFilesCount:"",Warningunsync_transaction:"", ifStartbuttontapped: Bool(),Istankempty:"",LimitReachedMessage:"",LastTransactiondata:NSMutableArray(),IsFirstTimeUse:"", IsLinkFlagged:"",LinkFlaggedMessage:"",MacAddressfromlink:"",iotversion:"",DoNotAllowOfflinePreauthorizedTransactions:"",HubLinkCommunication: "",ifSubscribed:Bool(),peripherals: [CBPeripheral](), LastTransactionFuelQuantity: "", ScreenNameForDepartment: "")
+private let _Vehicaldetails = Vehicaldetails(Vehicleno:"",Barcodescanvalue:"",Odometeno :"",deptno:"", Personalpinno:"", Other:"", hours:"",buttonset:Bool(),SiteID:"",MinLimit:"",PulseRatio:"",VehicleId:"",FuelTypeId:"",PersonId:"",PhoneNumber:"",SSId:"",reachblevia:"",odometerreq:"",IsPersonnelPINRequire:"",IsOtherRequire:"",IsDepartmentRequire:"",IsHoursrequirs:"",siteName:"",date:"",PulserStopTime:"",IsHoseNameReplaced:"",HoseID:"",gohome:Bool(),setrelay0:Bool(),CheckOdometerReasonable:"",OdometerReasonabilityConditions:"",PreviousOdo:Int(),OdoLimit:Int(),Lat:Double(),Long:Double(),TransactionId:Int(),FilePath:"",FirmwareVersion:"",IsFirmwareUpdate:Bool(),FinalQuantitycount:"",MacAddress:"",BTMacAddress:"",Transaction_id:NSMutableArray(),IsUpgrade:"",password:"",TimeOut:"",Otherlable:"",pulsarCount:"",PulserTimingAdjust:"",IsBusy:"",IsDefective:"",CollectDiagnosticLogs:"",URL:"",Language:"",AppType:"",ReplaceableHoseName:"",HoursLimit:Int(),PreviousHours:Int(),pumpoff_time:"",IsVehicleNumberRequire:"",IsTLDdata:"",Last10transactions:NSMutableArray(),Errorcode:"",CompanyBarndName:"",CompanyBrandLogoLink:"",SupportEmail:"", SupportPhonenumber:"",IsUseBarcode:"",fsSSId:"",IsExtraOther:"",ExtraOtherLabel:"",ExtraOther:"",checkSSIDwithLink:"",ScreenNameForVehicle:"", ScreenNameForPersonnel:"",ScreenNameForOdometer:"", ScreenNameForHours:"",pumpon_time:"",FuelLimitPerTnx:"",FuelLimitPerDay:"",Last_transactionformLast10:"",PreAuthDataDwnldFreq:"",PreAuthDataDownloadDay:"",PreAuthVehicleDataFilePath:"", PreAuthDataDownloadTimeInHrs:"",PreAuthDataDownloadTimeInMin:"",PreAuthVehicleDataFilesCount:"",Warningunsync_transaction:"", ifStartbuttontapped: Bool(),Istankempty:"",LimitReachedMessage:"",LastTransactiondata:NSMutableArray(),IsFirstTimeUse:"", IsLinkFlagged:"",LinkFlaggedMessage:"",MacAddressfromlink:"",iotversion:"",DoNotAllowOfflinePreauthorizedTransactions:"",HubLinkCommunication: "",ifSubscribed:Bool(),peripherals: [CBPeripheral](), LastTransactionFuelQuantity: "", ScreenNameForDepartment: "", IsResetSwitchTimeBounce: "",PreAuthVehicleDataFilename:"",prevSSID: "",PreAuthDepartmentDataFilePath:"",OriginalNamesOfLink:NSMutableArray(), FuelLimitPerMonth: "")
 
 class Vehicaldetails {
 
@@ -95,6 +95,7 @@ class Vehicaldetails {
     var ScreenNameForVehicle = ""
     var ScreenNameForDepartment = ""
     var FuelLimitPerDay = ""
+    var FuelLimitPerMonth = ""
     var FuelLimitPerTnx = ""
     var Last_transactionformLast10 = ""
     var PreAuthDataDwnldFreq = ""
@@ -102,6 +103,7 @@ class Vehicaldetails {
     var PreAuthDataDownloadTimeInHrs = ""
     var PreAuthDataDownloadTimeInMin = ""
     var PreAuthVehicleDataFilePath = ""
+    var PreAuthDepartmentDataFilePath = ""
     var PreAuthVehicleDataFilesCount = ""
     var Warningunsync_transaction = ""
     var ifStartbuttontapped: Bool!
@@ -120,10 +122,14 @@ class Vehicaldetails {
         //var blePeripheral : CBPeripheral?
     var peripherals: [CBPeripheral]
     var LastTransactionFuelQuantity: String = ""
+    var IsResetSwitchTimeBounce = ""
+    var PreAuthVehicleDataFilename = ""
+    var prevSSID = ""
+    var OriginalNamesOfLink:NSMutableArray
    
    
 
-    init(Vehicleno:String!,Barcodescanvalue:String,Odometeno:String!,deptno:String,Personalpinno :String,Other:String,hours: String,buttonset:Bool!,SiteID:String,MinLimit:String,PulseRatio:String,VehicleId:String,FuelTypeId:String,PersonId:String,PhoneNumber:String,SSId:String,reachblevia:String,odometerreq:String,IsPersonnelPINRequire:String,IsOtherRequire:String,IsDepartmentRequire:String,IsHoursrequirs:String,siteName:String,date:String,PulserStopTime:String,IsHoseNameReplaced:String,HoseID:String,gohome:Bool!,setrelay0:Bool!,CheckOdometerReasonable:String,OdometerReasonabilityConditions:String,PreviousOdo:Int,OdoLimit:Int,Lat:Double,Long:Double,TransactionId:Int,FilePath:String,FirmwareVersion :String,IsFirmwareUpdate:Bool!,FinalQuantitycount:String,MacAddress:String,BTMacAddress:String,Transaction_id:NSMutableArray,IsUpgrade:String,password:String,TimeOut:String,Otherlable:String,pulsarCount:String,PulserTimingAdjust:String,IsBusy:String,IsDefective:String,CollectDiagnosticLogs:String,URL:String,Language:String,AppType:String,ReplaceableHoseName:String,HoursLimit:Int,PreviousHours:Int,pumpoff_time:String,IsVehicleNumberRequire:String,IsTLDdata:String,Last10transactions:NSMutableArray,Errorcode:String,CompanyBarndName:String,CompanyBrandLogoLink:String,SupportEmail:String,SupportPhonenumber:String,IsUseBarcode:String,fsSSId:String,IsExtraOther:String,ExtraOtherLabel:String,ExtraOther:String,checkSSIDwithLink:String,ScreenNameForVehicle:String,ScreenNameForPersonnel:String,ScreenNameForOdometer:String,ScreenNameForHours:String,pumpon_time:String,FuelLimitPerTnx:String,FuelLimitPerDay:String,Last_transactionformLast10:String,PreAuthDataDwnldFreq:String,PreAuthDataDownloadDay:String,PreAuthVehicleDataFilePath:String,PreAuthDataDownloadTimeInHrs:String,PreAuthDataDownloadTimeInMin:String,PreAuthVehicleDataFilesCount:String,Warningunsync_transaction:String,ifStartbuttontapped:Bool,Istankempty:String,LimitReachedMessage:String,LastTransactiondata:NSMutableArray,IsFirstTimeUse:String,IsLinkFlagged:String,LinkFlaggedMessage:String,MacAddressfromlink:String,iotversion:String,DoNotAllowOfflinePreauthorizedTransactions:String,HubLinkCommunication:String,ifSubscribed:Bool,peripherals:[CBPeripheral],LastTransactionFuelQuantity:String,ScreenNameForDepartment:String)
+    init(Vehicleno:String!,Barcodescanvalue:String,Odometeno:String!,deptno:String,Personalpinno :String,Other:String,hours: String,buttonset:Bool!,SiteID:String,MinLimit:String,PulseRatio:String,VehicleId:String,FuelTypeId:String,PersonId:String,PhoneNumber:String,SSId:String,reachblevia:String,odometerreq:String,IsPersonnelPINRequire:String,IsOtherRequire:String,IsDepartmentRequire:String,IsHoursrequirs:String,siteName:String,date:String,PulserStopTime:String,IsHoseNameReplaced:String,HoseID:String,gohome:Bool!,setrelay0:Bool!,CheckOdometerReasonable:String,OdometerReasonabilityConditions:String,PreviousOdo:Int,OdoLimit:Int,Lat:Double,Long:Double,TransactionId:Int,FilePath:String,FirmwareVersion :String,IsFirmwareUpdate:Bool!,FinalQuantitycount:String,MacAddress:String,BTMacAddress:String,Transaction_id:NSMutableArray,IsUpgrade:String,password:String,TimeOut:String,Otherlable:String,pulsarCount:String,PulserTimingAdjust:String,IsBusy:String,IsDefective:String,CollectDiagnosticLogs:String,URL:String,Language:String,AppType:String,ReplaceableHoseName:String,HoursLimit:Int,PreviousHours:Int,pumpoff_time:String,IsVehicleNumberRequire:String,IsTLDdata:String,Last10transactions:NSMutableArray,Errorcode:String,CompanyBarndName:String,CompanyBrandLogoLink:String,SupportEmail:String,SupportPhonenumber:String,IsUseBarcode:String,fsSSId:String,IsExtraOther:String,ExtraOtherLabel:String,ExtraOther:String,checkSSIDwithLink:String,ScreenNameForVehicle:String,ScreenNameForPersonnel:String,ScreenNameForOdometer:String,ScreenNameForHours:String,pumpon_time:String,FuelLimitPerTnx:String,FuelLimitPerDay:String,Last_transactionformLast10:String,PreAuthDataDwnldFreq:String,PreAuthDataDownloadDay:String,PreAuthVehicleDataFilePath:String,PreAuthDataDownloadTimeInHrs:String,PreAuthDataDownloadTimeInMin:String,PreAuthVehicleDataFilesCount:String,Warningunsync_transaction:String,ifStartbuttontapped:Bool,Istankempty:String,LimitReachedMessage:String,LastTransactiondata:NSMutableArray,IsFirstTimeUse:String,IsLinkFlagged:String,LinkFlaggedMessage:String,MacAddressfromlink:String,iotversion:String,DoNotAllowOfflinePreauthorizedTransactions:String,HubLinkCommunication:String,ifSubscribed:Bool,peripherals:[CBPeripheral],LastTransactionFuelQuantity:String,ScreenNameForDepartment:String,IsResetSwitchTimeBounce:String,PreAuthVehicleDataFilename:String,prevSSID:String,PreAuthDepartmentDataFilePath:String,OriginalNamesOfLink:NSMutableArray,FuelLimitPerMonth:String)
     {
         self.Odometerno = Odometeno
         self.Errorcode = Errorcode
@@ -228,7 +234,12 @@ class Vehicaldetails {
         self.ifSubscribed = ifSubscribed
         self.peripherals = peripherals
         self.LastTransactionFuelQuantity = LastTransactionFuelQuantity
-        
+        self.IsResetSwitchTimeBounce = IsResetSwitchTimeBounce
+        self.PreAuthVehicleDataFilename = PreAuthVehicleDataFilename
+        self.prevSSID = prevSSID
+        self.PreAuthDepartmentDataFilePath = PreAuthDepartmentDataFilePath
+        self.OriginalNamesOfLink = OriginalNamesOfLink
+        self.FuelLimitPerMonth = FuelLimitPerMonth
 
     }
 

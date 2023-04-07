@@ -82,7 +82,6 @@ extension UIViewController {
     
     func showAlert(message: String)
     {
-        
         let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertController.Style.alert)
         // Background color.
         let backView = alertController.view.subviews.last?.subviews.last
@@ -503,7 +502,7 @@ class Commanfunction {
                     if let interfaceInfo = CNCopyCurrentNetworkInfo(interface as! CFString) as NSDictionary? {
                         currentSSID = interfaceInfo[kCNNetworkInfoKeySSID as String] as? String
                         
-//                        print(interfaceInfo)
+//                        print(interfaceInfo,CNCopyCurrentNetworkInfo,CNCopySupportedInterfaces)
                         break
                     }
                     else {
@@ -640,7 +639,7 @@ class Commanfunction {
         }
     }
     
-    func SaveLogFile(fileName: String, writeText: String)
+    func SaveLogFile(fileName: String, writeText: String) -> String
     {
         let readdata = getDocumentsURL().appendingPathComponent("data/unsyncdata/" + fileName)
         let fromPath: URL = URL(fileURLWithPath: readdata!.path)
@@ -650,8 +649,11 @@ class Commanfunction {
             fileHandle.seekToEndOfFile()
             fileHandle.write(writeText.data(using: .utf8)!)
             fileHandle.closeFile()
+            return ""
         } catch {
+            
             print("Error writing to file \(error)")
+            return "Error writing to file \(error)"
         }
     }
     

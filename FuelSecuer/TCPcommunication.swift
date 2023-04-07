@@ -34,59 +34,60 @@ class TCPCommunication:NSObject,StreamDelegate
     //TCP Communication with the FS link using Follwing Method Functions.
 
         
-        func Getinfo()->String{
-            do{
-                try self.NetworkEnable()
-                
-            }
-            catch let error as NSError {
-                print ("Error: \(error.domain)")
-                self.web.sentlog(func_name:" NetworkEnable", errorfromserverorlink: "\(error)", errorfromapp:"Error: \(error.domain)")
-            }
-            //"http://192.168.4.1:80/client?command=info"
-            let datastring = "GET /client?command=info HTTP/1.1\r\nContent-Type: application/json; charset=utf-8\r\nContent-Length: \r\nHost: 192.168.4.1\r\nConnection: Keep-Alive\r\nAccept-Encoding: gzip\r\nUser-Agent: okhttp/3.6.0\r\n\r\n"
-           
-
-            let data = datastring.data(using: String.Encoding.utf8)!
-
-            self.outStream?.write((data as NSData).bytes.bindMemory(to: UInt8.self, capacity: data.count), maxLength: data.count)
-            var outputdata :String = self.stringbuffer
-            //Thread.sleep(forTimeInterval:1)
-            if((outputdata.contains("iot_version")))
-            {
-                outputdata = "true"
-            }
-            else
-            {
-                outputdata = "false"
-            }
-            print(outputdata)
-            let text = self.stringbuffer
-
-    //        Get the output from the link in JSON Format remove the New line, spaces and null characters and then send log to server using sendlog function.
-            let test = String((text.filter { !" \n".contains($0) }))
-            let newString = test.replacingOccurrences(of: "\"" , with: " ", options: .literal, range: nil)
-            print(newString)
-            let responsestring = newString.replacingOccurrences(of: "\0" , with: " ", options: .literal, range: nil)
-            let newString1 =  String((responsestring.filter { !" \n".contains($0) }))
-            print(newString)
-            self.web.sentlog(func_name: "Fueling Page Getinfo Function", errorfromserverorlink: " Response from link $$ \(newString1)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + "Connected link : \(self.cf.getSSID())")
-                        
-    //        if(self.stringbuffer == ""){}
-    //        else{
-    //            if(outputdata.contains("{"))
-    //            {
-    //            let Split = outputdata.components(separatedBy: "{")
-    //            _ = Split[0]
-    //            let setrelay = Split[1]
-    //            let setrelaystatus = Split[2]
-    //            outputdata = setrelay + "{" + setrelaystatus
-    //            }
-    //        }
-            return outputdata
-        }
+//        func Getinfo()->String{
+//            do{
+//                try self.NetworkEnable()
+//
+//            }
+//            catch let error as NSError {
+//                print ("Error: \(error.domain)")
+//                self.web.sentlog(func_name:" NetworkEnable", errorfromserverorlink: "\(error)", errorfromapp:"Error: \(error.domain)")
+//            }
+//            //"http://192.168.4.1:80/client?command=info"
+//            let datastring = "GET /client?command=info HTTP/1.1\r\nContent-Type: application/json; charset=utf-8\r\nContent-Length: \r\nHost: 192.168.4.1\r\nConnection: Keep-Alive\r\nAccept-Encoding: gzip\r\nUser-Agent: okhttp/3.6.0\r\n\r\n"
+//
+//
+//            let data = datastring.data(using: String.Encoding.utf8)!
+//
+//            self.outStream?.write((data as NSData).bytes.bindMemory(to: UInt8.self, capacity: data.count), maxLength: data.count)
+//            var outputdata :String = self.stringbuffer
+//            //Thread.sleep(forTimeInterval:1)
+//            if((outputdata.contains("iot_version")))
+//            {
+//                outputdata = "true"
+//            }
+//            else
+//            {
+//                outputdata = "false"
+//            }
+//            print(outputdata)
+//            let text = self.stringbuffer
+//
+//    //        Get the output from the link in JSON Format remove the New line, spaces and null characters and then send log to server using sendlog function.
+//            let test = String((text.filter { !" \n".contains($0) }))
+//            let newString = test.replacingOccurrences(of: "\"" , with: " ", options: .literal, range: nil)
+//            print(newString)
+//            let responsestring = newString.replacingOccurrences(of: "\0" , with: " ", options: .literal, range: nil)
+//            let newString1 =  String((responsestring.filter { !" \n".contains($0) }))
+//            print(newString)
+//            self.web.sentlog(func_name: "Fueling Page Getinfo Function", errorfromserverorlink: " Response from link $$ \(newString1)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + "Connected link : \(self.cf.getSSID())")
+//
+//    //        if(self.stringbuffer == ""){}
+//    //        else{
+//    //            if(outputdata.contains("{"))
+//    //            {
+//    //            let Split = outputdata.components(separatedBy: "{")
+//    //            _ = Split[0]
+//    //            let setrelay = Split[1]
+//    //            let setrelaystatus = Split[2]
+//    //            outputdata = setrelay + "{" + setrelaystatus
+//    //            }
+//    //        }
+//            return outputdata
+//        }
     
     //TCP Communication with the FS link using Follwing Method Functions.
+    
     
     func setralaytcp()->String{
        
@@ -119,7 +120,7 @@ class TCPCommunication:NSObject,StreamDelegate
         let newString1 =  String((responsestring.filter { !" \n".contains($0) }))
         print(newString)
         
-        self.web.sentlog(func_name: "Fueling Page Relay On Function with command:http://192.168.4.1:80/config?command=relay { relay_request :{ Password : 12345678 , Status :1}}", errorfromserverorlink: "Response from link $$ \(newString1)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(cf.getSSID())")
+        self.web.sentlog(func_name: "Sent Relay ON command to Link: http://192.168.4.1:80/config?command=relay { relay_request :{ Password : 12345678 , Status :1}}", errorfromserverorlink: "Response from link $$ \(newString1)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(cf.getSSID())")
         
         if(self.stringbuffer == ""){}
         else{
@@ -203,7 +204,7 @@ class TCPCommunication:NSObject,StreamDelegate
 //        let newString = responsestring.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
 //        print(newString)
         
-        self.web.sentlog(func_name: "Fueling Page Set Sampling time Function with command:http://192.168.4.1:80/config?command=pulsar { pulsar_status :{ sampling_time_ms:\(Int(Vehicaldetails.sharedInstance.PulserTimingAdjust)!)", errorfromserverorlink: " "/*Response from link $$\(newString)!!*/,errorfromapp: "  Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+        self.web.sentlog(func_name: "Sent Set Sampling time command to Link with command:http://192.168.4.1:80/config?command=pulsar { pulsar_status :{ sampling_time_ms:\(Int(Vehicaldetails.sharedInstance.PulserTimingAdjust)!)", errorfromserverorlink: " "/*Response from link $$\(newString)!!*/,errorfromapp: "  Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
         return outputdata
     }
     
@@ -230,7 +231,7 @@ class TCPCommunication:NSObject,StreamDelegate
 //        print(newString)
 //        let responsestring = newString.replacingOccurrences(of: "\0" , with: " ", options: .literal, range: nil)
 //        let newString1 =  String((responsestring.filter { !" \n".contains($0) }))
-        self.web.sentlog(func_name: "Fueling Page Relay OFF Function with command:http://192.168.4.1:80/config?command=relay { relay_request :{ Password : 12345678 , Status :0}}", errorfromserverorlink: " "/*Response from link $$ \(newString1)!!*/,errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+        self.web.sentlog(func_name: "Sent Relay OFF command to Link command:http://192.168.4.1:80/config?command=relay { relay_request :{ Password : 12345678 , Status :0}}", errorfromserverorlink: " "/*Response from link $$ \(newString1)!!*/,errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
         return outputdata
     }
     
@@ -394,7 +395,7 @@ class TCPCommunication:NSObject,StreamDelegate
         print(newString)
         let responsestring = newString.replacingOccurrences(of: "\0" , with: " ", options: .literal, range: nil)
         let newString1 =  String((responsestring.filter { !" \n".contains($0) }))
-        self.web.sentlog(func_name: "changessidname send request Service Function", errorfromserverorlink: " Response from Link $$\(newString1)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+        self.web.sentlog(func_name: "Sent changessidname \(wifissid)  request to link", errorfromserverorlink: " Response from Link $$\(newString1)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
         
         print(outputdata)
         print(datastring)
@@ -472,7 +473,7 @@ class TCPCommunication:NSObject,StreamDelegate
         //let responsestring = newString.replacingOccurrences(of: "\0" , with: " ", options: .literal, range: nil)
         //let newString1 =  String((responsestring.filter { !" \n".contains($0) }))
         
-        self.web.sentlog(func_name: "Fueling Page Set_Transaction_IDtoFS Function with command:http://192.168.4.1:80/config?command=txtnid", errorfromserverorlink: ""/* Response from link $$ \(newString1)!!*/,errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+        self.web.sentlog(func_name: "Sent TXTN command to Link: command:http://192.168.4.1:80/config?command=\(txtnid)", errorfromserverorlink: ""/* Response from link $$ \(newString1)!!*/,errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
         print(outputdata)
         print(datastring)
     }
@@ -492,7 +493,7 @@ class TCPCommunication:NSObject,StreamDelegate
         let data : Data = datastring.data(using: String.Encoding.utf8)!
         outStream?.write((data as NSData).bytes.bindMemory(to: UInt8.self, capacity: data.count), maxLength: data.count)
         let outputdata :String = stringbuffer
-        self.web.sentlog(func_name: "Send Upgrade Command to Link \(datastring)", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+        self.web.sentlog(func_name: "Sent Upgrade Command to Link \(datastring)", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
         if(stringbuffer == ""){}
         else{
             print( stringbuffer)
@@ -545,9 +546,11 @@ class TCPCommunication:NSObject,StreamDelegate
             if let data = data {
                 print(String(data: data, encoding: String.Encoding.utf8)!)
                 self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
+                self.web.sentlog(func_name: "File uploaded \(bindata.count)", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 // print(self.reply)
             }  else {
                 print(error!)
+                self.web.sentlog(func_name: "error uploading the file \(error!)", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 self.reply = "-1"
             }
             semaphore.signal()
@@ -568,7 +571,9 @@ class TCPCommunication:NSObject,StreamDelegate
             if let data = data {
                 //                print(data,String(data: data, encoding: String.Encoding.utf8)!)
                 self.replydata = data as NSData
+                self.web.sentlog(func_name: "File download Completed \(data.count)", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
             } else {
+                self.web.sentlog(func_name: "error in download the file \(error!)", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 print(error!)
             }
             semaphore.signal()
@@ -593,7 +598,7 @@ class TCPCommunication:NSObject,StreamDelegate
             let data : Data = datastring.data(using: String.Encoding.utf8)!
             outStream?.write((data as NSData).bytes.bindMemory(to: UInt8.self, capacity: data.count), maxLength: data.count)
             let outputdata = stringbuffer
-            self.web.sentlog(func_name: "Send Upgrade Command to Link \(datastring)", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+            self.web.sentlog(func_name: "Sent Upgrade Command to Link \(datastring)", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
             print( outputdata)
             self.upgrade()
         }
@@ -676,13 +681,14 @@ class TCPCommunication:NSObject,StreamDelegate
     {
         if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID())
         {
-            inStream?.close()
-            outStream?.close()
             inStream?.delegate = nil
             outStream?.delegate = nil
+            inStream?.close()
+            outStream?.close()
+            
 //            
-//            inStream = nil
-//            outStream = nil
+            inStream = nil
+            outStream = nil
 //            // self.web.sentlog(func_name: "Stream", errorfromserverorlink:" " , errorfromapp: "Connction lost with the lin")
         }
         else{

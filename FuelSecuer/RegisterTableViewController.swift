@@ -20,6 +20,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
 //    @IBOutlet var unchecked: UIButton!
     @IBOutlet weak var activityindicator: UIActivityIndicatorView!
     var web = Webservices()
+    var vc = ViewController()
     var sysdata:NSDictionary!
     let locationManager = CLLocationManager()
     var currentlocation :CLLocation!
@@ -108,100 +109,124 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
         self.registerUser()
     }
 
+    func show_Alert(message: String)
+    {
+        let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertController.Style.alert)
+        // Background color.
+        let backView = alertController.view.subviews.last?.subviews.last
+        backView?.layer.cornerRadius = 10.0
+        backView?.backgroundColor = UIColor.white
+        
+        // Change Message With Color and Font
+        let message  = message
+        var messageMutableString = NSMutableAttributedString()
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedString.Key.font:UIFont(name: "Georgia", size: 25.0)!])
+        //messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
+        alertController.setValue(messageMutableString, forKey: "attributedMessage")
+        
+        // Action.
+        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertAction.Style.default, handler: nil)
+  
+//        let appDel = UIApplication.shared.delegate! as! AppDelegate
+//        appDel.start()
+        alertController.addAction(action)
+        
+        self.present(alertController, animated: true, completion: nil)
+    }
 
     func register(){
-//        var uuid:String //= //UIDevice.current.identifierForVendor!.uuidString
-        var uuid = UUID().uuidString
-        KeychainService.savePassword(token: uuid as NSString)
-        //activityindicator.sizeToFit()
-        activityindicator.isHidden = false
-        activityindicator.startAnimating()
-        
-//        let password = KeychainService.loadPassword()
-//        if(password == nil){
-//             uuid = UIDevice.current.identifierForVendor!.uuidString
-//            KeychainService.savePassword(token: uuid as NSString)
-//
-//        }
-//        else{
-//            uuid = password! as String
-//        }
-        let Name = firstNameTextField.text
-        let Email = emailTextField.text
-        let string = uuid + ":" + Email! + ":" + "Register" + ":" + "\(Vehicaldetails.sharedInstance.Language)"
-        let Base64 = convertStringToBase64(string: string)
-        let mobile = mobileNoTextField.text
-        let Companyname = Company_Name.text
-        let data = web.registration(Name: Name!,Email:Email!,Base64:Base64,mobile:mobile!,uuid:uuid,company:Companyname!)
-        let Split = data.components(separatedBy: "#")
-        let reply = Split[0]
-       // _ = Split[1]
-
-        print(reply)
-        if(reply == "-1"){
-            showAlert(message: NSLocalizedString("NoInternet", comment:"") )
-
-        }//"Internet connection is not available.\(error)")}
-        else {
-            let data1:NSData = reply.data(using: String.Encoding.utf8)! as NSData
-            do{
-                sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
-            }catch let error as NSError {
-                print ("Error: \(error.domain)")
-            }
-            //print(sysdata)
-            if(sysdata == nil){
-                
-            }
-            else{
-            let ResponceData = sysdata.value(forKey: "ResponceData") as! NSDictionary
-            let MinLimit = ResponceData.value(forKey: "MinLimit") as! NSNumber
-            let PulseRatio = ResponceData.value(forKey: "PulseRatio") as! NSNumber
-            let VehicleId = ResponceData.value(forKey: "VehicleId") as! NSNumber
-            let FuelTypeId = ResponceData.value(forKey: "FuelTypeId") as! NSNumber
-            let PersonId = ResponceData.value(forKey: "PersonId") as! NSNumber
-            let PhoneNumber = ResponceData.value(forKey: "PhoneNumber") as! NSString
-            print(MinLimit,PersonId,PhoneNumber,FuelTypeId,VehicleId,PulseRatio)
-
-            let Message = sysdata["ResponceMessage"] as! NSString
-            let ResponseText = sysdata["ResponceText"] as! NSString
-
-            defaults.set(firstNameTextField.text, forKey: "firstName")
-            defaults.set(mobileNoTextField.text, forKey: "mobile")
-            defaults.set(emailTextField.text, forKey: "address")
-            //defaults.set(uuid, forKey: "uuid")
-            defaults.set(uuid,forKey: "\(brandname)")
-            
-            
-            if(brandname == "FluidSecure"){
-            if(defaults.string(forKey: "\(brandname)") != nil) {
-                uuid = defaults.string(forKey: "\(brandname)")!//UUID().uuidString
-            }
+        //        var uuid:String //= //UIDevice.current.identifierForVendor!.uuidString
+                var uuid = UUID().uuidString
                 KeychainService.savePassword(token: uuid as NSString)
-            }
+                //activityindicator.sizeToFit()
+                activityindicator.isHidden = false
+                activityindicator.startAnimating()
+                
+        //        let password = KeychainService.loadPassword()
+        //        if(password == nil){
+        //             uuid = UIDevice.current.identifierForVendor!.uuidString
+        //            KeychainService.savePassword(token: uuid as NSString)
+        //
+        //        }
+        //        else{
+        //            uuid = password! as String
+        //        }
+                let Name = firstNameTextField.text
+                let Email = emailTextField.text
+                let string = uuid + ":" + Email! + ":" + "Register" + ":" + "\(Vehicaldetails.sharedInstance.Language)"
+                let Base64 = convertStringToBase64(string: string)
+                let mobile = mobileNoTextField.text
+                let Companyname = Company_Name.text
+                let data = web.registration(Name: Name!,Email:Email!,Base64:Base64,mobile:mobile!,uuid:uuid,company:Companyname!)
+                let Split = data.components(separatedBy: "#")
+                let reply = Split[0]
+               // _ = Split[1]
 
-            if(Message == "success") {
-                showAlert(message: "\(ResponseText)" )
-                defaults.set(0, forKey: "Login")
-                defaults.set(1, forKey: "Register")
-                let appDel = UIApplication.shared.delegate! as! AppDelegate
-                appDel.start()
-            }
-            else if(Message == "fail") {
-                self.showAlert(message: "\(ResponseText)" )
-                activityindicator.isHidden = true
-                activityindicator.stopAnimating()
-                if(ResponseText == "Please enter valid company.")
-                {
-                    self.showAlert(message: "\(ResponseText)" )
-                    activityindicator.stopAnimating()
-                    activityindicator.isHidden = true
-                }
-            }
-            else
-            {
-                activityindicator.isHidden = true
-                activityindicator.stopAnimating()
+                print(reply)
+                if(reply == "-1"){
+                    show_Alert(message: NSLocalizedString("NoInternet", comment:"") )
+
+                }//"Internet connection is not available.\(error)")}
+                else {
+                    let data1:NSData = reply.data(using: String.Encoding.utf8)! as NSData
+                    do{
+                        sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
+                    }catch let error as NSError {
+                        print ("Error: \(error.domain)")
+                    }
+                    //print(sysdata)
+                    if(sysdata == nil){
+                        
+                    }
+                    else{
+                    let ResponceData = sysdata.value(forKey: "ResponceData") as! NSDictionary
+                    let MinLimit = ResponceData.value(forKey: "MinLimit") as! NSNumber
+                    let PulseRatio = ResponceData.value(forKey: "PulseRatio") as! NSNumber
+                    let VehicleId = ResponceData.value(forKey: "VehicleId") as! NSNumber
+                    let FuelTypeId = ResponceData.value(forKey: "FuelTypeId") as! NSNumber
+                    let PersonId = ResponceData.value(forKey: "PersonId") as! NSNumber
+                    let PhoneNumber = ResponceData.value(forKey: "PhoneNumber") as! NSString
+                    print(MinLimit,PersonId,PhoneNumber,FuelTypeId,VehicleId,PulseRatio)
+
+                    let Message = sysdata["ResponceMessage"] as! NSString
+                    let ResponseText = sysdata["ResponceText"] as! NSString
+
+                    defaults.set(firstNameTextField.text, forKey: "firstName")
+                    defaults.set(mobileNoTextField.text, forKey: "mobile")
+                    defaults.set(emailTextField.text, forKey: "address")
+                    //defaults.set(uuid, forKey: "uuid")
+                    defaults.set(uuid,forKey: "\(brandname)")
+                    
+                    
+                    if(brandname == "FluidSecure"){
+                    if(defaults.string(forKey: "\(brandname)") != nil) {
+                        uuid = defaults.string(forKey: "\(brandname)")!//UUID().uuidString
+                    }
+                        KeychainService.savePassword(token: uuid as NSString)
+                    }
+
+                    if(Message == "success") {
+                        showAlert(message: "\(ResponseText)" )
+                        defaults.set(0, forKey: "Login")
+                        defaults.set(1, forKey: "Register")
+                        let appDel = UIApplication.shared.delegate! as! AppDelegate
+                        appDel.start()
+                    }
+                    else if(Message == "fail") {
+                        self.showAlert(message: "\(ResponseText)" )
+                        activityindicator.isHidden = true
+                        activityindicator.stopAnimating()
+                        if(ResponseText == "Please enter valid company.")
+                        {
+                            self.showAlert(message: "\(ResponseText)" )
+                            activityindicator.stopAnimating()
+                            activityindicator.isHidden = true
+                        }
+                    }
+                    else
+                    {
+                        activityindicator.isHidden = true
+                        activityindicator.stopAnimating()
                 showAlert(message: NSLocalizedString("Checkinternet", comment:"") )//"Please check your check your internet connection or Please contact your admin.")
             }
         }

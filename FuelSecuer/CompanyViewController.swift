@@ -198,16 +198,34 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
             
         }
         
-      let password = KeychainService.loadPassword()
-             if(password == nil)
-             {
-                 let uuid:String = UIDevice.current.identifierForVendor!.uuidString
-                 KeychainService.savePassword(token: uuid as NSString)
-             }
-             else   {
-                 
-             
-               let uuid = password!
+      
+        var password = KeychainService.loadPassword()
+        if(password == nil || password == "")
+        {
+            self.web.sentlog(func_name: "keychain service get \(password) ", errorfromserverorlink: "", errorfromapp: "")
+            let preuuid = defaults.string(forKey: "uuid")
+            if(preuuid == nil){
+                 uuid = UIDevice.current.identifierForVendor!.uuidString
+                KeychainService.savePassword(token: uuid as NSString)
+            }
+            else
+            {
+                KeychainService.savePassword(token: preuuid! as NSString)
+                password = KeychainService.loadPassword()
+                print(password!)//used this paasword (uuid)
+                uuid = password! as String
+            }
+        }
+        else{
+//            KeychainService.savePassword(token: "0B5C5D0B-70CE-4C75-8844-9E8938586489" as NSString)
+            //password = KeychainService.loadPassword()
+            print(password!)//used this paasword (uuid)
+            uuid = password! as String
+        }
+//             else   {
+//
+//
+//               let uuid = password!
                var myMutableStringTitle = NSMutableAttributedString()
                let Name = "Touch To Select Company"// PlaceHolderText
                myMutableStringTitle = NSMutableAttributedString(string:Name, attributes: [NSAttributedString.Key.font:UIFont(name: "Arial", size: 25.0)!]) // Font
@@ -419,6 +437,12 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
                            IsUseBarcode = objUserData.value(forKey: "UseBarcode") as! NSString as String
                            Vehicaldetails.sharedInstance.CompanyBarndName = (objUserData.value(forKey: "CompanyBrandName") as! NSString) as String
                            Vehicaldetails.sharedInstance.CompanyBrandLogoLink = (objUserData.value(forKey: "CompanyBrandLogoLink") as! NSString) as String
+                           let IsNonValidateVehicle = objUserData.value(forKey:"IsNonValidateVehicle") as!NSString as String
+                           let IsNonValidateODOM = objUserData.value(forKey: "IsNonValidateODOM") as! NSString as String
+                           defaults.set(IsNonValidateVehicle, forKey: "IsNonValidateVehicle")
+                           defaults.set(IsOdoMeterRequire, forKey: "IsOdoMeterRequire")
+                           defaults.set(IsNonValidateODOM, forKey: "IsNonValidateODOM")
+                           
                            Vehicaldetails.sharedInstance.IsVehicleNumberRequire = IsVehicleNumberRequire
                         self.navigationItem.title = Vehicaldetails.sharedInstance.CompanyBarndName
                         
@@ -526,7 +550,7 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
                            refreshButton.isHidden = true
                            preauth.isHidden = true
 
-                           supportinfo.text = "Support:\(Vehicaldetails.sharedInstance.SupportEmail) or " + "\(Vehicaldetails.sharedInstance.SupportPhonenumber)"
+                           supportinfo.text = "\(Vehicaldetails.sharedInstance.SupportEmail) or " + "\(Vehicaldetails.sharedInstance.SupportPhonenumber)"
                            self.wifiNameTextField.placeholder = NSLocalizedString("Touch to select Company", comment:"")
                            
                            self.wifiNameTextField.textColor = UIColor.white
@@ -760,7 +784,7 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
                let strDate = dateFormatter.string(from: NSDate() as Date)
                datetime.text = strDate
                selectHose.text = NSLocalizedString("selectCompany", comment:"")
-           }
+          // }
 }
 //
 //        var uuid:String = ""
@@ -1461,7 +1485,7 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
                     self.go.isEnabled = true
                 }
                 else{
-                
+                    self.web.sentlog(func_name: "Customer select company \(Vehicaldetails.sharedInstance.CompanyBarndName)", errorfromserverorlink: "", errorfromapp: "")
                 let Message = self.sysdata["ResponseMessage"] as! NSString
                 let ResponseText = self.sysdata["ResponseText"] as! NSString
                 if(ResponseText == "success"){

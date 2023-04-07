@@ -106,9 +106,9 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
     
     var IsOdoMeterRequire:String!
     var IsLoginRequire:String!
+    var uuid:String!
     
-    
-    
+    var OriginalNamesOfLink = [NSArray]()
     var Bluetooth_MacAddress = [String]()
     var Mac_Address = [String]()
     var Communication_Type = [String]()
@@ -147,32 +147,33 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
     }
     
 //    override func viewDidLoad() {
-//        super.viewDidLoad()
-//        version_2.text = "Version \(Version)"
-//        version.text = "Version \(Version)"
-//        if(Vehicaldetails.sharedInstance.Language == "es-ES"){
-//            itembarbutton.title = "English"
-//            //defaults.set("es", forKey: "Language")
-//
-//        }else  if(Vehicaldetails.sharedInstance.Language == ""){
-//            itembarbutton.title = "Spanish"
-//            //defaults.set("en", forKey: "Language")
-//        }
-//        wifiNameTextField.delegate = self
-//        if(preauthalert == false){
-//        Alert(message: "You currently have no cellular service and will be performing an Offline Transaction. After finishing, please leave app open until you regain service.")
-//        }
-//
-//        selecthose.text = NSLocalizedString("Select Hose to use", comment:"")
-//        let doneButton:UIButton = UIButton (frame: CGRect(x: 100, y: 100, width: 100, height: 44));
-//        doneButton.setTitle(NSLocalizedString("Return", comment:""), for: UIControl.State())
-//        doneButton.addTarget(self, action: #selector(tapAction), for: UIControl.Event.touchUpInside);
-//        doneButton.backgroundColor = UIColor .black
-//        wifiNameTextField.returnKeyType = .done
-//        wifiNameTextField.inputAccessoryView = doneButton
-//        wifiNameTextField.autocapitalizationType = UITextAutocapitalizationType.allCharacters
-//
-//        Vehicaldetails.sharedInstance.deptno = ""
+
+    //        super.viewDidLoad()
+    //        version_2.text = "Version \(Version)"
+    //        version.text = "Version \(Version)"
+    //        if(Vehicaldetails.sharedInstance.Language == "es-ES"){
+    //            itembarbutton.title = "English"
+    //            //defaults.set("es", forKey: "Language")
+    //
+    //        }else  if(Vehicaldetails.sharedInstance.Language == ""){
+    //            itembarbutton.title = "Spanish"
+    //            //defaults.set("en", forKey: "Language")
+    //        }
+    //        wifiNameTextField.delegate = self
+    //        if(preauthalert == false){
+    //        Alert(message: "You currently have no cellular service and will be performing an Offline Transaction. After finishing, please leave app open until you regain service.")
+    //        }
+    //
+    //        selecthose.text = NSLocalizedString("Select Hose to use", comment:"")
+    //        let doneButton:UIButton = UIButton (frame: CGRect(x: 100, y: 100, width: 100, height: 44));
+    //        doneButton.setTitle(NSLocalizedString("Return", comment:""), for: UIControl.State())
+    //        doneButton.addTarget(self, action: #selector(tapAction), for: UIControl.Event.touchUpInside);
+    //        doneButton.backgroundColor = UIColor .black
+    //        wifiNameTextField.returnKeyType = .done
+    //        wifiNameTextField.inputAccessoryView = doneButton
+    //        wifiNameTextField.autocapitalizationType = UITextAutocapitalizationType.allCharacters
+    //
+    //        Vehicaldetails.sharedInstance.deptno = ""
 //        Vehicaldetails.sharedInstance.Personalpinno = ""
 //        Vehicaldetails.sharedInstance.Other = ""
 //       // Vehicaldetails.sharedInstance.Odometerno = ""
@@ -733,18 +734,18 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         if(Vehicaldetails.sharedInstance.Language == "es-ES"){
             itembarbutton.title = "English"
             //defaults.set("es", forKey: "Language")
-
+            
         }else  if(Vehicaldetails.sharedInstance.Language == ""){
             itembarbutton.title = "Spanish"
             //defaults.set("en", forKey: "Language")
         }
         wifiNameTextField.delegate = self
-
+        
         if(preauthalert == false){
-        //Alert(message: "You currently have no cellular service and will be performing an Offline Transaction. After finishing, please leave app open until you regain service.")
+            //Alert(message: "You currently have no cellular service and will be performing an Offline Transaction. After finishing, please leave app open until you regain service.")
         }
-
-
+        
+        
         selecthose.text = NSLocalizedString("Select Hose To Use", comment:"")
         let doneButton:UIButton = UIButton (frame: CGRect(x: 100, y: 100, width: 100, height: 44));
         doneButton.setTitle(NSLocalizedString("Return", comment:""), for: UIControl.State())
@@ -757,25 +758,39 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         Vehicaldetails.sharedInstance.deptno = ""
         Vehicaldetails.sharedInstance.Personalpinno = ""
         Vehicaldetails.sharedInstance.Other = ""
-       // Vehicaldetails.sharedInstance.Odometerno = ""
+        // Vehicaldetails.sharedInstance.Odometerno = ""
         Vehicaldetails.sharedInstance.hours = ""
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         locationManager.desiredAccuracy=kCLLocationAccuracyBest
         locationManager.startUpdatingLocation()
         currentlocation = locationManager.location
-
-        let uuid:String //= UIDevice.current.identifierForVendor!.uuidString
-        let password = KeychainService.loadPassword()
-        if(password == nil){
-            uuid = UIDevice.current.identifierForVendor!.uuidString
-            KeychainService.savePassword(token: uuid as NSString)
+        
+        //= UIDevice.current.identifierForVendor!.uuidString
+        
+        var password = KeychainService.loadPassword()
+        if(password == nil || password == ""){
+            self.web.sentlog(func_name: "keychain service get \(password) ", errorfromserverorlink: "", errorfromapp: "")
+            let preuuid = defaults.string(forKey: "uuid")
+            if(preuuid == nil){
+                let uuid:String = UIDevice.current.identifierForVendor!.uuidString
+                KeychainService.savePassword(token: uuid as NSString)
+            }
+            else
+            {
+                KeychainService.savePassword(token: preuuid! as NSString)
+                password = KeychainService.loadPassword()
+                print(password!)//used this paasword (uuid)
+                uuid = password! as String
+            }
         }
         else{
-            let password = KeychainService.loadPassword()
-            print(password!)// password = "Pa55worD"
+            //            KeychainService.savePassword(token: "0B5C5D0B-70CE-4C75-8844-9E8938586489" as NSString)
+            password = KeychainService.loadPassword()
+            print(password!)//used this paasword (uuid)
             uuid = password! as String
         }
+        
         var myMutableStringTitle = NSMutableAttributedString()
         let Name  = "Enter Title" // PlaceHolderText
         
@@ -786,7 +801,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         var reply:String!
         var error:String!
         //var data:String!
-
+        
         if(currentlocation == nil)
         {
             let data =  web.checkApprove(uuid: uuid,lat:"\(0)",long:"\(0)")
@@ -840,11 +855,11 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                 refreshButton.isHidden = false
                 showAlertSetting(message: NSLocalizedString("warning_NoInternet_Connection", comment:""))//"Cannot connect to cloud server. Please connect to the network having the internet")
             }
-                
+            
             else if(Vehicaldetails.sharedInstance.reachblevia == "cellular") /*||  Vehicaldetails.sharedInstance.reachblevia == "notreachable"*/
             {
                 self.navigationItem.title = NSLocalizedString("Error",comment:"")//"Error"
-               // showAlert(message: "\(error)")
+                // showAlert(message: "\(error)")
                 scrollview.isHidden = true
                 version.isHidden = false
                 warningLable.isHidden = false
@@ -866,7 +881,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                     print(i)
                     if(currentlocation == nil)
                     {
-
+                        
                     }else{
                         // data = web.checkApprove(uuid,lat:"\(sourcelat)",long:"\(sourcelong)")
                     }
@@ -892,7 +907,11 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
             }catch let error as NSError {
                 print ("Error: \(error.domain)")
             }
-           /// print(sysdata)
+            /// print(sysdata)
+            if(sysdata == nil){
+                
+            }
+           else{
             
             let Message = sysdata["ResponceMessage"] as! NSString
             let ResponseText = sysdata["ResponceText"] as! NSString
@@ -911,6 +930,27 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                 IsOtherRequire = objUserData.value(forKey: "IsOtherRequire") as! NSString as String
                 Vehicaldetails.sharedInstance.SupportPhonenumber = (objUserData.value(forKey: "SupportPhonenumber") as! NSString) as String
                 Vehicaldetails.sharedInstance.SupportEmail = (objUserData.value(forKey: "SupportEmail") as! NSString) as String
+                let ScreenNameForHours = objUserData.value(forKey: "ScreenNameForHours") as! String
+                let ScreenNameForOdometer = objUserData.value(forKey: "ScreenNameForOdometer") as! String
+                let ScreenNameForPersonnel = objUserData.value(forKey: "ScreenNameForPersonnel") as! String
+                let ScreenNameForVehicle = objUserData.value(forKey: "ScreenNameForVehicle") as! String
+                let ScreenNameForDepartment = objUserData.value(forKey: "ScreenNameForDepartment") as! String
+                let OtherLabel = objUserData.value(forKey: "OtherLabel") as! String
+                
+                
+                Vehicaldetails.sharedInstance.ScreenNameForVehicle = ScreenNameForVehicle
+                Vehicaldetails.sharedInstance.ScreenNameForPersonnel = ScreenNameForPersonnel
+                Vehicaldetails.sharedInstance.ScreenNameForHours = ScreenNameForHours
+                Vehicaldetails.sharedInstance.ScreenNameForOdometer = ScreenNameForOdometer
+                Vehicaldetails.sharedInstance.ScreenNameForDepartment = ScreenNameForDepartment
+                Vehicaldetails.sharedInstance.Otherlable = OtherLabel
+                
+                
+                let IsNonValidateVehicle = objUserData.value(forKey:"IsNonValidateVehicle") as!NSString as String
+                let IsNonValidateODOM = objUserData.value(forKey: "IsNonValidateODOM") as! NSString as String
+                defaults.set(IsNonValidateVehicle, forKey: "IsNonValidateVehicle")
+                defaults.set(IsOdoMeterRequire, forKey: "IsOdoMeterRequire")
+                defaults.set(IsNonValidateODOM, forKey: "IsNonValidateODOM")
                 
                 infotext.text = NSLocalizedString("Name", comment:"") + ": \(PersonName)\n" + NSLocalizedString("Mobile", comment:"") + ":\(PhoneNumber)\n" + NSLocalizedString("Email", comment:"") + ": \(Email)"
                 Vehicaldetails.sharedInstance.odometerreq = IsOdoMeterRequire
@@ -927,25 +967,25 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                 
                 print(IMEI_UDID,IsApproved,PhoneNumber,PersonName,Email)
                 _ = (objUserData.value(forKey: "CompanyBrandLogoLink") as! NSString) as String
-                    //    Get Image from Document Directory :
+                //    Get Image from Document Directory :
+                
+                
+                let fileManager = FileManager.default
+                
+                let imagePAth = (cf.getDirectoryPath() as NSString).appendingPathComponent("logoimage.jpg")
+                
+                if fileManager.fileExists(atPath: imagePAth){
                     
+                    let url = Bundle.main.url(forAuxiliaryExecutable: imagePAth)// (forResource: "image", withExtension: "png")!
+                    let imageData = try! Data(contentsOf: url!)
+                    // let _ = UIImage(data: imageData)
+                    self.Companylogo.image = UIImage(data: imageData)//UIImage(contentsOfFile: imagePAth)
+                    //self.Companylogo.image = UIImage(contentsOfFile: imagePAth)
                     
-                    let fileManager = FileManager.default
+                }else{
                     
-                    let imagePAth = (cf.getDirectoryPath() as NSString).appendingPathComponent("logoimage.jpg")
-                    
-                    if fileManager.fileExists(atPath: imagePAth){
-                        
-                        let url = Bundle.main.url(forAuxiliaryExecutable: imagePAth)// (forResource: "image", withExtension: "png")!
-                       let imageData = try! Data(contentsOf: url!)
-                                                  // let _ = UIImage(data: imageData)
-                         self.Companylogo.image = UIImage(data: imageData)//UIImage(contentsOfFile: imagePAth)
-                        //self.Companylogo.image = UIImage(contentsOfFile: imagePAth)
-                        
-                    }else{
-                        
-                        print("No Image")
-                    }
+                    print("No Image")
+                }
             }
             else if(Message == "fail"){ }
             
@@ -958,7 +998,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                 warningLable.isHidden = true
                 refreshButton.isHidden = true
                 
-                self.wifiNameTextField.placeholder = NSLocalizedString("Touch To Select Site", comment:"")
+                self.wifiNameTextField.placeholder = NSLocalizedString("Select Hose to Use", comment:"")
                 self.wifiNameTextField.textColor = UIColor.white
                 self.wifiNameTextField.inputView = pickerViewLocation
                 self.pickerViewLocation.delegate = self
@@ -977,9 +1017,19 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                         print ("Error: \(error.domain)")
                         print ("Error: \(error)")
                     }
-                //    print(systemdata)
+                    //    print(systemdata)
                     ssid = []
                     Vehicaldetails.sharedInstance.Transaction_id = []
+                    OriginalNamesOfLink = []
+                    Uhosenumber = []
+                    location = []
+                    ssid = []
+                    Communication_Type = []
+                    location = []
+                    siteID = []
+                    Bluetooth_MacAddress = []
+                    Mac_Address = []
+                    PulserRatio = []
                     
                     let objUserDataT = sysdata.value(forKey: "PreAuthTransactionsObj") as! NSDictionary
                     let PreAuthJsonT = objUserDataT.value(forKey: "TransactionObj") as! NSArray
@@ -988,7 +1038,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                     {
                         let PreAuthJsonRow = PreAuthJsonT[i] as! NSDictionary
                         let MessageTransactionObj = PreAuthJsonRow["ResponceMessage"] as! NSString
-
+                        
                         if(MessageTransactionObj == "success"){
                             let T_Id = PreAuthJsonRow["TransactionId"] as! NSString
                             Transaction_Id.append(T_Id as String)
@@ -999,29 +1049,29 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                     //get Fuel limit per day from server
                     let FuelLimitPerDay = objUserData.value(forKey: "FuelLimitPerDay") as! NSString
                     let FuelLimitPerTxn = objUserData.value(forKey:"FuelLimitPerTxn") as! NSString
-//                    let PreAuthDataDwnldFreq = objUserData.value(forKey: "PreAuthDataDwnldFreq") as! NSString
-//                    let PreAuthDataDownloadDay = objUserData.value(forKey:"PreAuthDataDownloadDay") as! NSString
-//                    let PreAuthDataDownloadTimeInHrs = objUserData.value(forKey: "PreAuthDataDownloadTimeInHrs") as! NSString
-//                    let PreAuthDataDownloadTimeInMin = objUserData.value(forKey:"PreAuthDataDownloadTimeInMin") as! NSString
-//                   let PreAuthVehicleDataFilePath = objUserData.value(forKey: "PreAuthVehicleDataFilePath") as! NSString
-//                   let PreAuthVehicleDataFilesCount = objUserData.value(forKey:"PreAuthVehicleDataFilesCount") as! NSString
+                    //                    let PreAuthDataDwnldFreq = objUserData.value(forKey: "PreAuthDataDwnldFreq") as! NSString
+                    //                    let PreAuthDataDownloadDay = objUserData.value(forKey:"PreAuthDataDownloadDay") as! NSString
+                    //                    let PreAuthDataDownloadTimeInHrs = objUserData.value(forKey: "PreAuthDataDownloadTimeInHrs") as! NSString
+                    //                    let PreAuthDataDownloadTimeInMin = objUserData.value(forKey:"PreAuthDataDownloadTimeInMin") as! NSString
+                    //                   let PreAuthVehicleDataFilePath = objUserData.value(forKey: "PreAuthVehicleDataFilePath") as! NSString
+                    //                   let PreAuthVehicleDataFilesCount = objUserData.value(forKey:"PreAuthVehicleDataFilesCount") as! NSString
                     let DoNotAllowOfflinePreauthorizedTransactions = objUserData.value(forKey: "DoNotAllowOfflinePreauthorizedTransactions") as! NSString
-                                                 
-                     Vehicaldetails.sharedInstance.DoNotAllowOfflinePreauthorizedTransactions = DoNotAllowOfflinePreauthorizedTransactions as String
-                       // defaults.set(FuelLimitPerTxn, forKey: "GetFuelLimitPerTxn")
+                    
+                    Vehicaldetails.sharedInstance.DoNotAllowOfflinePreauthorizedTransactions = DoNotAllowOfflinePreauthorizedTransactions as String
+                    // defaults.set(FuelLimitPerTxn, forKey: "GetFuelLimitPerTxn")
                     
                     let getfirsttimeFuelLimitPerDay = self.defaults.string(forKey:"GetFuelLimitPerDay")
-                     //  let getfirsttimeFuelLimitPerTxn =
+                    //  let getfirsttimeFuelLimitPerTxn =
                     Vehicaldetails.sharedInstance.FuelLimitPerTnx = FuelLimitPerTxn as String
                     
                     let dateFormatter = DateFormatter()
-                           dateFormatter.dateFormat = "yyyy-MM-dd"
-                           let strDate = dateFormatter.string(from: Date())
+                    dateFormatter.dateFormat = "yyyy-MM-dd"
+                    let strDate = dateFormatter.string(from: Date())
                     
                     
                     let todaydate = defaults.string(forKey:"date")
                     if(todaydate == strDate){
-                    print(Int(getfirsttimeFuelLimitPerDay! as String) == Int(FuelLimitPerDay as String))
+                        print(Int(getfirsttimeFuelLimitPerDay! as String) == Int(FuelLimitPerDay as String))
                         
                         if(Int(getfirsttimeFuelLimitPerDay! as String) == Int(FuelLimitPerDay as String)){}
                         else
@@ -1031,19 +1081,19 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                                 defaults.set(FuelLimitPerDay, forKey: "FuelLimitPerDay")
                                 defaults.set(FuelLimitPerDay, forKey: "GetFuelLimitPerDay")
                             }else{
-                            
-                            defaults.set(strDate,forKey:"date")
-                             let FuelLimit_PerDay = self.defaults.string(forKey:"FuelLimitPerDay")
-                            let FLPD:String = FuelLimit_PerDay!
-                            let updateFuelLimitPerDay = Int(getfirsttimeFuelLimitPerDay!)! - Int(FLPD)!
-                            let updateFLPD = Int(FuelLimitPerDay as String)! - updateFuelLimitPerDay
-                            
-                            defaults.set(updateFLPD, forKey: "FuelLimitPerDay")
-                            defaults.set(FuelLimitPerDay, forKey: "GetFuelLimitPerDay")
-                            setFuelLimitePerDayOnce = false
+                                
+                                defaults.set(strDate,forKey:"date")
+                                let FuelLimit_PerDay = self.defaults.string(forKey:"FuelLimitPerDay")
+                                let FLPD:String = FuelLimit_PerDay!
+                                let updateFuelLimitPerDay = Int(getfirsttimeFuelLimitPerDay!)! - Int(FLPD)!
+                                let updateFLPD = Int(FuelLimitPerDay as String)! - updateFuelLimitPerDay
+                                
+                                defaults.set(updateFLPD, forKey: "FuelLimitPerDay")
+                                defaults.set(FuelLimitPerDay, forKey: "GetFuelLimitPerDay")
+                                setFuelLimitePerDayOnce = false
                             }
                         }
-                       
+                        
                         
                     }else
                     {
@@ -1076,23 +1126,33 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                             {}
                             
                             let WifiSSId = JsonRow["WifiSSId"] as! NSString
-                           // let PulserRatio = JsonRow["PulserRatio"] as! NSString
-                            let DecimalPulserRatio = JsonRow["DecimalPulserRatio"] as! NSNumber
+                            let Pulser_Ratio = JsonRow["PulserRatio"] as! NSString
+                            //let DecimalPulserRatio = JsonRow["DecimalPulserRatio"] as! NSNumber
                             let FuelTypeId = JsonRow["FuelTypeId"] as! NSString
                             let Sitid = JsonRow["SiteId"] as! NSString
                             let pulsarstoptime = JsonRow["PulserStopTime"] as! NSString
                             let PumpOffTime = JsonRow["PumpOffTime"] as! NSString
                             let PumpOnTime = JsonRow["PumpOnTime"] as! NSString
+                            let Original_NamesOfLink = JsonRow["OriginalNamesOfLink"] as! NSArray
+                            
+                            
+                            
+                            let MacAddress = JsonRow["MacAddress"] as! NSString as String
+                            let BluetoothMacAddress = JsonRow["BluetoothMacAddress"] as! NSString as String
+                            let HubLinkCommunication = JsonRow["HubLinkCommunication"] as! NSString
+                            
                             
                             ssid.append(WifiSSId as String)
                             Ulocation = ssid.removeDuplicates()
-                            
-                            PulserRatio.append("\(DecimalPulserRatio)" as String)
+                            OriginalNamesOfLink.append(Original_NamesOfLink as NSArray )
+                            PulserRatio.append(Pulser_Ratio as String)
                             Pass.append(FuelTypeId as String)
                             PulserStopTimelist.append(pulsarstoptime as String)
                             PumpOffTimelist.append(PumpOffTime as String)
                             PumpOnTimelist.append(PumpOnTime as String)
-                            
+                            Communication_Type.append(HubLinkCommunication as String)
+                            Bluetooth_MacAddress.append(BluetoothMacAddress as String)
+                            Mac_Address.append(MacAddress as String)
                             siteID.append(Sitid as String)
                             print(Uhosenumber)
                             
@@ -1110,7 +1170,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                     
                     let tranid = objUserData.value(forKey: "TransactionObj") as! NSArray
                     let id = tranid.count
-
+                    
                     for i in 0  ..< id
                     {
                         let PreAuthJsonRow = tranid[i] as! NSDictionary
@@ -1178,7 +1238,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                                 }
                             }
                         }
-                            
+                        
                         else if(Message == "fail"){
                             
                             self.navigationItem.title = NSLocalizedString("Error",comment:"")//"Error"
@@ -1192,98 +1252,100 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                     }
                     
                     
-                     
-                     Uhosenumber = []
-                    location = []
-                    ssid = []
-                    Communication_Type = []
-                    location = []
-                    siteID = []
-                    Bluetooth_MacAddress = []
-                    Mac_Address = []
-//                    PulserRatio = []
+                    
+                    //                     Uhosenumber = []
+                    //                    location = []
+                    ////                    ssid = []
+                    //                    Communication_Type = []
+                    //                    location = []
+                    ////                    siteID = []
+                    //                    Bluetooth_MacAddress = []
+                    //                    Mac_Address = []
+                    
                     
                     
                     let Json = systemdata.value(forKey: "SSIDDataObj") as! NSArray
-                             let rowCount = Json.count
-                             let index: Int = 0
-                             for i in 0  ..< rowCount
-                             {
-                                 let JsonRow = Json[i] as! NSDictionary
-                               
-                                let SiteName = JsonRow["SiteName"] as! NSString
-                                location.append(SiteName as String)
-
-                                print(ssid)
-//                                defaults.set(ssid, forKey: "SSID")
-//                                defaults.set(siteID, forKey: "SiteID")
-                                Ulocation = location.removeDuplicates()
-
-                                if(Ulocation[index] == SiteName as String){
-
-                                                              
-                                     let WifiSSId = JsonRow["WifiSSId"] as! NSString
-                                    
-                                     let hosename = JsonRow["HoseNumber"] as! NSString
-                                     let Sitid = JsonRow["SiteId"] as! NSString
-                                    let MacAddress = JsonRow["MacAddress"] as! NSString as String
-                                    let BluetoothMacAddress = JsonRow["BluetoothMacAddress"] as! NSString as String
-                                    let HubLinkCommunication = JsonRow["HubLinkCommunication"] as! NSString
-                                    let IsLinkFlagged = JsonRow["IsLinkFlagged"] as! NSString  as String
-                                    let LinkFlaggedMessage =  JsonRow["LinkFlaggedMessage"] as! NSString as String
-                                    let IsTankEmpty = JsonRow["IsTankEmpty"] as! NSString as String
-
-                                     ssid.append(WifiSSId as String)
-                                     location.append(SiteName as String)
-                                    
-                                     Uhosenumber.append(hosename as String)
-                                     siteID.append(Sitid as String)
-                                    Communication_Type.append(HubLinkCommunication as String)
-                                 IsTank_Empty.append(IsTankEmpty as String)
-                                        IsLink_Flagged.append(IsLinkFlagged as String)
-                                        LinkFlagged_Message.append(LinkFlaggedMessage as String)
-                                 Bluetooth_MacAddress.append(BluetoothMacAddress as String)
-                                 Mac_Address.append(MacAddress as String)
-                                     print(Uhosenumber)
-                                }
-                             }
+                    let rowCount = Json.count
+                    let index: Int = 0
+                    for i in 0  ..< rowCount
+                    {
+                        let JsonRow = Json[i] as! NSDictionary
+                        
+                        let SiteName = JsonRow["SiteName"] as! NSString
+                        location.append(SiteName as String)
+                        
+                        print(ssid)
+                        //                                defaults.set(ssid, forKey: "SSID")
+                        //                                defaults.set(siteID, forKey: "SiteID")
+                        Ulocation = location.removeDuplicates()
+                        
+                        if(Ulocation[index] == SiteName as String){
+                            
+                            
+                            let WifiSSId = JsonRow["WifiSSId"] as! NSString
+                            
+                            let hosename = JsonRow["HoseNumber"] as! NSString
+                            let Sitid = JsonRow["SiteId"] as! NSString
+                            let MacAddress = JsonRow["MacAddress"] as! NSString as String
+                            let BluetoothMacAddress = JsonRow["BluetoothMacAddress"] as! NSString as String
+                            let HubLinkCommunication = JsonRow["HubLinkCommunication"] as! NSString
+                            let IsLinkFlagged = JsonRow["IsLinkFlagged"] as! NSString  as String
+                            let LinkFlaggedMessage =  JsonRow["LinkFlaggedMessage"] as! NSString as String
+                            let IsTankEmpty = JsonRow["IsTankEmpty"] as! NSString as String
+                            
+                            //                                     ssid.append(WifiSSId as String)
+                            location.append(SiteName as String)
+                            
+                            Uhosenumber.append(hosename as String)
+                            //                                     siteID.append(Sitid as String)
+                            //                                    Communication_Type.append(HubLinkCommunication as String)
+                            IsTank_Empty.append(IsTankEmpty as String)
+                            IsLink_Flagged.append(IsLinkFlagged as String)
+                            LinkFlagged_Message.append(LinkFlaggedMessage as String)
+                            //                                 Bluetooth_MacAddress.append(BluetoothMacAddress as String)
+                            //                                 Mac_Address.append(MacAddress as String)
+                            print(Uhosenumber)
+                        }
+                    }
                     
                     
-                   
+                    
                     
                     if(Uhosenumber.count == 1)
                     {
                         var index: Int = 0
                         let siteid = siteID[index]
-                            let ssId = ssid[index]
-                            self.wifiNameTextField.text = ssid[index]
-                            Vehicaldetails.sharedInstance.siteID = siteid
-                            Vehicaldetails.sharedInstance.SSId = ssId
-                            Vehicaldetails.sharedInstance.PulseRatio = PulserRatio[index]
-                            Vehicaldetails.sharedInstance.FuelTypeId = Pass[index]
-                            Vehicaldetails.sharedInstance.PulserStopTime = PulserStopTimelist[index]
-                            Vehicaldetails.sharedInstance.pumpoff_time = PumpOffTimelist[index]
-                            print(Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.PulseRatio,Vehicaldetails.sharedInstance.FuelTypeId,Vehicaldetails.sharedInstance.pumpoff_time)
+                        let ssId = ssid[index]
+                        self.wifiNameTextField.text = ssid[index]
+                        Vehicaldetails.sharedInstance.siteID = siteid
+                        Vehicaldetails.sharedInstance.SSId = ssId
+                        Vehicaldetails.sharedInstance.PulseRatio = PulserRatio[index]
+                        Vehicaldetails.sharedInstance.FuelTypeId = Pass[index]
+                        Vehicaldetails.sharedInstance.PulserStopTime = PulserStopTimelist[index]
+                        Vehicaldetails.sharedInstance.pumpoff_time = PumpOffTimelist[index]
+                        Vehicaldetails.sharedInstance.pumpon_time = PumpOnTimelist[index]
+                        Vehicaldetails.sharedInstance.OriginalNamesOfLink = OriginalNamesOfLink[index] as! NSMutableArray
+                        print(Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.PulseRatio,Vehicaldetails.sharedInstance.FuelTypeId,Vehicaldetails.sharedInstance.pumpoff_time,Vehicaldetails.sharedInstance.OriginalNamesOfLink)
                         
-//                        let siteid = siteID[0]
-//                        let ssId = ssid[0]
-//
+                        //                        let siteid = siteID[0]
+                        //                        let ssId = ssid[0]
+                        //
                         
                         
                     }
                 }
             }
-                
-                //USER IS NOT REGISTER TO SYSTEM
+            
+            //USER IS NOT REGISTER TO SYSTEM
             else if(ResponseText == "New Registration") {
                 
                 let appDel = UIApplication.shared.delegate! as! AppDelegate
                 defaults.set(0, forKey: "Register")
                 // Call a method on the CustomController property of the AppDelegate
                 self.web.sentlog(func_name: "Preauth", errorfromserverorlink: "", errorfromapp: "")
-               appDel.preauthstart()
+                appDel.preauthstart()
             }
-                
+            
             else if(Message == "fail") {
                 
                 defaults.set("false", forKey: "checkApproved")
@@ -1297,6 +1359,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
             } else if(ResponseText == "New Registration") {
                 performSegue(withIdentifier: "Register", sender: self)
             }
+        }
         }
         
         if(cf.getSSID() != "" ) {}
@@ -1582,38 +1645,39 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         self.view.endEditing(true)
     }
     
-    @IBAction func refreshButtontappd(sender: AnyObject) {
-        if(Vehicaldetails.sharedInstance.reachblevia == "wificonn" || Vehicaldetails.sharedInstance.reachblevia == "cellular")
-        {
-        let uuid:String// = UIDevice.current.identifierForVendor!.uuidString
-
-
-            let password = KeychainService.loadPassword()
-            if(password == nil){
-                uuid = UIDevice.current.identifierForVendor!.uuidString
-                KeychainService.savePassword(token: uuid as NSString)
-            }
-            else{
-                let password = KeychainService.loadPassword()
-                print(password!)// password = "Pa55worD"
-                uuid = password! as String
-            }
-        let data = web.checkApprove(uuid: uuid,lat:"\(sourcelat!)",long:"\(sourcelong!)")
-        let Split = data.components(separatedBy: "#")
-        reply = Split[0]
-        if(reply != "-1"){
-
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            let controller = storyboard.instantiateViewController(withIdentifier: "InitialController") as UIViewController
-            self.present(controller, animated: true, completion: nil)
-            }
-
-            }
-            else{
-        viewDidLoad()
-        }
-
-    }
+//    @IBAction func refreshButtontappd(sender: AnyObject)
+//    {
+//        if(Vehicaldetails.sharedInstance.reachblevia == "wificonn" || Vehicaldetails.sharedInstance.reachblevia == "cellular")
+//        {
+//        let uuid:String// = UIDevice.current.identifierForVendor!.uuidString
+//
+//
+//            let password = KeychainService.loadPassword()
+//            if(password == nil){
+//                uuid = UIDevice.current.identifierForVendor!.uuidString
+//                KeychainService.savePassword(token: uuid as NSString)
+//            }
+//            else{
+//                let password = KeychainService.loadPassword()
+//                print(password!)// password = "Pa55worD"
+//                uuid = password! as String
+//            }
+//        let data = web.checkApprove(uuid: uuid,lat:"\(sourcelat!)",long:"\(sourcelong!)")
+//        let Split = data.components(separatedBy: "#")
+//        reply = Split[0]
+//        if(reply != "-1"){
+//
+//            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+//            let controller = storyboard.instantiateViewController(withIdentifier: "InitialController") as UIViewController
+//            self.present(controller, animated: true, completion: nil)
+//            }
+//
+//            }
+//            else{
+//        viewDidLoad()
+//        }
+//
+//    }
     
     @IBAction func refreshButtontapped(sender: AnyObject) {
         if(cf.getSSID() != "" ) {
@@ -1655,16 +1719,19 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                 let ssId = ssid[0]
                 let Password = Pass[0]
                 self.wifiNameTextField.text = ssid[0]
-
+                //print(PulserRatio[0])
                 Vehicaldetails.sharedInstance.siteID = siteid
                 Vehicaldetails.sharedInstance.SSId = ssId
                 Vehicaldetails.sharedInstance.password = Password
                 Vehicaldetails.sharedInstance.PulseRatio = PulserRatio[0]
+             
+                Vehicaldetails.sharedInstance.OriginalNamesOfLink = OriginalNamesOfLink[0] as! NSMutableArray
                 Vehicaldetails.sharedInstance.HubLinkCommunication = Communication_Type[0]
                 
                 Vehicaldetails.sharedInstance.FuelTypeId = Pass[0]
                 Vehicaldetails.sharedInstance.PulserStopTime = PulserStopTimelist[0]
                 Vehicaldetails.sharedInstance.pumpoff_time = PumpOffTimelist[0]
+                Vehicaldetails.sharedInstance.pumpon_time = PumpOnTimelist[0]
                
                 Vehicaldetails.sharedInstance.IsLinkFlagged = IsLink_Flagged[0]
                 Vehicaldetails.sharedInstance.LinkFlaggedMessage = LinkFlagged_Message[0]
@@ -1702,15 +1769,17 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
             Vehicaldetails.sharedInstance.siteID = siteid
             Vehicaldetails.sharedInstance.SSId = ssId
             Vehicaldetails.sharedInstance.PulseRatio = PulserRatio[index]
+            Vehicaldetails.sharedInstance.OriginalNamesOfLink = OriginalNamesOfLink[index] as! NSMutableArray
             Vehicaldetails.sharedInstance.FuelTypeId = Pass[index]
             Vehicaldetails.sharedInstance.PulserStopTime = PulserStopTimelist[index]
             Vehicaldetails.sharedInstance.pumpoff_time = PumpOffTimelist[index]
+            Vehicaldetails.sharedInstance.pumpon_time = PumpOnTimelist[index]
             Vehicaldetails.sharedInstance.HubLinkCommunication = Communication_Type[index]
             Vehicaldetails.sharedInstance.IsLinkFlagged = IsLink_Flagged[index]
             Vehicaldetails.sharedInstance.LinkFlaggedMessage = LinkFlagged_Message[index]
             Vehicaldetails.sharedInstance.FS_MacAddress = Mac_Address[index]
             Vehicaldetails.sharedInstance.BTMacAddress = Bluetooth_MacAddress[index]
-        print(Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.PulseRatio,Vehicaldetails.sharedInstance.FuelTypeId,Vehicaldetails.sharedInstance.pumpoff_time,Vehicaldetails.sharedInstance.HubLinkCommunication)
+            print(Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.PulseRatio,Vehicaldetails.sharedInstance.FuelTypeId,Vehicaldetails.sharedInstance.pumpoff_time,Vehicaldetails.sharedInstance.HubLinkCommunication,Vehicaldetails.sharedInstance.OriginalNamesOfLink)
             defaults.set(siteid, forKey: "SiteID")
             Vehicaldetails.sharedInstance.CollectDiagnosticLogs = "True"
             let Json = systemdata.value(forKey: "SSIDDataObj") as! NSArray

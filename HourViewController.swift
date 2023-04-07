@@ -89,7 +89,7 @@ class HourViewController: UIViewController,UITextFieldDelegate {
 
     @objc func gotostart(){
         if(appisonhourscreen == true){
-        self.web.sentlog(func_name: "Hour_screen_timeout", errorfromserverorlink: "", errorfromapp: "")
+        self.web.sentlog(func_name: "Hour_screen_timeout, back to home screen", errorfromserverorlink: "", errorfromapp: "")
         let appDel = UIApplication.shared.delegate! as! AppDelegate
         appDel.start()
         }
@@ -332,300 +332,326 @@ class HourViewController: UIViewController,UITextFieldDelegate {
     }
 
     @IBAction func saveButtontapped(sender: AnyObject) {
-        Activity.startAnimating()
-        Activity.isHidden = false
-        Go.isEnabled = false
-        
-        delay(1){
-            self.IsSavebuttontapped = true
-            self.Hourstoptimergotostart.invalidate()
-            self.tapAction()
-            if(self.Hour.text == "")
-            {
-                self.Activity.stopAnimating()
-                self.Activity.isHidden = true
-                if(Vehicaldetails.sharedInstance.Language == "es-ES")
-                 {
-                    self.showAlert(message:NSLocalizedString("EneterHour", comment:""))
-                 }
-                 else{
-               self.showAlert(message: "Enter \(Vehicaldetails.sharedInstance.ScreenNameForHours)")
-                 }
-
+        if(self.cf.getSSID() != "" && Vehicaldetails.sharedInstance.SSId != self.cf.getSSID() && Vehicaldetails.sharedInstance.HubLinkCommunication == "HTTP") {
+            print("SSID: \(self.cf.getSSID())")
+            self.showAlert(message:NSLocalizedString("SwitchoffyourWiFi", comment:""))
+//            self.showAlert(message:"Please switch off your wifi before proceeding. \n To switch off the wifi you can use the shortcut.  If you have an iPhone with Touch ID, swipe up from the bottom of the screen. If you have an iPhone with Face ID, swipe down from the upper right. Then tap on the wifi icon to switch it off.")
+            //            self.Activity.stopAnimating()
+            //            self.Activity.isHidden = true
+            // self.go.isEnabled = true
+        }
+        else{
+            Activity.startAnimating()
+            Activity.isHidden = false
+            Go.isEnabled = false
+            
+            delay(1){
+                self.IsSavebuttontapped = true
                 self.Hourstoptimergotostart.invalidate()
-                self.viewWillAppear(true)
-            }
-            else
-            {
-                if(Int(self.Hour.text!) == nil)
+                self.tapAction()
+                if(self.Hour.text == "")
                 {
                     self.Activity.stopAnimating()
                     self.Activity.isHidden = true
-                    self.showAlert(message: NSLocalizedString("EnterHour_Eng", comment:""))
-
+                    if(Vehicaldetails.sharedInstance.Language == "es-ES")
+                    {
+                        self.showAlert(message:NSLocalizedString("EneterHour", comment:""))
+                    }
+                    else{
+                        self.showAlert(message: "Please Enter \(Vehicaldetails.sharedInstance.ScreenNameForHours)")
+                    }
+                    
+                    self.Hourstoptimergotostart.invalidate()
+                    self.viewWillAppear(true)
                 }
-                else{
-                    let LastTransQuantity = Vehicaldetails.sharedInstance.LastTransactionFuelQuantity
-                    let hour:Int! = Int(self.Hour.text!)
-                    Vehicaldetails.sharedInstance.hours = "\(hour!)"
-                    self.web.sentlog(func_name: "Hour \(hour!) data entered", errorfromserverorlink: " Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
-                    let IsExtraOther = Vehicaldetails.sharedInstance.IsExtraOther
-//                   // let hours = Vehicaldetails.sharedInstance.IsHoursrequirs
-                    let isdept = Vehicaldetails.sharedInstance.IsDepartmentRequire
-                    let isPPin = Vehicaldetails.sharedInstance.IsPersonnelPINRequire
-                    let isother = Vehicaldetails.sharedInstance.IsOtherRequire
-                    let CheckOdometerReasonable = Vehicaldetails.sharedInstance.CheckOdometerReasonable
-                    let OdometerReasonabilityConditions = Vehicaldetails.sharedInstance.OdometerReasonabilityConditions
-                    let Hourlimit:Int = Vehicaldetails.sharedInstance.HoursLimit
-                    let Previoushours:Int = Vehicaldetails.sharedInstance.PreviousHours
-
-                    if(CheckOdometerReasonable == "True"){
-
-                        if(OdometerReasonabilityConditions == "1"){
-
-                            if(Hourlimit >= hour && hour >= Previoushours)
-                            {
-
-                                if (IsExtraOther == "True"){
-                                    self.performSegue(withIdentifier: "otherVehicle", sender: self)
-                                    self.Activity.stopAnimating()
-                                    self.Activity.isHidden = true
-                                }else
-                                if(isdept == "True"){
-                                    self.countdata = 0
-                                    self.Hourstoptimergotostart.invalidate()
-                                    self.Activity.stopAnimating()
-                                    self.Activity.isHidden = true
-                                    self.performSegue(withIdentifier: "dept", sender: self)
-                                }
-                                else{
-                                    if(isPPin == "True"){
+                else
+                {
+                    if(Int(self.Hour.text!) == nil)
+                    {
+                        self.Activity.stopAnimating()
+                        self.Activity.isHidden = true
+                        self.showAlert(message: NSLocalizedString("EnterHour_Eng", comment:""))
+                        
+                    }
+                    else{
+                        let LastTransQuantity = Vehicaldetails.sharedInstance.LastTransactionFuelQuantity
+                        let hour:Int! = Int(self.Hour.text!)
+                        Vehicaldetails.sharedInstance.hours = "\(hour!)"
+                        if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
+                        {
+                            self.web.sentlog(func_name: "Hour Entered : \(hour!) ", errorfromserverorlink: " Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: "")
+                        }
+                        else{
+                            self.web.sentlog(func_name: "Hour Entered : \(hour!) ", errorfromserverorlink: " Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
+                        }
+                        let IsExtraOther = Vehicaldetails.sharedInstance.IsExtraOther
+                        //                   // let hours = Vehicaldetails.sharedInstance.IsHoursrequirs
+                        let isdept = Vehicaldetails.sharedInstance.IsDepartmentRequire
+                        let isPPin = Vehicaldetails.sharedInstance.IsPersonnelPINRequire
+                        let isother = Vehicaldetails.sharedInstance.IsOtherRequire
+                        let CheckOdometerReasonable = Vehicaldetails.sharedInstance.CheckOdometerReasonable
+                        let OdometerReasonabilityConditions = Vehicaldetails.sharedInstance.OdometerReasonabilityConditions
+                        let Hourlimit:Int = Vehicaldetails.sharedInstance.HoursLimit
+                        let Previoushours:Int = Vehicaldetails.sharedInstance.PreviousHours
+                        
+                        if(CheckOdometerReasonable == "True"){
+                            
+                            if(OdometerReasonabilityConditions == "1"){
+                                
+                                if(Hourlimit >= hour && hour >= Previoushours)
+                                {
+                                    
+                                    if (IsExtraOther == "True"){
+                                        self.performSegue(withIdentifier: "otherVehicle", sender: self)
+                                        self.Activity.stopAnimating()
+                                        self.Activity.isHidden = true
+                                    }else
+                                    if(isdept == "True"){
                                         self.countdata = 0
                                         self.Hourstoptimergotostart.invalidate()
                                         self.Activity.stopAnimating()
                                         self.Activity.isHidden = true
-                                        self.performSegue(withIdentifier: "pin", sender: self)
+                                        self.performSegue(withIdentifier: "dept", sender: self)
                                     }
                                     else{
-                                        if(isother == "True"){
-                                            self.Activity.stopAnimating()
-                                            self.Activity.isHidden = true
+                                        if(isPPin == "True"){
                                             self.countdata = 0
                                             self.Hourstoptimergotostart.invalidate()
-                                            self.performSegue(withIdentifier: "other", sender: self)
+                                            self.Activity.stopAnimating()
+                                            self.Activity.isHidden = true
+                                            self.performSegue(withIdentifier: "pin", sender: self)
                                         }
                                         else{
-                                            let deptno = ""
-                                            let ppin = ""
-                                            let other = ""
-                                            Vehicaldetails.sharedInstance.deptno = ""
-                                            Vehicaldetails.sharedInstance.Personalpinno = ""
-                                            Vehicaldetails.sharedInstance.Other = ""
-                                            self.senddata(deptno: deptno,ppin:ppin,other:other)
+                                            if(isother == "True"){
+                                                self.Activity.stopAnimating()
+                                                self.Activity.isHidden = true
+                                                self.countdata = 0
+                                                self.Hourstoptimergotostart.invalidate()
+                                                self.performSegue(withIdentifier: "other", sender: self)
+                                            }
+                                            else{
+                                                let deptno = ""
+                                                let ppin = ""
+                                                let other = ""
+                                                Vehicaldetails.sharedInstance.deptno = ""
+                                                Vehicaldetails.sharedInstance.Personalpinno = ""
+                                                Vehicaldetails.sharedInstance.Other = ""
+                                                self.senddata(deptno: deptno,ppin:ppin,other:other)
+                                            }
                                         }
                                     }
                                 }
-                            }
-                            else{
-                                self.countdata += 1
-
-                                if(self.countdata >  3){
-                                    if(((LastTransQuantity)as NSString).doubleValue < 10)
-                                    {
-                                        if(hour < Previoushours){
-                                        self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.")
-                                        self.Activity.stopAnimating()
-                                        self.Activity.isHidden = true
-                                        self.viewWillAppear(true)
-                                        }
-                                        else
+                                else{
+                                    self.countdata += 1
+                                    
+                                    if(self.countdata >  3){
+                                        if(((LastTransQuantity)as NSString).doubleValue < 10)
                                         {
-                                            self.send_data()
-
+                                            if(hour < Previoushours){
+                                                self.showAlert(message: NSLocalizedString("warningOdoHour", comment:""))
+//                                                self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.")
+                                                self.Activity.stopAnimating()
+                                                self.Activity.isHidden = true
+                                                self.viewWillAppear(true)
+                                            }
+                                            else
+                                            {
+                                                self.send_data()
+                                                
+                                            }
+                                        }
+                                        else{
+                                            if(hour <= Previoushours){
+                                                self.showAlert(message: NSLocalizedString("warningOdoHour", comment:""))
+//                                                self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.")
+                                                self.Activity.stopAnimating()
+                                                self.Activity.isHidden = true
+                                                self.viewWillAppear(true)
+                                            }
+                                            else
+                                            {
+                                                self.send_data()
+                                            }
+                                            //                                    if(((LastTransQuantity)as NSString).doubleValue <= 10 || hour <= Previoushours)
+                                            //                                    {
+                                            //                                        self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.")
+                                            //                                        self.Activity.stopAnimating()
+                                            //                                        self.Activity.isHidden = true
+                                            //                                        self.viewWillAppear(true)
+                                            //                                    }
+                                            //                                    else
+                                            //                                    {
+                                            //                                    if (IsExtraOther == "True"){
+                                            //                                        self.performSegue(withIdentifier: "otherVehicle", sender: self)
+                                            //                                        self.Activity.stopAnimating()
+                                            //                                        self.Activity.isHidden = true
+                                            //                                    }else
+                                            //                                    if(isdept == "True"){
+                                            //                                        self.countdata = 0
+                                            //                                        self.performSegue(withIdentifier: "dept", sender: self)
+                                            //                                    }
+                                            //                                    else{
+                                            //                                        if(isPPin == "True"){
+                                            //                                            self.countdata = 0
+                                            //                                            self.performSegue(withIdentifier: "pin", sender: self)
+                                            //                                        }
+                                            //                                        else{
+                                            //                                            if(isother == "True"){
+                                            //                                                self.countdata = 0
+                                            //                                                self.performSegue(withIdentifier: "other", sender: self)
+                                            //                                            }
+                                            //                                            else{
+                                            //                                                let deptno = ""
+                                            //                                                let ppin = ""
+                                            //                                                let other = ""
+                                            //                                                Vehicaldetails.sharedInstance.deptno = ""
+                                            //                                                Vehicaldetails.sharedInstance.Personalpinno = ""
+                                            //                                                Vehicaldetails.sharedInstance.Other = ""
+                                            //                                                self.senddata(deptno: deptno,ppin:ppin,other:other)
+                                            //                                            }
+                                            //                                        }
+                                            //                                    }
                                         }
                                     }
                                     else{
-                                        if(hour <= Previoushours){
-                                        self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.")
                                         self.Activity.stopAnimating()
                                         self.Activity.isHidden = true
+                                        self.showAlert(message: NSLocalizedString("Hour_Reasonability", comment:""))
                                         self.viewWillAppear(true)
-                                        }
-                                        else
-                                        {
-                                            self.send_data()
-                                        }
-//                                    if(((LastTransQuantity)as NSString).doubleValue <= 10 || hour <= Previoushours)
-//                                    {
-//                                        self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.")
-//                                        self.Activity.stopAnimating()
-//                                        self.Activity.isHidden = true
-//                                        self.viewWillAppear(true)
-//                                    }
-//                                    else
-//                                    {
-//                                    if (IsExtraOther == "True"){
-//                                        self.performSegue(withIdentifier: "otherVehicle", sender: self)
-//                                        self.Activity.stopAnimating()
-//                                        self.Activity.isHidden = true
-//                                    }else
-//                                    if(isdept == "True"){
-//                                        self.countdata = 0
-//                                        self.performSegue(withIdentifier: "dept", sender: self)
-//                                    }
-//                                    else{
-//                                        if(isPPin == "True"){
-//                                            self.countdata = 0
-//                                            self.performSegue(withIdentifier: "pin", sender: self)
-//                                        }
-//                                        else{
-//                                            if(isother == "True"){
-//                                                self.countdata = 0
-//                                                self.performSegue(withIdentifier: "other", sender: self)
-//                                            }
-//                                            else{
-//                                                let deptno = ""
-//                                                let ppin = ""
-//                                                let other = ""
-//                                                Vehicaldetails.sharedInstance.deptno = ""
-//                                                Vehicaldetails.sharedInstance.Personalpinno = ""
-//                                                Vehicaldetails.sharedInstance.Other = ""
-//                                                self.senddata(deptno: deptno,ppin:ppin,other:other)
-//                                            }
-//                                        }
-//                                    }
+                                        print(self.countdata)
                                     }
+                                }
+                                
+                            } else if(OdometerReasonabilityConditions == "2"){
+                                
+                                if(Hourlimit >= hour && hour >= Previoushours)
+                                {
+                                    
+                                    Vehicaldetails.sharedInstance.hours = ""
+                                    if (IsExtraOther == "True"){
+                                        self.performSegue(withIdentifier: "otherVehicle", sender: self)
+                                        self.Activity.stopAnimating()
+                                        self.Activity.isHidden = true
+                                    }else
+                                    if(isdept == "True"){
+                                        self.countdata = 0
+                                        self.Activity.stopAnimating()
+                                        self.Activity.isHidden = true
+                                        self.performSegue(withIdentifier: "dept", sender: self)
+                                    }
+                                    else{
+                                        if(isPPin == "True"){
+                                            self.countdata = 0
+                                            self.Activity.stopAnimating()
+                                            self.Activity.isHidden = true
+                                            self.performSegue(withIdentifier: "pin", sender: self)
+                                        }
+                                        else{
+                                            if(isother == "True"){
+                                                self.countdata = 0
+                                                self.Activity.stopAnimating()
+                                                self.Activity.isHidden = true
+                                                self.performSegue(withIdentifier: "other", sender: self)
+                                            }
+                                            else{
+                                                let deptno = ""
+                                                let ppin = ""
+                                                let other = ""
+                                                Vehicaldetails.sharedInstance.deptno = ""
+                                                Vehicaldetails.sharedInstance.Personalpinno = ""
+                                                Vehicaldetails.sharedInstance.Other = ""
+                                                self.senddata(deptno: deptno,ppin:ppin,other:other)
+                                            }
+                                        }
+                                    }
+                                    
                                 }
                                 else{
                                     self.Activity.stopAnimating()
                                     self.Activity.isHidden = true
                                     self.showAlert(message: NSLocalizedString("Hour_Reasonability", comment:""))
                                     self.viewWillAppear(true)
-                                    print(self.countdata)
                                 }
                             }
-
-                        } else if(OdometerReasonabilityConditions == "2"){
-
-                            if(Hourlimit >= hour && hour >= Previoushours)
+                        }
+                        else if (CheckOdometerReasonable == "False"){
+                            
+                            if(hour > 0)
                             {
-
-                                Vehicaldetails.sharedInstance.hours = ""
-                                if (IsExtraOther == "True"){
-                                    self.performSegue(withIdentifier: "otherVehicle", sender: self)
-                                    self.Activity.stopAnimating()
-                                    self.Activity.isHidden = true
-                                }else
-                                if(isdept == "True"){
-                                    self.countdata = 0
-                                    self.Activity.stopAnimating()
-                                    self.Activity.isHidden = true
-                                    self.performSegue(withIdentifier: "dept", sender: self)
-                                }
-                                else{
-                                    if(isPPin == "True"){
-                                        self.countdata = 0
-                                        self.Activity.stopAnimating()
-                                        self.Activity.isHidden = true
-                                        self.performSegue(withIdentifier: "pin", sender: self)
-                                    }
-                                    else{
-                                        if(isother == "True"){
-                                            self.countdata = 0
-                                            self.Activity.stopAnimating()
-                                            self.Activity.isHidden = true
-                                            self.performSegue(withIdentifier: "other", sender: self)
-                                        }
-                                        else{
-                                            let deptno = ""
-                                            let ppin = ""
-                                            let other = ""
-                                            Vehicaldetails.sharedInstance.deptno = ""
-                                            Vehicaldetails.sharedInstance.Personalpinno = ""
-                                            Vehicaldetails.sharedInstance.Other = ""
-                                            self.senddata(deptno: deptno,ppin:ppin,other:other)
-                                        }
-                                    }
-                                }
-
+                                self.send_data()
                             }
                             else{
-                                self.Activity.stopAnimating()
-                                self.Activity.isHidden = true
-                                self.showAlert(message: NSLocalizedString("Hour_Reasonability", comment:""))
-                                self.viewWillAppear(true)
+                                self.showAlert(message:"Please check and try again. If the issue persists, please contact your Manager.")
                             }
+                            //#1750
+                            //                        if(((LastTransQuantity)as NSString).doubleValue < 10)
+                            //                        {
+                            //                            if(hour < Previoushours){
+                            //                            self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.")
+                            //                            self.Activity.stopAnimating()
+                            //                            self.Activity.isHidden = true
+                            //                            self.viewWillAppear(true)
+                            //                            }
+                            //                            else
+                            //                            {
+                            //                                self.send_data()
+                            //
+                            //                            }
+                            //                        }
+                            //                        else{
+                            //                            if(hour <= Previoushours){
+                            //                            self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.")
+                            //                            self.Activity.stopAnimating()
+                            //                            self.Activity.isHidden = true
+                            //                            self.viewWillAppear(true)
+                            //                            }
+                            //                            else
+                            //                            {
+                            //                                self.send_data()
+                            //                            }
+                            
+                            //                        if(((LastTransQuantity)as NSString).doubleValue <= 10 && hour < Previoushours)
+                            //                        {
+                            //                            self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.")
+                            //                            self.Activity.stopAnimating()
+                            //                            self.Activity.isHidden = true
+                            //                            self.viewWillAppear(true)
+                            //                        }
+                            //                        else
+                            //                        {
+                            //
+                            //                        if (IsExtraOther == "True"){
+                            //                            self.performSegue(withIdentifier: "otherVehicle", sender: self)
+                            //                        }else
+                            //                        if(isdept == "True"){
+                            //                            self.performSegue(withIdentifier: "dept", sender: self)
+                            //                        }
+                            //                        else//{
+                            //                            if(isPPin == "True"){
+                            //                                self.performSegue(withIdentifier: "pin", sender: self)
+                            //                            }
+                            //                            else//{
+                            //                                if(isother == "True"){
+                            //                                    self.performSegue(withIdentifier: "other", sender: self)
+                            //                                }
+                            //                                else{
+                            //                                    let deptno = ""
+                            //                                    let ppin = ""
+                            //                                    let other = ""
+                            //                                    Vehicaldetails.sharedInstance.deptno = ""
+                            //                                    Vehicaldetails.sharedInstance.Personalpinno = ""
+                            //                                    Vehicaldetails.sharedInstance.Other = ""
+                            //                                    self.senddata(deptno: deptno,ppin:ppin,other:other)
+                            //                        }
+                            //                        }
                         }
-                    }
-                    else if (CheckOdometerReasonable == "False"){
-                        //#1750 
-                        if(((LastTransQuantity)as NSString).doubleValue < 10)
-                        {
-                            if(hour < Previoushours){
-                            self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.")
-                            self.Activity.stopAnimating()
-                            self.Activity.isHidden = true
-                            self.viewWillAppear(true)
-                            }
-                            else
-                            {
-                                self.send_data()
-
-                            }
-                        }
-                        else{
-                            if(hour <= Previoushours){
-                            self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.")
-                            self.Activity.stopAnimating()
-                            self.Activity.isHidden = true
-                            self.viewWillAppear(true)
-                            }
-                            else
-                            {
-                                self.send_data()
-                            }
                         
-//                        if(((LastTransQuantity)as NSString).doubleValue <= 10 && hour < Previoushours)
-//                        {
-//                            self.showAlert(message: "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.")
-//                            self.Activity.stopAnimating()
-//                            self.Activity.isHidden = true
-//                            self.viewWillAppear(true)
-//                        }
-//                        else
-//                        {
-//
-//                        if (IsExtraOther == "True"){
-//                            self.performSegue(withIdentifier: "otherVehicle", sender: self)
-//                        }else
-//                        if(isdept == "True"){
-//                            self.performSegue(withIdentifier: "dept", sender: self)
-//                        }
-//                        else//{
-//                            if(isPPin == "True"){
-//                                self.performSegue(withIdentifier: "pin", sender: self)
-//                            }
-//                            else//{
-//                                if(isother == "True"){
-//                                    self.performSegue(withIdentifier: "other", sender: self)
-//                                }
-//                                else{
-//                                    let deptno = ""
-//                                    let ppin = ""
-//                                    let other = ""
-//                                    Vehicaldetails.sharedInstance.deptno = ""
-//                                    Vehicaldetails.sharedInstance.Personalpinno = ""
-//                                    Vehicaldetails.sharedInstance.Other = ""
-//                                    self.senddata(deptno: deptno,ppin:ppin,other:other)
-//                        }
+                        else{
+                            self.Activity.stopAnimating()
+                            self.Activity.isHidden = true
+                            self.showAlert(message: NSLocalizedString("Hour_Reasonability", comment:""))
+                            self.viewWillAppear(true)
                         }
-                    }
-
-                    else{
-                        self.Activity.stopAnimating()
-                        self.Activity.isHidden = true
-                        self.showAlert(message: NSLocalizedString("Hour_Reasonability", comment:""))
-                        self.viewWillAppear(true)
                     }
                 }
             }

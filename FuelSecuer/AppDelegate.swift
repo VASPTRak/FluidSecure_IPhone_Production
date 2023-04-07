@@ -6,6 +6,8 @@
 
 import UIKit
 import CoreData
+import BackgroundTasks
+import UserNotifications
 
 
 @UIApplicationMain
@@ -18,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     //var wificonn:String!
     //var jc = FuelquantityVC()
        var web = Webservices()
-    // var unsync = Sync_Unsynctransactions()
+     var unsync = Sync_Unsynctransactions()
     // var backgroundUpdateTask: UIBackgroundTaskIdentifier!
     
     //var tcpcon = TCPCommunication()
@@ -29,46 +31,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let defaults = UserDefaults.standard
     var id:Int!
    
-    //var preauth = PreauthFuelquantity()
-   
-    
-//    func beginBackgroundUpdateTask() {
-//        self.backgroundUpdateTask = UIApplication.shared.beginBackgroundTask(expirationHandler: {
-//            //print(var backgroundTimeRemaining: TimeInterval { get })
-//            self.endBackgroundUpdateTask()
-//        })
-//    }
-//
-//    func endBackgroundUpdateTask() {
-//        UIApplication.shared.endBackgroundTask(self.backgroundUpdateTask)
-//        self.backgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-//    }
-    
-//    func doBackgroundTask() {
-////        DispatchQueue.main.async(execute: {
-////            self.beginBackgroundUpdateTask()
-////            self.jc.stopbutton = true
-////            _ = self.unsync.unsyncTransaction()
-////            _ = self.preauth.preauthunsyncTransaction()
-////            // End the background task.
-////
-////            self.endBackgroundUpdateTask()
-////        })
-//
-//    }
 
-
- 
-
-//    func displayAlert() {
-//        let note = UILocalNotification()
-//        note.alertBody = "Your Transaction is successfully completed."
-//        note.soundName = UILocalNotificationDefaultSoundName
-//        UIApplication.shared.scheduleLocalNotification(note)
-//    }
-    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // doBackgroundTask()
+        UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
+//        UIApplication.shared.setMinimumBackgroundFetchInterval(100)
+        registerBackgroundTasks()
+        
+//        let center = UNUserNotificationCenter.current()
+//        center.requestAuthorization(options: [.alert, .badge, .sound]) { (success, error) in
+//            if error == nil {
+//                if success {
+//                    print("Permission granted")
+//                    // In case you want to register for the remote notifications
+//                    let application = UIApplication.shared
+//                    application.registerForRemoteNotifications()
+//                } else {
+//                    print("Permission denied")
+//                    
+//                }
+//            } else {
+//                print(error)
+//            }
+//        }
+        
         do {
             reachability = Reachability.init()
         }
@@ -117,11 +103,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     let initViewController: UIViewController = storyBoard.instantiateViewController(withIdentifier: "firstVC") as! RegisterTableViewController
                     let LogViewController: UIViewController = storyBoard.instantiateViewController(withIdentifier: "Login") as! LoginViewController
                     
-                    if(defaults.string(forKey: "Register") != "\(1)"){
+                    if(defaults.string(forKey: "Register") != "\(1)")
+                    {
                         print("root VC if condition")
                         
                         let nav =  UINavigationController(rootViewController: initViewController)
                         self.window?.rootViewController = nav
+                        self.web.sentlog(func_name: "App Goes to resgistration screen not 1", errorfromserverorlink: "", errorfromapp: "")
                     }
                     else{
                         print("root VC else condition")
@@ -162,6 +150,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     
+//    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+//        let center = UNUserNotificationCenter.current()
+//        center.requestAuthorization(options: [.alert, .badge, .sound]) { (success, error) in
+//            if error == nil {
+//                if success {
+//                    print("Permission granted")
+//                    // In case you want to register for the remote notifications
+//                    let application = UIApplication.shared
+//                    application.registerForRemoteNotifications()
+//                } else {
+//                    print("Permission denied")
+//                }
+//            } else {
+//                print(error)
+//            }
+//        }
+//    }
+    
+    
     
     func preauthstart(){
         do{
@@ -178,6 +185,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     let initViewController: UIViewController = storyBoard.instantiateViewController(withIdentifier: "firstVC") as! RegisterTableViewController
                     let nav = UINavigationController(rootViewController: initViewController)
                     self.window?.rootViewController = nav
+                    self.web.sentlog(func_name: "App Goes to resgistration screen not 1", errorfromserverorlink: "", errorfromapp: "")
                 }
                 else {
                     let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
@@ -275,6 +283,175 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        }
 
     }
+    
+    
+    func registerBackgroundTasks() {
+        // Declared at the "Permitted background task scheduler identifiers" in info.plist
+        let backgroundAppRefreshTaskSchedulerIdentifier = "com.VASPLLP.FuelSecureTest.refresh"
+        let backgroundProcessingTaskSchedulerIdentifier = "com.VASPLLP.FuelSecureTest.process"
+        if #available(iOS 13.0, *) {
+            BGTaskScheduler.shared.register(forTaskWithIdentifier: backgroundProcessingTaskSchedulerIdentifier, using: nil) { task in
+
+                task.setTaskCompleted(success: true)
+//                self.scheduleBackgroundProcessing()
+            }
+        } else {
+            // Fallback on earlier versions
+        }
+        // Use the identifier which represents your needs
+        if #available(iOS 13.0, *) {
+            BGTaskScheduler.shared.register(forTaskWithIdentifier: backgroundAppRefreshTaskSchedulerIdentifier, using: nil) { (task) in
+                print("BackgroundAppRefreshTaskScheduler is executed NOW!")
+                self.handleAppRefresh(task: task as! BGProcessingTask)
+                //                print("Background time remaining: \(UIApplication.shared.backgroundTimeRemaining)s")
+//                task.expirationHandler = {
+//                    task.setTaskCompleted(success: false)
+//                }
+//
+//                // Do some data fetching and call setTaskCompleted(success:) asap!
+//                let isFetchingSuccess = true
+//                task.setTaskCompleted(success: isFetchingSuccess)
+                
+            }
+        } else {
+            // Fallback on earlier versions
+        }
+       }
+   
+//    func handleAppRefresh(task: BGAppRefreshTask) {
+//       // Schedule a new refresh task.
+//       scheduleAppRefresh()
+//
+//       // Create an operation that performs the main part of the background task.
+//       let operation = RefreshAppContentsOperation()
+//
+//       // Provide the background task with an expiration handler that cancels the operation.
+//       task.expirationHandler = {
+//          operation.cancel()
+//       }
+//
+//       // Inform the system that the background task is complete
+//       // when the operation completes.
+//       operation.completionBlock = {
+//          task.setTaskCompleted(success: !operation.isCancelled)
+//       }
+//
+//       // Start the operation.
+//       operationQueue.addOperation(operation)
+//     }
+    
+    @available(iOS 13.0, *)
+    func handleAppRefresh(task: BGProcessingTask) {
+            scheduleAppRefresh()
+            
+            task.expirationHandler = {
+                task.setTaskCompleted(success: false)
+            }
+        unsync.unsyncTransaction()
+        unsync.Send10trans()
+        unsync.preauthunsyncTransaction()
+            // increment instead of a fixed number
+//            UserDefaults.standard.set(UserDefaults.standard.integer(forKey: "bgtask")+1, forKey: "bgtask")
+
+            task.setTaskCompleted(success: true)
+        }
+    
+    @available(iOS 13.0, *)
+    func scheduleAppRefresh() {
+        
+        let request = BGProcessingTaskRequest(identifier: "com.VASPLLP.FuelSecureTest.refresh")
+//        request.requiresNetworkConnectivity = true // Need to true if your task need to network process. Defaults to false.
+//        request.requiresExternalPower = false // Need to true if your task requires a device connected to power source. Defaults to false.
+
+        request.earliestBeginDate = Date(timeIntervalSinceNow: 5 * 60) // Process after 5 minutes.
+//        request.earliestBeginDate = Date(timeIntervalSinceNow: 5 * 60) // Process after 5 minutes.
+
+        do {
+            try BGTaskScheduler.shared.submit(request)
+            print("background refresh scheduled \(request)")
+        } catch {
+            print("Could not schedule image fetch: (error)")
+        }
+        
+//        if #available(iOS 13.0, *) {
+////            let timeDelay = 10.0
+//            let dateFormatter = DateFormatter()
+////            dateFormatter.dateFormat = "ddMMyyyyhhmmss ZZZ"
+////            let dtt1: String = dateFormatter.string(from: NSDate() as Date)
+//            let request = BGAppRefreshTaskRequest(identifier: "com.VASPLLP.FuelSecureTest.refresh")
+//
+////            var Currentdate = dateFormatter.date(from: dtt1)! as Date
+////            print(Currentdate,dtt1)
+////            request.earliestBeginDate = Date(timeIntervalSinceNow: 5 * 60)
+//
+//
+//            var currentDate = Date()
+////
+////            // 1) Get the current TimeZone's seconds from GMT. Since I am in Chicago this will be: 60*60*5 (18000)
+//            let timezoneOffset =  TimeZone.current.secondsFromGMT()
+////
+////            // 2) Get the current date (GMT) in seconds since 1970. Epoch datetime.
+//            let epochDate = currentDate.timeIntervalSince1970
+////
+////            // 3) Perform a calculation with timezoneOffset + epochDate to get the total seconds for the
+////            //    local date since 1970.
+////            //    This may look a bit strange, but since timezoneOffset is given as -18000.0, adding epochDate and timezoneOffset
+////            //    calculates correctly.
+//            let timezoneEpochOffset = (epochDate + Double(timezoneOffset))
+////
+////            // 4) Finally, create a date using the seconds offset since 1970 for the local date.
+//            let timeZoneOffsetDate = Date(timeIntervalSince1970: timezoneEpochOffset)
+////            print("timeZoneOffsetDate:\(timeZoneOffsetDate),timezoneEpochOffset:\(timezoneEpochOffset),epochDate:\(epochDate),timezoneOffset :\(timezoneOffset),currentDate:\(currentDate)")
+//
+////                dateFormatter.dateFormat = "yyyy-MM-dd H:mm:ss ZZZ"
+////                let after_add_time = dateFormatter.string(from: date)
+////
+////           let localISOFormatter = ISO8601DateFormatter()
+////            localISOFormatter.timeZone = TimeZone.current
+////
+////            // Printing a Date
+////            let date = Date()
+////            print(localISOFormatter.string(from: date))
+////
+////            // Parsing a string timestamp representing a date
+//////            let dateString = "2020-05-30T23:32:27-05:00"
+////            let localDate = localISOFormatter.date(from: localISOFormatter.string(from: date))
+////            let currentdate = dateFormatter.date(from: after_add_time)
+//
+////            let addminutes = timeZoneOffsetDate.addingTimeInterval(2*60)
+////            print(after_add_time, currentdate! ,addminutes,localDate)
+//            //Date(timeIntervalSinceNow: 5 * 60)
+//            request.earliestBeginDate = Date(timeIntervalSinceNow: 2 * 60)
+//            //request.earliestBeginDate = addminutes
+//      do {
+//        try BGTaskScheduler.shared.submit(request)
+//        print("background refresh scheduled \(request)")
+//      } catch {
+//        print("Couldn't schedule app refresh \(error.localizedDescription)")
+//      }
+//        } else {
+            // Fallback on earlier versions
+//        }
+    }
+    
+    @available(iOS 13.0, *)
+       func scheduleBackgroundProcessing() {
+           let request = BGProcessingTaskRequest(identifier: "com.VASPLLP.FuelSecureTest.process")
+           request.requiresNetworkConnectivity = true // Need to true if your task need to network process. Defaults to false.
+           request.requiresExternalPower = false // Need to true if your task requires a device connected to power source. Defaults to false.
+
+           request.earliestBeginDate = Date(timeIntervalSinceNow: 5 * 60) // Process after 5 minutes.
+
+           do {
+               try BGTaskScheduler.shared.submit(request)
+               print("background refresh scheduled \(request)")
+           } catch {
+               print("Could not schedule image fetch: (error)")
+           }
+       }
+    
+
+    
     
     func start()
     {
@@ -436,15 +613,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(_ application: UIApplication)
     {
         
-    
-//        //        }// Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-//        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-//        }
+        self.web.sentlog(func_name: "Application Enter In Background", errorfromserverorlink: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
+        //        //        }// Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
+        //        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        //        }
+        if #available(iOS 13, *) {
+            self.scheduleAppRefresh()
+//            self.scheduleBackgroundProcessing()
+        }
+        else{
+            if #available(iOS 13.0, *) {
+                scheduleAppRefresh()
+            } else {
+                // Fallback on earlier versions
+            }
+        }
+        
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
-//        self.web.sentlog(func_name: "Application Enter In Foreground", errorfromserverorlink: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
+        self.web.sentlog(func_name: "Application Enter In Foreground", errorfromserverorlink: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
      //   doBackgroundTask()
     }
     
@@ -453,6 +642,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     }
 
+    func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        print("\(Date()) perfom bg fetch")
+        self.web.sentlog(func_name: "\(Date()) perfom bg fetch", errorfromserverorlink: " ", errorfromapp: " ")
+        let uuid = defaults.string(forKey: "uuid")
+        if(uuid == nil){}
+        else{
+            unsync.unsyncTransaction()
+            unsync.Send10trans()
+            unsync.preauthunsyncTransaction()
+            completionHandler(.newData)
+        }
+    }
 
     func applicationWillTerminate(_ application: UIApplication) {
 //        if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){
@@ -512,11 +713,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
        // jc.Stopconnection()
         }
+        
+        unsync.unsyncTransaction()
+        unsync.Send10trans()
+        unsync.preauthunsyncTransaction()
+        
         self.web.sentlog(func_name: "Application Will Terminate", errorfromserverorlink: " Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected link : \(self.cf.getSSID())")
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         // Saves changes in the application's managed object context before the application terminates.
         sleep(5)
-        self.saveContext()
+        //self.saveContext()
 
     }
     

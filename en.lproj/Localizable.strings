@@ -55,13 +55,15 @@
 "wificonnection1" = " is lost. Please select ";
 "CheckFSunit" = "Please check your FS unit, and switch off power and back on.";
 "ThankyouMSG" = "Thank you for using \nFluidSecure.";
-"NoQuantity" = "No Quantity is Received as Your Connection with Link is Lost";//"No Quantity received. Transaction ended.";
+"NoQuantity" = "No Quantity is Received"; //as Your Connection with Link is Lost";//"No Quantity received. Transaction ended.";
 "ZeroQuantity" = "Quantity is zero. Transaction is stopped.";
 "Notify" = "Your Transaction is Successfully Completed at ";
 "autostop" = "Transaction ended because pulse count has not changed in allotted time.";
 //"app autostop because pulsecount getting is same.";
-"Fueldaylimit" = "You are fuel day limit reached.";
-"Fueltnxlimit" = "You are fuel transaction limit reached";
+"Fueldaylimit" = "This Vehicle has reached its daily fuel limit";//"You are fuel day limit reached.";
+"Fueltnxlimit" = "This Vehicle has reached its limit for this transaction";//"You are fuel transaction limit reached";
+"Fuelmonthlylimit" = "This Vehicle has reached its monthly fuel limit";//"You are fuel monthly limit reached.";
+
 "checkEmail" = "Please Enter Valid Email.";
 "ValidPhone" = "Please Enter Valid Phone Number.";
 "Checkinternet" = "Please check your internet connection or Please contact your admin.";
@@ -89,6 +91,7 @@
 "ConnectWifi" = "Connect WiFi";
 "Warningfueling" = "Caution: Do NOT leave this screen while fueling. Pump may TURN OFF!";
 "Pulsardisconnected" = "Pulsar disconnected";
-
-
+"SwitchoffyourWiFi" = "Please switch off your wifi before proceeding. \n To switch off the wifi you can use the shortcut.  If you have an iPhone with Touch ID, swipe up from the bottom of the screen. If you have an iPhone with Face ID, swipe down from the upper right. Then tap on the wifi icon to switch it off.";
+"warningOdoHour" = "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.";
+"tankempty" = "The system is low on fuel and must be refilled before fueling can start.\n Please contact your Manager.";
 

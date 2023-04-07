@@ -83,7 +83,7 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
    @objc func gotostart()
     {   //
         if(appisonother == true){
-            self.web.sentlog(func_name: "Other_screen_timeout", errorfromserverorlink: "", errorfromapp: "")
+            self.web.sentlog(func_name: "Other_screen_timeout, back to home screen", errorfromserverorlink: "", errorfromapp: "")
             let appDel = UIApplication.shared.delegate! as! AppDelegate
             appDel.start()
         }
@@ -308,27 +308,43 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
     }
 
     @IBAction func saveButtontapped(sender: AnyObject) {
-        Activity.startAnimating()
-        Activity.isHidden = false
-         Go.isEnabled = false
-            delay(1){
-            self.tapAction()
-            self.otherstoptimergotostart.invalidate()
-            self.IsSavebuttontapped = true
-
-            if(self.Other.text == "")
-        {
-                self.showAlert(message: NSLocalizedString("WarningEmptytext", comment:""))// "Please Enter something.")
-            self.otherstoptimergotostart.invalidate()
-            self.viewWillAppear(true)
-            self.Activity.stopAnimating()
-            self.Activity.isHidden = true
+        if(self.cf.getSSID() != "" && Vehicaldetails.sharedInstance.SSId != self.cf.getSSID() && Vehicaldetails.sharedInstance.HubLinkCommunication == "HTTP") {
+            print("SSID: \(self.cf.getSSID())")
+            self.showAlert(message:NSLocalizedString("SwitchoffyourWiFi", comment:""))//"Please switch off your wifi before proceeding. \n To switch off the wifi you can use the shortcut.  If you have an iPhone with Touch ID, swipe up from the bottom of the screen. If you have an iPhone with Face ID, swipe down from the upper right. Then tap on the wifi icon to switch it off.")
+            //            self.Activity.stopAnimating()
+            //            self.Activity.isHidden = true
+            // self.go.isEnabled = true
         }
-        else
-        {
-            Vehicaldetails.sharedInstance.Other = self.Other.text!
-            self.Other.text = Vehicaldetails.sharedInstance.Other
-            self.senddata()
+        else{
+            Activity.startAnimating()
+            Activity.isHidden = false
+            Go.isEnabled = false
+            delay(1){
+                self.tapAction()
+                self.otherstoptimergotostart.invalidate()
+                self.IsSavebuttontapped = true
+                
+                if(self.Other.text == "")
+                {
+                    self.showAlert(message: NSLocalizedString("WarningEmptytext", comment:""))// "Please Enter something.")
+                    self.otherstoptimergotostart.invalidate()
+                    self.viewWillAppear(true)
+                    self.Activity.stopAnimating()
+                    self.Activity.isHidden = true
+                }
+                else
+                {
+                    Vehicaldetails.sharedInstance.Other = self.Other.text!
+                    if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
+                    {
+                        self.web.sentlog(func_name: "\(Vehicaldetails.sharedInstance.Otherlable) Entered : \(Vehicaldetails.sharedInstance.Other)", errorfromserverorlink: " Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: "")
+                    }
+                    else{
+                        self.web.sentlog(func_name: "\(Vehicaldetails.sharedInstance.Otherlable) Entered : \(Vehicaldetails.sharedInstance.Other)", errorfromserverorlink: " Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
+                    }
+                    self.Other.text = Vehicaldetails.sharedInstance.Other
+                    self.senddata()
+                }
             }
         }
     }

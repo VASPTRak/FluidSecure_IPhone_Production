@@ -91,7 +91,7 @@ class Sync_Unsynctransactions : NSObject
                     self.defaults.set(nil, forKey: "pulsarratio")
                     self.defaults.set(nil,forKey: "InterruptedTransactionFlag")
                     self.defaults.set(0, forKey: "reinstatingtransaction")
-                    
+//                    self.cf.DeleteReportTextFile(fileName: filename, writeText: "")
                     self.web.sentlog(func_name: "Complete Transaction send to server", errorfromserverorlink: " Response from Server $$ \(jsonstring)!!", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                     if(siteName == "TransactionComplete"){
                         
@@ -117,7 +117,7 @@ class Sync_Unsynctransactions : NSObject
             
        
         
-        if(count_Last == nil || transactionid_Last == nil || pulsarratio == nil){}
+        if(count_Last == nil || transactionid_Last == nil || transactionid_Last == "0" || pulsarratio == nil){}
         else{
             print(count_Last!,transactionid_Last!,pulsarratio!)
             let lastcount = Int(count_Last!)
@@ -153,7 +153,7 @@ class Sync_Unsynctransactions : NSObject
             web.unsyncUpgradeTransactionStatus()
             let logdata = self.cf.ReadFile(fileName: "Sendlog.txt")
             print(logdata)
-            self.web.sentlog(func_name: "unsyncTransaction", errorfromserverorlink: "\(logdata)", errorfromapp: "")
+            self.web.sentlog(func_name: "Starts background service to sync unsync data.", errorfromserverorlink: "\(logdata)", errorfromapp: "")
 
             var reportsArray: [AnyObject]!
             let fileManager: FileManager = FileManager()
@@ -194,6 +194,7 @@ class Sync_Unsynctransactions : NSObject
                         }
                         if(ResponceMessageUpload == "success"){
                             self.notify(site: siteName)
+                            self.cf.DeleteReportTextFile(fileName: filename, writeText: "")
                         }
                     }
                 }
@@ -227,7 +228,7 @@ class Sync_Unsynctransactions : NSObject
                     _ = Split[1]
                     let quantity = Split[2]
                     let siteName = Split[3]
-                    self.web.sentlog(func_name: "unsyncTransaction", errorfromserverorlink: "\(filename)", errorfromapp: "")
+                    self.web.sentlog(func_name: "Starts background service to sync unsync data.", errorfromserverorlink: "\(filename)", errorfromapp: "")
                     if(quantity == "0" ){
                         //web.UpgradeTransactionStatus(Transaction_id:Transaction_id,Status: "1")
                         self.web.sentlog(func_name: "unsyncTransaction", errorfromserverorlink: "\(filename)", errorfromapp: "")
@@ -578,70 +579,147 @@ class Sync_Unsynctransactions : NSObject
         FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
         let Email = defaults.string(forKey: "address")
         let uuid = defaults.string(forKey: "uuid")
-        let Url:String = FSURL
-        let string = uuid! + ":" + Email! + ":" + "SaveMultipleTransactions"
-        let Base64 = convertStringToBase64(string: string)
-        let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
-
-        request.httpMethod = "POST"
-        if(Vehicaldetails.sharedInstance.Last10transactions.count == 0){}
-        else {
-        for i in 0  ..< Vehicaldetails.sharedInstance.Last10transactions.count
+        if (uuid == nil)
         {
-            let obj : Last10Transactions = Vehicaldetails.sharedInstance.Last10transactions[i] as! Last10Transactions
-            let Transid = obj.Transaction_id
-            let pulse = obj.Pulses
-            let quantity = obj.FuelQuantity
-
-            request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
-            let bodyData = try! JSONSerialization.data(withJSONObject:["TransactionId":Transid,
-                                                                       "Pulses":pulse,
-                                                                       "FuelQuantity":"\(quantity)",
-                ],options: [])
-            if let JSONString = String(data: bodyData, encoding: String.Encoding.utf8) {
-                print(JSONString)
-
-                ConcateJsonString += JSONString + ","
-
-            }
-            print(ConcateJsonString)
+            
         }
-        print(ConcateJsonString)
-        print(ConcateJsonString.dropLast())
-        let JSONdata = ConcateJsonString.dropLast()
-            let bodyData = "{cmtxtnid_10_record:[" + "\(JSONdata)" + "]}"
-        print(bodyData)
-        request.httpBody = bodyData.data(using: String.Encoding.utf8)
-        //        RequestFrom":"I",
-        //        "Device Type":"\(UIDevice().type)",
-        //        "iOS": "\(UIDevice.current.systemVersion)"
-        request.timeoutInterval = 10
-
-        let session = Foundation.URLSession.shared
-        let semaphore = DispatchSemaphore(value: 0)
-        let task = session.dataTask(with: request as URLRequest) { data, response, error in
-            if let data = data {
-              //  print(String(data: data, encoding: String.Encoding.utf8)!)
-                self.reply = NSString(data: data, encoding:String.Encoding.utf8.rawValue)! as String
-                //print(self.reply)
-                Vehicaldetails.sharedInstance.Last10transactions = []
+        else{
+            let Url:String = FSURL
+            let string = uuid! + ":" + Email! + ":" + "SaveMultipleTransactions"
+            let Base64 = convertStringToBase64(string: string)
+            let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
+            
+            request.httpMethod = "POST"
+            if(Vehicaldetails.sharedInstance.Last10transactions.count == 0){}
+            else {
+                for i in 0  ..< Vehicaldetails.sharedInstance.Last10transactions.count
+                {
+                    let obj : Last10Transactions = Vehicaldetails.sharedInstance.Last10transactions[i] as! Last10Transactions
+                    let Transid = obj.Transaction_id
+                    let pulse = obj.Pulses
+                    let quantity = obj.FuelQuantity
+                    
+                    request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
+                    let bodyData = try! JSONSerialization.data(withJSONObject:["TransactionId":Transid,
+                                                                               "Pulses":pulse,
+                                                                               "FuelQuantity":"\(quantity)",
+                                                                              ],options: [])
+                    if let JSONString = String(data: bodyData, encoding: String.Encoding.utf8) {
+                        print(JSONString)
+                        
+                        ConcateJsonString += JSONString + ","
+                        
+                    }
+                    print(ConcateJsonString)
+                }
+                print(ConcateJsonString)
+                print(ConcateJsonString.dropLast())
+                let JSONdata = ConcateJsonString.dropLast()
+                let bodyData = "{cmtxtnid_10_record:[" + "\(JSONdata)" + "]}"
+                print(bodyData)
+                request.httpBody = bodyData.data(using: String.Encoding.utf8)
+                //        RequestFrom":"I",
+                //        "Device Type":"\(UIDevice().type)",
+                //        "iOS": "\(UIDevice.current.systemVersion)"
+                request.timeoutInterval = 10
                 
-            } else {
-              //  print(error!)
-                let text = (error?.localizedDescription)! //+ error.debugDescription
-                let test = String((text.filter { !" \n".contains($0) }))
-                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
-             //   print(newString)
-                self.web.sentlog(func_name: "Transactiondetails TransactionComplete Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-                self.reply = "-1"
+                let session = Foundation.URLSession.shared
+                let semaphore = DispatchSemaphore(value: 0)
+                let task = session.dataTask(with: request as URLRequest) { data, response, error in
+                    if let data = data {
+                        //  print(String(data: data, encoding: String.Encoding.utf8)!)
+                        self.reply = NSString(data: data, encoding:String.Encoding.utf8.rawValue)! as String
+                        //print(self.reply)
+                        Vehicaldetails.sharedInstance.Last10transactions = []
+                        
+                    } else {
+                        //  print(error!)
+                        let text = (error?.localizedDescription)! //+ error.debugDescription
+                        let test = String((text.filter { !" \n".contains($0) }))
+                        let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                        //   print(newString)
+                        self.web.sentlog(func_name: "Transactiondetails TransactionComplete Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                        self.reply = "-1"
+                    }
+                    semaphore.signal()
+                }
+                task.resume()
+                _ = semaphore.wait(timeout: DispatchTime.distantFuture)
+                //        return reply
             }
-            semaphore.signal()
         }
-        task.resume()
-        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
-        //        return reply
+    }
+
+    
+    func preauthunsyncTransaction() -> String
+    {
+        if (Vehicaldetails.sharedInstance.reachblevia == "cellular")
+        {
+            var reportsArray: [AnyObject]!
+            let fileManager: FileManager = FileManager()
+            let readdata = cf.getDocumentsURL().appendingPathComponent("data/preauth/")
+            let fromPath: String = (readdata!.path)
+            do{
+
+                do{ if(!FileManager.default.fileExists(atPath: fromPath))
+                {
+                    do{ try FileManager.default.createDirectory(atPath: fromPath, withIntermediateDirectories: true, attributes: nil)
+                    }
+                    catch{print("error")}
+                    }
+                }
+
+
+                reportsArray = fileManager.subpaths(atPath: fromPath)! as [AnyObject]
+                for x in 0  ..< reportsArray.count
+                {
+                    let filename: String = "\(reportsArray[x])"
+                    let Split = filename.components(separatedBy: "#")
+                    let siteName = Split[1]
+
+                    let JData: String = cf.preauthReadReportFile(fileName: filename)
+                    if(JData != "")
+                    {
+                        Upload(jsonstring: JData,filename: filename,siteName:"SavePreAuthTransactions")
+                        return "true"
+                    }
+                }
+            }
         }
 
+        else if(Vehicaldetails.sharedInstance.reachblevia == "wificonn")
+        {
+            var reportsArray: [AnyObject]!
+            let fileManager: FileManager = FileManager()
+            let readdata = cf.getDocumentsURL().appendingPathComponent("data/preauth/")
+            let fromPath: String = (readdata!.path)
+            do{
+
+                do{ if(!FileManager.default.fileExists(atPath: fromPath))
+                {
+                    do{ try FileManager.default.createDirectory(atPath: fromPath, withIntermediateDirectories: true, attributes: nil)
+                    }
+                    catch{print("error")}
+                    }
+                }
+
+                reportsArray = fileManager.subpaths(atPath: fromPath)! as [AnyObject]
+                for x in 0  ..< reportsArray.count
+                {
+                    let filename: String = "\(reportsArray[x])"
+                    let Split = filename.components(separatedBy: "#")
+
+                    let siteName = Split[1]
+
+                    let JData: String = cf.preauthReadReportFile(fileName: filename)
+                    if(JData != "")
+                    {
+                        Upload(jsonstring: JData,filename: filename,siteName:"SavePreAuthTransactions")
+                    }
+                }
+            }
+        }
+        return "False"
     }
 
     

@@ -73,8 +73,9 @@ class OtherVehicleViewController: UIViewController,UITextFieldDelegate {
         self.oview.endEditing(true)
     }
 
+    
     @objc func gotostart(){
-        self.web.sentlog(func_name: "OtherVehiclescreen_timeout", errorfromserverorlink: "", errorfromapp: "")
+        self.web.sentlog(func_name: "OtherVehiclescreen_timeout, back to home screen.", errorfromserverorlink: "", errorfromapp: "")
         let appDel = UIApplication.shared.delegate! as! AppDelegate
         appDel.start()
     }
@@ -97,6 +98,7 @@ class OtherVehicleViewController: UIViewController,UITextFieldDelegate {
     @IBAction func reset(sender: AnyObject) {
         stoptimergotostart.invalidate()
         viewWillAppear(true)
+        Go.isEnabled = true
         Other.text = ""
     }
 
@@ -193,7 +195,7 @@ class OtherVehicleViewController: UIViewController,UITextFieldDelegate {
 //                        alertController.setValue(attributedString, forKey: "attributedTitle")
 //                        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertAction.Style.default){
 //                            action in
-//                            self.performSegue(withIdentifier: "Go", sender: self)
+                           self.performSegue(withIdentifier: "Go", sender: self)
 //                        }
 //                        alertController.addAction(action)
 //
@@ -209,13 +211,13 @@ class OtherVehicleViewController: UIViewController,UITextFieldDelegate {
                     }
                     else{
                         if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){
-                            let email_id = isValidOther(testStr: Other.text!)
-                            if(email_id != false){
+//                            let email_id = isValidOther(testStr: Other.text!)
+//                            if(email_id != false){
                                 self.performSegue(withIdentifier: "Go", sender: self)
-                            }
-                            else{
-                                showAlert(message: NSLocalizedString("checkEmail", comment:"") )//"please enter valid email.")
-                            }
+//                            }
+//                            else{
+//                                showAlert(message: NSLocalizedString("checkEmail", comment:"") )//"please enter valid email.")
+//                            }
                             
                         }
                     //self.performSegue(withIdentifier: "Go", sender: self)
@@ -318,13 +320,9 @@ class OtherVehicleViewController: UIViewController,UITextFieldDelegate {
                                         self.stoptimergotostart.invalidate()
                                         self.Activity.stopAnimating()
                                         self.Activity.isHidden = true
-                                        let email_id = self.isValidOther(testStr: self.Other.text!)
-                                        if(email_id != false){
-                                            
-                                        }
-                                        else{
+                                        
                                         self.performSegue(withIdentifier: "pin", sender: self)
-                                        }
+                                    
                                     }
                                     else{
                                         if(isother == "True"){
