@@ -98,7 +98,7 @@ class Preauth_DepartmentVC: UIViewController,UITextFieldDelegate {
                 getdata.remove(at: getdata.startIndex)
                 
                 print(getdata)
-                var json = testAES(encryped_data: getdata)
+                let json = testAES(encryped_data: getdata)
                 //print(json)
                 let data1:Data = json.data(using: String.Encoding.utf8.rawValue)! as Data
                 do {

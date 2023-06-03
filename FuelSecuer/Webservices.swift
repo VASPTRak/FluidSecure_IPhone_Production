@@ -766,7 +766,7 @@ class Webservices:NSObject {
         //        let bodyData = "\(Name)#:#\(mobile)#:#\(Email)#:#\(uuid)#:#I#:#\(company)"
         print(bodyData)
         request.httpBody = bodyData.data(using: String.Encoding.utf8)
-       // request.timeoutInterval = 15
+        request.timeoutInterval = 2
         
         let session = URLSession.shared
         let semaphore = DispatchSemaphore(value: 0)
@@ -1172,7 +1172,14 @@ class Webservices:NSObject {
                 // print(newString)
                 if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
                 {
-                    self.sentlog(func_name: "check if odometer or hour required. Success", errorfromserverorlink: " ", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + "")
+                    if(newString.contains("fail"))
+                    {
+                        self.sentlog(func_name: "check if odometer or hour required. \(newString)", errorfromserverorlink: " ", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + "")
+                    }
+                    else
+                    {
+                        self.sentlog(func_name: "check if odometer or hour required. Success", errorfromserverorlink: " ", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + "")
+                    }
                 }
                 else
                 {
@@ -1187,7 +1194,7 @@ class Webservices:NSObject {
                 // print(newString)
                 if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
                 {
-                self.sentlog(func_name: "check if odometer or hour required. fail \(newString)", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + "")
+                self.sentlog(func_name: "check if odometer or hour required. \(newString)", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + "")
                 }else
                 {
                     self.sentlog(func_name: "check if odometer or hour required. fail \(newString)", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
@@ -1520,6 +1527,11 @@ class Webservices:NSObject {
     {
         FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
         print(Vehicaldetails.sharedInstance.CollectDiagnosticLogs,FSURL)
+        if(Vehicaldetails.sharedInstance.CollectDiagnosticLogs == "" || Vehicaldetails.sharedInstance.CollectDiagnosticLogs == nil)
+        {
+            Vehicaldetails.sharedInstance.CollectDiagnosticLogs = "True"
+        }
+        
         if( Vehicaldetails.sharedInstance.CollectDiagnosticLogs == "False")  //if  CollectDiagnosticLogs is false saving the log into the file when CollectDiagnosticLogs is true the upload the appto server.
         {
             let dateFormatter = DateFormatter()
@@ -1716,6 +1728,7 @@ class Webservices:NSObject {
                     
                     if(ResponceMessage == "success")
                     {
+                        self.defaults.setValue("0", forKey: "previouspulsedata")
                         let ResponceData = self.sysdata.value(forKey: "ResponceData") as! NSDictionary
                         let MinLimit = ResponceData.value(forKey: "MinLimit") as! NSNumber
                         let PulseRatio = ResponceData.value(forKey: "PulseRatio") as! NSNumber

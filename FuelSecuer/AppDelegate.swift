@@ -3,65 +3,54 @@
 
 //  Created by VASP on 3/28/16.
 //  Copyright © 2016 VASP. All rights reserved.
-
 import UIKit
 import CoreData
 import BackgroundTasks
 import UserNotifications
-
+import FirebaseMessaging
+import Firebase
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, MessagingDelegate, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     
     var window: UIWindow?
     var reachability: Reachability!
-   // var reg = RegisterTableViewController()
-    //var vc = ViewController()
-    //var wificonn:String!
-    //var jc = FuelquantityVC()
-       var web = Webservices()
-     var unsync = Sync_Unsynctransactions()
-    // var backgroundUpdateTask: UIBackgroundTaskIdentifier!
-    
-    //var tcpcon = TCPCommunication()
+    let gcmMessageIDKey = "gcm_msg"
+    var web = Webservices()
+    var unsync = Sync_Unsynctransactions()
     var cf = Commanfunction()
-    
     var wificonnection:String = "False"
-    
     let defaults = UserDefaults.standard
     var id:Int!
    
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // doBackgroundTask()
+        
+        FirebaseApp.configure()
+        Messaging.messaging().delegate = self
+        if #available(iOS 10.0, *) {
+            // For iOS 10 display notification (sent via APNS)
+            UNUserNotificationCenter.current().delegate = self
+            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+            UNUserNotificationCenter.current().requestAuthorization(
+            options: authOptions,
+            completionHandler: {_, _ in })
+            // For iOS 10 data message (sent via FCM
+
+        } else {
+            let settings: UIUserNotificationSettings =
+            UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
+              application.registerUserNotificationSettings(settings)
+        }
+     
+        application.registerForRemoteNotifications()
+        registerForPushNotifications()
+   
         UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
 //        UIApplication.shared.setMinimumBackgroundFetchInterval(100)
         registerBackgroundTasks()
         
-//        let center = UNUserNotificationCenter.current()
-//        center.requestAuthorization(options: [.alert, .badge, .sound]) { (success, error) in
-//            if error == nil {
-//                if success {
-//                    print("Permission granted")
-//                    // In case you want to register for the remote notifications
-//                    let application = UIApplication.shared
-//                    application.registerForRemoteNotifications()
-//                } else {
-//                    print("Permission denied")
-//                    
-//                }
-//            } else {
-//                print(error)
-//            }
-//        }
-        
-        do {
-            reachability = Reachability.init()
-        }
-//        catch {
-//            print("Unable to create Reachability")
-//            return true;
-//        }
+        reachability = Reachability.init()
+       
         reachability = Reachability()!
         NotificationCenter.default.addObserver(self, selector: #selector(AppDelegate.reachabilityChanged),name: ReachabilityChangedNotification,object: reachability)
         do {
@@ -103,13 +92,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     let initViewController: UIViewController = storyBoard.instantiateViewController(withIdentifier: "firstVC") as! RegisterTableViewController
                     let LogViewController: UIViewController = storyBoard.instantiateViewController(withIdentifier: "Login") as! LoginViewController
                     
-                    if(defaults.string(forKey: "Register") != "\(1)")
+                    if(defaults.string(forKey: "Register") == "0")
                     {
                         print("root VC if condition")
                         
                         let nav =  UINavigationController(rootViewController: initViewController)
                         self.window?.rootViewController = nav
-                        self.web.sentlog(func_name: "App Goes to resgistration screen not 1", errorfromserverorlink: "", errorfromapp: "")
+                        self.web.sentlog(func_name: "App Goes to resgistration screen ", errorfromserverorlink: "", errorfromapp: "")
                     }
                     else{
                         print("root VC else condition")
@@ -142,32 +131,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //            print("some problem in assigning root VC")
 //        }
        
-        let settings = UIUserNotificationSettings(types: [.alert, .badge , .sound], categories: nil)
-        application.registerUserNotificationSettings(settings)
-        application.registerForRemoteNotifications()
+        
+
+        let TopicNameForFCMForIPhone = defaults.string(forKey: "TopicNameForFCMForIPhone")
+        //print(TopicNameForFCMForIPhone)
+        if(TopicNameForFCMForIPhone == "" || TopicNameForFCMForIPhone == nil){
+            Messaging.messaging().subscribe(toTopic:"FluidSecureAPPNotifications_Prod_IPhone")
+           print( "Subscribed to FluidSecureAPPNotifications_IPhone topic")
+        }
+        else
+        {
+            Messaging.messaging().subscribe(toTopic:"\(TopicNameForFCMForIPhone)")
+            print("Subscribed to \(String(describing: TopicNameForFCMForIPhone)) topic")
+        }
+        
+        Messaging.messaging().token { token, error in
+          if let error = error {
+            print("Error fetching FCM registration token: \(error)")
+          } else if let token = token {
+            print("FCM registration token: \(token)")
+
+          }
+        }
 
         return true
     }
     
-    
-//    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-//        let center = UNUserNotificationCenter.current()
-//        center.requestAuthorization(options: [.alert, .badge, .sound]) { (success, error) in
-//            if error == nil {
-//                if success {
-//                    print("Permission granted")
-//                    // In case you want to register for the remote notifications
-//                    let application = UIApplication.shared
-//                    application.registerForRemoteNotifications()
-//                } else {
-//                    print("Permission denied")
-//                }
-//            } else {
-//                print(error)
-//            }
-//        }
-//    }
-    
+   
     
     
     func preauthstart(){
@@ -256,6 +246,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             print("root VC if condition")
                             let nav =  UINavigationController(rootViewController: loginViewController)
                             self.window?.rootViewController = nav
+                            self.web.sentlog(func_name: "App Goes to resgistration screen not 1", errorfromserverorlink: "", errorfromapp: "")
                         }
                         else{ }
                         if(wificonnection == "True"){
@@ -271,8 +262,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             let nav =  UINavigationController(rootViewController: controller)
                             
                             self.window?.rootViewController = nav
-                          //  self.web.sentlog(func_name: "Appdelegate Start goto select hose screen", errorfromserverorlink: "", errorfromapp: "")
-                            //self.window?.makeKeyAndVisible()
+                          
                         }
                     }
                 }
@@ -293,7 +283,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             BGTaskScheduler.shared.register(forTaskWithIdentifier: backgroundProcessingTaskSchedulerIdentifier, using: nil) { task in
 
                 task.setTaskCompleted(success: true)
-//                self.scheduleBackgroundProcessing()
+                self.scheduleBackgroundProcessing()
             }
         } else {
             // Fallback on earlier versions
@@ -318,28 +308,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
        }
    
-//    func handleAppRefresh(task: BGAppRefreshTask) {
-//       // Schedule a new refresh task.
-//       scheduleAppRefresh()
-//
-//       // Create an operation that performs the main part of the background task.
-//       let operation = RefreshAppContentsOperation()
-//
-//       // Provide the background task with an expiration handler that cancels the operation.
-//       task.expirationHandler = {
-//          operation.cancel()
-//       }
-//
-//       // Inform the system that the background task is complete
-//       // when the operation completes.
-//       operation.completionBlock = {
-//          task.setTaskCompleted(success: !operation.isCancelled)
-//       }
-//
-//       // Start the operation.
-//       operationQueue.addOperation(operation)
-//     }
-    
+   
     @available(iOS 13.0, *)
     func handleAppRefresh(task: BGProcessingTask) {
             scheduleAppRefresh()
@@ -349,7 +318,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         unsync.unsyncTransaction()
         unsync.Send10trans()
-        unsync.preauthunsyncTransaction()
+       _ = unsync.preauthunsyncTransaction()
             // increment instead of a fixed number
 //            UserDefaults.standard.set(UserDefaults.standard.integer(forKey: "bgtask")+1, forKey: "bgtask")
 
@@ -469,6 +438,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     let initViewController: UIViewController = storyBoard.instantiateViewController(withIdentifier: "firstVC") as! RegisterTableViewController
                     let nav = UINavigationController(rootViewController: initViewController)
                     self.window?.rootViewController = nav
+                    self.web.sentlog(func_name: "App Goes to resgistration screen not 1", errorfromserverorlink: "", errorfromapp: "")
                 }
                 else {
                     let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
@@ -511,7 +481,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         do
                         {
                         let uid = try defaults.array(forKey: "SSID")
+                
                         let rowCount =  uid!.count
+                            
                         for i in 0  ..< rowCount
                         {
                             if(cf.getSSID() == uid![i] as! String)
@@ -556,6 +528,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             print("root VC if condition")
                             let nav =  UINavigationController(rootViewController: loginViewController)
                             self.window?.rootViewController = nav
+                            self.web.sentlog(func_name: "App Goes to resgistration screen not 1", errorfromserverorlink: "", errorfromapp: "")
                         }
                         else{ }
                         if(wificonnection == "True"){
@@ -628,13 +601,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 // Fallback on earlier versions
             }
         }
-        
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
         self.web.sentlog(func_name: "Application Enter In Foreground", errorfromserverorlink: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
-     //   doBackgroundTask()
+     
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
@@ -650,16 +622,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         else{
             unsync.unsyncTransaction()
             unsync.Send10trans()
-            unsync.preauthunsyncTransaction()
+          _ = unsync.preauthunsyncTransaction()
             completionHandler(.newData)
         }
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
-//        if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){
-////            _ = jc.setralay0tcp()
-////            _ = jc.setpulsar0tcp()
-//        }
         
         if(Vehicaldetails.sharedInstance.ifStartbuttontapped == true){}  /// Is Start button tapped is true then do nothing
         else {
@@ -716,7 +684,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         unsync.unsyncTransaction()
         unsync.Send10trans()
-        unsync.preauthunsyncTransaction()
+        _ = unsync.preauthunsyncTransaction()
         
         self.web.sentlog(func_name: "Application Will Terminate", errorfromserverorlink: " Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected link : \(self.cf.getSSID())")
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
@@ -796,11 +764,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if reachability.isReachableViaWiFi {
                 print("Reachable via WiFi......")
                 Vehicaldetails.sharedInstance.reachblevia = "wificonn"
-               // doBackgroundTask()
+               
             } else {
                 print("Reachable via Cellular......")
                 Vehicaldetails.sharedInstance.reachblevia = "cellular"
-                //doBackgroundTask()
+                
             }
         } else {
             print("Not reachable..........")
@@ -809,3 +777,131 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 }
 
+
+// Push Notificaion
+extension AppDelegate {
+func registerForPushNotifications() {
+    if #available(iOS 10.0, *) {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
+            [weak self] (granted, error) in
+            print("Permission granted: \(granted)")
+
+            guard granted else {
+                print("Please enable \"Notifications\" from App Settings.")
+//                self?.showPermissionAlert()
+                return
+            }
+
+            self?.getNotificationSettings()
+        }
+    } else {
+        let settings = UIUserNotificationSettings(types: [.alert, .sound, .badge], categories: nil)
+        UIApplication.shared.registerUserNotificationSettings(settings)
+        UIApplication.shared.registerForRemoteNotifications()
+    }
+}
+
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        
+        Messaging.messaging().apnsToken = deviceToken;
+        let tokenParts = deviceToken.map { data -> String in
+            return String(format: "%02.2hhx", data)
+        }
+
+        let token = tokenParts.joined()
+        print("Device Token: \(token)")
+    }
+    
+    func application(_ application: UIApplication,
+                     didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult)
+                       -> Void) {
+      // If you are receiving a notification message while your app is in the background,
+      // this callback will not be fired till the user taps on the notification launching the application.
+      // TODO: Handle data of notification
+
+      // With swizzling disabled you must let Messaging know about the message, for Analytics
+      // Messaging.messaging().appDidReceiveMessage(userInfo)
+
+      // Print message ID.
+      if let messageID = userInfo[gcmMessageIDKey] {
+        print("Message ID: \(messageID)")
+      }
+
+      // Print full message.
+      print(userInfo)
+
+      completionHandler(UIBackgroundFetchResult.newData)
+        let userNotificationCenter = UNUserNotificationCenter.current()
+        let notificationContent = UNMutableNotificationContent()
+        notificationContent.sound = UNNotificationSound.default
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1,
+                                                            repeats: false)
+            let request = UNNotificationRequest(identifier: "testNotification",
+                                                content: notificationContent,
+                                                trigger: trigger)
+            
+            userNotificationCenter.add(request) { (error) in
+                if let error = error {
+                    print("Notification Error: ", error)
+                }}
+    }
+    
+@available(iOS 10.0, *)
+func getNotificationSettings() {
+
+    UNUserNotificationCenter.current().getNotificationSettings { (settings) in
+        print("Notification settings: \(settings)")
+        guard settings.authorizationStatus == .authorized else { return }
+        DispatchQueue.main.async {
+            UIApplication.shared.registerForRemoteNotifications()
+        }
+    }
+}
+
+
+func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+    print("Failed to register: \(error)")
+}
+
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+      print("Firebase registration token: \(String(describing: fcmToken!))")
+
+      let dataDict: [String: String] = ["token": fcmToken ?? ""]
+      NotificationCenter.default.post(
+        name: Notification.Name("FCMToken"),
+        object: nil,
+        userInfo: dataDict
+      )
+      // TODO: If necessary send token to application server.
+      // Note: This callback is fired at each app startup and whenever a new token is generated.
+    }
+    
+func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
+
+    // If your app was running and in the foreground
+    // Or
+    // If your app was running or suspended in the background and the user brings it to the foreground by tapping the push notification
+
+    print("didReceiveRemoteNotification /(userInfo)")
+
+    guard let dict = userInfo["aps"]  as? [String: Any], let msg = dict ["alert"] as? String else {
+        print("Notification Parsing Error")
+        let userNotificationCenter = UNUserNotificationCenter.current()
+        let notificationContent = UNMutableNotificationContent()
+        notificationContent.sound = UNNotificationSound.default
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1,
+                                                            repeats: false)
+            let request = UNNotificationRequest(identifier: "testNotification",
+                                                content: notificationContent,
+                                                trigger: trigger)
+            
+            userNotificationCenter.add(request) { (error) in
+                if let error = error {
+                    print("Notification Error: ", error)
+                }
+            }
+        return
+    }
+  }
+}

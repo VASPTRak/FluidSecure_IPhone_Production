@@ -291,24 +291,24 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                         self.AppconnectedtoBLE = true
                         if(self.appdisconnects_automatically == true)
                         {
-                            if(self.AppconnectedtoBLE == true){
-                                self.getlast10transaction()
-                                self.BLErescount = 0
-                                self.web.sentlog(func_name: "Sent Relay On Command to BT link LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
-                                self.outgoingData(inputText: "LK_COMM=relay:12345=ON")
-                                NotificationCenter.default.removeObserver(self)
-                                self.updateIncomingData ()
-                                
-                                self.cf.delay(0.1){
-                                    self.start.isHidden = true
-                                    self.cancel.isHidden = true
-                                    self.Stop.isHidden = false
-    //                                self.displaytime.text = NSLocalizedString("Fueling", comment:"")
-                                    //self.displaytime.textColor = UIColor.black
-                                    self.FDcheckBLEtimer.invalidate()
-                                    self.FDcheckBLEtimer = Timer.scheduledTimer(timeInterval: 4, target: self, selector: #selector(self.FDcheckBLE), userInfo: nil, repeats: true)
-                                }
-                            }
+//                            if(self.AppconnectedtoBLE == true){
+//                                self.getlast10transaction()
+//                                self.BLErescount = 0
+//                                self.web.sentlog(func_name: "Sent Relay On Command to BT link LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
+//                                self.outgoingData(inputText: "LK_COMM=relay:12345=ON")
+//                                NotificationCenter.default.removeObserver(self)
+//                                self.updateIncomingData ()
+//
+//                                self.cf.delay(0.1){
+//                                    self.start.isHidden = true
+//                                    self.cancel.isHidden = true
+//                                    self.Stop.isHidden = false
+//    //                                self.displaytime.text = NSLocalizedString("Fueling", comment:"")
+//                                    //self.displaytime.textColor = UIColor.black
+//                                    self.FDcheckBLEtimer.invalidate()
+//                                    self.FDcheckBLEtimer = Timer.scheduledTimer(timeInterval: 4, target: self, selector: #selector(self.FDcheckBLE), userInfo: nil, repeats: true)
+//                                }
+//                            }
                         }
                         
                         //                        if(self.gotLinkVersion == true){
@@ -363,24 +363,24 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                         
                     if(self.appdisconnects_automatically == true)
                     {
-                        if(self.AppconnectedtoBLE == true){
-                            self.getlast10transaction()
-                            self.BLErescount = 0
-                            self.web.sentlog(func_name: "Sent Relay On Command to BT link LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
-                            self.outgoingData(inputText: "LK_COMM=relay:12345=ON")
-                            NotificationCenter.default.removeObserver(self)
-                            self.updateIncomingData ()
-                            
-                            self.cf.delay(0.1){
-                                self.start.isHidden = true
-                                self.cancel.isHidden = true
-                                self.Stop.isHidden = false
-                                self.displaytime.text = NSLocalizedString("Fueling", comment:"")
-                                //self.displaytime.textColor = UIColor.black
-                                self.FDcheckBLEtimer.invalidate()
-                                self.FDcheckBLEtimer = Timer.scheduledTimer(timeInterval: 4, target: self, selector: #selector(self.FDcheckBLE), userInfo: nil, repeats: true)
-                            }
-                        }
+//                        if(self.AppconnectedtoBLE == true){
+//                            self.getlast10transaction()
+//                            self.BLErescount = 0
+//                            self.web.sentlog(func_name: "Sent Relay On Command to BT link LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
+//                            self.outgoingData(inputText: "LK_COMM=relay:12345=ON")
+//                            NotificationCenter.default.removeObserver(self)
+//                            self.updateIncomingData ()
+//
+//                            self.cf.delay(0.1){
+//                                self.start.isHidden = true
+//                                self.cancel.isHidden = true
+//                                self.Stop.isHidden = false
+//                                self.displaytime.text = NSLocalizedString("Fueling", comment:"")
+//                                //self.displaytime.textColor = UIColor.black
+//                                self.FDcheckBLEtimer.invalidate()
+//                                self.FDcheckBLEtimer = Timer.scheduledTimer(timeInterval: 4, target: self, selector: #selector(self.FDcheckBLE), userInfo: nil, repeats: true)
+//                            }
+//                        }
                     }
                     else{
                     //self.start.isEnabled = true
@@ -711,7 +711,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
     @objc func goto_Start()
     {
         isgotostartcalled = true
-        
+        isviewdidDisappear = true
         self.timerview.invalidate()
         self.stoptimergotostart.invalidate()
         self.stoptimer_gotostart.invalidate()
@@ -1335,6 +1335,8 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                         self.showAlert(message: "There is a MAC address error. Please contact Support")//"Invalid Link Mac Address. Please try again.")
                         self.cf.delay(6)
                         {
+                            self.outgoingData(inputText: "LK_COMM=relay:12345=OFF")
+                            self.updateIncomingData()
                             self.disconnectFromDevice()
                                 self.goto_Start()
                         }
@@ -2102,14 +2104,14 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                                 }
                                 Vehicaldetails.sharedInstance.IsUpgrade = "N"
                                 
-                                self.cf.delay(30){
-                                    self.FDcheckBLEtimer.invalidate()
-                                    Vehicaldetails.sharedInstance.gohome = true
-                                    self.timerview.invalidate()
-                                    let appDel = UIApplication.shared.delegate! as! AppDelegate
-                                    //self.web.sentlog(func_name: "stoprelay function 30 delay ", errorfromserverorlink: "", errorfromapp: "")
-                                    appDel.start()
-                                }
+//                                self.cf.delay(30){
+//                                    self.FDcheckBLEtimer.invalidate()
+//                                    Vehicaldetails.sharedInstance.gohome = true
+//                                    self.timerview.invalidate()
+//                                    let appDel = UIApplication.shared.delegate! as! AppDelegate
+//                                    //self.web.sentlog(func_name: "stoprelay function 30 delay ", errorfromserverorlink: "", errorfromapp: "")
+//                                    appDel.start()
+//                                }
                             }
                             if (self.stopdelaytime == true){}
                             else{
@@ -2279,6 +2281,12 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
             if(Odomtr == ""){
                 Odomtr = "0"
             }
+            
+            var Hours = Vehicaldetails.sharedInstance.hours
+            if(Hours == ""){
+                Hours = "0"
+            }
+            
             let Wifyssid = Vehicaldetails.sharedInstance.SSId
             let pulser_count = Vehicaldetails.sharedInstance.pulsarCount
     
@@ -2314,7 +2322,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
 //            "Hours":"\(hour)",
 //            "VehicleExtraOther": VehicleExtraOther,
             
-            let bodyData = "{\"SiteId\":\(siteid),\"CurrentOdometer\":\(Odomtr),\"FuelQuantity\":\((fuelQuantity)),\"TransactionId\":\(TransactionId),\"FuelTypeId\":\(FuelTypeId),\"WifiSSId\":\"\(Wifyssid)\",\"TransactionDate\":\"\(dtt)\",\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"VehicleNumber\":\"\(Vehicaldetails.sharedInstance.vehicleno)\",\"ErrorCode\":\"\(Vehicaldetails.sharedInstance.Errorcode)\",\"DepartmentNumber\":\"\(Vehicaldetails.sharedInstance.deptno)\",\"Hours\":\"\(Vehicaldetails.sharedInstance.hours)\",\"VehicleExtraOther\":\"\(Vehicaldetails.sharedInstance.ExtraOther)\",\"Other\":\"\(Vehicaldetails.sharedInstance.Other)\",\"PersonnelPIN\":\"\(Vehicaldetails.sharedInstance.Personalpinno)\",\"CurrentLng\":\"\(sourcelong!)\",\"CurrentLat\":\"\(sourcelat!)\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\"}"
+            let bodyData = "{\"SiteId\":\(siteid),\"CurrentOdometer\":\(Odomtr),\"FuelQuantity\":\((fuelQuantity)),\"TransactionId\":\(TransactionId),\"FuelTypeId\":\(FuelTypeId),\"WifiSSId\":\"\(Wifyssid)\",\"TransactionDate\":\"\(dtt)\",\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"VehicleNumber\":\"\(Vehicaldetails.sharedInstance.vehicleno)\",\"ErrorCode\":\"\(Vehicaldetails.sharedInstance.Errorcode)\",\"DepartmentNumber\":\"\(Vehicaldetails.sharedInstance.deptno)\",\"Hours\":\(Hours),\"VehicleExtraOther\":\"\(Vehicaldetails.sharedInstance.ExtraOther)\",\"Other\":\"\(Vehicaldetails.sharedInstance.Other)\",\"PersonnelPIN\":\"\(Vehicaldetails.sharedInstance.Personalpinno)\",\"CurrentLng\":\"\(sourcelong!)\",\"CurrentLat\":\"\(sourcelat!)\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\"}"
             print(bodyData)
     
             let reply = web.Transactiondetails(bodyData: bodyData)
@@ -2477,7 +2485,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
         {
             self.GetPulsarstartimer.invalidate()
             self.timerview.invalidate()
-            goto_Start()
+            gotostart()
             self.GetPulsarstartimer.invalidate()
             self.web.sentlog(func_name:" AppStops because transaction id 0, Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
         }
@@ -3346,10 +3354,13 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                 cf.delay(40){
                 do
                 {
-//                    self.timer_conutnotupdateprevious.invalidate()
-//                    self.timer_conutnotupdateprevious = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(FuelquantityVC.stoprelay), userInfo: nil, repeats: false)
-                    try self.stoprelay()
-                    self.web.sentlog(func_name: "auto stops the app when app not connect the link while reconnecting." , errorfromserverorlink: "", errorfromapp: "")
+                    if(self.displaytime.text == "Fueling…...")
+                    {
+                        //                    self.timer_conutnotupdateprevious.invalidate()
+                        //                    self.timer_conutnotupdateprevious = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(FuelquantityVC.stoprelay), userInfo: nil, repeats: false)
+                        try self.stoprelay()
+                        self.web.sentlog(func_name: "auto stops the app when app not connect the link while reconnecting." , errorfromserverorlink: "", errorfromapp: "")
+                    }
                 }
                 catch{}
             }
@@ -3472,9 +3483,9 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                         var pulsedata = defaults.string(forKey: "previouspulsedata")
                         if(pulsedata == ""){}
                         else{
-                        let totalpulsecount = Int(pulsedata! as String)! + Int(counts as String)!
+                        let totalpulsecount = Int(Float(pulsedata! as String)!) + Int(counts as String)!
                         print(Last_Count,totalpulsecount,counts,pulsedata)
-                        if(totalpulsecount < Int(Last_Count as String)!)
+                        if(totalpulsecount < Int(Float(Last_Count as String)!))
                         {
                             defaults.setValue(Last_Count, forKey: "previouspulsedata")
                             print("pulsedata:\( pulsedata!),Counts: \(counts),LastCount: \( Last_Count)")
@@ -3485,8 +3496,8 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
 
                         
                             
-                        let totalpulsecount = Int(pulsedata! as String)! + Int(counts as String)!
-                            if(totalpulsecount < Int(Last_Count as String)!)
+                        let totalpulsecount = Int(Float(pulsedata! as String)!) + Int(counts as String)!
+                            if(totalpulsecount < Int(Float(Last_Count as String)!))
                              {
                                 defaults.setValue(Last_Count, forKey: "previouspulsedata")
                                  print("pulsedata:\( pulsedata!),Counts: \(counts),LastCount: \( Last_Count)")
@@ -5117,6 +5128,28 @@ extension PreauthFuelquantity: CXCallObserverDelegate
 //                        {
 //                            self.showAlert(message: "Macaddress is not matched \(Vehicaldetails.sharedInstance.BTMacAddress)" )
 //                        }
+                    }
+                }
+                if(self.appdisconnects_automatically == true)
+                {
+                    if(self.AppconnectedtoBLE == true){
+                        self.getlast10transaction()
+                        self.BLErescount = 0
+                        self.baseTextView = ""
+                        self.web.sentlog(func_name: "Sent Relay On Command to BT link LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
+                        self.outgoingData(inputText: "LK_COMM=relay:12345=ON")
+                        NotificationCenter.default.removeObserver(self)
+                        self.updateIncomingData ()
+                        
+                        self.cf.delay(0.1){
+                            self.start.isHidden = true
+                            self.cancel.isHidden = true
+                            self.Stop.isHidden = false
+                            //                                self.displaytime.text = NSLocalizedString("Fueling", comment:"")
+                            //self.displaytime.textColor = UIColor.black
+                            self.FDcheckBLEtimer.invalidate()
+                            self.FDcheckBLEtimer = Timer.scheduledTimer(timeInterval: 4, target: self, selector: #selector(self.FDcheckBLE), userInfo: nil, repeats: true)
+                        }
                     }
                 }
             }

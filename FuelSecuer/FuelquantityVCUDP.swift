@@ -716,20 +716,20 @@ class FuelquantityVCUDP: UIViewController,StreamDelegate,UITextFieldDelegate,URL
                                 }
                                 Vehicaldetails.sharedInstance.IsUpgrade = "N"
 
-                                self.cf.delay(30){
-                                    Vehicaldetails.sharedInstance.gohome = true
-                                    self.timerview.invalidate()
-                                    self.stoptimerIspulsarcountsame.invalidate()
-                                    self.timerview.invalidate()
-                                    self.timer.invalidate()
-                                    self.timerFDCheck.invalidate()
-                                    self.timer_quantityless_thanprevious.invalidate()
-                                    self.stoptimergotostart.invalidate()
-                                    self.stoptimer_gotostart.invalidate()
-                                    let appDel = UIApplication.shared.delegate! as! AppDelegate
-//                                    self.web.sentlog(func_name: "stoprelay function 30 delay ", errorfromserverorlink: "", errorfromapp: "")
-                                    appDel.start()
-                                }
+//                                self.cf.delay(30){
+//                                    Vehicaldetails.sharedInstance.gohome = true
+//                                    self.timerview.invalidate()
+//                                    self.stoptimerIspulsarcountsame.invalidate()
+//                                    self.timerview.invalidate()
+//                                    self.timer.invalidate()
+//                                    self.timerFDCheck.invalidate()
+//                                    self.timer_quantityless_thanprevious.invalidate()
+//                                    self.stoptimergotostart.invalidate()
+//                                    self.stoptimer_gotostart.invalidate()
+//                                    let appDel = UIApplication.shared.delegate! as! AppDelegate
+////                                    self.web.sentlog(func_name: "stoprelay function 30 delay ", errorfromserverorlink: "", errorfromapp: "")
+//                                    appDel.start()
+//                                }
                             }
                             if (self.stopdelaytime == true){}
                             else{

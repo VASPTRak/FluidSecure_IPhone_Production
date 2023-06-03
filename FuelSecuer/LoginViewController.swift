@@ -92,7 +92,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         version_2.text = "Version \(Version)"
 
 //        Vehicaldetails.sharedInstance.URL = "http://fluidsecuretest.eastus.cloudapp.azure.com/"
-        //"http://sierravistatest.cloudapp.net/"//appLink as String testing
+//        "http://sierravistatest.cloudapp.net/"//appLink as String testing
         Vehicaldetails.sharedInstance.URL = "https://www.fluidsecure.net/"//appLink as String testing"https://www.fluidsecure.net/"//"https://www.fluidsecure.net/" //Live
         Vehicaldetails.sharedInstance.deptno = ""
         Vehicaldetails.sharedInstance.Personalpinno = ""
@@ -426,6 +426,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
                 else if(Message == "fail"){
                     if(ResponseText == "New Registration")
                     {
+                        self.web.sentlog(func_name: "New Registration from  server UUID \(uuid).,Brand \(brandname)", errorfromserverorlink: "", errorfromapp: "")
                         let appDel = UIApplication.shared.delegate! as! AppDelegate
                         // Call a method on the CustomController property of the AppDelegate
                         defaults.set(0, forKey: "Register")

@@ -413,11 +413,11 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
                         let odometer:Int! = Int(self.Odometer.text!)
                         Vehicaldetails.sharedInstance.Odometerno = "\(odometer!)"
                         self.Odometer.text = Vehicaldetails.sharedInstance.Odometerno
-                        let hours = Vehicaldetails.sharedInstance.IsHoursrequirs
-                        let IsExtraOther = Vehicaldetails.sharedInstance.IsExtraOther
-                        let isdept = Vehicaldetails.sharedInstance.IsDepartmentRequire
-                        let isPPin = Vehicaldetails.sharedInstance.IsPersonnelPINRequire
-                        let isother = Vehicaldetails.sharedInstance.IsOtherRequire
+                        _ = Vehicaldetails.sharedInstance.IsHoursrequirs
+                        _ = Vehicaldetails.sharedInstance.IsExtraOther
+                        _ = Vehicaldetails.sharedInstance.IsDepartmentRequire
+                        _ = Vehicaldetails.sharedInstance.IsPersonnelPINRequire
+                        _ = Vehicaldetails.sharedInstance.IsOtherRequire
                         let CheckOdometerReasonable = Vehicaldetails.sharedInstance.CheckOdometerReasonable
                         let OdometerReasonabilityConditions = Vehicaldetails.sharedInstance.OdometerReasonabilityConditions
                         let PreviousOdo:Int = Vehicaldetails.sharedInstance.PreviousOdo

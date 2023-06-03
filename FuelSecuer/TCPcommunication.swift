@@ -668,8 +668,11 @@ class TCPCommunication:NSObject,StreamDelegate
         inStream?.delegate = self
         outStream?.delegate = self
         
-        inStream?.schedule(in: RunLoop.current, forMode: RunLoop.Mode.default)//RunLoopMode.defaultRunLoopMode
-        outStream?.schedule(in: RunLoop.current, forMode: RunLoop.Mode.default)//RunLoopMode.defaultRunLoopMode
+            inStream?.schedule(in: .current, forMode: .common)//RunLoopMode.defaultRunLoopMode
+            outStream?.schedule(in: .current, forMode: .common)//RunLoopMode.defaultRunLoopMode
+            
+//        inStream?.schedule(in: RunLoop.current, forMode: RunLoop.Mode.default)//RunLoopMode.defaultRunLoopMode
+//        outStream?.schedule(in: RunLoop.current, forMode: RunLoop.Mode.default)//RunLoopMode.defaultRunLoopMode
         
         inStream?.open()
         outStream?.open()
@@ -698,6 +701,11 @@ class TCPCommunication:NSObject,StreamDelegate
         switch eventCode {
         
         case Stream.Event.endEncountered:
+            if(aStream === outStream)
+                        {
+                            print("output:Error Occurred\n")
+
+                        }
             print("EndEncountered")
             inStream?.close()
             inStream?.remove(from: RunLoop.current, forMode: RunLoop.Mode.default)//RunLoopMode.defaultRunLoopMode
@@ -724,9 +732,13 @@ class TCPCommunication:NSObject,StreamDelegate
             
         case Stream.Event.hasBytesAvailable:
             print("HasBytesAvailable")
+            if(aStream === outStream)
+                        {
+                            print("output:hasBytesAvailable\n")
+                        }
             status = "HasBytesAvailable"
             
-            if aStream == inStream {
+            if aStream === inStream {
                 var buffer = [UInt8](repeating: 0, count:4096)
                 inStream!.read(&buffer, maxLength: buffer.count)
                 let bufferStr = NSString(bytes: &buffer, length: buffer.count, encoding: String.Encoding.utf8.rawValue)
@@ -736,7 +748,12 @@ class TCPCommunication:NSObject,StreamDelegate
             break
             
         case Stream.Event.hasSpaceAvailable:
-            print("HasSpaceAvailable")
+            if(aStream === outStream)
+                        {
+                            print("output:hasSpaceAvailable\n")
+                        }
+
+                        print("Input = hasSpaceAvailable\n")
             
         case Stream.Event():
             print("None")

@@ -86,7 +86,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
 
     var sysdata:NSDictionary!
     var systemdata:NSDictionary!
-
+    var IsVehicleNumberRequire:String!
     var pickerViewLocation: UIPickerView = UIPickerView()
     var ssid = [String]()
     var Pass = [String]()
@@ -923,6 +923,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                 let IsApproved = objUserData.value(forKey: "IsApproved") as! NSString
                 let PersonName = objUserData.value(forKey: "PersonName") as! NSString
                 let PhoneNumber = objUserData.value(forKey: "PhoneNumber") as! NSString
+                IsVehicleNumberRequire = objUserData.value(forKey: "IsVehicleNumberRequire") as! NSString as String
                 IsOdoMeterRequire = objUserData.value(forKey: "IsOdoMeterRequire") as! NSString as String
                 IsLoginRequire = objUserData.value(forKey: "IsLoginRequire") as! NSString as String
                 IsDepartmentRequire = objUserData.value(forKey: "IsDepartmentRequire") as! NSString as String
@@ -937,7 +938,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                 let ScreenNameForDepartment = objUserData.value(forKey: "ScreenNameForDepartment") as! String
                 let OtherLabel = objUserData.value(forKey: "OtherLabel") as! String
                 
-                
+                Vehicaldetails.sharedInstance.IsVehicleNumberRequire = IsVehicleNumberRequire
                 Vehicaldetails.sharedInstance.ScreenNameForVehicle = ScreenNameForVehicle
                 Vehicaldetails.sharedInstance.ScreenNameForPersonnel = ScreenNameForPersonnel
                 Vehicaldetails.sharedInstance.ScreenNameForHours = ScreenNameForHours
@@ -1313,7 +1314,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                     
                     if(Uhosenumber.count == 1)
                     {
-                        var index: Int = 0
+                        let index: Int = 0
                         let siteid = siteID[index]
                         let ssId = ssid[index]
                         self.wifiNameTextField.text = ssid[index]
@@ -1584,6 +1585,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
 //            showAlert(message:"We have detected that your device has been offline. You have \(Available_preauthtransactions.count) offline transactions remaining. In order to resupply your offline transaction count, you will need to take your device where it has cellular service so the offline transactions can be sent to the Cloud, and you will be able to perform additional offline transactions. If you have any questions, please call into Support.")//NSLocalizedString("HelptextSelectedSite", comment:"") )
         }
         else{
+            self.defaults.setValue("0", forKey: "previouspulsedata")
             gobuttontap()
         }
         
@@ -1631,8 +1633,30 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
 //                    shownotransId(message: NSLocalizedString("Preauthnointernet", comment:""))//"Pre-authorized transactions not available for you. Please enabled your internet connection or Please contact your company’s administrator.")
                 }
                 else if(notransactionid == "False"){
-
-                    self.performSegue(withIdentifier: "GO", sender: self)
+                    if(self.IsVehicleNumberRequire == "True"){
+                        self.performSegue(withIdentifier: "veh", sender: self)
+                    }
+                    else{
+                        if(self.IsDepartmentRequire == "True"){
+                            self.performSegue(withIdentifier: "dept", sender: self)
+                        }
+                        else{
+                            if(self.IsPersonnelPINRequire == "True"){
+                                self.performSegue(withIdentifier: "pin", sender: self)
+                            }
+                            else{
+                                if(self.IsOtherRequire == "True"){
+                                    self.performSegue(withIdentifier: "other", sender: self)
+                                }
+                                else{
+                                    //self.senddata(deptno: self.IsDepartmentRequire,ppin:self.IsPersonnelPINRequire,other:self.IsOtherRequire)
+                                    Vehicaldetails.sharedInstance.MinLimit = "0"
+                                    self.performSegue(withIdentifier: "Go", sender: self)
+                                }
+                            }
+                        }
+                    }
+//                    self.performSegue(withIdentifier: "GO", sender: self)
                 }
             }
             }
@@ -1965,7 +1989,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
     
     func Upload(jsonstring: String,filename:String,siteName:String)
     {
-         var FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
+        let FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
 //        FSURL = Vehicaldetails.sharedInstance.URL + "/HandlerTrak.ashx"
         let Email = defaults.string(forKey: "address")
         let uuid = defaults.string(forKey: "uuid")

@@ -719,14 +719,14 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
                            }
                        }
 
-                           //USER IS NOT REGISTER TO SYSTEM
-                       else if(ResponseText == "New Registration") {
-                           let appDel = UIApplication.shared.delegate! as! AppDelegate
-                           defaults.set(0, forKey: "Register")
-                           self.web.sentlog(func_name: "New Registration", errorfromserverorlink: "", errorfromapp: "")
-                           // Call a method on the CustomController property of the AppDelegate
-                           appDel.start()
-                       }
+//                           //USER IS NOT REGISTER TO SYSTEM
+//                       else if(ResponseText == "New Registration") {
+//                           let appDel = UIApplication.shared.delegate! as! AppDelegate
+//                           defaults.set(0, forKey: "Register")
+//                           self.web.sentlog(func_name: "New Registration", errorfromserverorlink: "", errorfromapp: "")
+//                           // Call a method on the CustomController property of the AppDelegate
+//                           appDel.start()
+//                       }
 
                        else if(Message == "fail") {
 
@@ -1788,13 +1788,13 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
             }
             
              companyid = groupAdminCompanyListCompanyID[index]
-            let Companyname = groupAdminCompanyList[index]
+            _ = groupAdminCompanyList[index]
            
             
           
             
             let Json = systemdata.value(forKey: "SSIDDataObj") as! NSArray
-            let rowCount = Json.count
+            _ = Json.count
             
 //            for i in 0  ..< rowCount
 //            {
@@ -1844,7 +1844,7 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
                 {
                     let filename: String = "\(reportsArray[x])"
                     let Split = filename.components(separatedBy: "#")
-                    let siteName = Split[1]
+//                    let siteName = Split[1]
 
                     let JData: String = cf.preauthReadReportFile(fileName: filename)
                     if(JData != "")
@@ -1878,7 +1878,7 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
                     let filename: String = "\(reportsArray[x])"
                     let Split = filename.components(separatedBy: "#")
 
-                    let siteName = Split[1]
+//                    let siteName = Split[1]
 
                     let JData: String = cf.preauthReadReportFile(fileName: filename)
                     if(JData != "")
@@ -1894,7 +1894,7 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
     
     func Upload(jsonstring: String,filename:String,siteName:String)
     {
-         var FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
+        let FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
 //        FSURL = Vehicaldetails.sharedInstance.URL + "/HandlerTrak.ashx"
         let Email = defaults.string(forKey: "address")
         let uuid = defaults.string(forKey: "uuid")

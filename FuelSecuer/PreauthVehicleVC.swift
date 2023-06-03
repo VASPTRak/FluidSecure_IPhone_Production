@@ -92,7 +92,7 @@ class PreauthVehiclenoVC: UIViewController,UITextFieldDelegate {
                 getdata.remove(at: getdata.startIndex)
                 
                 print(getdata)
-                var json = testAES(encryped_data: getdata)
+                let json = testAES(encryped_data: getdata)
                 //print(json)
                 let data1:Data = json.data(using: String.Encoding.utf8.rawValue)! as Data
                 do {
@@ -675,7 +675,7 @@ class PreauthVehiclenoVC: UIViewController,UITextFieldDelegate {
                                 
                                 print(Totalfuelquantity)
                                 Totalfuelquantity = Totalfuelquantity + Float(FuelQuantityOfVehiclePerMonth)!
-                                var limit = (FuelLimit_PerMonth as NSString).floatValue - Totalfuelquantity
+                                let limit = (FuelLimit_PerMonth as NSString).floatValue - Totalfuelquantity
                                 
                                 if(limit < 0.0)
                                 {
@@ -703,7 +703,7 @@ class PreauthVehiclenoVC: UIViewController,UITextFieldDelegate {
                                 else{
 
                                     print(Totalfuelquantity)
-                                    var limit = (FuelLimit_PerDay as NSString).floatValue - Totalfuelquantity
+                                    let limit = (FuelLimit_PerDay as NSString).floatValue - Totalfuelquantity
                                     if(limit < 0.0)
                                     {
                                         self.showAlert(message: NSLocalizedString("Fueldaylimit", comment:""))
@@ -728,7 +728,7 @@ class PreauthVehiclenoVC: UIViewController,UITextFieldDelegate {
                                 else{
 
                                     print(Totalfuelquantity)
-                                    var limit = (FuelLimitPerTXN as NSString).floatValue //- Totalfuelquantity
+                                    let limit = (FuelLimitPerTXN as NSString).floatValue //- Totalfuelquantity
                                     if(limit < 0.0)
                                     {
                                         self.showAlert(message: NSLocalizedString("Fueldaylimit", comment:""))
@@ -757,7 +757,7 @@ class PreauthVehiclenoVC: UIViewController,UITextFieldDelegate {
                             else{
                                 
                                 print(Totalfuelquantity)
-                                var limit = (FuelLimit_PerDay as NSString).floatValue - Totalfuelquantity
+                                let limit = (FuelLimit_PerDay as NSString).floatValue - Totalfuelquantity
                                 if(limit < 0.0)
                                 {
                                     self.showAlert(message: NSLocalizedString("Fueldaylimit", comment:""))
@@ -781,7 +781,7 @@ class PreauthVehiclenoVC: UIViewController,UITextFieldDelegate {
                             else{
                                 
                                 print(Totalfuelquantity)
-                                var limit = (FuelLimitPerTXN as NSString).floatValue - Totalfuelquantity
+                                let limit = (FuelLimitPerTXN as NSString).floatValue - Totalfuelquantity
                                 if(limit < 0.0)
                                 {
                                     self.showAlert(message: NSLocalizedString("Fueldaylimit", comment:""))

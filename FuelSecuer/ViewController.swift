@@ -181,7 +181,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         
         if defaults.value(forKey: "dateof_DownloadVehiclesForphone") != nil {
             //Key exists
-            print(defaults.value(forKey: "dateof_DownloadVehiclesForphone"))
+//            print(defaults.value(forKey: "dateof_DownloadVehiclesForphone"))
         }
         else
         {
@@ -218,22 +218,80 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         Vehicaldetails.sharedInstance.hours = ""
         
         getdatauser()
-        
-        if(defaults.string(forKey: "dateof_DownloadVehiclesForphonefilename") == nil) {
+        //check the downloadvehiclesforphone & DownloadPreAuthDepartmentData in mobile device.
+        if(defaults.string(forKey: "dateof_DownloadVehiclesForphonefilename") == nil)   {
             _ = web.GetVehiclesForPhone()
-            _ = web.GetDepartmentsForPhone()
+            
             sentcalltogetdatavehicle = true
         }
         else{
             if(cf.checkPath(fileName: defaults.string(forKey: "dateof_DownloadVehiclesForphonefilename")!) == true)
-            {}
+            {
+                print(defaults.string(forKey: "dateof_DownloadVehiclesForphonefilename")!)
+            }
             else{
-                _ = web.GetVehiclesForPhone()
+                //                _ = web.GetVehiclesForPhone()
                 _ = web.GetDepartmentsForPhone()
                 sentcalltogetdatavehicle = true
             }
         }
+        if(defaults.string(forKey: "dateof_DownloadPreAuthDepartmentData") == nil)
+        {
+            _ = web.GetDepartmentsForPhone()
+            sentcalltogetdatavehicle = true
+        }
+        else
+        if(cf.checkPath(fileName: defaults.string(forKey: "dateof_DownloadPreAuthDepartmentData")!) == true)
+        {
+            print(defaults.string(forKey: "dateof_DownloadPreAuthDepartmentData")!)
+        }
+//        else{
+////            _ = web.GetVehiclesForPhone()
+//            _ = web.GetDepartmentsForPhone()
+//            sentcalltogetdatavehicle = true
+//        }
+        
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
+            [weak self] (granted, error) in
+            print("Permission granted: \(granted)")
+            
+            guard granted else {
+                print("Please enable \"Notifications\" from App Settings.")
+                self?.showPermissionAlert()
+                return
+            }
+        }
+        }
+//    }
+    
+    func showPermissionAlert() {
+        let alert = UIAlertController(title: "WARNING", message: "Please enable access to Notifications in the Settings app.", preferredStyle: .alert)
+
+        let settingsAction = UIAlertAction(title: "Settings", style: .default) {[weak self] (alertAction) in
+            self?.gotoAppSettings()
+        }
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+
+        alert.addAction(settingsAction)
+        alert.addAction(cancelAction)
+
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
     }
+        
+    private func gotoAppSettings() {
+
+        guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+            return
+        }
+
+        if UIApplication.shared.canOpenURL(settingsUrl) {
+            UIApplication.shared.openURL(settingsUrl)//UIApplication.shared.openURL(settingsUrl)
+        }
+    }
+
     
     func GotoSettingpage(message: String)
     {
@@ -281,7 +339,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                 KeychainService.savePassword(token: uuid as NSString)
             }
         }
-        
+        print(defaults.string(forKey: "Register"))
         var password = KeychainService.loadPassword()
         if(password == nil || password == "")
         {
@@ -394,7 +452,8 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                         let ScreenNameForPersonnel = objUserData.value(forKey: "ScreenNameForPersonnel") as! String
                         let ScreenNameForVehicle = objUserData.value(forKey: "ScreenNameForVehicle") as! String
                         let ScreenNameForDepartment = objUserData.value(forKey: "ScreenNameForDepartment") as! String
-                        
+                        let TopicNameForFCMFor_IPhone = objUserData.value(forKey: "TopicNameForFCMForIPhone") as! String
+                        defaults.set(TopicNameForFCMFor_IPhone, forKey: "TopicNameForFCMForIPhone")
                         
                         Vehicaldetails.sharedInstance.ScreenNameForVehicle = ScreenNameForVehicle
                         Vehicaldetails.sharedInstance.ScreenNameForPersonnel = ScreenNameForPersonnel
@@ -808,13 +867,13 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                     }
                     
                     //USER IS NOT REGISTER TO SYSTEM
-                    else if(ResponseText == "New Registration") {
-                        let appDel = UIApplication.shared.delegate! as! AppDelegate
-                        defaults.set(0, forKey: "Register")
-                        self.web.sentlog(func_name: "New Registration", errorfromserverorlink: "", errorfromapp: "")
-                        // Call a method on the CustomController property of the AppDelegate
-                        appDel.start()
-                    }
+//                    else if(ResponseText == "New Registration") {
+//                        let appDel = UIApplication.shared.delegate! as! AppDelegate
+//                        defaults.set(0, forKey: "Register")
+//                        self.web.sentlog(func_name: "New Registration", errorfromserverorlink: "", errorfromapp: "")
+//                        // Call a method on the CustomController property of the AppDelegate
+//                        appDel.start()
+//                    }
                     
                     else if(Message == "fail") {
                         
@@ -934,7 +993,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         } else {}
         unsync.unsyncTransaction()   ///check
         self.unsync.Send10trans()
-        self.preauthunsyncTransaction()
+       _ = self.preauthunsyncTransaction()
         
         if(Vehicaldetails.sharedInstance.Warningunsync_transaction == "True"){
             
@@ -974,7 +1033,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         
         delay(1){
             let soon = Date()
-            print(self.now!,soon)
+//            print(self.now!,soon)
             if(self.now! < soon){
                 self.cf.showUpdateWithForce()
                 self.defaults.set("\(soon)",forKey: "Date")
@@ -1464,7 +1523,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             Vehicaldetails.sharedInstance.LinkFlaggedMessage = LinkFlagged_Message[index]
             Vehicaldetails.sharedInstance.MacAddress = Mac_Address[index]
             Vehicaldetails.sharedInstance.BTMacAddress = Bluetooth_MacAddress[index]
-            print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced,Vehicaldetails.sharedInstance.prevSSID,Vehicaldetails.sharedInstance.OriginalNamesOfLink)
+            print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced,Vehicaldetails.sharedInstance.prevSSID,Vehicaldetails.sharedInstance.OriginalNamesOfLink,Vehicaldetails.sharedInstance.BTMacAddress )
             defaults.set(siteid, forKey: "SiteID")
             
             let Json = systemdata.value(forKey: "SSIDDataObj") as! NSArray
@@ -1517,7 +1576,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                 {
                     let filename: String = "\(reportsArray[x])"
                     let Split = filename.components(separatedBy: "#")
-                    let siteName = Split[1]
+                    _ = Split[1]
                     
                     let JData: String = cf.preauthReadReportFile(fileName: filename)
                     if(JData != "")
@@ -1551,7 +1610,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                     let filename: String = "\(reportsArray[x])"
                     let Split = filename.components(separatedBy: "#")
                     
-                    let siteName = Split[1]
+                    _ = Split[1]
                     
                     let JData: String = cf.preauthReadReportFile(fileName: filename)
                     if(JData != "")
@@ -1566,7 +1625,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     
     func Upload(jsonstring: String,filename:String,siteName:String)
     {
-        var FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
+        let FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
         
         let Email = defaults.string(forKey: "address")
         let uuid = defaults.string(forKey: "uuid")

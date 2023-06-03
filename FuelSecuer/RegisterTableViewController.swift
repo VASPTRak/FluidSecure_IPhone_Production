@@ -106,7 +106,10 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
     @IBAction func registerButtonClicked(sender: AnyObject) {
         activityindicator.isHidden = false
         activityindicator.startAnimating()
-        self.registerUser()
+        self.web.sentlog(func_name: "Register button tapped.", errorfromserverorlink: "", errorfromapp: "")
+        delay(1){
+            self.registerUser()
+        }
     }
 
     func show_Alert(message: String)
@@ -135,22 +138,23 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
     }
 
     func register(){
-        //        var uuid:String //= //UIDevice.current.identifierForVendor!.uuidString
+//                var uuid:String //= //UIDevice.current.identifierForVendor!.uuidString
                 var uuid = UUID().uuidString
                 KeychainService.savePassword(token: uuid as NSString)
                 //activityindicator.sizeToFit()
                 activityindicator.isHidden = false
                 activityindicator.startAnimating()
                 
-        //        let password = KeychainService.loadPassword()
-        //        if(password == nil){
-        //             uuid = UIDevice.current.identifierForVendor!.uuidString
-        //            KeychainService.savePassword(token: uuid as NSString)
-        //
-        //        }
-        //        else{
-        //            uuid = password! as String
-        //        }
+//                let password = KeychainService.loadPassword()
+//                if(password == nil){
+//                     uuid = UIDevice.current.identifierForVendor!.uuidString
+//                    KeychainService.savePassword(token: uuid as NSString)
+//
+//                }
+//                else{
+//                    uuid = password! as String
+//                }
+        
                 let Name = firstNameTextField.text
                 let Email = emailTextField.text
                 let string = uuid + ":" + Email! + ":" + "Register" + ":" + "\(Vehicaldetails.sharedInstance.Language)"
@@ -165,7 +169,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                 print(reply)
                 if(reply == "-1"){
                     show_Alert(message: NSLocalizedString("NoInternet", comment:"") )
-
+                    self.web.sentlog(func_name: "On Registration page No internet.", errorfromserverorlink: "", errorfromapp: "")
                 }//"Internet connection is not available.\(error)")}
                 else {
                     let data1:NSData = reply.data(using: String.Encoding.utf8)! as NSData
@@ -204,8 +208,9 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                     }
                         KeychainService.savePassword(token: uuid as NSString)
                     }
-
+                  
                     if(Message == "success") {
+                        self.web.sentlog(func_name: "On Registration page register successful UUID \(uuid).,Brand \(brandname)", errorfromserverorlink: "", errorfromapp: "")
                         showAlert(message: "\(ResponseText)" )
                         defaults.set(0, forKey: "Login")
                         defaults.set(1, forKey: "Register")

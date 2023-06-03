@@ -258,7 +258,7 @@ public extension UIDevice {
             
         ]
         
-        if let model = modelMap[String.init(validatingUTF8: modelCode!)!] {
+        if let model = modelMap[String.init(validatingUTF8: modelCode!)!] {//} .init(validatingUTF8: modelCode!)!] {
             if model == .simulator {
                 if let simModelCode = ProcessInfo().environment["SIMULATOR_MODEL_IDENTIFIER"] {
                     if let simModel = modelMap[String.init(validatingUTF8: simModelCode)!] {
@@ -372,7 +372,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     
     var IsStartbuttontapped : Bool = false
     var IsStopbuttontapped:Bool = false
-    var IsStopbuttontappedBLE:Bool = true
+    var IsStopbuttontappedBLE:Bool = false
     
     var Ispulsarcountsame :Bool = false
     var PulseCountSamefunctionCall :Bool = false
@@ -525,7 +525,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
             
             cf.delay(2){
                 self.Activity.hidesWhenStopped = true;
-                //                print(Vehicaldetails.sharedInstance.SSId,self.cf.getSSID())
+                
                 if(Vehicaldetails.sharedInstance.checkSSIDwithLink == "true"){
                     Vehicaldetails.sharedInstance.checkSSIDwithLink = "false"
                 }
@@ -549,31 +549,10 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                         self.AppconnectedtoBLE = true
                         if(self.appdisconnects_automatically == true)
                         {
-                            if(self.AppconnectedtoBLE == true){
-                                self.getlast10transaction()
-                                self.BLErescount = 0
-                                self.baseTextView = ""
-                                self.web.sentlog(func_name: "Sent Relay On Command to BT link LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
-                                self.outgoingData(inputText: "LK_COMM=relay:12345=ON")
-                                NotificationCenter.default.removeObserver(self)
-                                self.updateIncomingData ()
-                                
-                                self.cf.delay(0.1){
-                                    self.start.isHidden = true
-                                    self.cancel.isHidden = true
-                                    self.Stop.isHidden = false
-                                    //                                self.displaytime.text = NSLocalizedString("Fueling", comment:"")
-                                    //self.displaytime.textColor = UIColor.black
-                                    self.FDcheckBLEtimer.invalidate()
-                                    self.FDcheckBLEtimer = Timer.scheduledTimer(timeInterval: 4, target: self, selector: #selector(self.fdCheckBLE), userInfo: nil, repeats: true)
-                                }
-                            }
+
                         }
                     }
                     else{
-//                       self.cf.delay(1){
-                            
-//                            self.getBLEInfo()
                             
                             if(Vehicaldetails.sharedInstance.BTMacAddress == "")
                             {
@@ -582,29 +561,9 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                             
                             if(self.appdisconnects_automatically == true)
                             {
-                                if(self.AppconnectedtoBLE == true){
-                                    self.getlast10transaction()
-                                    self.BLErescount = 0
-                                    self.web.sentlog(func_name: "Sent Relay On Command to BT link LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
-                                    self.outgoingData(inputText: "LK_COMM=relay:12345=ON")
-                                    NotificationCenter.default.removeObserver(self)
-                                    self.updateIncomingData ()
-                                    
-                                    self.cf.delay(0.1){
-                                        self.start.isHidden = true
-                                        self.cancel.isHidden = true
-                                        self.Stop.isHidden = false
-                                        //                                self.displaytime.text = NSLocalizedString("Fueling", comment:"")
-                                        //self.displaytime.textColor = UIColor.black
-                                        self.FDcheckBLEtimer.invalidate()
-                                        self.FDcheckBLEtimer = Timer.scheduledTimer(timeInterval: 4, target: self, selector: #selector(self.fdCheckBLE), userInfo: nil, repeats: true)
-                                    }
-                                }
+
                             }
                             else{
-                                //self.start.isEnabled = true
-                                //  self.start.isHidden = false
-                                //    self.cancel.isHidden = false
                                 
                                 self.Activity.stopAnimating()
                                 self.timerview.invalidate()
@@ -663,9 +622,9 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                             
                             if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
                             {
-//                                self.cf.delay(0.5){
+
                                 self.showstart = self.web.getinfo()
-//                                }
+
                                 if(Vehicaldetails.sharedInstance.MacAddress == "" && self.cf.getSSID() != "" )
                                 {
                                     if (self.isUpdateMACAddress == false){
@@ -707,14 +666,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                             }
                                         } }
                                 }
-                                //                    if(Vehicaldetails.sharedInstance.checkSSIDwithLink == "true"){
-                                //
-                                //                    }
-                                //                    else{
-                                //                        if(self.IsStartbuttontapped == true){}
-                                //                        else{
-                                
-                                //                                        self.showstart = self.web.getinfo()//self.tcpcon.Getinfo()//self.showstart = self.web.getinfo()
+                               
                                 
                                 print(self.showstart)
                                 if(self.showstart == "true"){
@@ -929,35 +881,50 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
         }
         else{
             
-            if(IsStartbuttontapped == true){}  /// Is Start button tapped is true then do nothing
+            if(IsStartbuttontapped == true)
+            {
+                
+            }  /// Is Start button tapped is true then do nothing
             else {
-                if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
+                
+                if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
                 {
-                    if(self.showstart == "true") {
+                    self.outgoingData(inputText: "LK_COMM=relay:12345=OFF")
+                    self.updateIncomingData()
                         let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
-                        self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "7")//did not press start (start appeared, was never pressed):  User did not Press Start
+                        self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "5")
+                        self.disconnectFromDevice()
+                        self.goto_Start()
+                }
+                else if(Vehicaldetails.sharedInstance.HubLinkCommunication == "HTTP"){
+                    if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
+                    {
+                        if(self.showstart == "true") {
+                            let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                            self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "7")//did not press start (start appeared, was never pressed):  User did not Press Start
+                        }
+                        else
+                        {
+                            let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                            self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6")
+                        }
                     }
-                    else
+                    else if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID())
                     {
                         let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
-                        self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6")
+                        self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6") //unable to start (start never appeared): Potential Wifi Connection Issue
+                        //potentialfix()
                     }
+                    
+                    self.web.sentlog(func_name:" Fueling_screen_timeout, back to home screen", errorfromserverorlink: "", errorfromapp: "")
+                    FDcheckBLEtimer.invalidate()
+                    self.web.sentlog(func_name: "data send to server Final Quantity = \(self.Quantity1.text) ,Final Pulse Count = \(self.pulse.text)", errorfromserverorlink: "", errorfromapp: "")
+                    let appDel = UIApplication.shared.delegate! as! AppDelegate
+                    appDel.start()
+                    stoptimer_gotostart.invalidate()
+                    stoptimergotostart.invalidate()
+                    self.timerview.invalidate()
                 }
-                else if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID())
-                {
-                    let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
-                    self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6") //unable to start (start never appeared): Potential Wifi Connection Issue
-                    //potentialfix()
-                }
-                
-                self.web.sentlog(func_name:" Fueling_screen_timeout, back to home screen", errorfromserverorlink: "", errorfromapp: "")
-                FDcheckBLEtimer.invalidate()
-                self.web.sentlog(func_name: "data send to server Final Quantity = \(self.Quantity1.text) ,Final Pulse Count = \(self.pulse.text)", errorfromserverorlink: "", errorfromapp: "")
-                let appDel = UIApplication.shared.delegate! as! AppDelegate
-                appDel.start()
-                stoptimer_gotostart.invalidate()
-                stoptimergotostart.invalidate()
-                self.timerview.invalidate()
             }
         }
     }
@@ -965,7 +932,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     @objc func goto_Start()
     {
         isgotostartcalled = true
-        
+        isviewdidDisappear = true
         self.timerview.invalidate()
         self.stoptimergotostart.invalidate()
         self.stoptimer_gotostart.invalidate()
@@ -1338,7 +1305,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                     {
                                         st = self.tcpcon.setSamplingtime()  /// set Sampling time to FS link
                                         if(st.contains("200")){
-                                        self.web.UpdateSwitchTimeBounceForLink()
+                                      _ = self.web.UpdateSwitchTimeBounceForLink()
                                         }
                                     }
                                 }
@@ -1641,6 +1608,10 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                             self.showAlert(message: "There is a MAC address error. Please contact Support")//"Invalid Link Mac Address. Please try again.")
                             self.cf.delay(6)
                             {
+                            self.outgoingData(inputText: "LK_COMM=relay:12345=OFF")
+                            self.updateIncomingData()
+                                let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                                self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6")
                                 self.disconnectFromDevice()
                                 self.goto_Start()
                             }
@@ -1676,6 +1647,10 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                         self.showAlert(message: "There is a MAC address error. Please contact Support")//"Invalid Link Mac Address. Please try again.")
                         self.cf.delay(6)
                         {
+                        self.outgoingData(inputText: "LK_COMM=relay:12345=OFF")
+                        self.updateIncomingData()
+                            let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                            self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6")
                             self.disconnectFromDevice()
                             self.goto_Start()
                         }
@@ -1784,9 +1759,9 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                 self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "5")
                             }
                             //                    cleanup()
-                            //            isviewdidDisappear = true
-//                                        self.outgoingData(inputText: "LK_COMM=relay:12345=OFF")
-//                                        self.updateIncomingData()
+                            self.isviewdidDisappear = true
+                                        self.outgoingData(inputText: "LK_COMM=relay:12345=OFF")
+                                        self.updateIncomingData()
                                         self.disconnectFromDevice()
                             appDel.start()
                             self.Activity.style = UIActivityIndicatorView.Style.gray;
@@ -2428,7 +2403,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                                                         self.tcpcon.changessidname(wifissid: trimmedString)
                                                                     }
                                                                 }
-                                                                _ = self.web.SetHoseNameReplacedFlag()
+                                                                self.web.SetHoseNameReplacedFlag()
                                                                 //                                                                print(Vehicaldetails.sharedInstance.ReplaceableHoseName)
                                                                 //
                                                             }
@@ -2445,7 +2420,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                                                 {
                                                                     self.uploadbinfile()
                                                                     //                                                                    self.web.sentlog(func_name: "StopButtonTapped Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-                                                                    self.firmwareUpdateDemo()
+                                                                    _ = self.firmwareUpdateDemo()
                                                                     _ = self.web.UpgradeCurrentiotVersiontoserver()
                                                                     self.web.sentlog(func_name: "StopButtonTapped Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                                                                     
@@ -2840,16 +2815,16 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                             }
                             Vehicaldetails.sharedInstance.IsUpgrade = "N"
                             
-                            self.cf.delay(30){
-                                self.FDcheckBLEtimer.invalidate()
-                                Vehicaldetails.sharedInstance.gohome = true
-                                self.timerview.invalidate()
-                                self.web.sentlog(func_name: "data send to server Final Quantity = \(self.Quantity1.text) ,Final Pulse Count = \(self.pulse.text)", errorfromserverorlink: "", errorfromapp: "")
-                                let appDel = UIApplication.shared.delegate! as! AppDelegate
-                                self.web.sentlog(func_name: "stoprelay function 30 delay ", errorfromserverorlink: "", errorfromapp: "")
-                                appDel.start()
-                                self.web.sentlog(func_name: " OK buttontapped TXTN \(Vehicaldetails.sharedInstance.TransactionId) finished, back to home screen.", errorfromserverorlink: "", errorfromapp: "")
-                            }
+//                            self.cf.delay(30){
+//                                self.FDcheckBLEtimer.invalidate()
+//                                Vehicaldetails.sharedInstance.gohome = true
+//                                self.timerview.invalidate()
+//                                self.web.sentlog(func_name: "data send to server Final Quantity = \(self.Quantity1.text) ,Final Pulse Count = \(self.pulse.text)", errorfromserverorlink: "", errorfromapp: "")
+//                                let appDel = UIApplication.shared.delegate! as! AppDelegate
+//                                self.web.sentlog(func_name: "stoprelay function 30 delay ", errorfromserverorlink: "", errorfromapp: "")
+//                                appDel.start()
+//                                self.web.sentlog(func_name: " OK buttontapped TXTN \(Vehicaldetails.sharedInstance.TransactionId) finished, back to home screen.", errorfromserverorlink: "", errorfromapp: "")
+//                            }
                         }
                         if (self.stopdelaytime == true){}
                         else{
@@ -3209,7 +3184,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
             {
                 FDcheckBLEtimer.invalidate()
                 self.timerview.invalidate()
-                self.goto_Start()
+                self.gotoStart()
                 self.FDcheckBLEtimer.invalidate()
                 self.web.sentlog(func_name:" AppStops because transaction id 0, Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
             }
@@ -3794,14 +3769,15 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
             //self.web.wifi_settings()
             self.unsync.unsyncTransaction()   ///check
             self.unsync.Send10trans()
-            let appDel = UIApplication.shared.delegate! as! AppDelegate
-            appDel.start()
-           
-            
             self.timerview.invalidate()
             //UIApplication.shared.delegate = nil
             self.web.sentlog(func_name: " OK buttontapped TXTN \(Vehicaldetails.sharedInstance.TransactionId) finished, back to home screen.", errorfromserverorlink: "", errorfromapp: "")
             self.stopdelaytime = true
+            let appDel = UIApplication.shared.delegate! as! AppDelegate
+            appDel.start()
+           
+            
+            
             
         }
     }
@@ -3932,8 +3908,11 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                     cf.delay(40){
                         do
                         {
-                            try self.stoprelay()
-                            self.web.sentlog(func_name: "auto stops the app when app not connect the link while reconnecting." , errorfromserverorlink: "", errorfromapp: "")
+                            if(self.displaytime.text == "Fueling…...")
+                            {
+                                try self.stoprelay()
+                                self.web.sentlog(func_name: "auto stops the app when app not connect the link while reconnecting." , errorfromserverorlink: "", errorfromapp: "")
+                            }
                         }
                         catch{}
                     }
@@ -3966,6 +3945,15 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
             self.GetPulsarstartimer.invalidate()
             self.timerview.invalidate()
             goto_Start()
+            self.newAsciiText.mutableString.replaceOccurrences(of: "\n\n", with: "\n", options: [], range: NSMakeRange(0, self.newAsciiText.length))
+            outgoingData(inputText: "LK_COMM=relay:12345=OFF")
+            //                        self.cf.delay(0.1){
+            
+            
+            
+            NotificationCenter.default.removeObserver(self)
+            //updateIncomingData()
+            disconnectFromDevice()
             self.GetPulsarstartimer.invalidate()
             self.web.sentlog(func_name:" AppStops because transaction id 0, Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
         }
@@ -4066,11 +4054,14 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                         }
                         print(Last_Count)
                         var pulsedata = defaults.string(forKey: "previouspulsedata")
-                        if(pulsedata == ""){}
+                        if(pulsedata == "")
+                        {
+                            defaults.setValue("0", forKey: "previouspulsedata")
+                        }
                         else{
                             let totalpulsecount = Int(pulsedata! as String)! + Int(counts as String)!
                             print(Last_Count,totalpulsecount,counts,pulsedata)
-                            if(totalpulsecount < Int(Last_Count as String)!)
+                            if(totalpulsecount < Int(Float(Last_Count as String)!))
                             {
                                 defaults.setValue(Last_Count, forKey: "previouspulsedata")
                                 print("pulsedata:\( pulsedata!),Counts: \(counts),LastCount: \( Last_Count)")
@@ -4079,7 +4070,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                             }else{
                                 
                                 let totalpulsecount = Int(pulsedata! as String)! + Int(counts as String)!
-                                if(totalpulsecount < Int(Last_Count as String)!)
+                                if(totalpulsecount < Int(Float(Last_Count as String)!))
                                 {
                                     defaults.setValue(Last_Count, forKey: "previouspulsedata")
                                     print("pulsedata:\( pulsedata!),Counts: \(counts),LastCount: \( Last_Count)")
@@ -4314,14 +4305,14 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
             let pulse = self.sysdata.value(forKey: "pulse") as! NSNumber
             
             print(pulse)
-            
-            self.web.sentlog(func_name: " BLE Response from link is \(pulse)", errorfromserverorlink:"", errorfromapp: "")
-
-            self.countfromlink = Int(truncating: pulse)
-            
-            self.getPulserBLE(counts:"\(pulse)")
-            self.displaytime.text = ""
-            
+//            self.delay(1){
+                self.web.sentlog(func_name: " BLE Response from link is \(pulse)", errorfromserverorlink:"", errorfromapp: "")
+                
+                self.countfromlink = Int(truncating: pulse)
+                
+                self.getPulserBLE(counts:"\(pulse)")
+                self.displaytime.text = ""
+//            }
         }
         catch let error as NSError {
             print ("Error: \(error.domain)")
@@ -4372,7 +4363,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
             NotificationCenter.default.removeObserver(self.observationToken!)
         }
         self.newAsciiText.mutableString.replaceOccurrences(of: "\n\n", with: "\n", options: [], range: NSMakeRange(0, self.newAsciiText.length))
-        self.outgoingData(inputText: "LK_COMM=T:\(Vehicaldetails.sharedInstance.TransactionId);D:\(dtt1);V:\(Vehicaldetails.sharedInstance.VehicleId);")
+        self.outgoingData(inputText:"LK_COMM=T:\(Vehicaldetails.sharedInstance.TransactionId);D:\(dtt1);V:\(Vehicaldetails.sharedInstance.VehicleId);") //TDV change the vehicle id to vehicle no
         
         NotificationCenter.default.removeObserver(self)
         self.updateIncomingData()
@@ -4938,6 +4929,10 @@ extension FuelquantityVC: CBCentralManagerDelegate {
                     self.web.sentlog(func_name: "App Not able to Connect BT Link and Subscribed peripheral Connection. Attempt  \(countfailBLEConn)", errorfromserverorlink: "", errorfromapp: "")
 
                     self.web.sentlog(func_name: "App Switches BT to UDP...", errorfromserverorlink: "", errorfromapp: "")
+                   
+                    let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                    self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6")
+                    
                     Vehicaldetails.sharedInstance.HubLinkCommunication = "UDP"
                     DispatchQueue.main.async() {
 
@@ -5163,6 +5158,10 @@ extension FuelquantityVC: CBCentralManagerDelegate {
                             self.web.sentlog(func_name: "App Not able to Connect BT Link and Subscribed peripheral Connection. Attempt  \(countfailBLEConn)", errorfromserverorlink: "", errorfromapp: "")
 
                             self.web.sentlog(func_name: "App Switches BT to UDP...", errorfromserverorlink: "", errorfromapp: "")
+                            
+                            let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                            self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6")
+                            
                             Vehicaldetails.sharedInstance.HubLinkCommunication = "UDP"
                             DispatchQueue.main.async() {
 
@@ -5208,7 +5207,7 @@ extension FuelquantityVC: CBCentralManagerDelegate {
         }
         else {
             print("Something wrong with BLE")
-            self.web.sentlog(func_name: "Something wrong with BLE  ", errorfromserverorlink: "\(countfromlink)", errorfromapp:"")
+            self.web.sentlog(func_name: "Something wrong with BLE  ", errorfromserverorlink: "", errorfromapp:"")
             // Not on, but can have different issues
         }
     }
@@ -5223,7 +5222,7 @@ extension FuelquantityVC: CBCentralManagerDelegate {
             if(peripheral.name == "nil" || peripheral.name == "(null)")
             {
                 
-                self.web.sentlog(func_name: "onFuelingScreen peripheral \(peripheral)", errorfromserverorlink: "Peripheral name: \(String(describing: peripheral.name))", errorfromapp:"")
+                self.web.sentlog(func_name: "onFuelingScreen peripheral \(peripheral), RSSI \(RSSI)", errorfromserverorlink: "Peripheral name: \(String(describing: peripheral.name))", errorfromapp:"")
                
             }
             
@@ -5231,7 +5230,7 @@ extension FuelquantityVC: CBCentralManagerDelegate {
                 blePeripheral = peripheral
                 self.peripherals.append(peripheral)
                 self.RSSIs.append(RSSI)
-                self.web.sentlog(func_name: "On FuelingScreen append the blePeripherals \(peripheral)", errorfromserverorlink: "\(peripherals)", errorfromapp:"")
+                self.web.sentlog(func_name: "On FuelingScreen append the blePeripherals \(peripherals.count),RSSI \(RSSI)", errorfromserverorlink: "\(peripherals)", errorfromapp:"")
                 peripheral.delegate = self
 
             }
@@ -5296,17 +5295,21 @@ extension FuelquantityVC: CBCentralManagerDelegate {
                 }
                 else{
                     self.Reconnect.isHidden = false
+                    ifSubscribed = false
                     self.Reconnect.text = "Reconnecting to pump."//NSLocalizedString("Reconnect" , comment:"")
                     //displaytime.textColor = UIColor.red
+//                    if(Last_Count == nil){
+//                        Last_Count = "0"
+//                    }else{
                     self.appdisconnects_automatically = true
                     self.web.LINKDisconnectionError()
                     self.connectToDevice()
                     iskBLE_Characteristic_uuid_Tx_upload_setnotifytrue = false
                     iskBLE_Characteristic_uuid_Tx_setnotifytrue = false
-                    self.delay(0.2){
-                        self.viewDidAppear(true)
-                        self.isNotifyenable = false
-                        
+                        self.delay(1){
+                            self.viewDidAppear(true)
+                            self.isNotifyenable = false
+//                        }
                     }
                 }
             }
@@ -5374,7 +5377,7 @@ extension FuelquantityVC: CBCentralManagerDelegate {
                 {
                     let trimmedString = Vehicaldetails.sharedInstance.ReplaceableHoseName.trimmingCharacters(in: .whitespacesAndNewlines)
                     self.renamelink(SSID:trimmedString)
-                    _ = self.web.SetHoseNameReplacedFlag()
+                    self.web.SetHoseNameReplacedFlag()
                 }
                 self.isdisconnected = true
             }
@@ -5828,6 +5831,28 @@ extension FuelquantityVC: CBPeripheralDelegate {
                     //                        {
                     //                            self.showAlert(message: "Macaddress is not matched \(Vehicaldetails.sharedInstance.BTMacAddress)" )
                     //                        }
+                }
+            }
+            if(self.appdisconnects_automatically == true)
+            {
+                if(self.AppconnectedtoBLE == true){
+                    self.getlast10transaction()
+                    self.BLErescount = 0
+                    self.baseTextView = ""
+                    self.web.sentlog(func_name: "Sent Relay On Command to BT link LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
+                    self.outgoingData(inputText: "LK_COMM=relay:12345=ON")
+                    NotificationCenter.default.removeObserver(self)
+                    self.updateIncomingData ()
+                    
+                    self.cf.delay(0.1){
+                        self.start.isHidden = true
+                        self.cancel.isHidden = true
+                        self.Stop.isHidden = false
+                        //                                self.displaytime.text = NSLocalizedString("Fueling", comment:"")
+                        //self.displaytime.textColor = UIColor.black
+                        self.FDcheckBLEtimer.invalidate()
+                        self.FDcheckBLEtimer = Timer.scheduledTimer(timeInterval: 4, target: self, selector: #selector(self.fdCheckBLE), userInfo: nil, repeats: true)
+                    }
                 }
             }
         }

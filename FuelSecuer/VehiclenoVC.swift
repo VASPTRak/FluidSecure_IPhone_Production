@@ -104,7 +104,7 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
             Barcodescanvalue = scanvehicle
             Barcodevalue.text = "Barcode " + scanvehicle
             Vehicaldetails.sharedInstance.Barcodescanvalue = Barcodescanvalue
-            Vehicaldetails.sharedInstance.odometerreq = "False"
+//            Vehicaldetails.sharedInstance.odometerreq = "False"
             odo = Vehicaldetails.sharedInstance.odometerreq
             print(odo , Vehicaldetails.sharedInstance.odometerreq)
             
@@ -122,8 +122,8 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
     override func viewWillAppear(_ animated: Bool) {
         IsScanBarcode = false
         Vehicleno.becomeFirstResponder()
-        UIKeyboardType.default
-        UIKeyboardAppearance.alert
+//        UIKeyboardType.default
+//        UIKeyboardAppearance.alert
         
         stoptimergotostart.invalidate()
         stoptimergotostart = Timer.scheduledTimer(timeInterval: (Double(1)*60), target: self, selector: #selector(VehiclenoVC.gotostart), userInfo: nil, repeats: false)
