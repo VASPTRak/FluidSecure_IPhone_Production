@@ -765,7 +765,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         locationManager.desiredAccuracy=kCLLocationAccuracyBest
         locationManager.startUpdatingLocation()
         currentlocation = locationManager.location
-        
+        Vehicaldetails.sharedInstance.AppType = "preAuthTransaction"
         //= UIDevice.current.identifierForVendor!.uuidString
         
         var password = KeychainService.loadPassword()
@@ -1541,6 +1541,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
             print("SSID: \(cf.getSSID())")
         } else {}
         unsync.unsyncTransaction()
+       
         
         preauthusyncdatatimer.invalidate()
         preauthusyncdatatimer = Timer.scheduledTimer(timeInterval: (Double(1)*60), target: self, selector: #selector(PreauthVC.preauthunsyncTransaction), userInfo: nil, repeats: true)

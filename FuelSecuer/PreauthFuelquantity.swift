@@ -955,6 +955,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                 self.web.sentlog(func_name:" Saved Last Transaction to Phone, Date\(dtt1) TransactionId:\(lasttransID),FuelQuantity:\((fuelquantity)),Pulses:\(lastpulsarcount)", errorfromserverorlink: "Selected Hose : \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"Connetced link : \( self.cf.getSSID())")
             }
         }
+        self.newTransactionid()
     }
     
     func Startfueling()
@@ -2531,7 +2532,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
             
             if(sendtransactioncausereinstate == true)
             {
-                 let FuelQuan = self.cf.calculate_fuelquantity(quantitycount: Int(Last_Count as String)!)
+                let FuelQuan = self.cf.calculate_fuelquantity(quantitycount: Int(Float(Last_Count as String)!))
                  Sendtransaction(fuelQuantity: "\(FuelQuan)")
              Interrupted_TransactionFlag = "y"
                  self.web.UpdateInterruptedTransactionFlag(TransactionId: "\(Vehicaldetails.sharedInstance.TransactionId)",Flag: Interrupted_TransactionFlag)
@@ -3194,6 +3195,69 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
         
     }
     
+    func newTransactionid()
+    {
+        let TransactionId = "\(Vehicaldetails.sharedInstance.TransactionId)"
+        let managedObjectContext = (UIApplication.shared.delegate as! AppDelegate).managedObjectContext
+        let entityDescription = NSEntityDescription.entity(forEntityName: "TransactionID",in: managedObjectContext)
+        let ID = TransactionID(entity: entityDescription!, insertInto: managedObjectContext)
+
+        let context = (UIApplication.shared.delegate as! AppDelegate).managedObjectContext
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName:"TransactionID")
+        fetchRequest.returnsObjectsAsFaults = false
+        let resultPredicate2 = NSPredicate (format:"(transactionid == %@)",TransactionId)
+        let compound = NSCompoundPredicate(andPredicateWithSubpredicates:[resultPredicate2])
+        fetchRequest.predicate = compound
+        do{
+            results = []
+            results = try context.fetch(fetchRequest) as! [NSManagedObject]
+            print(results)
+        } catch let error as NSError {
+            print ("Error: \(error.domain)")
+        }
+        Transaction_ID = []
+        Transaction_ID = results
+        print(results)
+
+        if (results == [])
+        {
+            let request = NSFetchRequest<NSFetchRequestResult>(entityName: "transactionID")
+            request.returnsObjectsAsFaults = false
+            ID.isactive = "false"
+            ID.transactionid = TransactionId as String
+
+            do{
+                try managedObjectContext.save()
+            }catch let error as NSError {
+                print ("Error: \(error.domain)")
+
+            }
+        }
+        else {
+
+            let count = Transaction_ID.count
+            let request = NSFetchRequest<NSFetchRequestResult>(entityName: "transactionID")
+            request.returnsObjectsAsFaults = false
+
+            for i in 0  ..< count
+            {
+                let certificate = self.Transaction_ID[i]
+                certificate.setValue( "true" as String, forKey: "isactive")
+                certificate.setValue( TransactionId as String, forKey: "transactionid")
+
+                do{
+                    try managedObjectContext.save()
+
+                }catch let error as NSError {
+                    print ("Error: \(error.domain)")
+                }
+
+                let Transactioniddeatils = Transaction_id(isactive: "true",TransactionID: TransactionId as String)
+                Vehicaldetails.sharedInstance.Transaction_id.add(Transactioniddeatils)
+            }
+        }
+    }
+    
     func Sendtransaction(fuelQuantity:String)
     {
         let Odomtr = Vehicaldetails.sharedInstance.Odometerno
@@ -3217,6 +3281,38 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
         print(reply)
     }
     // MARK: - BLE Functions
+    
+    func sendpulsar_type()
+    {
+        if(AppconnectedtoBLE == true ){
+        
+        if(Vehicaldetails.sharedInstance.PulserTimingAdjust == "1")
+        {
+            outgoingData(inputText: "LK_COMM=p_type:" + "\(Vehicaldetails.sharedInstance.PulserTimingAdjust)")
+            updateIncomingData()
+
+        }
+        else  if(Vehicaldetails.sharedInstance.PulserTimingAdjust == "2")
+        {
+            outgoingData(inputText: "LK_COMM=p_type:" + "\(Vehicaldetails.sharedInstance.PulserTimingAdjust)")
+            updateIncomingData()
+
+        }
+            else  if(Vehicaldetails.sharedInstance.PulserTimingAdjust == "3")
+            {
+                outgoingData(inputText: "LK_COMM=p_type:" + "\(Vehicaldetails.sharedInstance.PulserTimingAdjust)")
+                updateIncomingData()
+
+            }
+            else  if(Vehicaldetails.sharedInstance.PulserTimingAdjust == "4")
+            {
+                outgoingData(inputText: "LK_COMM=p_type:" + "\(Vehicaldetails.sharedInstance.PulserTimingAdjust)")
+                updateIncomingData()
+
+            }
+       }
+    }
+    
     
     func Stopconnection()
     {
@@ -3490,7 +3586,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                             defaults.setValue(Last_Count, forKey: "previouspulsedata")
                             print("pulsedata:\( pulsedata!),Counts: \(counts),LastCount: \( Last_Count)")
                             pulsedata = Last_Count
-////
+///
                         }else{
                         
 
@@ -4326,7 +4422,15 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                     print("\(self.newAsciiText)")
                     if("\(self.newAsciiText)".contains("bt"))
                     {
-                        self.parsejson()
+                        
+                        if(gotLinkVersion == true)
+                        {
+                            
+                        }
+                        else{
+                            self.parsejson()
+                        }
+                       // self.parsejson()
                     }
 
                     if("\(characteristicASCIIValue)".contains("{\"pulse\":"))
@@ -5045,7 +5149,25 @@ extension PreauthFuelquantity: CXCallObserverDelegate
             }
             
             
+           
+            //#2177
             print("Value Recieved: \((characteristicASCIIValue as String))")
+            if("\(self.characteristicASCIIValue)".contains("{\"pulser_type\":1}$$"))
+            {
+                defaults.set("true", forKey: "UpdateSwitchTimeBounceForLink")
+            }
+            else if("\(self.characteristicASCIIValue)".contains("{\"pulser_type\":2}$$"))
+            {
+                defaults.set("true", forKey: "UpdateSwitchTimeBounceForLink")
+            }
+            else if("\(self.characteristicASCIIValue)".contains("{\"pulser_type\":3}$$"))
+            {
+                defaults.set("true", forKey: "UpdateSwitchTimeBounceForLink")
+            }
+            else if("\(self.characteristicASCIIValue)".contains("{\"pulser_type\":4}$$"))
+            {
+                defaults.set("true", forKey: "UpdateSwitchTimeBounceForLink")
+            }
             NotificationCenter.default.post(name:NSNotification.Name(rawValue: "Notify"), object: self)
             
             
@@ -5113,6 +5235,11 @@ extension PreauthFuelquantity: CXCallObserverDelegate
                 web.sentlog(func_name: "Connected to BT link, Subscribed. Set Notify enabled... to true in BLE transaction for ID:", errorfromserverorlink: "\(characteristic.uuid)", errorfromapp: ""); print("Subscribed. Notification has begun for: \(characteristic.uuid)")
                 if(IsStartbuttontapped == false)
                 {
+                    print(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce)
+                                        if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1")
+                                        {
+                                            self.sendpulsar_type()
+                                        }
                 getlast10transaction()
                     delay(1){
 //                        if(self.BTMacAddress == true)

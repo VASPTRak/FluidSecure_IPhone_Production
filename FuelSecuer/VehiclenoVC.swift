@@ -563,10 +563,7 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
         if(self.cf.getSSID() != "" && Vehicaldetails.sharedInstance.SSId != self.cf.getSSID() && Vehicaldetails.sharedInstance.HubLinkCommunication == "HTTP") {
             print("SSID: \(self.cf.getSSID())")
             self.showAlert(message:NSLocalizedString("SwitchoffyourWiFi", comment:""))
-//            self.showAlert(message:"Please switch off your wifi before proceeding. \n To switch off the wifi you can use the shortcut.  If you have an iPhone with Touch ID, swipe up from the bottom of the screen. If you have an iPhone with Face ID, swipe down from the upper right. Then tap on the wifi icon to switch it off.")
-//            self.Activity.stopAnimating()
-//            self.Activity.isHidden = true
-           // self.go.isEnabled = true
+
         }
         else{
             Activity.startAnimating()

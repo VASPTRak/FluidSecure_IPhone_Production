@@ -13,6 +13,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
     @IBOutlet var version: UILabel!
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var mobileNoTextField: UITextField!
+    @IBOutlet weak var Countrycode: UITextField!
     @IBOutlet weak var registerButton: UIButton!
     @IBOutlet var firstNameTextField: UITextField!
     @IBOutlet var Company_Name: UITextField!
@@ -21,6 +22,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
     @IBOutlet weak var activityindicator: UIActivityIndicatorView!
     var web = Webservices()
     var vc = ViewController()
+    var cf = Commanfunction()
     var sysdata:NSDictionary!
     let locationManager = CLLocationManager()
     var currentlocation :CLLocation!
@@ -37,6 +39,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                     placeholderdata(name: "Ingrese su nombre completo", textfield: firstNameTextField)
                     placeholderdata(name: "Introducir la dirección de correo electrónico", textfield: emailTextField)
                     placeholderdata(name: "Ingrese el número de celular", textfield: mobileNoTextField)
+            placeholderdata(name: "Código de país", textfield: Countrycode)
                     placeholderdata(name: "Ingrese el nombre de la empresa", textfield: Company_Name)
 
         }else  if(Vehicaldetails.sharedInstance.Language == "") ||  (Vehicaldetails.sharedInstance.Language == "en-US"){
@@ -44,6 +47,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                     placeholderdata(name: "Enter Full Name", textfield: firstNameTextField)
                     placeholderdata(name: "Enter Email Address", textfield: emailTextField)
                     placeholderdata(name: "Enter Mobile Number", textfield: mobileNoTextField)
+                    placeholderdata(name: "Country Code", textfield: Countrycode)
                     placeholderdata(name: "Enter Company Name", textfield: Company_Name)
 
         }
@@ -53,6 +57,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
         locationManager.startUpdatingLocation()
         currentlocation = locationManager.location
         mobileNoTextField.delegate = self
+        Countrycode.text = "+1"
         self.registerButton.layer.cornerRadius = 5
 //        checked.isHidden = true
 
@@ -198,7 +203,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                     defaults.set(firstNameTextField.text, forKey: "firstName")
                     defaults.set(mobileNoTextField.text, forKey: "mobile")
                     defaults.set(emailTextField.text, forKey: "address")
-                    //defaults.set(uuid, forKey: "uuid")
+                    defaults.set(uuid, forKey: "uuid")
                     defaults.set(uuid,forKey: "\(brandname)")
                     
                     
@@ -210,10 +215,19 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                     }
                   
                     if(Message == "success") {
-                        self.web.sentlog(func_name: "On Registration page register successful UUID \(uuid).,Brand \(brandname)", errorfromserverorlink: "", errorfromapp: "")
+                        self.web.sentlog(func_name: "On Registration page register successful UUID \(uuid).,Brand \(brandname),Name \(firstNameTextField.text!),Email \(mobileNoTextField.text!), Phone \(emailTextField.text!)", errorfromserverorlink: "", errorfromapp: "")
                         showAlert(message: "\(ResponseText)" )
                         defaults.set(0, forKey: "Login")
                         defaults.set(1, forKey: "Register")
+                        let sourcelat = currentlocation.coordinate.latitude
+                        let sourcelong = currentlocation.coordinate.longitude
+                        //print (sourcelat,sourcelong)
+                        let reply = web.checkApprove(uuid: uuid,lat:"\(sourcelat)",long:"\(sourcelong)")
+
+                        if(reply != "-1"){
+                            cf.DeleteFileInApp(fileName: "getSites.txt")
+                            cf.CreateTextFile(fileName: "getSites.txt", writeText: reply)
+                        }
                         let appDel = UIApplication.shared.delegate! as! AppDelegate
                         appDel.start()
                     }
@@ -278,16 +292,35 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
             {
                 let email_id = isValidEmail(testStr: emailTextField.text!)
                 if(email_id != false){
-                    let phoneno = validatephone(testStr: mobileNoTextField.text!)
-                    print(phoneno)
-                    if(phoneno == true){
-                        register()
-                    }
-                    else
+                    let concatmob = Countrycode.text! + mobileNoTextField.text!
+                    
+                    if(Countrycode.text! == "+1" || Countrycode.text! == "1")
                     {
-                        showAlert(message: NSLocalizedString("ValidPhone", comment:"") )//"Please enter valid Phone number.")
-                        activityindicator.stopAnimating()
-                        activityindicator.isHidden = true
+                        let phoneno = validate_Phone(testStr: concatmob)
+                        print(phoneno)
+                        if(phoneno == true){
+                            register()
+                        }
+                        else
+                        {
+                            showAlert(message: NSLocalizedString("ValidPhone", comment:"") )//"Please enter valid Phone number.")
+                            activityindicator.stopAnimating()
+                            activityindicator.isHidden = true
+                        }
+
+                    }
+                    else{
+                        let phoneno = validatephone(testStr: concatmob)
+                        print(phoneno)
+                        if(phoneno == true){
+                            register()
+                        }
+                        else
+                        {
+                            showAlert(message: NSLocalizedString("ValidPhone", comment:"") )//"Please enter valid Phone number.")
+                            activityindicator.stopAnimating()
+                            activityindicator.isHidden = true
+                        }
                     }
                 }
                 else{
@@ -328,6 +361,22 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
         let result = range != nil ? true : false
         return result
     }
+    
+    func validate_Phone(testStr:String) -> Bool
+    {
+        //let phoneNumber = "+1 (123) 456-7890" //Replace it with the Phone number you want to validate
+        let range = NSRange(location: 0, length: testStr.count)
+        let regex = try! NSRegularExpression(pattern: "^[1{1}]\\s\\d{3}-\\d{3}-\\d{4}$")
+        if regex.firstMatch(in: testStr, options: [], range: range) != nil{
+            print("Phone number is valid")
+           
+            return true
+            
+        }else{
+            print("Phone number is not valid")
+            return false
+        }
+    }
 
     func validatephone(testStr:String) -> Bool {
         if(mobileNoTextField.text!.trimmingCharacters(in: .whitespacesAndNewlines) == ""){}
@@ -346,7 +395,36 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
         }
         return false
     }
+    
+    private func formatPhone(_ number: String) -> String {
+        let cleanNumber = number.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()
+        let format: [Character] = ["X", "X", "X", "-", "X", "X", "X", "-", "X", "X", "X", "X"]
 
+        var result = ""
+        var index = cleanNumber.startIndex
+        for ch in format {
+            if index == cleanNumber.endIndex {
+                break
+            }
+            if ch == "X" {
+                result.append(cleanNumber[index])
+                index = cleanNumber.index(after: index)
+            } else {
+                result.append(ch)
+            }
+        }
+        return result
+    }
+    
+    
+    @IBAction func Mobilephone(_ sender: Any) {
+        
+        //let phoneFormatter = DefaultTextFormatter(textPattern: "### (###) ###-##-##")
+        if(Countrycode.text == "1" || Countrycode.text == "+1" ){
+            mobileNoTextField.text = formatPhone(mobileNoTextField.text!)
+        }
+    }
+    
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool
     {
         if (textField == mobileNoTextField)

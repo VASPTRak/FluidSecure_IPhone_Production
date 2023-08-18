@@ -392,6 +392,25 @@ class Commanfunction {
         return readData
     }
     
+    func ReadPtypeFile(fileName: String) -> String
+    {
+        var readData: String!
+        let readdata = getDocumentsURL().appendingPathComponent("data/ptype/" + fileName)
+        let fromPath: String = (readdata!.path)
+        do{
+            do{ readData = try String(contentsOfFile: fromPath, encoding: String.Encoding.utf8)
+                if(readData == nil){
+                    readData = ""
+                }
+            }
+            catch let error as NSError {
+                print ("Error: \(error.domain)")
+            }
+            
+        }
+        return readData
+    }
+    
     func delay(_ delay:Double, closure:@escaping ()->()) {
 
         DispatchQueue.main.asyncAfter(
@@ -678,6 +697,26 @@ class Commanfunction {
         }
     }
     
+    func Saveptype(fileName: String, writeText: String)
+    {
+        let readdata = getDocumentsURL().appendingPathComponent("data/ptype/")
+        let fromPath: String = (readdata!.path)
+        do{
+            do{ if(!FileManager.default.fileExists(atPath: fromPath))
+            {
+                do{ try FileManager.default.createDirectory(atPath: fromPath, withIntermediateDirectories: true, attributes: nil)
+                }
+                catch{print("error")}
+                }
+            }
+            let writePath = getDocumentsURL().appendingPathComponent("data/ptype/" + fileName)
+            let wPath: String = (writePath!.path)
+            do { try writeText.write(toFile: wPath, atomically: true, encoding: String.Encoding.utf8)
+            }
+            catch{print("error")}
+        }
+    }
+    
     func preauthSaveTextFile(fileName: String, writeText: String)
     {
         let readdata = getDocumentsURL().appendingPathComponent("data/preauth/")
@@ -701,6 +740,16 @@ class Commanfunction {
     func DeleteReportTextFile(fileName: String, writeText: String)
     {
         let deletePath = getDocumentsURL().appendingPathComponent("data/test/" + fileName)
+        let fromPath: String = (deletePath!.path)
+        do{
+            try fileManager.removeItem(atPath: fromPath)
+        }
+        catch{print("error")}
+    }
+    
+    func Delete_unsyncP_typestatusFile(fileName: String, writeText: String)
+    {
+        let deletePath = getDocumentsURL().appendingPathComponent("data/ptype/" + fileName)
         let fromPath: String = (deletePath!.path)
         do{
             try fileManager.removeItem(atPath: fromPath)
@@ -784,6 +833,8 @@ class Commanfunction {
         }
         return readData
     }
+    
+    
     
     func ReadDeleteOrder(fileName: String) -> String
     {

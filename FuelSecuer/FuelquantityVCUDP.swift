@@ -1001,7 +1001,7 @@ class FuelquantityVCUDP: UIViewController,StreamDelegate,UITextFieldDelegate,URL
             
             print(Wifyssid)
             print(Odomtr)
-            let bodyData = "{\"TransactionId\":\(TransactionId),\"FuelQuantity\":\((fuelQuantity)),\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\",\"Transaction\":\"Current_Transaction\"}"
+            let bodyData = "{\"TransactionId\":\(TransactionId),\"FuelQuantity\":\((fuelQuantity)),\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\",\"IsFuelingStop\":0,\"Transaction\":\"Current_Transaction\"}"
             
             let reply = "-1"//web.Transaction_details(bodyData: bodyData)
             if (reply == "-1")

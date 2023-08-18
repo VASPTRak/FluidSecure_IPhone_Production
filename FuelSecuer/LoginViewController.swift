@@ -65,28 +65,52 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         }
             
         }
-        var password = KeychainService.loadPassword()
-        if(password == nil || password == ""){
-            self.web.sentlog(func_name: "keychain service get \(password) ", errorfromserverorlink: "", errorfromapp: "")
-            let preuuid = defaults.string(forKey: "uuid")
-            if(preuuid == nil){
-                 uuid = UIDevice.current.identifierForVendor!.uuidString
+        
+        let preuuid = defaults.string(forKey: "uuid")
+        if(preuuid == nil || preuuid == ""){
+           var password = KeychainService.loadPassword()
+                       
+            if(password == nil || password == "")
+            {
+                uuid = UIDevice.current.identifierForVendor!.uuidString
                 KeychainService.savePassword(token: uuid as NSString)
             }
             else
             {
-                KeychainService.savePassword(token: preuuid! as NSString)
-                password = KeychainService.loadPassword()
                 print(password!)//used this paasword (uuid)
                 uuid = password! as String
             }
         }
-        else{
-//            KeychainService.savePassword(token: "0B5C5D0B-70CE-4C75-8844-9E8938586489" as NSString)
-           // password = KeychainService.loadPassword()
-            print(password!)//used this paasword (uuid)
-            uuid = password! as String
+        else
+        {
+            KeychainService.savePassword(token: preuuid! as NSString)
+            var password = KeychainService.loadPassword()
+            print(password!,preuuid!)//used this paasword (uuid)
+            uuid = preuuid! as String
         }
+//        var password = KeychainService.loadPassword()
+//        if(password == nil || password == ""){
+//            self.web.sentlog(func_name: "keychain service get \(password) ", errorfromserverorlink: "", errorfromapp: "")
+//            let preuuid = defaults.string(forKey: "uuid")
+//            self.web.sentlog(func_name: "on log in page uuid \(preuuid)", errorfromserverorlink: "", errorfromapp: "")
+//            if(preuuid == nil || password == ""){
+//                 uuid = UIDevice.current.identifierForVendor!.uuidString
+//                KeychainService.savePassword(token: uuid as NSString)
+//            }
+//            else
+//            {
+//                KeychainService.savePassword(token: preuuid! as NSString)
+//                password = KeychainService.loadPassword()! as NSString
+//                print(password!)//used this paasword (uuid)
+//                uuid = password! as String
+//            }
+//        }
+//        else{
+////            KeychainService.savePassword(token: "0B5C5D0B-70CE-4C75-8844-9E8938586489" as NSString)
+//           // password = KeychainService.loadPassword()
+//            print(password!)//used this paasword (uuid)
+//            uuid = password! as String
+//        }
 
         version.text = "Version \(Version)"
         version_2.text = "Version \(Version)"
@@ -123,6 +147,10 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         if(currentlocation == nil)
         {
             reply = web.checkApprove(uuid: uuid,lat:"\(0)",long:"\(0)")   // send check approve command if lat long is zero.
+            if(reply != "-1"){
+                cf.DeleteFileInApp(fileName: "getSites.txt")
+                cf.CreateTextFile(fileName: "getSites.txt", writeText: reply)
+            }
         }
             
         else {

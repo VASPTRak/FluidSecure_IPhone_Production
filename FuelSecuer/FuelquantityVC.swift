@@ -80,6 +80,14 @@ public enum Model : String {
          iPadAir4GenWC = "iPad Air 4th Gen (WiFi+Cellular)",
          iPadPro115Gen = "iPad Pro 11 inch 5th Gen",
          iPadPro125Gen = "iPad Pro 12.9 inch 5th Gen",
+         iPadAir5thGenW = "iPad Air 5th Gen (WiFi)",
+         iPadAir5thGenWC = "iPad Air 5th Gen (WiFi+Cellular)",
+         iPad10thGen = "iPad 10th Gen",
+    
+         iPadPro11inch4thGen = "iPad Pro 11 inch 4th Gen",
+    
+         iPadPro129inch6thGen = "iPad Pro 12.9 inch 6th Gen",
+    
          
          
          iPhone6            = "iPhone 6",
@@ -110,7 +118,15 @@ public enum Model : String {
          iPhone13ProMax     = "iPhone 13 Pro Max",
          iPhone13Mini       = "iPhone 13 Mini",
          iPhone13           = "iPhone 13",
+         iPhoneSE3rdGen     = "iPhone SE 3rd Gen",
+         iPhone14           = "iPhone 14",
+         iPhone14Plus       = "iPhone 14 Plus",
+         iPhone14Pro        = "iPhone 14 Pro",
+         iPhone14ProMax     = "iPhone 14 Pro Max",
+  
+         
          unrecognized       = "?unrecognized?"
+    
 }
 
 public extension UIDevice {
@@ -205,6 +221,15 @@ public extension UIDevice {
             "iPad13,9" : .iPadPro125Gen,//
             "iPad13,10" : .iPadPro125Gen,//
             "iPad13,11" : .iPadPro125Gen,//iPad Pro 12.9 inch 5th Gen
+            "iPad13,16" : .iPadAir5thGenW,//iPad Air 5th Gen (WiFi)
+            "iPad13,17" : .iPadAir5thGenWC,//iPad Air 5th Gen (WiFi+Cellular)
+            "iPad13,18" : .iPad10thGen,//iPad 10th Gen
+            "iPad13,19" : .iPad10thGen,//iPad 10th Gen
+            "iPad14,3" : .iPadPro11inch4thGen,//iPad Pro 11 inch 4th Gen
+            "iPad14,4" : .iPadPro11inch4thGen,//iPad Pro 11 inch 4th Gen
+            "iPad14,5" : .iPadPro129inch6thGen,//iPad Pro 12.9 inch 6th Gen
+            "iPad14,6" : .iPadPro129inch6thGen,//iPad Pro 12.9 inch 6th Gen
+            
             
             "iPhone3,1" : .iPhone4,
             "iPhone3,2" : .iPhone4,
@@ -251,10 +276,18 @@ public extension UIDevice {
             "iPhone13,2" : .iPhone12,
             "iPhone13,3" : .iPhone12Pro,
             "iPhone13,4" : .iPhone12ProMax,
+            
             "iPhone14,2" : .iPhone13Pro,
             "iPhone14,3" : .iPhone13ProMax,
             "iPhone14,4" : .iPhone13Mini,
-            "iPhone14,5" : .iPhone13
+            "iPhone14,5" : .iPhone13,
+            "iPhone14,6" : .iPhoneSE3rdGen,
+            "iPhone14,7" : .iPhone14,
+            "iPhone14,8" : .iPhone14Plus,
+            
+            "iPhone15,2" : .iPhone14Pro,
+            "iPhone15,3" : .iPhone14ProMax
+            
             
         ]
         
@@ -312,6 +345,9 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
             }
         }
     }
+    
+    var readRSSITimer: Timer!
+    var RSSIholder: NSNumber = 0
     
     let kBLEService_UUID = "4c425346-0000-1000-8000-00805f9b34fb"
     let kBLE_Characteristic_uuid_Tx = "e49227e8-659f-4d7e-8e23-8c6eea5b9173"
@@ -406,6 +442,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     // var timer_noConnection_withlink = Timer()
     var timer_quantityless_thanprevious = Timer()  ///#selector(FuelquantityVC.stoprelay) to stop the app
     var timer_conutnotupdateprevious = Timer()
+    var stoptimerIspulsarcountsamefor10sec:Timer = Timer()
     
     var y :CGFloat = CGFloat()
     var isokbuttontapped = false
@@ -1068,6 +1105,25 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
         }
         
         else if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT"){
+            
+            if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1")
+            {
+                print(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce,defaults.string(forKey: "UpdateSwitchTimeBounceForLink"))
+                if(defaults.string(forKey: "UpdateSwitchTimeBounceForLink") != nil)
+                {
+//                    if(defaults.string(forKey: "UpdateSwitchTimeBounceForLink") == "true")
+//                    {
+                        _ = web.UpdateSwitchTimeBounceForLink()
+//                    }
+                }
+            }
+            else
+            {
+                if(defaults.string(forKey: "UpdateSwitchTimeBounceForLink") != nil) {
+                    _ = web.UpdateSwitch_TimeBounceForLink()
+                }
+            }
+            
             if (isokbuttontapped == true)
             {
                 //                cleanup()
@@ -1083,6 +1139,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
             }
         }
         self.unsync.unsyncTransaction()
+        unsync.unsyncP_typestatus()
     }
     
     override func viewDidLoad() {
@@ -2532,10 +2589,10 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                 }
                             }
                         }
-                        if(self.InterruptedTransactionFlag == true)
-                        {
-                            self.web.UpdateInterruptedTransactionFlag(TransactionId: "\(Vehicaldetails.sharedInstance.TransactionId)",Flag: "y") /// 1168 if relay off is not working then app sends to server Transaction id.
-                        }
+//                        if(self.InterruptedTransactionFlag == true)
+//                        {
+//                            self.web.UpdateInterruptedTransactionFlag(TransactionId: "\(Vehicaldetails.sharedInstance.TransactionId)",Flag: "y") /// 1168 if relay off is not working then app sends to server Transaction id.
+//                        }
                     }
                 }
 //            }
@@ -2561,7 +2618,37 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
             }
         }
     }
-    
+    //#2177
+    func sendpulsar_type()
+    {
+        if(AppconnectedtoBLE == true ){
+        
+        if(Vehicaldetails.sharedInstance.PulserTimingAdjust == "1")
+        {
+            outgoingData(inputText: "LK_COMM=p_type:" + "\(Vehicaldetails.sharedInstance.PulserTimingAdjust)")
+            updateIncomingData()
+
+        }
+        else  if(Vehicaldetails.sharedInstance.PulserTimingAdjust == "2")
+        {
+            outgoingData(inputText: "LK_COMM=p_type:" + "\(Vehicaldetails.sharedInstance.PulserTimingAdjust)")
+            updateIncomingData()
+
+        }
+            else  if(Vehicaldetails.sharedInstance.PulserTimingAdjust == "3")
+            {
+                outgoingData(inputText: "LK_COMM=p_type:" + "\(Vehicaldetails.sharedInstance.PulserTimingAdjust)")
+                updateIncomingData()
+
+            }
+            else  if(Vehicaldetails.sharedInstance.PulserTimingAdjust == "4")
+            {
+                outgoingData(inputText: "LK_COMM=p_type:" + "\(Vehicaldetails.sharedInstance.PulserTimingAdjust)")
+                updateIncomingData()
+
+            }
+       }
+    }
     
     func firmwareUpdateDemo() -> Data? {
         //let subData:Data
@@ -2777,7 +2864,9 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                             if(ResponceMessage == "fail")
                                             {
 //                                                self.showstart = "false"
+                                                
                                                 self.error400(message: ResponceText as String)
+                                                
                                             }
                                             
                                         }
@@ -2797,6 +2886,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                             
                         }
                         self.unsync.unsyncTransaction()
+                        self.unsync.unsyncP_typestatus()
                         self.wait.isHidden = true
                         self.waitactivity.isHidden = true
                         self.waitactivity.stopAnimating()
@@ -2844,6 +2934,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                             }
                         }
                         self.unsync.unsyncTransaction()
+                        self.unsync.unsyncP_typestatus()
                         self.wait.isHidden = true
                         self.waitactivity.isHidden = true
                         self.waitactivity.stopAnimating()
@@ -2986,6 +3077,66 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     }
     
     
+    @objc func sendTransaction_ifgetsamecount()
+    {
+        
+        print(Samecount == Last_Count)
+        self.web.sentlog(func_name:"count \(Samecount) \(Last_Count)", errorfromserverorlink: "", errorfromapp: "")
+//        if(Samecount == Last_Count){
+            
+            let Odomtr = Vehicaldetails.sharedInstance.Odometerno
+            let Wifyssid = Vehicaldetails.sharedInstance.SSId
+            let TransactionId = Vehicaldetails.sharedInstance.TransactionId
+            let pusercount :String
+            //            defaults.set("", forKey: "previouspulsedata")
+            if(self.Last_Count == nil){
+                pusercount = Vehicaldetails.sharedInstance.pulsarCount
+            }else{
+                pusercount = self.Last_Count!
+            }
+            
+            
+            let PulseRatio = Vehicaldetails.sharedInstance.PulseRatio
+            let fuelQuantity = (Double(pusercount))!/(PulseRatio as NSString).doubleValue
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "ddMMyyyyhhmmss"
+            
+            print(Wifyssid)
+            print(Odomtr)
+            let bodyData = "{\"TransactionId\":\(TransactionId),\"FuelQuantity\":\((fuelQuantity)),\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\",\"IsFuelingStop\":2,\"Transaction\":\"Current_Transaction\"}"
+            
+            let reply = web.Transaction_details(bodyData: bodyData)
+            if (reply == "-1")
+            {
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "ddMMyyyyhhmmss"
+                dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
+                let dtt1: String = dateFormatter.string(from: NSDate() as Date)
+                
+                let unsycnfileName =  dtt1 + "#" + "\(TransactionId)" + "#" + "\(fuelQuantity)" + "#" + Vehicaldetails.sharedInstance.SSId //
+                if(bodyData != ""){
+                    cf.SaveTextFile(fileName: unsycnfileName, writeText: bodyData)
+                    self.characteristicASCIIValue = ""
+                    if(TransactionId == 0){}
+                    else{
+                        self.web.sentlog(func_name: " Saved Current Transaction to Phone, Date\(dtt1) TransactionId:\(TransactionId),FuelQuantity:\((fuelQuantity)),Pulses:\(pusercount)",errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"Connetced link \( self.cf.getSSID())")
+                    }
+                }
+            }
+            else{
+                Warning.isHidden = true
+                let data1:NSData = reply.data(using: String.Encoding.utf8)! as NSData
+                do{
+                    sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
+                }catch let error as NSError {
+                    print ("Error: \(error.domain)")
+                }
+                //  print(sysdata)
+                //            self.notify(site: Vehicaldetails.sharedInstance.SSId)
+            }
+//        }
+    }
+    
     func Transaction(fuelQuantity:Double)
     {
         let Odomtr = Vehicaldetails.sharedInstance.Odometerno
@@ -3004,7 +3155,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
         
         print(Wifyssid)
         print(Odomtr)
-        let bodyData = "{\"TransactionId\":\(TransactionId),\"FuelQuantity\":\((fuelQuantity)),\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\",\"Transaction\":\"Current_Transaction\"}"
+        let bodyData = "{\"TransactionId\":\(TransactionId),\"FuelQuantity\":\((fuelQuantity)),\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\",\"IsFuelingStop\":0,\"Transaction\":\"Current_Transaction\"}"
         
         let reply = web.Transaction_details(bodyData: bodyData)
         if (reply == "-1")
@@ -3318,6 +3469,9 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                         Samecount = Last_Count
                                         self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpon_time as NSString).doubleValue, target: self, selector: #selector(FuelquantityVC.stopIspulsarcountsame), userInfo: nil, repeats: false)
                                         
+                                        self.stoptimerIspulsarcountsamefor10sec.invalidate()
+                                        self.stoptimerIspulsarcountsamefor10sec = Timer.scheduledTimer(timeInterval: 5, target: self, selector:#selector(FuelquantityVC.sendTransaction_ifgetsamecount), userInfo: nil, repeats: false)
+                                        
                                         self.web.sentlog(func_name:"Get pulse count was the same while fueling function pump on time - \(Vehicaldetails.sharedInstance.pumpon_time),Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
                                     }
                                 }
@@ -3521,6 +3675,8 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                                     self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(FuelquantityVC.stopIspulsarcountsame), userInfo: nil, repeats: false)
                                                     
                                                     self.web.sentlog(func_name: "Get pulse count was the same while fueling function pump off  - after \(Vehicaldetails.sharedInstance.pumpoff_time) Seconds if you get the same count ,Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+                                                    self.stoptimerIspulsarcountsamefor10sec.invalidate()
+                                                    self.stoptimerIspulsarcountsamefor10sec = Timer.scheduledTimer(timeInterval: 5, target: self, selector:#selector(FuelquantityVC.sendTransaction_ifgetsamecount), userInfo: nil, repeats: false)
                                                 }
                                             }
                                             else {
@@ -3657,6 +3813,8 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                             self.web.sentlog(func_name:  "Get pulse count was the same while fueling function, pump off  - after \(Vehicaldetails.sharedInstance.pumpoff_time) Seconds if you get the same count ,Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
                                             
                                             self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(FuelquantityVC.stopIspulsarcountsame), userInfo: nil, repeats: false)
+                                            self.stoptimerIspulsarcountsamefor10sec.invalidate()
+                                            self.stoptimerIspulsarcountsamefor10sec = Timer.scheduledTimer(timeInterval: 5, target: self, selector:#selector(FuelquantityVC.sendTransaction_ifgetsamecount), userInfo: nil, repeats: false)
                                         }
                                     }
                                 }
@@ -3768,6 +3926,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
             self.stoptimer_gotostart.invalidate()
             //self.web.wifi_settings()
             self.unsync.unsyncTransaction()   ///check
+            self.unsync.unsyncP_typestatus()
             self.unsync.Send10trans()
             self.timerview.invalidate()
             //UIApplication.shared.delegate = nil
@@ -3801,7 +3960,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
         
         print(Wifyssid)
         print(Odomtr)
-        let bodyData = "{\"TransactionId\":\(TransactionId),\"FuelQuantity\":\((fuelQuantity)),\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\",\"Transaction\":\"Current_Transaction\"}"
+        let bodyData = "{\"TransactionId\":\(TransactionId),\"FuelQuantity\":\((fuelQuantity)),\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\",\"IsFuelingStop\":2,\"Transaction\":\"Current_Transaction\"}"
         
         let reply = web.Transaction_details(bodyData: bodyData)
         print(reply)
@@ -3940,6 +4099,9 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     
     func getPulserBLE(counts:String) {
         //counts = "0"
+        readRSSI()
+//        self.web.sentlog(func_name: " RSSI \(RSSIholder)", errorfromserverorlink: "", errorfromapp:"")
+        
         if("\(Vehicaldetails.sharedInstance.TransactionId)" == "0")
         {
             self.GetPulsarstartimer.invalidate()
@@ -4019,6 +4181,8 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                             self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpon_time as NSString).doubleValue, target: self, selector: #selector(FuelquantityVC.stopIspulsarcountsame), userInfo: nil, repeats: false)
                             
                             self.web.sentlog(func_name: "get pulse count was the same while fueling function pump on time - \(Vehicaldetails.sharedInstance.pumpon_time),Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+                            self.stoptimerIspulsarcountsamefor10sec.invalidate()
+                            self.stoptimerIspulsarcountsamefor10sec = Timer.scheduledTimer(timeInterval: 5, target: self, selector:#selector(FuelquantityVC.sendTransaction_ifgetsamecount), userInfo: nil, repeats: false)
                         }
                     }
                 }
@@ -4130,6 +4294,8 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                                 self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(FuelquantityVC.stopIspulsarcountsame), userInfo: nil, repeats: false)
                                                 
                                                 self.web.sentlog(func_name: "get pulse count was the same while fueling function pump off time - \(Vehicaldetails.sharedInstance.pumpoff_time),Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+                                                self.stoptimerIspulsarcountsamefor10sec.invalidate()
+                                                self.stoptimerIspulsarcountsamefor10sec = Timer.scheduledTimer(timeInterval: 5, target: self, selector:#selector(FuelquantityVC.sendTransaction_ifgetsamecount), userInfo: nil, repeats: false)
                                             }
                                         }
                                         else
@@ -4202,6 +4368,8 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                         self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(FuelquantityVC.stopIspulsarcountsame), userInfo: nil, repeats: false)
                                         
                                         self.web.sentlog(func_name: "get pulse count was the same while fueling function pump off time - \(Vehicaldetails.sharedInstance.pumpoff_time),Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+                                        self.stoptimerIspulsarcountsamefor10sec.invalidate()
+                                        self.stoptimerIspulsarcountsamefor10sec = Timer.scheduledTimer(timeInterval: 5, target: self, selector:#selector(FuelquantityVC.sendTransaction_ifgetsamecount), userInfo: nil, repeats: false)
                                     }
                                 }
                                 else
@@ -4379,92 +4547,96 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
         print(jsonText)
         if(jsonText.contains("{\"notify\" : \"enabled\"}")){}
         else{
-        let data1:Data = jsonText.data(using: String.Encoding.utf8)!
-        do{
-            //print(self.sysdata)
-            self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
-            if(self.sysdata == nil){
-                
-            }
-            else{
-                self.web.sentlog(func_name: " BLE Response from link is \(jsonText)", errorfromserverorlink:"", errorfromapp: "")
-                print(self.sysdata)
-                
-                let version = self.sysdata.value(forKey: "version") as! NSDictionary
-                let Linkversion = version.value(forKey: "version") as! NSString
-                let mac_address = self.sysdata.value(forKey: "mac_address") as! NSDictionary
-                let bt = mac_address.value(forKey: "bt") as! NSString
-                print(Linkversion,bt)
-                Vehicaldetails.sharedInstance.MacAddressfromlink = bt as String
-                Vehicaldetails.sharedInstance.iotversion = Linkversion as String
-                if(Vehicaldetails.sharedInstance.BTMacAddress == "")
-                {
-                    if(Vehicaldetails.sharedInstance.MacAddressfromlink == "")
-                    {}
-                    else{
+            if(jsonText.contains("version")){
+                let data1:Data = jsonText.data(using: String.Encoding.utf8)!
+                do{
+                    //print(self.sysdata)
+                    self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
+                    if(self.sysdata == nil){
                         
-                        if(self.isUpdateMACAddress == false){
-                            let response = self.web.UpdateMACAddress()
-                            let data1:Data = response.data(using: String.Encoding.utf8)!
-                            do{
-                                //print(self.sysdata)
-                                self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
-                                // print(self.sysdata)
-                                let ResponceMessage = self.sysdata.value(forKey: "ResponceMessage") as! NSString
-                                let ResponceText = self.sysdata.value(forKey: "ResponceText") as! NSString
-                                print(ResponceMessage,ResponceText)
-                                if(ResponceMessage == "success")
-                                {
-                                    self.isUpdateMACAddress = true
-                                    self.showstart = "true"
-                                }
-                                else
-                                if(ResponceMessage == "fail")
-                                {
-                                    self.showstart = "false"
-                                    self.error400(message: ResponceText as String)
-                                }
+                    }
+                    else{
+                        self.web.sentlog(func_name: " BLE Response from link is \(jsonText)", errorfromserverorlink:"", errorfromapp: "")
+                        print(self.sysdata)
+                        
+                        let version = self.sysdata.value(forKey: "version") as! NSDictionary
+                        let Linkversion = version.value(forKey: "version") as! NSString
+                        let mac_address = self.sysdata.value(forKey: "mac_address") as! NSDictionary
+                        let bt = mac_address.value(forKey: "bt") as! NSString
+                        print(Linkversion,bt)
+                        Vehicaldetails.sharedInstance.MacAddressfromlink = bt as String
+                        Vehicaldetails.sharedInstance.iotversion = Linkversion as String
+                        if(Vehicaldetails.sharedInstance.BTMacAddress == "")
+                        {
+                            if(Vehicaldetails.sharedInstance.MacAddressfromlink == "")
+                            {}
+                            else{
                                 
+                                if(self.isUpdateMACAddress == false){
+                                    let response = self.web.UpdateMACAddress()
+                                    let data1:Data = response.data(using: String.Encoding.utf8)!
+                                    do{
+                                        //print(self.sysdata)
+                                        self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
+                                        // print(self.sysdata)
+                                        let ResponceMessage = self.sysdata.value(forKey: "ResponceMessage") as! NSString
+                                        let ResponceText = self.sysdata.value(forKey: "ResponceText") as! NSString
+                                        print(ResponceMessage,ResponceText)
+                                        if(ResponceMessage == "success")
+                                        {
+                                            self.isUpdateMACAddress = true
+                                            self.showstart = "true"
+                                        }
+                                        else
+                                        if(ResponceMessage == "fail")
+                                        {
+                                            self.showstart = "false"
+                                            gotLinkVersion = true
+                                            self.gotostartBLE()
+                                            self.error400(message: ResponceText as String)
+                                        }
+                                        
+                                    }
+                                    catch let error as NSError {
+                                        print ("Error: \(error.domain)")
+                                        let text = error.localizedDescription //+ error.debugDescription
+                                        let test = String((text.filter { !" \n".contains($0) }))
+                                        let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                                        print(newString)
+                                        
+                                    }
+                                }
                             }
-                            catch let error as NSError {
-                                print ("Error: \(error.domain)")
-                                let text = error.localizedDescription //+ error.debugDescription
-                                let test = String((text.filter { !" \n".contains($0) }))
-                                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
-                                print(newString)
-                                
+                        }
+                        else{
+                            print(Vehicaldetails.sharedInstance.BTMacAddress,bt)
+                            if(Vehicaldetails.sharedInstance.BTMacAddress == bt as String)
+                            {
+                                self.web.sentlog(func_name: " BLE Mac Address from server \(Vehicaldetails.sharedInstance.BTMacAddress), MacAddressfromlink \(bt) ", errorfromserverorlink:"", errorfromapp: "")
+                                BTMacAddress = false
                             }
+                            else
+                            {
+                                self.web.sentlog(func_name: "There is a MAC address error BLE Mac Address from server \(Vehicaldetails.sharedInstance.BTMacAddress), MacAddressfromlink \(Vehicaldetails.sharedInstance.MacAddressfromlink) ", errorfromserverorlink:"", errorfromapp: "")
+                                BTMacAddress = true
+                            }
+                            
+                            gotLinkVersion = true
+                            
+                            //                settransactionid()
                         }
                     }
                 }
-                else{
-                    print(Vehicaldetails.sharedInstance.BTMacAddress,bt)
-                    if(Vehicaldetails.sharedInstance.BTMacAddress == bt as String)
-                    {
-                        self.web.sentlog(func_name: " BLE Mac Address from server \(Vehicaldetails.sharedInstance.BTMacAddress), MacAddressfromlink \(bt) ", errorfromserverorlink:"", errorfromapp: "")
-                        BTMacAddress = false
-                    }
-                    else
-                    {
-                        self.web.sentlog(func_name: "There is a MAC address error BLE Mac Address from server \(Vehicaldetails.sharedInstance.BTMacAddress), MacAddressfromlink \(Vehicaldetails.sharedInstance.MacAddressfromlink) ", errorfromserverorlink:"", errorfromapp: "")
-                        BTMacAddress = true
-                    }
+                catch let error as NSError {
+                    print ("Error: \(error.domain)")
+                    let text = error.localizedDescription //+ error.debugDescription
+                    let test = String((text.filter { !" \n".contains($0) }))
+                    let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                    print(newString)
                     
-                    gotLinkVersion = true
-                    
-                    //                settransactionid()
                 }
             }
         }
-        catch let error as NSError {
-            print ("Error: \(error.domain)")
-            let text = error.localizedDescription //+ error.debugDescription
-            let test = String((text.filter { !" \n".contains($0) }))
-            let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
-            print(newString)
-            
-        }
-    }
     }
     
     
@@ -4982,7 +5154,7 @@ extension FuelquantityVC: CBCentralManagerDelegate {
                         print(peripherals,peripherals.count)
                     }
                     else{
-                        let peripheral = self.peripherals[i]
+                         peripheral = self.peripherals[i]
                       
                         
                         if(peripheral.name! == "nil" || peripheral.name! == "(null)")
@@ -5066,7 +5238,7 @@ extension FuelquantityVC: CBCentralManagerDelegate {
                             print(peripherals,peripherals.count)
                         }
                         else{
-                            let peripheral = self.peripherals[i]
+                             peripheral = self.peripherals[i]
                             
                             if(peripheral.name! == "nil" || peripheral.name! == "(null)")
                             {}
@@ -5251,6 +5423,17 @@ extension FuelquantityVC: CBCentralManagerDelegate {
         }
     }
     
+    func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral)
+    {
+            
+            peripheral.delegate = self
+        
+            peripheral.discoverServices(nil)
+            print("connected to \(peripheral)")
+//        peripheral.readRSSI()
+//        self.startReadRSSI()
+        }
+    
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         //let BLEService_UUID = CBUUID(string: kBLEService_UUID)
         print("*****************************")
@@ -5273,6 +5456,9 @@ extension FuelquantityVC: CBCentralManagerDelegate {
         peripheral.discoverServices([CBUUID(string:"725e0bc8-6f00-4d2d-a4af-96138ce599b9")])
         peripheral.discoverServices([CBUUID(string:"725e0bc8-6f00-4d2d-a4af-96138ce599b6")])
         
+//        peripheral.readRSSI()
+//        self.startReadRSSI()
+//        print("Discovered Services: \(services)")
     }
     
   
@@ -5327,7 +5513,15 @@ extension FuelquantityVC: CBCentralManagerDelegate {
                 }
                 
                 if(Last_Count! == "0"){
-                    self.connectToDevice()
+                    do{
+                        try self.stoprelay()
+                        isdisconnected = true
+                    }
+                    catch let error as NSError {
+                        print ("Error: \(error.domain)")
+                    }
+                    isdisconnected = true
+                    //self.connectToDevice()
                 }
                 else{
                     if (IsStopbuttontapped == true)
@@ -5421,6 +5615,7 @@ extension FuelquantityVC: CBCentralManagerDelegate {
                             do{
                                 self.isdisconnected = true
                                 self.unsync.unsyncTransaction()
+                                self.unsync.unsyncP_typestatus()
                                 self.UsageInfoview.isHidden = false
                                 try self.stoprelay()
                             }
@@ -5612,6 +5807,8 @@ extension FuelquantityVC: CBPeripheralDelegate {
                 connectedservice = "725e0bc8-6f00-4d2d-a4af-96138ce599b6"
             }
         }
+        
+        peripheral.readRSSI()
         print("Discovered Services: \(services)")
     }
     
@@ -5690,6 +5887,7 @@ extension FuelquantityVC: CBPeripheralDelegate {
         else { return }
         // BLE infor command response old link version
         characteristicASCIIValue = ASCIIstring as String
+        print(characteristicASCIIValue)
         if((characteristicASCIIValue as String).contains("L10:"))
         {
             Last10transaction = (characteristicASCIIValue as String)
@@ -5746,7 +5944,31 @@ extension FuelquantityVC: CBPeripheralDelegate {
         }
         
         
+        
+        
+        //#2177
         print("Value Recieved: \((characteristicASCIIValue as String))")
+        if("\(self.characteristicASCIIValue)".contains("{\"pulser_type\""))
+        {
+            self.web.sentlog(func_name: " BLE Response from link is \(self.characteristicASCIIValue)", errorfromserverorlink:"", errorfromapp: "")
+        }
+        if("\(self.characteristicASCIIValue)".contains("{\"pulser_type\":1}$$"))
+        {
+            defaults.set("1", forKey: "UpdateSwitchTimeBounceForLink")
+        }
+        else if("\(self.characteristicASCIIValue)".contains("{\"pulser_type\":2}$$"))
+        {
+            defaults.set("2", forKey: "UpdateSwitchTimeBounceForLink")
+        }
+        else if("\(self.characteristicASCIIValue)".contains("{\"pulser_type\":3}$$"))
+        {
+            defaults.set("3", forKey: "UpdateSwitchTimeBounceForLink")
+        }
+        else if("\(self.characteristicASCIIValue)".contains("{\"pulser_type\":4}$$"))
+        {
+            defaults.set("4", forKey: "UpdateSwitchTimeBounceForLink")
+        }
+        
         NotificationCenter.default.post(name:NSNotification.Name(rawValue: "Notify"), object: self)
         
         
@@ -5816,6 +6038,14 @@ extension FuelquantityVC: CBPeripheralDelegate {
             web.sentlog(func_name: "Connected to BT link, Subscribed. Set Notify enabled... to true in BLE transaction for ID:", errorfromserverorlink: "\(characteristic.uuid)", errorfromapp: ""); print("Subscribed. Notification has begun for: \(characteristic.uuid)")
             if(IsStartbuttontapped == false)
             {
+                print(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce)
+                                    if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1")
+                                    {
+                                        
+                                        self.sendpulsar_type()
+                                    }
+                outgoingData(inputText: "LK_COMM=p_type?")
+                updateIncomingData()
                 getlast10transaction()
                 delay(1){
                     //                        if(self.BTMacAddress == true)
@@ -5909,5 +6139,27 @@ extension FuelquantityVC: CBPeripheralDelegate {
     {
         self.sendData()
     }
+    
+    func peripheral(_ peripheral: CBPeripheral, didReadRSSI RSSI: NSNumber, error: Error?) {
+       self.RSSIholder = Int(truncating: RSSI) as NSNumber
+        print(RSSIholder,RSSI)
+       self.web.sentlog(func_name: " RSSI \(RSSI),\(RSSIholder)", errorfromserverorlink: "", errorfromapp:"")
+      }
+   
+   @objc func readRSSI(){
+       if (self.peripheral != nil){
+           self.peripheral.delegate = self
+           self.peripheral.readRSSI()
+       } else {
+           print("peripheral = nil")
+       }
+   if (Int(truncating: self.RSSIholder) < -90) {
+            //let openValue = "1".dataUsingEncoding(NSUTF8StringEncoding)!
+           print(RSSIholder)
+           self.web.sentlog(func_name: " RSSI value \(RSSIholder) < -90 this signal is extremely weak.", errorfromserverorlink: "", errorfromapp:"")
+      
+       }
+   }
 }
+
 

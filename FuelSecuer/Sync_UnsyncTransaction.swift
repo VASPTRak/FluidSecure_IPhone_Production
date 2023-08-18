@@ -21,6 +21,7 @@ class Sync_Unsynctransactions : NSObject
     var string_data = ""
     var reply :String!
     var sysdata:NSDictionary!
+    var ptypesysdata:NSDictionary!
     var FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
     let defaults = UserDefaults.standard
     var fuelquantity:Double!
@@ -123,7 +124,7 @@ class Sync_Unsynctransactions : NSObject
             let lastcount = Int(count_Last!)
             
             let fuelQuantity = calculate_fuelquantity(quantitycount: lastcount!, pulsarratio: pulsarratio!)
-            let bodyData = "{\"TransactionId\":\(transactionid_Last!),\"FuelQuantity\":\((fuelQuantity)),\"Pulses\":\(count_Last!),\"TransactionFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\",\"Transaction\":\"Current_Transaction\"}"
+            let bodyData = "{\"TransactionId\":\(transactionid_Last!),\"FuelQuantity\":\((fuelQuantity)),\"Pulses\":\(count_Last!),\"TransactionFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\",\"IsFuelingStop\":0,\"Transaction\":\"Current_Transaction\"}"
             UploadUnsyncdata(jsonstring: bodyData,siteName:"TransactionComplete")
         }
         if(InterruptedTransactionFlag == true)
@@ -135,6 +136,117 @@ class Sync_Unsynctransactions : NSObject
            // self.web.UpdateInterruptedTransactionFlag(TransactionId: transactionid_Last!,Flag: "y") /// 1168 if relay off is not working then app sends to server Transaction id.
                 }
         }
+    }
+    
+    func unsyncP_typestatus()
+    {
+
+            
+            var reportsArray: [AnyObject]!
+            let fileManager: FileManager = FileManager()
+            let readdata = cf.getDocumentsURL().appendingPathComponent("data/ptype/")!
+            let fromPath: String = (readdata.path)
+            do{
+
+                do{ if(!FileManager.default.fileExists(atPath: fromPath))
+                {
+                    do{ try FileManager.default.createDirectory(atPath: fromPath, withIntermediateDirectories: true, attributes: nil)
+                    }
+                    catch{print("error")}
+                    }
+                }
+
+                reportsArray = fileManager.subpaths(atPath: fromPath)! as [AnyObject]
+                for x in 0  ..< reportsArray.count
+                {
+                    let filename: String = "\(reportsArray[x])"
+                    
+                    
+                        let JData: String = cf.ReadPtypeFile(fileName: filename)
+                        print(JData)
+                        if(JData != "")
+                        {
+                            
+                                UploadunsyncP_typestatus(jsonstring: JData,filename: filename,siteName:"UpdateSwitchTimeBounceForLink")
+                            
+
+                            if(ResponceMessageUpload == "success"){
+                                //self.notify(site: siteName)
+                            }
+                        }
+                   
+                }
+            }
+        
+    }
+   
+    
+    
+    
+    func UploadunsyncP_typestatus(jsonstring: String,filename:String,siteName:String)
+    {
+        FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
+        let Email = defaults.string(forKey: "address")
+        let uuid = defaults.string(forKey: "uuid")
+        let Url:String = FSURL
+
+        string_data = uuid! + ":" + Email! + ":" + "\(siteName)"//TransactionComplete"
+//        print(string_data,jsonstring)
+        let Base64 = cf.convertStringToBase64(string_data)
+        let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
+        request.httpMethod = "POST"
+        request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
+        print(jsonstring)
+        request.httpBody = jsonstring.data(using: String.Encoding.utf8)
+        request.timeoutInterval = 10
+
+        let session = Foundation.URLSession.shared
+        let semaphore = DispatchSemaphore(value: 0)
+        let task = session.dataTask(with: request as URLRequest) {  data, response, error in
+            if let data = data {
+             
+                self.reply = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
+               
+                print(self.reply)
+                let data1 = self.reply.data(using: String.Encoding.utf8)!
+                do{
+                    self.ptypesysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
+                }catch let error as NSError {
+                    print ("Error: \(error.domain)")
+                }
+                print(self.reply,self.ptypesysdata)
+                                    
+                                    if(self.ptypesysdata == nil){
+                                        
+                                    }
+                                    else{
+                let ResponceText = self.ptypesysdata.value(forKey: "ResponseText") as! NSString
+                self.ResponceMessageUpload = (self.ptypesysdata.value(forKey: "ResponseMessage") as! NSString) as String
+                print(ResponceText)
+                if(self.ResponceMessageUpload == "fail"){
+//                    if(ResponceText == "TransactionId not found."){
+//
+//                    }
+//                     self.cf.DeleteReportTextFile(fileName: filename, writeText: "")
+                }
+                if(self.ResponceMessageUpload == "success"){
+                    
+                    self.defaults.set(nil,forKey: "UpdateSwitchTimeBounceForLink")
+                    
+                    self.cf.Delete_unsyncP_typestatusFile(fileName: filename, writeText: "")
+                    self.web.sentlog(func_name: "Unsync Pulser type status send to server", errorfromserverorlink: " Response from Server $$ \(jsonstring)!!", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                    
+                }
+                }
+                               
+            } else {
+               // print(error as Any)
+                self.reply = "-1"
+            }
+            semaphore.signal()
+        }
+        task.resume()
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
     }
 
     func unsyncTransaction() //-> String

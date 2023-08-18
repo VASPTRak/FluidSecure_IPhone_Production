@@ -317,6 +317,7 @@ class AppDelegate: UIResponder, MessagingDelegate, UIApplicationDelegate, UNUser
                 task.setTaskCompleted(success: false)
             }
         unsync.unsyncTransaction()
+        unsync.unsyncP_typestatus()
         unsync.Send10trans()
        _ = unsync.preauthunsyncTransaction()
             // increment instead of a fixed number
@@ -621,6 +622,7 @@ class AppDelegate: UIResponder, MessagingDelegate, UIApplicationDelegate, UNUser
         if(uuid == nil){}
         else{
             unsync.unsyncTransaction()
+            unsync.unsyncP_typestatus()
             unsync.Send10trans()
           _ = unsync.preauthunsyncTransaction()
             completionHandler(.newData)
@@ -661,7 +663,39 @@ class AppDelegate: UIResponder, MessagingDelegate, UIApplicationDelegate, UNUser
              bodyData = "{\"TransactionId\":\(TransactionId),\"FuelQuantity\":\((fuelQuantity)),\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\"}"
             }
             else if(Vehicaldetails.sharedInstance.AppType == "preAuthTransaction"){
+                
 
+                
+                   let sourcelat = Vehicaldetails.sharedInstance.Lat//currentlocation.coordinate.latitude
+                    let sourcelong = Vehicaldetails.sharedInstance.Long//currentlocation.coordinate.longitude
+                let siteid = Vehicaldetails.sharedInstance.siteID
+                let FuelTypeId = Vehicaldetails.sharedInstance.FuelTypeId
+                var Odomtr = Vehicaldetails.sharedInstance.Odometerno
+                if(Odomtr == ""){
+                    Odomtr = "0"
+                }
+                
+                var Hours = Vehicaldetails.sharedInstance.hours
+                if(Hours == ""){
+                    Hours = "0"
+                }
+//
+                let datepreauthFormatter = DateFormatter()
+                datepreauthFormatter.dateFormat = "MM/dd/yyyy HH:mm:ss a" //9/25/2017 10:21:41 AM"
+                datepreauthFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
+                let dtt: String = datepreauthFormatter.string(from: NSDate() as Date)
+                let Wifyssid = Vehicaldetails.sharedInstance.SSId
+                let pulser_count = Vehicaldetails.sharedInstance.pulsarCount
+                 let preauthbodyData = "{\"SiteId\":\(siteid),\"CurrentOdometer\":\(Odomtr),\"FuelQuantity\":\((fuelQuantity)),\"TransactionId\":\(TransactionId),\"FuelTypeId\":\(FuelTypeId),\"WifiSSId\":\"\(Wifyssid)\",\"TransactionDate\":\"\(dtt)\",\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"VehicleNumber\":\"\(Vehicaldetails.sharedInstance.vehicleno)\",\"ErrorCode\":\"\(Vehicaldetails.sharedInstance.Errorcode)\",\"DepartmentNumber\":\"\(Vehicaldetails.sharedInstance.deptno)\",\"Hours\":\(Hours),\"VehicleExtraOther\":\"\(Vehicaldetails.sharedInstance.ExtraOther)\",\"Other\":\"\(Vehicaldetails.sharedInstance.Other)\",\"PersonnelPIN\":\"\(Vehicaldetails.sharedInstance.Personalpinno)\",\"CurrentLng\":\"\(sourcelong)\",\"CurrentLat\":\"\(sourcelat)\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\"}"
+                print(preauthbodyData)
+                //let unsycnfileName =  dtt1 + "transaction" + "#" + Vehicaldetails.sharedInstance.siteName
+                let dtt1: String = dateFormatter.string(from: NSDate() as Date)
+                let unsycnfileName =  dtt1 + "#" + "\(TransactionId)" + "#" + "\(fuelQuantity)" + "#" + Vehicaldetails.sharedInstance.SSId//Vehicaldetails.sharedInstance.siteName
+                if(preauthbodyData != ""){
+                    cf.preauthSaveTextFile(fileName: unsycnfileName, writeText: preauthbodyData)
+                }
+
+                
                // preauth.Transaction(fuelQuantity: (Double(pusercount))!/(PulseRatio as NSString).doubleValue)
             }
 
@@ -683,6 +717,7 @@ class AppDelegate: UIResponder, MessagingDelegate, UIApplicationDelegate, UNUser
         }
         
         unsync.unsyncTransaction()
+        unsync.unsyncP_typestatus()
         unsync.Send10trans()
         _ = unsync.preauthunsyncTransaction()
         

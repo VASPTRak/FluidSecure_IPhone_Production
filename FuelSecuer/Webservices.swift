@@ -12,39 +12,6 @@ import NetworkExtension
 
 let imageCache = NSCache<NSString, UIImage>()
 
-//extension UIImageView {
-//    
-//    func imageFromServerURL(_ URLString: String, placeHolder: UIImage?) {
-//        
-//        self.image = nil
-//        if let cachedImage = imageCache.object(forKey: NSString(string: URLString)) {
-//            self.image = cachedImage
-//            return
-//        }
-//        
-//        if let url = URL(string: URLString) {
-//            URLSession.shared.dataTask(with: url, completionHandler: { (data, response, error) in
-//                
-//                //print("RESPONSE FROM API: \(response)")
-//                if error != nil {
-//                    // print("ERROR LOADING IMAGES FROM URL: \(error)")
-//                    DispatchQueue.main.async {
-//                        self.image = placeHolder
-//                    }
-//                    return
-//                }
-//                DispatchQueue.main.async {
-//                    if let data = data {
-//                        if let downloadedImage = UIImage(data: data) {
-//                            imageCache.setObject(downloadedImage, forKey: NSString(string: URLString))
-//                            self.image = downloadedImage
-//                        }
-//                    }
-//                }
-//            }).resume()
-//        }
-//    }
-//}
 extension NSMutableData {
     
     /// Append string to NSMutableData
@@ -67,6 +34,7 @@ class Webservices:NSObject {
     var replysentlog :String!
     var replygetpulsar :String!
     var replygetvehicledata :String!
+    var replygetDeptdata :String!
     var sysdata:NSDictionary!
     var sysdata1:NSDictionary!
     var sysdataLast10trans:NSDictionary!
@@ -116,29 +84,7 @@ class Webservices:NSObject {
            
                }
     
-    //For Testing
-    
-//    func wifisettings(pagename:String)
-//    {
-        //Vehicaldetails.sharedInstance.fsSSId = "FS-" + Vehicaldetails.sharedInstance.SSId
-
-//        let hotspotConfig = NEHotspotConfiguration(ssid: Vehicaldetails.sharedInstance.SSId, passphrase: "123456789", isWEP: false)
-//        hotspotConfig.joinOnce = false
-//        print(Vehicaldetails.sharedInstance.fsSSId)
-//
-//        NEHotspotConfigurationManager.shared.apply(hotspotConfig) {(error) in
-//
-//            if let error = error {
-//                print("Error\(error)")
-//                Vehicaldetails.sharedInstance.fsSSId = Vehicaldetails.sharedInstance.SSId
-//            }
-//            else {
-//
-//                self.sentlog(func_name: "Go button Tapped user Joins \(Vehicaldetails.sharedInstance.fsSSId) wifi Automatically from \(pagename) Page", errorfromserverorlink: " \(Vehicaldetails.sharedInstance.fsSSId == self.cf.getSSID())",errorfromapp: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)" + " Connected link: \(self.cf.getSSID())")
-//                print("Connected")
-//            }
-//        }
-//    }
+   
     
     //Live
         @available(iOS 11.0, *)
@@ -542,17 +488,17 @@ class Webservices:NSObject {
             if let data = data {
                 print(String(data: data, encoding: String.Encoding.utf8)!)
                 // DispatchQueue.main.async{
-                self.replygetvehicledata = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
+                self.replygetDeptdata = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
                 self.doBackgroundTask()
                 
-                 print(self.replygetvehicledata)
-                if(self.replygetvehicledata.contains("success"))
+                 print(self.replygetDeptdata)
+                if(self.replygetDeptdata.contains("success"))
                 {
                     let dateFormatter = DateFormatter()
                     dateFormatter.dateFormat = "EEEE,dd/MM/yyyy"
                     dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
                     let dateofdownload: String = dateFormatter.string(from: NSDate() as Date)
-                    self.defaults.set(dateofdownload, forKey: "dateof_DownloadDepartmentsForphone")
+                    self.defaults.set(dateofdownload, forKey: "dateof_DownloadDepartmentsForphone")//"dateof_DownloadDepartmentsForphone")
                     print("\(dateofdownload) dateofdownload")
                 }
                 
@@ -566,13 +512,13 @@ class Webservices:NSObject {
                 let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
 //                print(newString)
                 self.sentlog(func_name: "GetDepartmentsForPhone Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-                self.replygetvehicledata = "-1" + "#" + "\(error!)"
+                self.replygetDeptdata = "-1" + "#" + "\(error!)"
             }
             semaphore.signal()
         }
         task.resume()
         _ = semaphore.wait(timeout: DispatchTime.distantFuture)
-        return replygetvehicledata + "#" + ""
+        return replygetDeptdata + "#" + ""
     }
    
     
@@ -642,6 +588,7 @@ class Webservices:NSObject {
         if(Vehicaldetails.sharedInstance.Language == ""){
             ///Vehicaldetails.sharedInstance.Language = "en-ES"
         }
+      
         defaults.set("", forKey: "address")
         let Url:String = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
         var Email :String
@@ -652,11 +599,15 @@ class Webservices:NSObject {
         }
         if(uuid == "")
         {
-            print("checkApprove command sent to server UUID Get \(uuid)")
-            self.sentlog(func_name: "checkApprove command sent to server UUID:\(uuid))", errorfromserverorlink: "", errorfromapp: "")
+            print(" UUID Get \(uuid)")
+            self.sentlog(func_name: " UUID:\(uuid))", errorfromserverorlink: "", errorfromapp: "")
+            let uuid = UIDevice.current.identifierForVendor!.uuidString
+            KeychainService.savePassword(token: uuid as NSString)
+            defaults.set(uuid, forKey: "uuid")
         }
         else{
         let string = uuid + ":" + Email + ":" + "Other" + ":" + "\(Vehicaldetails.sharedInstance.Language)" + ":" + "\(brandname)"
+            print(string)
 //        let string = uuid + ":" + Email + ":" + "Other" + ":" + "\(Vehicaldetails.sharedInstance.Language)"
         let Base64 = convertStringToBase64(string: string)
         print(Base64)
@@ -687,7 +638,13 @@ class Webservices:NSObject {
                 let test = String((text?.filter { !" \n".contains($0) })!)
                 let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
                 print(newString)
-                self.sentlog(func_name: "<Check Approve> Authenticate:I: \(lat!),\(long!), Devicetype:\(UIDevice().type), uuid(\(uuid)), iOS_version:\(UIDevice.current.systemVersion) , App_version \(Version)", errorfromserverorlink: " ",errorfromapp: "")
+                if(newString.contains("success"))
+                {
+                    self.sentlog(func_name: "<Check Approve> Authenticate:I: \(lat!),\(long!), Devicetype:\(UIDevice().type), uuid(\(uuid)), iOS_version:\(UIDevice.current.systemVersion) , App_version \(Version)", errorfromserverorlink: " ",errorfromapp: "")
+                }
+                else{
+                    self.sentlog(func_name: "<Check Approve> Authenticate:I: \(lat!),\(long!), Devicetype:\(UIDevice().type), uuid(\(uuid)), iOS_version:\(UIDevice.current.systemVersion) , App_version \(Version)", errorfromserverorlink: "response from sever \(newString) ",errorfromapp: "")
+                }
                 //self.sentlog(func_name: "Check Approve Function with command:Authenticate:I: \(lat!),\(long!),Devicetype:\(UIDevice().type),uuid(\(uuid)),iOS_version:\(UIDevice.current.systemVersion) , App_version \(Version)", errorfromserverorlink: " ",errorfromapp: "Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 
             } else {
@@ -1044,6 +1001,104 @@ class Webservices:NSObject {
     }
     
     
+//    func UpdateSwitchTimeBounceForLink() -> String {
+//        FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
+////        let Version = Vehicaldetails.sharedInstance.FirmwareVersion
+////        let HoseId = Vehicaldetails.sharedInstance.HoseID
+//
+//        let Url:String = FSURL
+//        let Email = defaults.string(forKey: "address")
+//        let uuid = defaults.string(forKey: "uuid")
+//        let string = uuid! + ":" + Email! + ":" + "UpdateSwitchTimeBounceForLink"
+//        let Base64 = convertStringToBase64(string: string)
+//        let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
+//
+//        print(string)
+//        request.httpMethod = "POST"
+//        request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
+//        let bodyData = "{\"SiteId\":\(Vehicaldetails.sharedInstance.siteID),\"IsResetSwitchTimeBounce\":0}"//
+//        print(bodyData)
+//        request.httpBody = bodyData.data(using: String.Encoding.utf8)
+//        request.timeoutInterval = 10
+//
+//        let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
+//            if let data = data {
+//                print(String(data: data, encoding: String.Encoding.utf8)!)
+//                self.reply = NSString(data: data, encoding:String.Encoding.utf8.rawValue)! as String
+//                 print(self.reply)
+//                // print(response!)
+//            } else {
+//                //  print(error!)
+//                let text = (error?.localizedDescription)! //+ error.debugDescription
+//                let test = String((text.filter { !" \n".contains($0) }))
+//                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+//                // print(newString)
+//                self.sentlog(func_name: "Upgrade Current Version toserver UpdateSwitchTimeBounceForLink Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//                self.reply = "-1" + "#" + "\(error!)"
+//            }
+//        }
+//        task.resume()
+//        return reply //+ "#" + ""
+//    }
+    
+    func UpdateSwitch_TimeBounceForLink() -> String {
+        FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
+//        let Version = Vehicaldetails.sharedInstance.FirmwareVersion
+//        let HoseId = Vehicaldetails.sharedInstance.HoseID
+        
+        let Url:String = FSURL
+        let Email = defaults.string(forKey: "address")
+        let uuid = defaults.string(forKey: "uuid")
+        let string = uuid! + ":" + Email! + ":" + "UpdatePulserTypeOfLINK"
+        let Base64 = convertStringToBase64(string: string)
+        let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
+        var p_type = defaults.string(forKey: "UpdateSwitchTimeBounceForLink")
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MM/dd/yyyy HH:mm:ss"
+        dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
+        let dtt: String = dateFormatter.string(from: NSDate() as Date)
+        print(dtt)
+        print(string,p_type)
+        request.httpMethod = "POST"
+        request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
+        let bodyData = "{\"email\":\"\(Email!)\",\"IMEIUDID\":\"\(uuid!)\",\"PulserType\":\"\(p_type!)\",\"SiteId\":\"\(Vehicaldetails.sharedInstance.siteID)\",\"DateTimeFromApp\":\"\(dtt)\"}"//IMEIUDID,Email,HoseId,       PulserType
+        print(bodyData)
+        request.httpBody = bodyData.data(using: String.Encoding.utf8)
+        //request.timeoutInterval = 10
+        
+        let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
+            if let data = data {
+                print(String(data: data, encoding: String.Encoding.utf8)!)
+                self.reply = NSString(data: data, encoding:String.Encoding.utf8.rawValue)! as String
+                 print(self.reply)
+                self.sentlog(func_name: "UpdatePulserTypeOfLINK Service Function", errorfromserverorlink: " Response from Server $$ \(self.reply)!!", errorfromapp: " " )
+                // print(response!)
+            } else {
+                //  print(error!)
+                let text = (error?.localizedDescription)! //+ error.debugDescription
+                let test = String((text.filter { !" \n".contains($0) }))
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                 print(newString)
+                self.sentlog(func_name: "Upgrade Current Version toserver UpdateSwitchTimeBounceForLink Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "ddMMyyyyhhmmss"
+                dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
+                let dtt1: String = dateFormatter.string(from: NSDate() as Date)
+                
+                let unsycnfileName =  dtt1 + "#" + "Pulsar type" + "#" + Vehicaldetails.sharedInstance.SSId //
+                if(bodyData != ""){
+                    self.cf.Saveptype(fileName: unsycnfileName, writeText: bodyData)
+                    self.sentlog(func_name: " Saved Pulsar type to Phone, data \(bodyData)",errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"Connetced link \( self.cf.getSSID())")
+                   
+                }
+                self.reply = "-1" + "#" + "\(error!)"
+            }
+        }
+        task.resume()
+        return reply //+ "#" + ""
+    }
+    
     func UpdateSwitchTimeBounceForLink() -> String {
         FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
 //        let Version = Vehicaldetails.sharedInstance.FirmwareVersion
@@ -1062,21 +1117,33 @@ class Webservices:NSObject {
         let bodyData = "{\"SiteId\":\(Vehicaldetails.sharedInstance.siteID),\"IsResetSwitchTimeBounce\":0}"//
         print(bodyData)
         request.httpBody = bodyData.data(using: String.Encoding.utf8)
-        request.timeoutInterval = 10
+        //request.timeoutInterval = 10
         
         let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
             if let data = data {
                 print(String(data: data, encoding: String.Encoding.utf8)!)
                 self.reply = NSString(data: data, encoding:String.Encoding.utf8.rawValue)! as String
                  print(self.reply)
+                self.sentlog(func_name: "UpdateSwitchTimeBounceForLink Service Function", errorfromserverorlink: " Response from Server $$ \(self.reply)!!", errorfromapp: " " )
                 // print(response!)
             } else {
                 //  print(error!)
                 let text = (error?.localizedDescription)! //+ error.debugDescription
                 let test = String((text.filter { !" \n".contains($0) }))
                 let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
-                // print(newString)
+                 print(newString)
                 self.sentlog(func_name: "Upgrade Current Version toserver UpdateSwitchTimeBounceForLink Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "ddMMyyyyhhmmss"
+                dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
+                let dtt1: String = dateFormatter.string(from: NSDate() as Date)
+                
+                let unsycnfileName =  dtt1 + "#" + "Pulsar type" + "#" + Vehicaldetails.sharedInstance.SSId //
+                if(bodyData != ""){
+                    self.cf.Saveptype(fileName: unsycnfileName, writeText: bodyData)
+                    self.sentlog(func_name: " Saved Pulsar type to Phone, data \(bodyData)",errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"Connetced link \( self.cf.getSSID())")
+                   
+                }
                 self.reply = "-1" + "#" + "\(error!)"
             }
         }

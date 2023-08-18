@@ -567,7 +567,7 @@ class PreauthVehiclenoVC: UIViewController,UITextFieldDelegate {
                             
                             print ("Error: \(error.domain)")
                         }
-                       // print(sysdata)
+                        print(preauthtransdata!)
                         if(preauthtransdata == nil){
                         }
                         else{

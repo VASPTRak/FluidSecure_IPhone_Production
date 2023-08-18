@@ -31,11 +31,11 @@ extension Array where Element:Equatable {
 class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,UIPickerViewDelegate,StreamDelegate {
     var web = Webservices()
     var cf = Commanfunction()
-    var fVC = FuelquantityVC()
+    
     var unsync = Sync_Unsynctransactions()
     
     var currentlocation :CLLocation!
-    let locationManager = CLLocationManager()
+    var locationManager = CLLocationManager()
     var sourcelat:Double!
     var sourcelong:Double!
     
@@ -84,6 +84,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
 //    var groupAdminCompanyList = [String]()
     
     var IsGobuttontapped : Bool = false
+    var IsrefreshButtontapped : Bool = false
     var now:Date!
     var sentcalltogetdatavehicle = false
     
@@ -95,6 +96,8 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     let kBLEService_UUID = "4c425346-0000-1000-8000-00805f9b34fb"
     let kBLE_Characteristic_uuid_Tx = "e49227e8-659f-4d7e-8e23-8c6eea5b9173"
     let kBLE_Characteristic_uuid_Rx = "e49227e8-659f-4d7e-8e23-8c6eea5b9173"
+    
+    var ISLocationpermissiongetfromuser = true
     
     var txCharacteristic : CBCharacteristic?
     var rxCharacteristic : CBCharacteristic?
@@ -169,6 +172,29 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         self.present(alertController, animated: true, completion: nil)
     }
     
+    func checkLocationpermission()
+    {
+        locationManager = CLLocationManager()
+
+        if CLLocationManager.locationServicesEnabled() {
+            if #available(iOS 14.0, *) {
+                switch locationManager.authorizationStatus {
+                case .notDetermined, .restricted, .denied:
+                    print("No access")
+                    ISLocationpermissiongetfromuser = false
+                case .authorizedAlways, .authorizedWhenInUse:
+                    print("Access")
+                    ISLocationpermissiongetfromuser = true
+                @unknown default:
+                    break
+                }
+            } else {
+                // Fallback on earlier versions
+            }
+        } else {
+            print("Location services are not enabled")
+        }
+    }
     
     //MARK: ViewDidLoad Methods
     override func viewDidLoad() {
@@ -245,11 +271,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         {
             print(defaults.string(forKey: "dateof_DownloadPreAuthDepartmentData")!)
         }
-//        else{
-////            _ = web.GetVehiclesForPhone()
-//            _ = web.GetDepartmentsForPhone()
-//            sentcalltogetdatavehicle = true
-//        }
+
         
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
             [weak self] (granted, error) in
@@ -257,15 +279,17 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             
             guard granted else {
                 print("Please enable \"Notifications\" from App Settings.")
-                self?.showPermissionAlert()
+                self?.showPermissionAlert(message:"Notifications are disabled. Please enable it using the app settings option below.") //"Please allow FluidSecure to access Notifications in the app Settings."
                 return
             }
+            
         }
+        checkLocationpermission()
         }
 //    }
     
-    func showPermissionAlert() {
-        let alert = UIAlertController(title: "WARNING", message: "Please enable access to Notifications in the Settings app.", preferredStyle: .alert)
+    func showPermissionAlert(message:String) {
+        let alert = UIAlertController(title: "WARNING", message: message, preferredStyle: .alert)
 
         let settingsAction = UIAlertAction(title: "Settings", style: .default) {[weak self] (alertAction) in
             self?.gotoAppSettings()
@@ -332,39 +356,41 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     func getdatauser()
     {
         var uuid:String = ""
-        if(brandname == "FluidSecure"){
-            
-            if(defaults.string(forKey: "\(brandname)") != nil) {
-                uuid = defaults.string(forKey: "\(brandname)")!//UUID().uuidString
-                KeychainService.savePassword(token: uuid as NSString)
-            }
-        }
-        print(defaults.string(forKey: "Register"))
-        var password = KeychainService.loadPassword()
-        if(password == nil || password == "")
-        {
-            self.web.sentlog(func_name: "keychain service get \(password) ", errorfromserverorlink: "", errorfromapp: "")
+//        if(brandname == "FluidSecure"){
+//
+//            if(defaults.string(forKey: "\(brandname)") != nil) {
+//                uuid = defaults.string(forKey: "\(brandname)")!//UUID().uuidString
+//                KeychainService.savePassword(token: uuid as NSString)
+//            }
+//        }
+//        print(defaults.string(forKey: "Register"))
+//        var password = KeychainService.loadPassword()
+//        if(password == nil || password == "")
+//        {
+//            self.web.sentlog(func_name: "keychain service get \(password) ", errorfromserverorlink: "", errorfromapp: "")
             let preuuid = defaults.string(forKey: "uuid")
             if(preuuid == nil){
-                 uuid = UIDevice.current.identifierForVendor!.uuidString
-                KeychainService.savePassword(token: uuid as NSString)
+               var password = KeychainService.loadPassword()
+                           
+                if(password == nil || password == "")
+                {
+                    uuid = UIDevice.current.identifierForVendor!.uuidString
+                    KeychainService.savePassword(token: uuid as NSString)
+                }
+                else
+                {
+                    print(password!)//used this paasword (uuid)
+                    uuid = password! as String
+                }
             }
             else
             {
                 KeychainService.savePassword(token: preuuid! as NSString)
-                password = KeychainService.loadPassword()
+                var password = KeychainService.loadPassword()
                 print(password!)//used this paasword (uuid)
-                uuid = password! as String
+                uuid = preuuid! as String
             }
-        }
-        else{
-//            KeychainService.savePassword(token: "0B5C5D0B-70CE-4C75-8844-9E8938586489" as NSString)
-            //password = KeychainService.loadPassword()
-            print(password!)//used this paasword (uuid)
-            uuid = password! as String
-        }
-      
-            //let uuid = password!
+
             var myMutableStringTitle = NSMutableAttributedString()
             let Name = "Select Hose to Use"// PlaceHolderText
             myMutableStringTitle = NSMutableAttributedString(string:Name, attributes: [NSAttributedString.Key.font:UIFont(name: "Arial", size: 25.0)!]) // Font
@@ -376,7 +402,13 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             //Server call to Check User approved or not.
             if(currentlocation == nil)
             {
-                reply =  web.checkApprove(uuid: uuid as String,lat:"\(0)",long:"\(0)")
+                if( self.IsGobuttontapped == true || self.IsrefreshButtontapped == true){
+                    reply =  web.checkApprove(uuid: uuid as String,lat:"\(0)",long:"\(0)")
+                }
+                else{
+                    
+                }
+               
             }
             else
             {
@@ -385,7 +417,20 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                 print (sourcelat!,sourcelong!)
                 Vehicaldetails.sharedInstance.Lat = sourcelat!
                 Vehicaldetails.sharedInstance.Long = sourcelong!
-                reply = web.checkApprove(uuid: uuid as String,lat:"\(sourcelat!)",long:"\(sourcelong!)")
+                if( self.IsGobuttontapped == true || self.IsrefreshButtontapped == true){
+                    reply = web.checkApprove(uuid: uuid as String,lat:"\(sourcelat!)",long:"\(sourcelong!)")
+                    if(reply != "-1"){
+                        cf.DeleteFileInApp(fileName: "getSites.txt")
+                        cf.CreateTextFile(fileName: "getSites.txt", writeText: reply)
+                    }
+                }
+                else
+                {
+                    if(cf.checkPath(fileName: "getSites.txt") == true) {
+                        reply = cf.ReadFile(fileName: "getSites.txt")
+                    }
+                }
+                
             }
             
             
@@ -397,15 +442,15 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                     for i in 1...3
                     {
                         print(i)
-                        
+
                         if(self.currentlocation == nil)
                         {
                             reply = self.web.checkApprove(uuid: uuid as String,lat:"\(0)",long:"\(0)")
                         }else{
-                            
+
                             reply = self.web.checkApprove(uuid: uuid as String,lat:"\(self.sourcelat!)",long:"\(self.sourcelong!)")
                         }
-                        
+
                         if(reply == "-1")
                         {
                             if(i == 3){
@@ -421,8 +466,9 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                 }
             }
             else {
-                cf.DeleteFileInApp(fileName: "getSites.txt")
-                cf.CreateTextFile(fileName: "getSites.txt", writeText: reply)
+                if(cf.checkPath(fileName: "getSites.txt") == true) {
+                    reply = cf.ReadFile(fileName: "getSites.txt")
+                }
                 let data1:Data = reply.data(using: String.Encoding.utf8)!
                 do {
                     sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
@@ -992,6 +1038,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
          
         } else {}
         unsync.unsyncTransaction()   ///check
+        unsync.unsyncP_typestatus()
         self.unsync.Send10trans()
        _ = self.preauthunsyncTransaction()
         
@@ -1101,8 +1148,9 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     
     //MARK:Go Button tapped
     @IBAction func goButtontapped(sender: AnyObject) {
-        
+        checkLocationpermission()
         unsync.unsyncTransaction()
+        unsync.unsyncP_typestatus()
         self.unsync.Send10trans()
         _ = preauthunsyncTransaction()
         
@@ -1112,167 +1160,168 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         Vehicaldetails.sharedInstance.Barcodescanvalue = ""
         Vehicaldetails.sharedInstance.checkSSIDwithLink = "false"
         delay(0.1){
-            
-            self.go.isEnabled = false
-            if(self.wifiNameTextField.text == ""){
-                self.showAlert(message: NSLocalizedString("NoHoseselect", comment:""))
-                self.Activity.stopAnimating()
-                self.Activity.isHidden = true
-                self.go.isEnabled = true
-            }
-            else{
-                self.web.sentlog(func_name: "Selected hose \(Vehicaldetails.sharedInstance.SSId)", errorfromserverorlink: "", errorfromapp: "")
-                //#1594
-                if(Vehicaldetails.sharedInstance.IsLinkFlagged == "True")
-                {
-                    self.showAlert(message: "\(Vehicaldetails.sharedInstance.LinkFlaggedMessage)")
+            if(self.ISLocationpermissiongetfromuser == true){
+                self.go.isEnabled = false
+                if(self.wifiNameTextField.text == ""){
+                    self.showAlert(message: NSLocalizedString("NoHoseselect", comment:""))
+                    self.Activity.stopAnimating()
+                    self.Activity.isHidden = true
+                    self.go.isEnabled = true
                 }
                 else{
-                    print("SSID: \(self.cf.getSSID())", self.wifiNameTextField.text!)
-                    if(self.cf.getSSID() != "" && self.wifiNameTextField.text != self.cf.getSSID() && Vehicaldetails.sharedInstance.HubLinkCommunication == "HTTP") {
-                        print("SSID: \(self.cf.getSSID())")
-                        self.showAlert(message:NSLocalizedString("SwitchoffyourWiFi", comment:""))
-//                        self.showAlert(message:"Please switch off your wifi before proceeding. \n To switch off the wifi you can use the shortcut.  If you have an iPhone with Touch ID, swipe up from the bottom of the screen. If you have an iPhone with Face ID, swipe down from the upper right. Then tap on the wifi icon to switch it off.")
-                        self.Activity.stopAnimating()
-                        self.Activity.isHidden = true
-                        self.go.isEnabled = true
+                    self.web.sentlog(func_name: "Selected hose \(Vehicaldetails.sharedInstance.SSId)", errorfromserverorlink: "", errorfromapp: "")
+                    //#1594
+                    if(Vehicaldetails.sharedInstance.IsLinkFlagged == "True")
+                    {
+                        self.showAlert(message: "\(Vehicaldetails.sharedInstance.LinkFlaggedMessage)")
                     }
                     else{
-                        if(self.wifiNameTextField.text != "") {
-                            print(Vehicaldetails.sharedInstance.IsBusy)
-                            self.IsGobuttontapped = true
+                        print("SSID: \(self.cf.getSSID())", self.wifiNameTextField.text!)
+                        if(self.cf.getSSID() != "" && self.wifiNameTextField.text != self.cf.getSSID() && Vehicaldetails.sharedInstance.HubLinkCommunication == "HTTP") {
+                            print("SSID: \(self.cf.getSSID())")
+                            self.showAlert(message:NSLocalizedString("SwitchoffyourWiFi", comment:""))
                             
-                            self.getdatauser()
-                            for id in 0  ..< self.ssid.count {
-                                if(self.wifiNameTextField.text == self.ssid[id])
-                                {
-                                    Vehicaldetails.sharedInstance.IsBusy = self.IFISBusy[id]
-                                    Vehicaldetails.sharedInstance.IsDefective = self.IFIsDefective[id]
-                                    Vehicaldetails.sharedInstance.Istankempty = self.IsTank_Empty[id]
-                                    print(Vehicaldetails.sharedInstance.IsBusy)
-                                    let siteid = self.siteID[id]
-                                    let ssId = self.ssid[id]
-                                    let hoseid = self.HoseId[id]
-                                    let Password = self.Pass[id]
-                                    self.wifiNameTextField.text = self.ssid[id]
-                                    let isupgrade = self.Is_upgrade[id]
-                                    let pulsartime_adjust = self.pulsartimeadjust[id]
-                                    Vehicaldetails.sharedInstance.siteID = siteid
-                                    
-                                    Vehicaldetails.sharedInstance.SSId = ssId.trimmingCharacters(in: .whitespacesAndNewlines)
-                                    print(Vehicaldetails.sharedInstance.SSId)
-                                    Vehicaldetails.sharedInstance.HoseID = hoseid
-                                    Vehicaldetails.sharedInstance.password = Password
-                                    Vehicaldetails.sharedInstance.IsUpgrade = isupgrade
-                                    Vehicaldetails.sharedInstance.PulserTimingAdjust = pulsartime_adjust
-                                    //                        Vehicaldetails.sharedInstance.IsBusy = IsBusy
-                                    Vehicaldetails.sharedInstance.IsDefective = self.IFIsDefective[id]
-                                    Vehicaldetails.sharedInstance.prevSSID = self.preSSID[id]
-                                    Vehicaldetails.sharedInstance.OriginalNamesOfLink = self.OriginalNamesOfLink[id] as! NSMutableArray
-                                    Vehicaldetails.sharedInstance.IsHoseNameReplaced = self.Is_HoseNameReplaced[id]
-                                    Vehicaldetails.sharedInstance.ReplaceableHoseName = self.ReplaceableHosename[id]
-                                    print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced)
-                                    Vehicaldetails.sharedInstance.HubLinkCommunication = self.Communication_Type[id]
-                                    Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce = self.Is_ResetSwitchTimeBounce[id]
-                                }
-                            }
-                            print(Vehicaldetails.sharedInstance.IsDefective )
-                            if(Vehicaldetails.sharedInstance.IsDefective == "True"){
-                                self.showAlert(message: NSLocalizedString("Hoseorder", comment:""))
-                                self.Activity.stopAnimating()
-                                self.Activity.isHidden = true
-                            }
-                            else {
-                                if(Vehicaldetails.sharedInstance.IsBusy == "Y"){
-                                    let alert = UIAlertController(title: "", message: NSLocalizedString("", comment:""), preferredStyle: UIAlertController.Style.alert )
-                                    let backView = alert.view.subviews.last?.subviews.last
-                                    backView?.layer.cornerRadius = 10.0
-                                    backView?.backgroundColor = UIColor.white
-                                    var messageMutableString = NSMutableAttributedString()
-                                    messageMutableString = NSMutableAttributedString(string: NSLocalizedString("warninghoseinused", comment:"")as String, attributes: [NSAttributedString.Key.font:UIFont(name: "Georgia", size: 20.0)!])
-                                    self.web.sentlog(func_name: "Go button tapped Hose In Use\(Vehicaldetails.sharedInstance.IsBusy)", errorfromserverorlink: "", errorfromapp: "")
-                                    
-                                    alert.setValue(messageMutableString, forKey: "attributedMessage")
-                                    
-                                    let okAction = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertAction.Style.default) { action in
-                                        self.go.isEnabled = true
-                                    }
-                                    alert.addAction(okAction)
-                                    self.present(alert, animated: true, completion: nil)
-                                }
-                                else if(Vehicaldetails.sharedInstance.IsBusy == "N")
-                                {
-                                    if(Vehicaldetails.sharedInstance.Istankempty == "True")
+                            self.Activity.stopAnimating()
+                            self.Activity.isHidden = true
+                            self.go.isEnabled = true
+                        }
+                        else{
+                            if(self.wifiNameTextField.text != "") {
+                                print(Vehicaldetails.sharedInstance.IsBusy)
+                                self.IsGobuttontapped = true
+                                
+                                self.getdatauser()
+                                for id in 0  ..< self.ssid.count {
+                                    if(self.wifiNameTextField.text == self.ssid[id])
                                     {
+                                        Vehicaldetails.sharedInstance.IsBusy = self.IFISBusy[id]
+                                        Vehicaldetails.sharedInstance.IsDefective = self.IFIsDefective[id]
+                                        Vehicaldetails.sharedInstance.Istankempty = self.IsTank_Empty[id]
+                                        print(Vehicaldetails.sharedInstance.IsBusy)
+                                        let siteid = self.siteID[id]
+                                        let ssId = self.ssid[id]
+                                        let hoseid = self.HoseId[id]
+                                        let Password = self.Pass[id]
+                                        self.wifiNameTextField.text = self.ssid[id]
+                                        let isupgrade = self.Is_upgrade[id]
+                                        let pulsartime_adjust = self.pulsartimeadjust[id]
+                                        Vehicaldetails.sharedInstance.siteID = siteid
                                         
-                                        self.showAlert(message: NSLocalizedString("tankempty", comment:""))
-//                                        self.showAlert(message: "The system is low on fuel and must be refilled before fueling can start.\n Please contact your Manager.")
-                                        self.go.isEnabled = true
+                                        Vehicaldetails.sharedInstance.SSId = ssId.trimmingCharacters(in: .whitespacesAndNewlines)
+                                        print(Vehicaldetails.sharedInstance.SSId)
+                                        Vehicaldetails.sharedInstance.HoseID = hoseid
+                                        Vehicaldetails.sharedInstance.password = Password
+                                        Vehicaldetails.sharedInstance.IsUpgrade = isupgrade
+                                        Vehicaldetails.sharedInstance.PulserTimingAdjust = pulsartime_adjust
+                                        //                        Vehicaldetails.sharedInstance.IsBusy = IsBusy
+                                        Vehicaldetails.sharedInstance.IsDefective = self.IFIsDefective[id]
+                                        Vehicaldetails.sharedInstance.prevSSID = self.preSSID[id]
+                                        Vehicaldetails.sharedInstance.OriginalNamesOfLink = self.OriginalNamesOfLink[id] as! NSMutableArray
+                                        Vehicaldetails.sharedInstance.IsHoseNameReplaced = self.Is_HoseNameReplaced[id]
+                                        Vehicaldetails.sharedInstance.ReplaceableHoseName = self.ReplaceableHosename[id]
+                                        print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced)
+                                        Vehicaldetails.sharedInstance.HubLinkCommunication = self.Communication_Type[id]
+                                        Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce = self.Is_ResetSwitchTimeBounce[id]
                                     }
-                                    else{
-                                        if (self.wifiNameTextField.text == ""){
-                                            self.showAlert(message: NSLocalizedString("NoHoseselect", comment:""))
-                                            self.Activity.stopAnimating()
-                                            self.Activity.isHidden = true
+                                }
+                                print(Vehicaldetails.sharedInstance.IsDefective )
+                                if(Vehicaldetails.sharedInstance.IsDefective == "True"){
+                                    self.showAlert(message: NSLocalizedString("Hoseorder", comment:""))
+                                    self.Activity.stopAnimating()
+                                    self.Activity.isHidden = true
+                                }
+                                else {
+                                    if(Vehicaldetails.sharedInstance.IsBusy == "Y"){
+                                        let alert = UIAlertController(title: "", message: NSLocalizedString("", comment:""), preferredStyle: UIAlertController.Style.alert )
+                                        let backView = alert.view.subviews.last?.subviews.last
+                                        backView?.layer.cornerRadius = 10.0
+                                        backView?.backgroundColor = UIColor.white
+                                        var messageMutableString = NSMutableAttributedString()
+                                        messageMutableString = NSMutableAttributedString(string: NSLocalizedString("warninghoseinused", comment:"")as String, attributes: [NSAttributedString.Key.font:UIFont(name: "Georgia", size: 20.0)!])
+                                        self.web.sentlog(func_name: "Go button tapped Hose In Use\(Vehicaldetails.sharedInstance.IsBusy)", errorfromserverorlink: "", errorfromapp: "")
+                                        
+                                        alert.setValue(messageMutableString, forKey: "attributedMessage")
+                                        
+                                        let okAction = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertAction.Style.default) { action in
+                                            self.go.isEnabled = true
+                                        }
+                                        alert.addAction(okAction)
+                                        self.present(alert, animated: true, completion: nil)
+                                    }
+                                    else if(Vehicaldetails.sharedInstance.IsBusy == "N")
+                                    {
+                                        if(Vehicaldetails.sharedInstance.Istankempty == "True")
+                                        {
+                                            
+                                            self.showAlert(message: NSLocalizedString("tankempty", comment:""))
+                                            //                                        self.showAlert(message: "The system is low on fuel and must be refilled before fueling can start.\n Please contact your Manager.")
                                             self.go.isEnabled = true
                                         }
                                         else{
-                                            let reply = self.web.sendSiteID()
-                                            if(reply == "-1"){
-                                                self.showAlert(message: NSLocalizedString("NoInternet", comment:""))
+                                            if (self.wifiNameTextField.text == ""){
+                                                self.showAlert(message: NSLocalizedString("NoHoseselect", comment:""))
                                                 self.Activity.stopAnimating()
                                                 self.Activity.isHidden = true
                                                 self.go.isEnabled = true
-                                                
-                                            }else{
-                                                let data1:NSData = reply.data(using: String.Encoding.utf8)! as NSData
-                                                do{
-                                                    self.sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
-                                                }catch let error as NSError {
-                                                    print ("Error: \(error.domain)")
-                                                }
-                                                
-                                                if(self.sysdata == nil){
+                                            }
+                                            else{
+                                                let reply = self.web.sendSiteID()
+                                                if(reply == "-1"){
+                                                    self.showAlert(message: NSLocalizedString("NoInternet", comment:""))
+                                                    self.Activity.stopAnimating()
+                                                    self.Activity.isHidden = true
+                                                    self.go.isEnabled = true
                                                     
-                                                }
-                                                else{
-                                                    let ResponceText = self.sysdata.value(forKey: "ResponceText") as! NSString
-                                                    
-                                                    print(ResponceText)
-                                                    if(ResponceText == "Y"){
-                                                        self.showAlert(message: NSLocalizedString("warninghoseinused", comment:""))
-                                                        self.Activity.stopAnimating()
-                                                        self.Activity.isHidden = true
+                                                }else{
+                                                    let data1:NSData = reply.data(using: String.Encoding.utf8)! as NSData
+                                                    do{
+                                                        self.sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
+                                                    }catch let error as NSError {
+                                                        print ("Error: \(error.domain)")
                                                     }
-                                                    else if(ResponceText == "Busy"){
-                                                        print("ssID Match")
-                                                        self.Activity.stopAnimating()
-                                                        self.Activity.isHidden = true
-                                                        Vehicaldetails.sharedInstance.TransactionId = 0;
+                                                    
+                                                    if(self.sysdata == nil){
                                                         
-                                                        if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT"){
-                                                            
-                                                            self.fVC.connectToBLE()
-                                                            
+                                                    }
+                                                    else{
+                                                        let ResponceText = self.sysdata.value(forKey: "ResponceText") as! NSString
+                                                        
+                                                        print(ResponceText)
+                                                        if(ResponceText == "Y"){
+                                                            self.showAlert(message: NSLocalizedString("warninghoseinused", comment:""))
+                                                            self.Activity.stopAnimating()
+                                                            self.Activity.isHidden = true
                                                         }
-                                                                                                                
-                                                        if(self.IsVehicleNumberRequire == "True"){
-                                                            self.performSegue(withIdentifier: "GO", sender: self)
-                                                        }
-                                                        else{
-                                                            if(self.IsDepartmentRequire == "True"){
-                                                                self.performSegue(withIdentifier: "dept", sender: self)
+                                                        else if(ResponceText == "Busy"){
+                                                            print("ssID Match")
+                                                            self.Activity.stopAnimating()
+                                                            self.Activity.isHidden = true
+                                                            Vehicaldetails.sharedInstance.TransactionId = 0;
+                                                            
+                                                            if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT"){
+                                                                let fVC = FuelquantityVC()
+                                                            fVC.connectToBLE()
+                                                                
+                                                            }
+                                                            
+                                                            if(self.IsVehicleNumberRequire == "True"){
+                                                                self.performSegue(withIdentifier: "GO", sender: self)
                                                             }
                                                             else{
-                                                                if(self.IsPersonnelPINRequire == "True"){
-                                                                    self.performSegue(withIdentifier: "pin", sender: self)
+                                                                if(self.IsDepartmentRequire == "True"){
+                                                                    self.performSegue(withIdentifier: "dept", sender: self)
                                                                 }
                                                                 else{
-                                                                    if(self.IsOtherRequire == "True"){
-                                                                        self.performSegue(withIdentifier: "other", sender: self)
+                                                                    if(self.IsPersonnelPINRequire == "True"){
+                                                                        self.performSegue(withIdentifier: "pin", sender: self)
                                                                     }
                                                                     else{
-                                                                        self.senddata(deptno: self.IsDepartmentRequire,ppin:self.IsPersonnelPINRequire,other:self.IsOtherRequire)
+                                                                        if(self.IsOtherRequire == "True"){
+                                                                            self.performSegue(withIdentifier: "other", sender: self)
+                                                                        }
+                                                                        else{
+                                                                            self.senddata(deptno: self.IsDepartmentRequire,ppin:self.IsPersonnelPINRequire,other:self.IsOtherRequire)
+                                                                        }
                                                                     }
                                                                 }
                                                             }
@@ -1287,6 +1336,10 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                         }
                     }
                 }
+            }
+            else
+            {
+                self.showPermissionAlert(message: "Location is disabled. Please enable it using the app settings option below.")
             }
         }
     }
@@ -1415,8 +1468,11 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     
     @IBAction func refreshButtontappd(sender: AnyObject)
     {
+        IsrefreshButtontapped = true
         viewDidLoad()
         unsync.unsyncTransaction()
+        unsync.unsyncP_typestatus()
+       
         
     }
     
