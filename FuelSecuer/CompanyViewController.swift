@@ -1805,7 +1805,7 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
             {
                 if(groupAdminCompanyList[v] == groupAdminCompanyList[row])
                 {
-                    index = v
+                    index = row
                     break
                 }
             }

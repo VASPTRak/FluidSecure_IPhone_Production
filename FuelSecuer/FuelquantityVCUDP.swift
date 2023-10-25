@@ -1770,7 +1770,7 @@ class FuelquantityVCUDP: UIViewController,StreamDelegate,UITextFieldDelegate,URL
                     self.newAsciiText.append(NSAttributedString(string:(self.backToString as String)))
                     
 //                    print(self.backToString , "\(self.newAsciiText)")
-                    
+                    //checkissue
                     if("\(self.newAsciiText)".contains("$$"))
                     {
                         let jsondata = self.newAsciiText

@@ -13,7 +13,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
     @IBOutlet var version: UILabel!
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var mobileNoTextField: UITextField!
-    @IBOutlet weak var Countrycode: UITextField!
+//    @IBOutlet weak var Countrycode: UITextField!
     @IBOutlet weak var registerButton: UIButton!
     @IBOutlet var firstNameTextField: UITextField!
     @IBOutlet var Company_Name: UITextField!
@@ -39,7 +39,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                     placeholderdata(name: "Ingrese su nombre completo", textfield: firstNameTextField)
                     placeholderdata(name: "Introducir la dirección de correo electrónico", textfield: emailTextField)
                     placeholderdata(name: "Ingrese el número de celular", textfield: mobileNoTextField)
-            placeholderdata(name: "Código de país", textfield: Countrycode)
+//            placeholderdata(name: "Código de país", textfield: Countrycode)
                     placeholderdata(name: "Ingrese el nombre de la empresa", textfield: Company_Name)
 
         }else  if(Vehicaldetails.sharedInstance.Language == "") ||  (Vehicaldetails.sharedInstance.Language == "en-US"){
@@ -47,7 +47,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                     placeholderdata(name: "Enter Full Name", textfield: firstNameTextField)
                     placeholderdata(name: "Enter Email Address", textfield: emailTextField)
                     placeholderdata(name: "Enter Mobile Number", textfield: mobileNoTextField)
-                    placeholderdata(name: "Country Code", textfield: Countrycode)
+//                    placeholderdata(name: "Country Code", textfield: Countrycode)
                     placeholderdata(name: "Enter Company Name", textfield: Company_Name)
 
         }
@@ -57,7 +57,8 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
         locationManager.startUpdatingLocation()
         currentlocation = locationManager.location
         mobileNoTextField.delegate = self
-        Countrycode.text = "+1"
+//        Countrycode.delegate = self
+//        Countrycode.text = "+1"
         self.registerButton.layer.cornerRadius = 5
 //        checked.isHidden = true
 
@@ -166,7 +167,10 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                 let Base64 = convertStringToBase64(string: string)
                 let mobile = mobileNoTextField.text
                 let Companyname = Company_Name.text
+//                let Country_code = Countrycode.text
                 let data = web.registration(Name: Name!,Email:Email!,Base64:Base64,mobile:mobile!,uuid:uuid,company:Companyname!)
+        //web.registration(Name: Name!,Email:Email!,Base64:Base64,mobile:mobile!,uuid:uuid,company:Companyname!,Countrycode:Country_code!)
+               // let data = web.registration(Name: Name!,Email:Email!,Base64:Base64,mobile:mobile!,uuid:uuid,company:Companyname!)
                 let Split = data.components(separatedBy: "#")
                 let reply = Split[0]
                // _ = Split[1]
@@ -219,14 +223,25 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                         showAlert(message: "\(ResponseText)" )
                         defaults.set(0, forKey: "Login")
                         defaults.set(1, forKey: "Register")
-                        let sourcelat = currentlocation.coordinate.latitude
-                        let sourcelong = currentlocation.coordinate.longitude
-                        //print (sourcelat,sourcelong)
-                        let reply = web.checkApprove(uuid: uuid,lat:"\(sourcelat)",long:"\(sourcelong)")
-
-                        if(reply != "-1"){
-                            cf.DeleteFileInApp(fileName: "getSites.txt")
-                            cf.CreateTextFile(fileName: "getSites.txt", writeText: reply)
+                        if(currentlocation == nil)
+                        {
+                            let reply =  web.checkApprove(uuid: uuid as String,lat:"\(0)",long:"\(0)")
+                            if(reply != "-1"){
+                                cf.DeleteFileInApp(fileName: "getSites.txt")
+                                cf.CreateTextFile(fileName: "getSites.txt", writeText: reply)
+                            }
+                        }
+                        else {
+                            let sourcelat = currentlocation.coordinate.latitude
+                            let sourcelong = currentlocation.coordinate.longitude
+                            //print (sourcelat,sourcelong)
+                            let reply = web.checkApprove(uuid: uuid,lat:"\(sourcelat)",long:"\(sourcelong)")
+                            
+                            
+                            if(reply != "-1"){
+                                cf.DeleteFileInApp(fileName: "getSites.txt")
+                                cf.CreateTextFile(fileName: "getSites.txt", writeText: reply)
+                            }
                         }
                         let appDel = UIApplication.shared.delegate! as! AppDelegate
                         appDel.start()
@@ -282,7 +297,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
 //            }
 //        }
 //        else if(checkedstatus == false){
-            if(firstNameTextField.text == "" || mobileNoTextField.text == "" ||  emailTextField.text == "" || Company_Name.text == "") {
+        if(firstNameTextField.text == "" || mobileNoTextField.text == "" ||  emailTextField.text == "" || Company_Name.text == "") {
                 showAlert(message: NSLocalizedString("SelectallFields", comment:"") )//"Please Select All Fields.")
                 activityindicator.stopAnimating()
                 activityindicator.isHidden = true
@@ -292,24 +307,25 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
             {
                 let email_id = isValidEmail(testStr: emailTextField.text!)
                 if(email_id != false){
-                    let concatmob = Countrycode.text! + mobileNoTextField.text!
+                    let concatmob = mobileNoTextField.text!
                     
-                    if(Countrycode.text! == "+1" || Countrycode.text! == "1")
-                    {
-                        let phoneno = validate_Phone(testStr: concatmob)
-                        print(phoneno)
-                        if(phoneno == true){
-                            register()
-                        }
-                        else
-                        {
-                            showAlert(message: NSLocalizedString("ValidPhone", comment:"") )//"Please enter valid Phone number.")
-                            activityindicator.stopAnimating()
-                            activityindicator.isHidden = true
-                        }
-
-                    }
-                    else{
+//                    if(Countrycode.text! == "+1" || Countrycode.text! == "1")
+//                    {
+//                        let concatmob = mobileNoTextField.text!//Countrycode.text! + " " + mobileNoTextField.text!
+//                        let phoneno = validate_Phone(testStr: concatmob)
+//                        print(phoneno)
+//                        if(phoneno == true){
+//                            register()
+//                        }
+//                        else
+//                        {
+//                            showAlert(message: NSLocalizedString("ValidPhone", comment:"") )//"Please enter valid Phone number.")
+//                            activityindicator.stopAnimating()
+//                            activityindicator.isHidden = true
+//                        }
+//
+//                    }
+//                    else{
                         let phoneno = validatephone(testStr: concatmob)
                         print(phoneno)
                         if(phoneno == true){
@@ -321,7 +337,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                             activityindicator.stopAnimating()
                             activityindicator.isHidden = true
                         }
-                    }
+//                    }
                 }
                 else{
                     showAlert(message: NSLocalizedString("checkEmail", comment:"") )//"please enter valid email.")
@@ -366,7 +382,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
     {
         //let phoneNumber = "+1 (123) 456-7890" //Replace it with the Phone number you want to validate
         let range = NSRange(location: 0, length: testStr.count)
-        let regex = try! NSRegularExpression(pattern: "^[1{1}]\\s\\d{3}-\\d{3}-\\d{4}$")
+        let regex = try! NSRegularExpression(pattern: "^\\+[1{1}]\\s\\d{3}-\\d{3}-\\d{4}$")
         if regex.firstMatch(in: testStr, options: [], range: range) != nil{
             print("Phone number is valid")
            
@@ -396,6 +412,58 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
         return false
     }
     
+    func showPopupWithTitle(title: String, message: String, interval: TimeInterval) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        // Change Message With Color and Font
+        let message  = message
+        var messageMutableString = NSMutableAttributedString()
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedString.Key.font:UIFont(name: "Georgia", size: 30.0)!])
+        //messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
+        alertController.setValue(messageMutableString, forKey: "attributedMessage")
+        present(alertController, animated: true, completion: nil)
+        self.perform(#selector(dismissAlertViewController), with: alertController, afterDelay: interval)
+    }
+
+    @objc func dismissAlertViewController(alertController: UIAlertController) {
+        alertController.dismiss(animated: true, completion: nil)
+    }
+    
+    @IBAction func q_button(_ sender: Any) {
+        showPopupWithTitle(title: "", message: "USA is 1", interval: 2)
+        showAlert(message: "USA is 1" )
+    }
+    
+//    @IBAction func country_Code(_ sender: Any) {
+//        if(Countrycode.text == ""){
+//            showAlert(message: "USA is 1" )
+//        }
+//    }
+//    @IBAction func countryCode(_ sender: Any) {
+//
+//
+//        Countrycode.text!.filter{$0.isNumber}
+//        if(((Countrycode.text?.contains("0"))) == true)
+//        {
+//
+//            let Country_code = Countrycode.text!
+//            let code = Country_code.replacingOccurrences(of: "^.0*", with: "", options: .regularExpression)
+//            Countrycode.text = "+\(code)"
+//        }
+//        else
+//        if(((Countrycode.text?.contains("+"))) == true)
+//        {
+//
+//             let Country_code = Countrycode.text!.trimmingCharacters(in: .whitespacesAndNewlines)
+//            Countrycode.text = "\(Country_code)"
+//        }
+//        else
+//        {
+//
+//             let Country_code = Countrycode.text!.trimmingCharacters(in: .whitespacesAndNewlines)
+//            Countrycode.text = "+\(Country_code)"
+//        }
+//    }
+    
     private func formatPhone(_ number: String) -> String {
         let cleanNumber = number.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()
         let format: [Character] = ["X", "X", "X", "-", "X", "X", "X", "-", "X", "X", "X", "X"]
@@ -420,9 +488,27 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
     @IBAction func Mobilephone(_ sender: Any) {
         
         //let phoneFormatter = DefaultTextFormatter(textPattern: "### (###) ###-##-##")
-        if(Countrycode.text == "1" || Countrycode.text == "+1" ){
+//        if(Countrycode.text == "1" || Countrycode.text == "+1" ){
             mobileNoTextField.text = formatPhone(mobileNoTextField.text!)
-        }
+            let concatmob = mobileNoTextField.text!
+            let phoneno = validatephone(testStr: concatmob)
+            print(phoneno)
+            if(phoneno == true){
+                //register()
+            }
+            else
+            {
+                showAlert(message: NSLocalizedString("ValidPhone", comment:"") )//"Please enter valid Phone number.")
+                activityindicator.stopAnimating()
+                activityindicator.isHidden = true
+            }
+//        }
+//        else
+//        {
+           var phone = mobileNoTextField.text!.filter{$0.isNumber}
+            mobileNoTextField.text = phone
+//        }
+        
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool
@@ -430,16 +516,27 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
         if (textField == mobileNoTextField)
         {
             let newString = (textField.text! as NSString).replacingCharacters(in: range, with: string)
-            let components = newString.components(separatedBy: CharacterSet.init(charactersIn: "0123456789+-().").inverted)// .decimalDigits.inverted)
+            let components = newString.components(separatedBy: CharacterSet.init(charactersIn: "0123456789+-()").inverted)// .decimalDigits.inverted)
             let decimalString = components.joined(separator: "") as NSString
             let length = decimalString.length
             let hasLeadingOne = length > 0 && decimalString.character(at: 0) == (1 as unichar)
-            if length == 0 || (length > 15 && !hasLeadingOne) || length > 15
-            {
-                let newLength = (textField.text! as NSString).length + (string as NSString).length - range.length as Int
-
-                return (newLength > 15) ? false : true
-            }
+//            if( Countrycode.text == "+1" )
+//            {
+//                if length == 0 || (length > 14 && !hasLeadingOne) || length > 14
+//                {
+//                    let newLength = (textField.text! as NSString).length + (string as NSString).length - range.length as Int
+//
+//                    return (newLength > 14) ? false : true
+//                }
+//            }
+//            else{
+                if length == 0 || (length > 15 && !hasLeadingOne) || length > 15
+                {
+                    let newLength = (textField.text! as NSString).length + (string as NSString).length - range.length as Int
+                    
+                    return (newLength > 15) ? false : true
+                }
+//            }
             var index = 0 as Int
             let formattedString = NSMutableString()
 
@@ -454,6 +551,35 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
             textField.text = formattedString as String
             return false
         }
+//        if(textField == Countrycode)
+//        {
+//            let newString = (Countrycode.text! as NSString).replacingCharacters(in: range, with: string)
+//            let components = newString.components(separatedBy: CharacterSet.init(charactersIn: "0123456789+-()").inverted)// .decimalDigits.inverted)
+//            let decimalString = components.joined(separator: "") as NSString
+//            let length = decimalString.length
+//            let hasLeadingOne = length > 0 && decimalString.character(at: 0) == (1 as unichar)
+//
+//                if length == 0 || (length > 5 && !hasLeadingOne) || length > 5
+//                {
+//                    let newLength = (textField.text! as NSString).length + (string as NSString).length - range.length as Int
+//
+//                    return (newLength > 5) ? false : true
+//                }
+//
+//            var index = 0 as Int
+//            let formattedString = NSMutableString()
+//
+//            if hasLeadingOne
+//            {
+//                formattedString.append("1 ")
+//                index += 1
+//            }
+//
+//            let remainder = decimalString.substring(from: index)
+//            formattedString.append(remainder)
+//            textField.text = formattedString as String
+//            return false
+//        }
         else
         {
             return true

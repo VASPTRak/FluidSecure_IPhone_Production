@@ -604,7 +604,8 @@ class PreauthVehiclenoVC: UIViewController,UITextFieldDelegate {
             
             if(vehiclenumber.count == 0)
             {
-                showAlert(message:"You do not have enough cellular coverage to perform this transaction. Please return to where you have coverage and reopen the APP for at least two minutes. During this time, an offline database will be loaded onto your device where you can return to perform your transaction(s). The transaction(s) will be loaded into the Cloud once you return again to where you have cellular coverage. If you have any questions, please contact Support.")
+                self.showAlert(message: NSLocalizedString("preauthwaringMsg", comment:""))
+                //showAlert(message:"You do not have enough cellular coverage to perform this transaction. Please return to where you have coverage and reopen the APP for at least two minutes. During this time, an offline database will be loaded onto your device where you can return to perform your transaction(s). The transaction(s) will be loaded into the Cloud once you return again to where you have cellular coverage. If you have any questions, please contact Support.")
             }
             
             

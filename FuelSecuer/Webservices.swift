@@ -407,7 +407,7 @@ class Webservices:NSObject {
                 print(destinationUrl)
                 let filename = url.lastPathComponent
                 
-                defaults.set(filename, forKey: "dateof_DownloadVehiclesForphonefilename")
+//                defaults.set(filename, forKey: "dateof_DownloadVehiclesForphonefilename")
                
 
 //
@@ -432,6 +432,7 @@ class Webservices:NSObject {
                                     {
                                         if response.statusCode == 200
                                         {
+                                            self.defaults.set(filename, forKey: "dateof_DownloadVehiclesForphonefilename")
                                             if let data = data
                                             {
                                                 
@@ -538,7 +539,8 @@ class Webservices:NSObject {
         
         let uuid = defaults.string(forKey: "uuid")
         
-        let Url:String =  Vehicaldetails.sharedInstance.URL + "/api/Offline/GetVehiclesForPhone?Email=\(Email)&IMEI=\(uuid!)"
+        let Url:String =  Vehicaldetails.sharedInstance.URL + "api/Offline/GetVehiclesForPhone?Email=\(Email)&IMEI=\(uuid!)"
+        print(Url)
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string:Url)!)
         request.httpMethod = "GET"
 //        request.timeoutInterval = 1 //////timeout interval should be increased it is 4 earlier now i am convert it to 10
@@ -626,7 +628,7 @@ class Webservices:NSObject {
             if let data = data {
                // print(String(data: data, encoding: String.Encoding.utf8)!)
                 self.reply = NSString(data: data, encoding:String.Encoding.utf8.rawValue)!as String
-//                 print(self.reply)
+                 print(self.reply)
                 let text = self.reply
                 if text!.contains("ResponceMessage"){
                     
@@ -1820,6 +1822,7 @@ class Webservices:NSObject {
                         
                         print(MinLimit,PersonId,PhoneNumber,FuelTypeId,VehicleId,PulseRatio,FilePath)
                         
+                        
                         Vehicaldetails.sharedInstance.FirmwareVersion = FirmwawareVersion as String
                         Vehicaldetails.sharedInstance.FilePath = FilePath as String
                         Vehicaldetails.sharedInstance.MinLimit = "\(MinLimit)"
@@ -2751,11 +2754,153 @@ class Webservices:NSObject {
         return reply //+ "#" + ""
     }
     
+    func Testtransaction() -> String
+    {
+        
+        
+        FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
+        
+        
+        
+        //Add this change on 11Aug on testing
+        var TransactionId:String!
+        let ppin = ""
+        let Email = defaults.string(forKey: "address")
+        let uuid = defaults.string(forKey: "uuid")
+        let wifiSSID:String = Vehicaldetails.sharedInstance.SSId
+        let siteid = Vehicaldetails.sharedInstance.siteID
+        var Errorcode = Vehicaldetails.sharedInstance.Errorcode;
+        if(Errorcode == "")
+        {
+            Errorcode = "0"
+        }
+        print("\(Vehicaldetails.sharedInstance.siteID)")
+        let Url:String = FSURL
+        let string = uuid! + ":" + Email! + ":" + "AuthorizationsequenceForTestTransaction" + ":" + "\(Vehicaldetails.sharedInstance.Language)"
+        let Base64 = convertStringToBase64(string: string)
+        let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
+        
+        request.httpMethod = "POST"
+        
+        request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
+        
+        let bodyData = try! JSONSerialization.data(withJSONObject: [
+            "IMEIUDID":uuid,
+            "WifiSSId":wifiSSID,
+            "SiteId":siteid,
+            
+            "PersonnelPIN":"\(ppin)",
+            "IsTestTransaction":"y",
+            "CurrentLat":"\(Vehicaldetails.sharedInstance.Lat)",
+            "CurrentLng":"\(Vehicaldetails.sharedInstance.Long)",
+            "RequestFrom":"I",
+            "versionno":"\(Version)",
+            "Device Type":"\(UIDevice().type)",
+            "iOS": "\(UIDevice.current.systemVersion)",
+                                                                
+            
+        ],options: [])
+        
+        //        "{\"IMEIUDID\":\"\(uuid!)\",\"IsVehicleNumberRequire\":\"\(Vehicaldetails.sharedInstance.IsVehicleNumberRequire)\",\"VehicleNumber\":\"\(vehicle_no)\",\"OdoMeter\":\"\(Odometer)\",\"WifiSSId\":\"\(wifiSSID)\",\"SiteId\":\"\(siteid)\",\"DepartmentNumber\":\"\(isdept)\",\"PersonnelPIN\":\"\(isPPin)\",\"Other\":\"\(isother)\",\"Hours\":\"\(hour)\",\"CurrentLat\":\"\(Vehicaldetails.sharedInstance.Lat)\",\"CurrentLng\":\"\(Vehicaldetails.sharedInstance.Long)\",\"RequestFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\"}"
+        print(bodyData)
+        request.httpBody = bodyData//.data(using: String.Encoding.utf8)
+        request.timeoutInterval = 20
+        
+        let semaphore = DispatchSemaphore(value: 0)
+        let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
+            if let data = data {
+                
+                self.reply = NSString(data: data, encoding:String.Encoding.utf8.rawValue)! as String
+                print(self.reply!)
+                let text = self.reply
+                let test = String((text?.filter { !" \n".contains($0) })!)
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+               // self.sentlog(func_name: "AuthorizationSequence Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                let data1:Data = self.reply.data(using: String.Encoding.utf8)!
+                do{
+                    self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
+                }catch let error as NSError {
+                    print ("Error: \(error.domain)")
+                }
+                // print(self.sysdata)
+                if(self.sysdata == nil){}
+                else{
+                    let ResponceMessage = self.sysdata.value(forKey: "ResponceMessage") as! String
+                    
+                    if(ResponceMessage == "success")
+                    {
+                        self.defaults.setValue("0", forKey: "previouspulsedata")
+                        let ResponceData = self.sysdata.value(forKey: "ResponceData") as! NSDictionary
+                        let MinLimit = ResponceData.value(forKey: "MinLimit") as! NSNumber
+                        let PulseRatio = ResponceData.value(forKey: "PulseRatio") as! NSNumber
+                        let VehicleId = ResponceData.value(forKey: "VehicleId") as! NSNumber
+                        let FuelTypeId = ResponceData.value(forKey: "FuelTypeId") as! NSNumber
+                        let PersonId = ResponceData.value(forKey: "PersonId") as! NSNumber
+                        let PhoneNumber = ResponceData.value(forKey: "PhoneNumber") as! NSString
+                        let PulserStopTime = ResponceData.value(forKey: "PulserStopTime") as! NSString
+                        let ServerDate = ResponceData.value(forKey: "ServerDate") as! String
+                        let pumpoff_time = ResponceData.value(forKey: "PumpOffTime") as! String
+                        let pumpon_time = ResponceData.value(forKey: "PumpOnTime") as! String
+                        let LimitReachedMessage = ResponceData.value(forKey: "LimitReachedMessage") as! String
+                        let IsFirstTimeUse  = ResponceData.value(forKey: "IsFirstTimeUse") as! String
+                        
+                        let FilePath = ResponceData.value(forKey: "FilePath") as! NSString
+                        let FirmwawareVersion = ResponceData.value(forKey: "FirmwareVersion") as! NSString
+                        if(ResponceData.value(forKey: "TransactionId") == nil){}
+                        else{
+                            TransactionId = ResponceData.value(forKey: "TransactionId") as! NSString as String
+                            Vehicaldetails.sharedInstance.TransactionId = Int(TransactionId as String)!
+                            Vehicaldetails.sharedInstance.pulsarCount = ""
+                        }
+                        
+                        print(MinLimit,PersonId,PhoneNumber,FuelTypeId,VehicleId,PulseRatio,FilePath)
+                        
+                        Vehicaldetails.sharedInstance.FirmwareVersion = FirmwawareVersion as String
+                        Vehicaldetails.sharedInstance.FilePath = FilePath as String
+                        Vehicaldetails.sharedInstance.MinLimit = "\(MinLimit)"
+                        Vehicaldetails.sharedInstance.PulseRatio = "\(PulseRatio)"
+                        Vehicaldetails.sharedInstance.VehicleId = "\(VehicleId)"
+                        Vehicaldetails.sharedInstance.FuelTypeId = "\(FuelTypeId)"
+                        Vehicaldetails.sharedInstance.PersonId = "\(PersonId)"
+                        Vehicaldetails.sharedInstance.PhoneNumber = "\(PhoneNumber)"
+                        Vehicaldetails.sharedInstance.PulserStopTime = "\(PulserStopTime)"
+                        Vehicaldetails.sharedInstance.date = "\(ServerDate)"
+                        Vehicaldetails.sharedInstance.pumpoff_time = "\(pumpoff_time)" //Send pump off time to pulsar off time.
+                        Vehicaldetails.sharedInstance.pumpon_time = "\(pumpon_time)" //Send pump off time to pulsar off time.
+                        Vehicaldetails.sharedInstance.LimitReachedMessage = "\(LimitReachedMessage)"
+                        Vehicaldetails.sharedInstance.IsFirstTimeUse = "\(IsFirstTimeUse)"
+                        self.sentlog(func_name: "Fuel limit \(Vehicaldetails.sharedInstance.MinLimit).", errorfromserverorlink:"", errorfromapp: "")
+                    }
+                    
+                    
+                }
+            } else {
+                
+                self.reply = "-1" + "#" + "\(error!)"
+                let text = (error?.localizedDescription)! //+ error.debugDescription
+                let test = String((text.filter { !" \n".contains($0) }))
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+                self.sentlog(func_name: "AuthorizationsequenceForTestTransaction Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: "Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                
+            }
+            semaphore.signal()
+        }
+        task.resume()
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
+        return reply// + "#" + ""
+        
+    }
+    
+    
     
     func UpgradeCurrentiotVersiontoserver() -> String {
         if (isUpgradeCurrentiotVersiontoserver == true){}
         else{
         FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
+            print(Vehicaldetails.sharedInstance.FirmwareVersion,Vehicaldetails.sharedInstance.iotversion)
+            
         let Version = Vehicaldetails.sharedInstance.FirmwareVersion
         let HoseId = Vehicaldetails.sharedInstance.HoseID
     

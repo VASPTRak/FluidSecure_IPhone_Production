@@ -451,7 +451,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     var reply1 :String!
     var startbutton:String = ""
     var string:String = ""
-    
+    var isupload_file = false
     var emptypulsar_count:Int = 0
     var total_count:Int = 0
     var Last_Count:String!
@@ -477,7 +477,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     var newAsciiText = NSMutableAttributedString()
     var baseTextView: String = ""
     var gotLinkVersion = false
-    
+    var IsUpgrade = false
     private var observationToken: Any?
     
     
@@ -510,8 +510,8 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     @IBOutlet var dataview: UIView!
     
     @IBOutlet weak var Reconnect: UILabel!
-    @IBOutlet weak var progressviewtext: UILabel!
-    @IBOutlet weak var progressview: UIProgressView!
+//    @IBOutlet weak var progressviewtext: UILabel!
+//    @IBOutlet weak var progressview: UIProgressView!
     
     
     ///view did Appear every time we visit this page and we see this page below fuction is called.
@@ -568,6 +568,30 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                 }
                 
                 if(self.ifSubscribed == true){
+                    
+//                    if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
+//                    {
+//                        if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
+//                        {
+//                            self.uploadbinfile()
+//                            //                                                                    self.web.sentlog(func_name: "StopButtonTapped Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+////                            _ = self.firmwareUpdateDemo()
+////                            self.sendData()
+//                            _ = self.web.UpgradeCurrentiotVersiontoserver()
+//                            self.web.sentlog(func_name: "Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//                            
+//                        }
+//                        else
+//                        {
+//                            self.web.sentlog(func_name: " Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//                            if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
+//                            {
+//                                self.tcpcon.getuser()
+//                            }
+//                        }
+//                        //                            Vehicaldetails.sharedInstance.IsUpgrade = "N"
+//                    }
+                    
                     if(self.connectedservice == "725e0bc8-6f00-4d2d-a4af-96138ce599b9")
                     {
                         self.consoleAsciiText = NSAttributedString(string: "")
@@ -728,20 +752,33 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                     
                                     else{
                                         
-                                        self.start.isEnabled = true
-                                        self.start.isHidden = false
-                                        self.cancel.isHidden = false
-                                        self.Pwait.isHidden = true
-                                        self.Activity.stopAnimating()
-                                        self.timerview.invalidate()
-                                        self.stoptimergotostart.invalidate()
-                                        
-                                        self.displaytime.text = NSLocalizedString("MessageFueling", comment:"")
-                                        //self.displaytime.textColor = UIColor.black
-                                        //if the information from link get and start button Appeared but user not press the start button the after 60 sec app go to the on HomeScreen.
-                                        self.stoptimergotostart = Timer.scheduledTimer(timeInterval: (Double(1)*120), target: self, selector: #selector(FuelquantityVC.gotoStart), userInfo: nil, repeats: false)
-                                        
-                                        self.web.sentlog(func_name:" Starts screen timeout timer.", errorfromserverorlink: "", errorfromapp: "")
+                                        if(self.defaults.string(forKey: "Companyname") == "Company2")
+                                        {
+                                            self.startFueling()
+                                            self.cancel.isHidden = true
+                                            self.Pwait.isHidden = true
+                                            self.Activity.stopAnimating()
+                                            self.timerview.invalidate()
+                                            self.stoptimergotostart.invalidate()
+                                            
+                                            self.displaytime.text = NSLocalizedString("MessageFueling", comment:"")
+                                        }
+                                        else{
+                                            self.start.isEnabled = true
+                                            self.start.isHidden = false
+                                            self.cancel.isHidden = false
+                                            self.Pwait.isHidden = true
+                                            self.Activity.stopAnimating()
+                                            self.timerview.invalidate()
+                                            self.stoptimergotostart.invalidate()
+                                            
+                                            self.displaytime.text = NSLocalizedString("MessageFueling", comment:"")
+                                            //self.displaytime.textColor = UIColor.black
+                                            //if the information from link get and start button Appeared but user not press the start button the after 60 sec app go to the on HomeScreen.
+                                            self.stoptimergotostart = Timer.scheduledTimer(timeInterval: (Double(1)*120), target: self, selector: #selector(FuelquantityVC.gotoStart), userInfo: nil, repeats: false)
+                                            
+                                            self.web.sentlog(func_name:" Starts screen timeout timer.", errorfromserverorlink: "", errorfromapp: "")
+                                        }
                                     }
                                 }
                                 else
@@ -801,18 +838,32 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                         if(self.IsStartbuttontapped == true){}
                                         else{
                                             self.cf.delay(0.5){
-                                            self.showstart = self.web.getinfo()//_ssid()
+                                            //self.showstart = self.web.getinfo()//_ssid()
                                             }
                                             if(self.showstart == "true"){
                                                 
-                                                
-                                                self.start.isEnabled = true
-                                                self.start.isHidden = false
-                                                self.cancel.isHidden = false
-                                                self.Pwait.isHidden = true
-                                                self.Activity.stopAnimating()
-                                                self.timerview.invalidate()
-                                                self.stoptimergotostart.invalidate()
+                                                if(self.defaults.string(forKey: "Companyname") == "Company2")
+                                                {
+                                                    self.startFueling()
+                                                    self.cancel.isHidden = true
+                                                    self.Pwait.isHidden = true
+                                                    self.Activity.stopAnimating()
+                                                    self.timerview.invalidate()
+                                                    self.stoptimergotostart.invalidate()
+                                                    
+                                                    self.displaytime.text = NSLocalizedString("MessageFueling", comment:"")
+                                                }
+                                                else{
+                                                    
+                                                    
+                                                    self.start.isEnabled = true
+                                                    self.start.isHidden = false
+                                                    self.cancel.isHidden = false
+                                                    self.Pwait.isHidden = true
+                                                    self.Activity.stopAnimating()
+                                                    self.timerview.invalidate()
+                                                    self.stoptimergotostart.invalidate()
+                                                }
                                                 
                                             }
                                             else
@@ -1032,9 +1083,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
         self.peripherals = []
 //        self.kCBAdvData_LocalName = []
         print(Vehicaldetails.sharedInstance.PulseRatio)
-        self.progressview.progress = 0.0
-        progressview.isHidden = true
-        progressviewtext.isHidden = true
+        
         UIApplication.shared.isIdleTimerDisabled = true
         stoptimer_gotostart.invalidate()
         stoptimergotostart.invalidate()
@@ -1846,15 +1895,18 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     func error400(message: String)
     {
         self.timerview.invalidate()
-        
-                if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID())
-                {
-        if(Last_Count == "0.0" || Last_Count == nil){
-            let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
-            self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6") //unable to start (start never appeared): Potential Wifi Connection Issue
-            //potentialfix()
-        }
+        if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT") //#2351
+        {}
+        else if(Vehicaldetails.sharedInstance.HubLinkCommunication == "HTTP"){
+            if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID())
+            {
+                if(Last_Count == "0.0" || Last_Count == nil){
+                    let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                    self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6") //unable to start (start never appeared): Potential Wifi Connection Issue
+                    //potentialfix()
                 }
+            }
+        }
         
         let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertController.Style.alert)
         // Background color.
@@ -2471,29 +2523,29 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                                             //                                                            if(Vehicaldetails.sharedInstance.IsHoseNameReplaced == "N"){
                                                             //                                                                _ = self.web.SetHoseNameReplacedFlag()
                                                             //                                                            }
-                                                            if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
-                                                            {
-                                                                if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
-                                                                {
-                                                                    self.uploadbinfile()
-                                                                    //                                                                    self.web.sentlog(func_name: "StopButtonTapped Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-                                                                    _ = self.firmwareUpdateDemo()
-                                                                    _ = self.web.UpgradeCurrentiotVersiontoserver()
-                                                                    self.web.sentlog(func_name: "StopButtonTapped Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-                                                                    
-                                                                    
-                                                                }
-                                                                else
-                                                                {
-                                                                    self.web.sentlog(func_name: "StopButtonTapped Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-                                                                    if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
-                                                                    {
-                                                                        self.tcpcon.getuser()
-                                                                    }
-                                                                }
-                                                                //                            Vehicaldetails.sharedInstance.IsUpgrade = "N"
-                                                            }
-                                                            else{}
+//                                                            if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
+//                                                            {
+//                                                                if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
+//                                                                {
+//                                                                    self.uploadbinfile()
+//                                                                    //                                                                    self.web.sentlog(func_name: "StopButtonTapped Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//                                                                    _ = self.firmwareUpdateDemo()
+//                                                                    _ = self.web.UpgradeCurrentiotVersiontoserver()
+//                                                                    self.web.sentlog(func_name: "StopButtonTapped Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//
+//
+//                                                                }
+//                                                                else
+//                                                                {
+//                                                                    self.web.sentlog(func_name: "StopButtonTapped Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//                                                                    if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
+//                                                                    {
+//                                                                        self.tcpcon.getuser()
+//                                                                    }
+//                                                                }
+//                                                                //                            Vehicaldetails.sharedInstance.IsUpgrade = "N"
+//                                                            }
+//                                                            else{}
                                                             
                                                             if(self.fuelquantity > 0){
                                                                 
@@ -2525,34 +2577,34 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                                                     self.Warning.isHidden = true
                                                                 }
                                                                 self.cf.delay(10){
-                                                                    if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
-                                                                    {
-                                                                        if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
-                                                                        {
-                                                                            _ = self.web.getinfo()//self.tcpcon.Getinfo()//self.web.getinfo()
-                                                                        }
-                                                                        if(Vehicaldetails.sharedInstance.IsFirmwareUpdate == false) {
-                                                                            _ = self.web.UpgradeCurrentVersiontoserver()
-                                                                        }
-                                                                        Vehicaldetails.sharedInstance.IsUpgrade = "N"
-                                                                        self.cf.delay(30){
-                                                                            if(Vehicaldetails.sharedInstance.IsHoseNameReplaced == "N")
-                                                                            {
-                                                                                self.displaymessage(message:"We have renamed your LINK to the given name in the Cloud. Please close App and reopen")
-                                                                                Vehicaldetails.sharedInstance.IsHoseNameReplaced = "Y"
-                                                                                self.stopdelaytime = true
-                                                                            }else{
-                                                                                Vehicaldetails.sharedInstance.gohome = true
-                                                                                self.web.sentlog(func_name: "data send to server Final Quantity = \(self.Quantity1.text) ,Final Pulse Count = \(self.pulse.text)", errorfromserverorlink: "", errorfromapp: "")
-                                                                                self.timerview.invalidate()
-                                                                                
-                                                                                self.timerview.invalidate()
-                                                                                let appDel = UIApplication.shared.delegate! as! AppDelegate
-                                                                                self.web.sentlog(func_name: "stopButtontapped 30 delay", errorfromserverorlink: "", errorfromapp: "")
-                                                                                appDel.start()
-                                                                            }
-                                                                        }
-                                                                    }
+//                                                                    if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
+//                                                                    {
+//                                                                        if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
+//                                                                        {
+//                                                                            _ = self.web.getinfo()//self.tcpcon.Getinfo()//self.web.getinfo()
+//                                                                        }
+//                                                                        if(Vehicaldetails.sharedInstance.IsFirmwareUpdate == false) {
+//                                                                            _ = self.web.UpgradeCurrentVersiontoserver()
+//                                                                        }
+//                                                                        Vehicaldetails.sharedInstance.IsUpgrade = "N"
+//                                                                        self.cf.delay(30){
+//                                                                            if(Vehicaldetails.sharedInstance.IsHoseNameReplaced == "N")
+//                                                                            {
+//                                                                                self.displaymessage(message:"We have renamed your LINK to the given name in the Cloud. Please close App and reopen")
+//                                                                                Vehicaldetails.sharedInstance.IsHoseNameReplaced = "Y"
+//                                                                                self.stopdelaytime = true
+//                                                                            }else{
+//                                                                                Vehicaldetails.sharedInstance.gohome = true
+//                                                                                self.web.sentlog(func_name: "data send to server Final Quantity = \(self.Quantity1.text) ,Final Pulse Count = \(self.pulse.text)", errorfromserverorlink: "", errorfromapp: "")
+//                                                                                self.timerview.invalidate()
+//
+//                                                                                self.timerview.invalidate()
+//                                                                                let appDel = UIApplication.shared.delegate! as! AppDelegate
+//                                                                                self.web.sentlog(func_name: "stopButtontapped 30 delay", errorfromserverorlink: "", errorfromapp: "")
+//                                                                                appDel.start()
+//                                                                            }
+//                                                                        }
+//                                                                    }
                                                                     if (self.stopdelaytime == true){}
                                                                     else{
                                                                         Vehicaldetails.sharedInstance.gohome = true
@@ -2599,25 +2651,25 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
 //        }
     }
     
-    //     MARK: - Helper Methods
-    func sendData() {
-        
-        progressview.isHidden = false
-        progressviewtext.isHidden = false
-        if let discoveredPeripheral = blePeripheral{
-            if let txCharacteristic = txCharacteristicupload
-            {
-                sentDataPacket = firmwareUpdateDemo()
-                if sentDataPacket != nil {
-                    discoveredPeripheral.writeValue(sentDataPacket!, for: txCharacteristic, type: CBCharacteristicWriteType.withoutResponse)
-                }
-                else{
-                    
-                    // discoveredPeripheral.writeValue("EOM".data(using: String.Encoding.utf8)!, for: txCharacteristic, type: .withoutResponse)
-                }
-            }
-        }
-    }
+//    //     MARK: - Helper Methods
+//    func sendData() {
+//        
+//        progressview.isHidden = false
+//        progressviewtext.isHidden = false
+//        if let discoveredPeripheral = blePeripheral{
+//            if let txCharacteristic = txCharacteristicupload
+//            {
+//                sentDataPacket = firmwareUpdateDemo()
+//                if sentDataPacket != nil {
+//                    discoveredPeripheral.writeValue(sentDataPacket!, for: txCharacteristic, type: CBCharacteristicWriteType.withoutResponse)
+//                }
+//                else{
+//                    
+//                    // discoveredPeripheral.writeValue("EOM".data(using: String.Encoding.utf8)!, for: txCharacteristic, type: .withoutResponse)
+//                }
+//            }
+//        }
+//    }
     //#2177
     func sendpulsar_type()
     {
@@ -2649,110 +2701,131 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
             }
        }
     }
-    
-    func firmwareUpdateDemo() -> Data? {
-        //let subData:Data
-        guard let discoveredPeripheral = blePeripheral,
-              let txCharacteristic = txCharacteristicupload
-        else { return nil}
-        let mtu = discoveredPeripheral.maximumWriteValueLength(for: CBCharacteristicWriteType.withoutResponse)
-        
-        if(bindata == nil){
-            uploadbinfile()
-        }
-        else {
-            guard bindata!.count > 0 else {
-                
-                
-                // set label for progress value
-                
-                self.progressviewtext.text = "Done Upgrade \(Int(self.progressview.progress * 100))%"
-                _ = self.web.UpgradeCurrentiotVersiontoserver()
-                self.web.sentlog(func_name: " Finished Upgrade Process", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-                self.disconnectFromDevice()
-                //                self.cleanup()
-                // invalidate timer if progress reach to 1
-                
-                //                if(progressview.progress >= 1)
-                
-                return nil
-            }
-            progressview.isHidden = false
-            progressviewtext.isHidden = false
-            let iteration:Float = Float(totalbindatacount / mtu)
-            let onepercentoffile:Float = 1/iteration
-            print(iteration,Float(Double(onepercentoffile)))
-            iterationcountforupgrade = iterationcountforupgrade + 1
-            self.progressview.progress += Float(Double(onepercentoffile))
-            self.progressviewtext.text = "Please wait Upgrading in progress \(Int(self.progressview.progress * 100))%"
-            
-            var range:Range<Data.Index>
-            // Create a range based on the length of data to return
-            if (bindata!.count) >= mtu{
-                range = (0..<mtu)
-            }
-            else{
-                
-                range = (0..<(bindata!.count))
-            }
-            // Get a new copy of data
-            subData = bindata!.subdata(in: range)
-            // Mutate data
-            bindata!.removeSubrange(range)
-            print(range,subData,bindata!)
-            // Return the new copy of data
-            
-        }
-        
-        return subData
-    }
-    
-    //BTUpgrade
-    
-    func uploadbinfile(){
-        //Download new link from Server using getbinfile and upload/Flash the file to FS link.
-        //            DispatchQueue.main.async(execute: {
-        //                self.web.beginBackgroundUpdateTask()
-        //                if(self.bindata == nil){
-        self.bindata = self.getbinfile() as Data
-        //                }
-        //                else{
-        self.totalbindatacount = self.bindata!.count
-        print(self.bindata!.count)
-        self.outgoingData(inputText: "LK_COMM=upgrade \(self.bindata!.count)")
-        NotificationCenter.default.removeObserver(self)
-        self.updateIncomingData()
-        //                }
-        
-        // End the background task.
-        
-        //                self.web.endBackgroundUpdateTask()
-        //            })
-    }
-    
-    func getbinfile() -> Data
-    {
-        let urlPath:String = Vehicaldetails.sharedInstance.FilePath
-        
-        let objectUrl = URL(string:urlPath.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
-        let request: NSMutableURLRequest = NSMutableURLRequest(url:objectUrl! as URL)
-        request.httpMethod = "GET"
-        
-        let session = Foundation.URLSession.shared
-        let semaphore = DispatchSemaphore(value: 0)
-        let task =  session.dataTask(with: request as URLRequest) { data, response, error in
-            if let data = data {
-                
-                self.replydata = data as NSData
-            } else {
-                print(error!)
-            }
-            semaphore.signal()
-        }
-        task.resume()
-        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
-        return replydata as Data
-    }
+//    
+//    func firmwareUpdateDemo() -> Data? {
+//        //let subData:Data
+//        guard let discoveredPeripheral = blePeripheral,
+//              let txCharacteristic = txCharacteristicupload
+//        else { return nil}
+//        let mtu = discoveredPeripheral.maximumWriteValueLength(for: CBCharacteristicWriteType.withoutResponse)
+//        
+//        if(bindata == nil){
+//            uploadbinfile()
+//        }
+//        else {
+//            guard bindata!.count > 0 else {
+//                
+//                
+//                // set label for progress value
+//                
+//                self.progressviewtext.text = "Done Upgrade \(Int(self.progressview.progress * 100))%"
+//                _ = self.web.UpgradeCurrentiotVersiontoserver()
+//                self.web.sentlog(func_name: " Finished Upgrade Process", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//                print(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce)
+//                                    if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1")
+//                                    {
+//                                        
+//                                        self.sendpulsar_type()
+//                                    }
+//                outgoingData(inputText: "LK_COMM=p_type?")
+//                updateIncomingData()
+//                getlast10transaction()
+//                delay(1){
+//                    //                        if(self.BTMacAddress == true)
+//                    //                        {
+//                    
+//                    self.start.isEnabled = true
+//                    self.start.isHidden = false
+//                    self.cancel.isHidden = false
+//                    self.Pwait.isHidden = true
+//                    self.Activity.stopAnimating()
+//                    self.displaytime.text = NSLocalizedString("MessageFueling", comment:"")
+////                    self.IsUpgrade = true
+//                    //                self.disconnectFromDevice()
+//                    //                self.cleanup()
+//                    // invalidate timer if progress reach to 1
+//                    
+//                    //                if(progressview.progress >= 1)
+//                }
+//                return nil
+//            }
+//            progressview.isHidden = false
+//            progressviewtext.isHidden = false
+//            let iteration:Float = Float(totalbindatacount / mtu)
+//            let onepercentoffile:Float = 1/iteration
+//            print(iteration,Float(Double(onepercentoffile)))
+//            iterationcountforupgrade = iterationcountforupgrade + 1
+//            self.progressview.progress += Float(Double(onepercentoffile))
+//            self.progressviewtext.text = "Please wait Upgrading in progress \(Int(self.progressview.progress * 100))%"
+//            
+//            var range:Range<Data.Index>
+//            // Create a range based on the length of data to return
+//            if (bindata!.count) >= mtu{
+//                range = (0..<mtu)
+//            }
+//            else{
+//                
+//                range = (0..<(bindata!.count))
+//            }
+//            // Get a new copy of data
+//            subData = bindata!.subdata(in: range)
+//            // Mutate data
+//            bindata!.removeSubrange(range)
+//            print(range,subData,bindata!)
+//            // Return the new copy of data
+//            
+//        }
+//        
+//        return subData
+//    }
+//    
+//    //BTUpgrade
+//    
+//    func uploadbinfile(){
+//        //Download new link from Server using getbinfile and upload/Flash the file to FS link.
+//        //            DispatchQueue.main.async(execute: {
+//        //                self.web.beginBackgroundUpdateTask()
+//        //                if(self.bindata == nil){
+//        isupload_file = true
+//        self.bindata = self.getbinfile() as Data
+//        //                }
+//        //                else{
+//        self.totalbindatacount = self.bindata!.count
+//        print(self.bindata!.count)
+//        self.outgoingData(inputText: "LK_COMM=upgrade \(self.bindata!.count)")
+//        NotificationCenter.default.removeObserver(self)
+//        self.updateIncomingData()
+//        //                }
+//        
+//        // End the background task.
+//        
+//        //                self.web.endBackgroundUpdateTask()
+//        //            })
+//    }
+//    
+//    func getbinfile() -> Data
+//    {
+//        let urlPath:String = Vehicaldetails.sharedInstance.FilePath
+//        
+//        let objectUrl = URL(string:urlPath.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
+//        let request: NSMutableURLRequest = NSMutableURLRequest(url:objectUrl! as URL)
+//        request.httpMethod = "GET"
+//        
+//        let session = Foundation.URLSession.shared
+//        let semaphore = DispatchSemaphore(value: 0)
+//        let task =  session.dataTask(with: request as URLRequest) { data, response, error in
+//            if let data = data {
+//                
+//                self.replydata = data as NSData
+//            } else {
+//                print(error!)
+//            }
+//            semaphore.signal()
+//        }
+//        task.resume()
+//        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
+//        return replydata as Data
+//    }
     
     
     func senddataTransaction(quantitycount:String,PulseRatio:String)
@@ -2760,32 +2833,32 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
         //        cf.delay(0.5) {     // takes a Double value for the delay in seconds
         // put the delayed action/function here
         
-        if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
-        {
-            if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
-            {
-                //                self.web.sentlog(func_name: "StopButtonTapped Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-                
-                self.uploadbinfile()
-                self.web.sentlog(func_name: "stoprelay Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-                // self.firmwareUpdateDemo()
-                _ = self.web.UpgradeCurrentiotVersiontoserver()
-            }
-            else
-            {
-                self.web.sentlog(func_name: " stoprelay Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-                if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
-                {
-                    self.tcpcon.getuser()
-//                    _ = self.web.UpgradeCurrentiotVersiontoserver()
-                }
-            }
-        }
-        
-        else{
-            _ = self.web.UpgradeCurrentiotVersiontoserver()
-            
-        }
+//        if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
+//        {
+//            if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
+//            {
+//                //                self.web.sentlog(func_name: "StopButtonTapped Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//
+//                self.uploadbinfile()
+//                self.web.sentlog(func_name: "stoprelay Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//                // self.firmwareUpdateDemo()
+//                _ = self.web.UpgradeCurrentiotVersiontoserver()
+//            }
+//            else
+//            {
+//                self.web.sentlog(func_name: " stoprelay Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//                if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
+//                {
+//                    self.tcpcon.getuser()
+////                    _ = self.web.UpgradeCurrentiotVersiontoserver()
+//                }
+//            }
+//        }
+//
+//        else{
+//            _ = self.web.UpgradeCurrentiotVersiontoserver()
+//
+//        }
         self.cf.delay(1){
             self.fuelquantity = (Double(quantitycount))!/(PulseRatio as NSString).doubleValue
             if(self.fuelquantity == nil || self.fuelquantity == 0.0){
@@ -2894,28 +2967,28 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                         self.Warning.isHidden = true
                     }
                     self.cf.delay(10){
-                        if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
-                        {
-                            if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
-                            {
-                                _ = self.web.getinfo()//self.tcpcon.Getinfo()//self.web.getinfo()
-                            }
-                            if(Vehicaldetails.sharedInstance.IsFirmwareUpdate == false) {
-                                _ = self.web.UpgradeCurrentVersiontoserver()
-                            }
-                            Vehicaldetails.sharedInstance.IsUpgrade = "N"
-                            
-//                            self.cf.delay(30){
-//                                self.FDcheckBLEtimer.invalidate()
-//                                Vehicaldetails.sharedInstance.gohome = true
-//                                self.timerview.invalidate()
-//                                self.web.sentlog(func_name: "data send to server Final Quantity = \(self.Quantity1.text) ,Final Pulse Count = \(self.pulse.text)", errorfromserverorlink: "", errorfromapp: "")
-//                                let appDel = UIApplication.shared.delegate! as! AppDelegate
-//                                self.web.sentlog(func_name: "stoprelay function 30 delay ", errorfromserverorlink: "", errorfromapp: "")
-//                                appDel.start()
-//                                self.web.sentlog(func_name: " OK buttontapped TXTN \(Vehicaldetails.sharedInstance.TransactionId) finished, back to home screen.", errorfromserverorlink: "", errorfromapp: "")
+//                        if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
+//                        {
+//                            if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
+//                            {
+//                                _ = self.web.getinfo()//self.tcpcon.Getinfo()//self.web.getinfo()
 //                            }
-                        }
+//                            if(Vehicaldetails.sharedInstance.IsFirmwareUpdate == false) {
+//                                _ = self.web.UpgradeCurrentVersiontoserver()
+//                            }
+//                            Vehicaldetails.sharedInstance.IsUpgrade = "N"
+//                            
+////                            self.cf.delay(30){
+////                                self.FDcheckBLEtimer.invalidate()
+////                                Vehicaldetails.sharedInstance.gohome = true
+////                                self.timerview.invalidate()
+////                                self.web.sentlog(func_name: "data send to server Final Quantity = \(self.Quantity1.text) ,Final Pulse Count = \(self.pulse.text)", errorfromserverorlink: "", errorfromapp: "")
+////                                let appDel = UIApplication.shared.delegate! as! AppDelegate
+////                                self.web.sentlog(func_name: "stoprelay function 30 delay ", errorfromserverorlink: "", errorfromapp: "")
+////                                appDel.start()
+////                                self.web.sentlog(func_name: " OK buttontapped TXTN \(Vehicaldetails.sharedInstance.TransactionId) finished, back to home screen.", errorfromserverorlink: "", errorfromapp: "")
+////                            }
+//                        }
                         if (self.stopdelaytime == true){}
                         else{
                             if(Vehicaldetails.sharedInstance.IsHoseNameReplaced == "N")
@@ -4542,7 +4615,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     {
         let Split = self.baseTextView.components(separatedBy: "$$")
         
-        let jsonText = Split[0];
+        let jsonText = Split[1];
         //       let jsonText =  "{\"version\":{\"version\":\"1.0.0(s)\"},\"mac_address\":{\"bt\":\"10:52:1c:85:72:92\"}}"
         print(jsonText)
         if(jsonText.contains("{\"notify\" : \"enabled\"}")){}
@@ -4805,6 +4878,17 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
         audio?.play()
     }
     
+    func writeValue(data: String){
+        let valueString = (data as NSString).data(using: String.Encoding.utf8.rawValue)
+        //change the "data" to valueString
+        if let blePeripheral = blePeripheral{
+            if let txCharacteristic = txCharacteristic
+            {
+                blePeripheral.writeValue(valueString!, for: txCharacteristic, type: CBCharacteristicWriteType.withResponse)
+            }
+        }
+    }
+    
     func GotoSettingpage(message: String)
     {
        
@@ -4886,7 +4970,8 @@ extension FuelquantityVC: CBCentralManagerDelegate {
                     else{
 //                        cf.delay(1){
                         //sleep(1)
-                        self.parsepulsedata()
+                        //2405
+//                        self.parsepulsedata()
 //                        }
                     }
                 }
@@ -4908,26 +4993,26 @@ extension FuelquantityVC: CBCentralManagerDelegate {
                         self.baseTextView = "\(jsondata)"
                         print(newAsciiText)
                         
-                        if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
-                        {
-                            if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
-                            {
-                                self.web.sentlog(func_name: "Got OFF response from link Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-                                if(self.bindata == nil){
-                                    self.uploadbinfile()
-                                }
-                                
-                                sendData()
-                                _ = self.web.UpgradeCurrentiotVersiontoserver()
-                                
-                            }
-                        }
-                        else
-                        {
+//                        if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
+//                        {
+//                            if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
+//                            {
+//                                self.web.sentlog(func_name: "Got OFF response from link Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//                                if(self.bindata == nil){
+//                                    self.uploadbinfile()
+//                                }
+//                                
+//                                sendData()
+//                                _ = self.web.UpgradeCurrentiotVersiontoserver()
+//                                
+//                            }
+//                        }
+//                        else
+//                        {
                             
                             self.parsejsonOFF()
                             
-                        }
+//                        }
                     }
                     
                 }
@@ -4936,8 +5021,11 @@ extension FuelquantityVC: CBCentralManagerDelegate {
             
             if(self.characteristicASCIIValue == "ON")
             {
+                print(characteristicASCIIValue)
                 iflinkison = true
+                
             }
+            
             if(characteristicASCIIValue == "HO")
             {
                 self.web.sentlog(func_name: " BLE Response from link is \(characteristicASCIIValue)", errorfromserverorlink:"", errorfromapp: "")
@@ -4961,7 +5049,7 @@ extension FuelquantityVC: CBCentralManagerDelegate {
                 //                    }
             }
             
-            if(self.characteristicASCIIValue == "OFF")
+            if(self.characteristicASCIIValue.contains("{\"upgrade\":'true'}"))
             {
                 if (isdisconnected == true)
                 {
@@ -4980,14 +5068,17 @@ extension FuelquantityVC: CBCentralManagerDelegate {
                     {
                         if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
                         {
-                            self.web.sentlog(func_name: "StopButtonTapped Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-                            if(self.bindata == nil){
-                                self.uploadbinfile()
-                            }
+                            stoptimer_gotostart.invalidate()
+                            stoptimergotostart.invalidate()
+//                            self.web.sentlog(func_name: " Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//                            if(self.bindata == nil){
+//                                self.uploadbinfile()
+//                            }
                             // self.web.sentlog(func_name: "StopButtonTapped Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-                            //self.Firmwareupdate()//firmwareUpdateDemo()
-                            sendData()
-                            //  _ = self.web.UpgradeCurrentiotVersiontoserver()
+                            //self.Firmwareupdate()
+//                            firmwareUpdateDemo()
+//                            sendData()
+//                              _ = self.web.UpgradeCurrentiotVersiontoserver()
                             
                         }
                     }
@@ -5570,8 +5661,8 @@ extension FuelquantityVC: CBCentralManagerDelegate {
                 if(self.AppconnectedtoBLE == true)
                 {
                     let trimmedString = Vehicaldetails.sharedInstance.ReplaceableHoseName.trimmingCharacters(in: .whitespacesAndNewlines)
-                    self.renamelink(SSID:trimmedString)
-                    self.web.SetHoseNameReplacedFlag()
+//                    self.renamelink(SSID:trimmedString)
+//                    self.web.SetHoseNameReplacedFlag()
                 }
                 self.isdisconnected = true
             }
@@ -5739,16 +5830,7 @@ extension getLocalNetworkAccessState : NetServiceDelegate {
 //    // MARK: - Peripheral Delegate
 extension FuelquantityVC: CBPeripheralDelegate {
     
-    func writeValue(data: String){
-        let valueString = (data as NSString).data(using: String.Encoding.utf8.rawValue)
-        //change the "data" to valueString
-        if let blePeripheral = blePeripheral{
-            if let txCharacteristic = txCharacteristic
-            {
-                blePeripheral.writeValue(valueString!, for: txCharacteristic, type: CBCharacteristicWriteType.withResponse)
-            }
-        }
-    }
+   
     
     /*
      *  Call this when things either go wrong, or you're done with the connection.
@@ -5894,6 +5976,10 @@ extension FuelquantityVC: CBPeripheralDelegate {
             self.web.sentlog(func_name: " Get response from info command to link \(characteristicASCIIValue)", errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"")
         }
         
+        if((characteristicASCIIValue as String).contains("{\"relay\":\"ON\"}"))
+        {
+            self.web.sentlog(func_name: " BLE Response from link is \(characteristicASCIIValue)", errorfromserverorlink:"", errorfromapp: "")
+        }
         if(characteristicASCIIValue == "Notify enabled..." || characteristicASCIIValue == "LinkBlue notify enabled..." || characteristicASCIIValue == "{\"notify\" : \"enabled\"}")
         {
             isNotifyenable = true
@@ -5994,7 +6080,7 @@ extension FuelquantityVC: CBPeripheralDelegate {
             
         } else {
             // Otherwise, just append the data to what we have previously received.
-            sendData()//bin_data.append(characteristicData)
+//            sendData()//bin_data.append(characteristicData)
         }
     }
     
@@ -6038,6 +6124,60 @@ extension FuelquantityVC: CBPeripheralDelegate {
             web.sentlog(func_name: "Connected to BT link, Subscribed. Set Notify enabled... to true in BLE transaction for ID:", errorfromserverorlink: "\(characteristic.uuid)", errorfromapp: ""); print("Subscribed. Notification has begun for: \(characteristic.uuid)")
             if(IsStartbuttontapped == false)
             {
+//                if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
+//                {
+//                    if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
+//                    {
+//                        if(isupload_file == true){}
+//                        else{
+//                            self.uploadbinfile()
+//                          
+////                            _ = self.firmwareUpdateDemo()
+////                            self.sendData()
+////                            _ = self.web.UpgradeCurrentiotVersiontoserver()
+//                            self.web.sentlog(func_name: "Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//                        }
+//
+//                    }
+//                    else
+//                    {
+//                        self.web.sentlog(func_name: " Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//                        if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
+//                        {
+//                            self.tcpcon.getuser()
+//                        }
+//                    }
+//                    //                            Vehicaldetails.sharedInstance.IsUpgrade = "N"
+//                }
+//                else{
+                    //        delay(1){
+                            if(self.connectedservice == "725e0bc8-6f00-4d2d-a4af-96138ce599b9")
+                            {
+                                self.consoleAsciiText = NSAttributedString(string: "")
+                                self.newAsciiText = NSMutableAttributedString()
+                                if(self.observationToken == nil){}
+                                else{
+                                    NotificationCenter.default.removeObserver(self.observationToken!)
+                                }
+                                self.newAsciiText.mutableString.replaceOccurrences(of: "\n\n", with: "\n", options: [], range: NSMakeRange(0, self.newAsciiText.length))
+                                if(self.gotLinkVersion == true){}
+                                else{
+                            self.outgoingData(inputText: "LK_COMM=info")
+                                    self.cf.delay(1){
+                                        
+                                        //                                        self.cf.delay(0.5){
+                                        self.updateIncomingData()
+                                        NotificationCenter.default.removeObserver(self)
+                                        //                    }
+                                        //            self.updateIncomingData()
+                                        //
+                                        //            NotificationCenter.default.removeObserver(self)
+                                        //                                    }
+                                        
+                                       // self.web.sentlog(func_name: " Send info command to link", errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"")
+                                    }
+                            }
+                    //        }
                 print(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce)
                                     if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1")
                                     {
@@ -6047,23 +6187,56 @@ extension FuelquantityVC: CBPeripheralDelegate {
                 outgoingData(inputText: "LK_COMM=p_type?")
                 updateIncomingData()
                 getlast10transaction()
-                delay(1){
-                    //                        if(self.BTMacAddress == true)
-                    //                        {
-                    self.start.isEnabled = true
-                    self.start.isHidden = false
-                    self.cancel.isHidden = false
-                    self.Pwait.isHidden = true
-                    self.Activity.stopAnimating()
-                    self.displaytime.text = NSLocalizedString("MessageFueling", comment:"")
-                    //                        }
-                    //                        else
-                    //                        {
-                    //                            self.showAlert(message: "Macaddress is not matched \(Vehicaldetails.sharedInstance.BTMacAddress)" )
-                    //                        }
+                    delay(1){
+                        //                        if(self.BTMacAddress == true)
+                        //                        {
+                        
+                        self.start.isEnabled = true
+                        self.start.isHidden = false
+                        self.cancel.isHidden = false
+                        self.Pwait.isHidden = true
+                        self.Activity.stopAnimating()
+                        self.displaytime.text = NSLocalizedString("MessageFueling", comment:"")
+                        //                        }
+                        //                        else
+                        //                        {
+                        //                            self.showAlert(message: "Macaddress is not matched \(Vehicaldetails.sharedInstance.BTMacAddress)" )
+                        //                        }
+                    }
                 }
             }
-            if(self.appdisconnects_automatically == true)
+            //#2350 allow BLE transaction with out click start button
+            if(self.defaults.string(forKey: "Companyname") == "Company2")
+            {
+                if(self.AppconnectedtoBLE == true){
+                    // #2403
+                    self.stoptimergotostart.invalidate()
+                    self.stoptimer_gotostart.invalidate()
+                    self.getlast10transaction()
+                    self.BLErescount = 0
+                    self.baseTextView = ""
+
+                        self.updateIncomingData()
+                        self.web.sentlog(func_name: "Sent Relay On Command to BT link LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
+                        self.outgoingData(inputText: "LK_COMM=relay:12345=ON")
+                        NotificationCenter.default.removeObserver(self)
+                        self.updateIncomingData ()
+                        
+                        self.cf.delay(0.1){
+                            self.start.isHidden = true
+                            self.cancel.isHidden = true
+                            self.Stop.isHidden = false
+                            //                                self.displaytime.text = NSLocalizedString("Fueling", comment:"")
+                            //self.displaytime.textColor = UIColor.black
+                            self.FDcheckBLEtimer.invalidate()
+                            self.FDcheckBLEtimer = Timer.scheduledTimer(timeInterval: 4, target: self, selector: #selector(self.fdCheckBLE), userInfo: nil, repeats: true)
+                        }
+
+                }
+            }
+            //if(self.appdisconnects_automatically == true)//#2344
+            
+                if(self.appdisconnects_automatically == true && IsStartbuttontapped == true)
             {
                 if(self.AppconnectedtoBLE == true){
                     self.getlast10transaction()
@@ -6090,32 +6263,7 @@ extension FuelquantityVC: CBPeripheralDelegate {
         {
             ifSubscribed = false
         }
-//        delay(1){
-        if(self.connectedservice == "725e0bc8-6f00-4d2d-a4af-96138ce599b9")
-        {
-            self.consoleAsciiText = NSAttributedString(string: "")
-            self.newAsciiText = NSMutableAttributedString()
-            if(self.observationToken == nil){}
-            else{
-                NotificationCenter.default.removeObserver(self.observationToken!)
-            }
-            self.newAsciiText.mutableString.replaceOccurrences(of: "\n\n", with: "\n", options: [], range: NSMakeRange(0, self.newAsciiText.length))
-            self.cf.delay(2){
-                if(self.gotLinkVersion == true){}
-                else{
-            self.outgoingData(inputText: "LK_COMM=info")
-//                    self.cf.delay(0.5){
-                        self.updateIncomingData()
-                        NotificationCenter.default.removeObserver(self)
-//                    }
-//            self.updateIncomingData()
-//
-//            NotificationCenter.default.removeObserver(self)
-                }
-                                   }
-            self.web.sentlog(func_name: " Send info command to link", errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"")
-        }
-//        }
+
     }
     
     func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
@@ -6135,10 +6283,12 @@ extension FuelquantityVC: CBPeripheralDelegate {
     /*
      *  This is called when peripheral is ready to accept more data when using write without response
      */
-    func peripheralIsReady(toSendWriteWithoutResponse peripheral: CBPeripheral)
-    {
-        self.sendData()
-    }
+
+//    func peripheralIsReady(toSendWriteWithoutResponse peripheral: CBPeripheral)
+//    {
+//        self.sendData()
+//    }
+  
     
     func peripheral(_ peripheral: CBPeripheral, didReadRSSI RSSI: NSNumber, error: Error?) {
        self.RSSIholder = Int(truncating: RSSI) as NSNumber

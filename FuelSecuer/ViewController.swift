@@ -28,7 +28,11 @@ extension Array where Element:Equatable {
 }
 
 
-class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,UIPickerViewDelegate,StreamDelegate {
+class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,UIPickerViewDelegate,StreamDelegate,CBCentralManagerDelegate, CBPeripheralDelegate {
+    
+        
+   
+    
     var web = Webservices()
     var cf = Commanfunction()
     
@@ -66,6 +70,9 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     var siteID = [String]()
     var HoseId = [String]()
     var Is_upgrade = [String]()
+    var File_Path = [String]()
+    var Firmware_Version = [String]()
+    var Firmware_FileName = [String]()
     var pulsartimeadjust = [String]()
     var IFISBusy = [String]()
     var Is_HoseNameReplaced = [String]()
@@ -82,19 +89,23 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     var Communication_Type = [String]()
 //    var groupAdminCompanyListCompanyID = [String]()
 //    var groupAdminCompanyList = [String]()
-    
+    var iterationcountforupgrade = 0
     var IsGobuttontapped : Bool = false
     var IsrefreshButtontapped : Bool = false
     var now:Date!
     var sentcalltogetdatavehicle = false
+    var sentcalltogetdeptdata = false
     
     var ResponceMessageUpload:String = ""
     var sysdata1:NSDictionary!
     var reply :String!
     
     //BLE
+  
     let kBLEService_UUID = "4c425346-0000-1000-8000-00805f9b34fb"
     let kBLE_Characteristic_uuid_Tx = "e49227e8-659f-4d7e-8e23-8c6eea5b9173"
+    let kBLE_Characteristic_uuid_Tx_upload = "e49227e8-659f-4d7e-8e23-8c6eea5b9174"
+    let discoverServices_upload = "725e0bc8-6f00-4d2d-a4af-96138ce599b7"
     let kBLE_Characteristic_uuid_Rx = "e49227e8-659f-4d7e-8e23-8c6eea5b9173"
     
     var ISLocationpermissiongetfromuser = true
@@ -117,7 +128,29 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     var connectedperipheral = ""
     var appdisconnects_automatically = false
     var Last10transaction = ""
+    var countfromlink = 0
+    var sendrename_linkname = false
+    var ifSubscribed = false
+    var connectedservice:String = ""
+    var iskBLE_Characteristic_uuid_Tx_upload_setnotifytrue = false
+    var iskBLE_Characteristic_uuid_Tx_setnotifytrue = false
+    var isNotifyenable = false
+    var txCharacteristicupload : CBCharacteristic?
+    var discoveredPeripheral: CBPeripheral?
+    var isupgradeBLE = false
+    var isupload_file = false
+    var newAsciiText = NSMutableAttributedString()
+    private var observationToken: Any?
+    var sentDataPacket:Data!
+    var bindata:Data!
+    var totalbindatacount:Int!
+    var subData = Data()
+    var replydata:NSData!
+    var upgradestarttimer:Timer = Timer()
     
+    @IBOutlet weak var progressviewtext: UILabel!
+    @IBOutlet weak var progressview: UIProgressView!
+    @IBOutlet weak var Upgrade: UIView!
     @IBOutlet var supportinfo: UILabel!
     @IBOutlet var Activity: UIActivityIndicatorView!
     @IBOutlet var version_2: UILabel!
@@ -137,6 +170,328 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     @IBOutlet weak var Companynamelabel: UILabel!
     @IBOutlet var wifiNameTextField: UITextField!
     @IBOutlet  var Companylogo: UIImageView!
+    
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        
+        if central.state == CBManagerState.poweredOn {
+            print("BLE powered on")
+            self.web.sentlog(func_name: "BLE powered on", errorfromserverorlink: "", errorfromapp:"")
+            if(countfromlink > 0)
+            {
+                
+                    startScan()
+                    self.web.sentlog(func_name: "startScan  ", errorfromserverorlink: "\(countfromlink)", errorfromapp:"")
+               
+            }
+            else{
+                // Turned on
+                startScan()
+                self.web.sentlog(func_name: "startScan  ", errorfromserverorlink: "\(countfromlink)", errorfromapp:"")
+                //central.scanForPeripherals(withServices: [CBUUID(string: "000000ff-0000-1000-8000-00805f9b34fb")], options: nil)
+            }
+        }
+        else {
+            print("Something wrong with BLE")
+            self.web.sentlog(func_name: "Something wrong with BLE  ", errorfromserverorlink: "", errorfromapp:"")
+            // Not on, but can have different issues
+        }
+    }
+    
+    func startScan() {
+        if(ifSubscribed == true)
+        {
+            
+        }
+        else{
+        print(countfromlink)
+        
+        self.web.sentlog(func_name: "Start BT Scan...to search the service id \(kBLEService_UUID)", errorfromserverorlink:"", errorfromapp: "\(peripherals)")
+        self.peripherals = []
+//        self.kCBAdvData_LocalName = []
+        let BLEService_UUID = CBUUID(string: kBLEService_UUID)
+        print("Now Scanning...")
+        //self.GetPulsarstartimer.invalidate()
+        centralManager?.scanForPeripherals(withServices: [BLEService_UUID] , options: [CBCentralManagerScanOptionAllowDuplicatesKey:false])
+        
+        Timer.scheduledTimer(withTimeInterval: 10, repeats: false) {_ in
+//            self.web.sentlog(func_name: "Scan Stopped...", errorfromserverorlink:"", errorfromapp: "\(self.peripherals)")
+            if(self.peripherals.count == 0)
+            {
+                
+            }
+            Vehicaldetails.sharedInstance.peripherals = self.peripherals
+             self.cancelScan()
+            
+        }
+        }
+    }
+    
+    /*We also need to stop scanning at some point so we'll also create a function that calls "stopScan"*/
+    func cancelScan() {
+        if(ifSubscribed == true){}
+        else{
+        self.centralManager?.stopScan()
+       
+        self.web.sentlog(func_name: "Scan Stopped", errorfromserverorlink: "Number of Peripherals Found: \(peripherals.count)", errorfromapp: "\(peripherals)")
+        Vehicaldetails.sharedInstance.peripherals = self.peripherals
+        if (peripherals.count == 0){
+            
+                self.countfailBLEConn = self.countfailBLEConn + 1
+                self.web.sentlog(func_name: "Attempt \(countfailBLEConn)", errorfromserverorlink: "", errorfromapp: "")
+                
+                if (self.countfailBLEConn == 5){
+               
+                    self.web.sentlog(func_name: "App Not able to Connect BT Link and Subscribed peripheral Connection. Attempt  \(countfailBLEConn)", errorfromserverorlink: "", errorfromapp: "")
+
+                    self.web.sentlog(func_name: "App Switches BT to UDP...", errorfromserverorlink: "", errorfromapp: "")
+                   
+                    let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                    self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6")
+                    
+                    Vehicaldetails.sharedInstance.HubLinkCommunication = "UDP"
+                    DispatchQueue.main.async() {
+
+                        self.performSegue(withIdentifier: "GoUDP", sender: self)
+                    }
+                    
+
+                }
+
+                else{
+                    if(ifSubscribed == true){}
+                    else{
+                        self.web.sentlog(func_name: " Peripherals Found restart Scan...", errorfromserverorlink:"Number of Peripherals Found: \(peripherals.count)", errorfromapp: "\(self.peripherals)")
+                        //self.startScan()
+                      
+                    }
+                }
+
+                Vehicaldetails.sharedInstance.peripherals = self.peripherals
+                
+            
+        }
+        else
+        {
+            if(peripherals.count == 0)
+            {
+                print(peripherals,peripherals.count)
+            }
+            else{
+                print(peripherals,peripherals.count)
+                for i in 0  ..< peripherals.count
+                {
+                    print(peripherals,peripherals.count)
+                    if(peripherals.count == 0)
+                    {
+                        print(peripherals,peripherals.count)
+                    }
+                    else{
+                         peripheral = self.peripherals[i]
+                      
+                        
+                        if(peripheral.name! == "nil" || peripheral.name! == "(null)")
+                        {}
+                        else{
+                        if( Vehicaldetails.sharedInstance.SSId.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                        {
+                            
+                            blePeripheral = self.peripherals[i]
+                            connectedperipheral = (blePeripheral?.name)!
+                            defaults.set(blePeripheral?.name!, forKey: "LasttransactionSSID")
+                            //                            defaults.set("\(blePeripheral!.identifier)", forKey: "Lasttransactionidentifier")
+                            connectToDevice()
+                            break
+                        }
+//                        else if(Vehicaldetails.sharedInstance.SSId.trimmingCharacters(in: .whitespacesAndNewlines).uppercased().components(separatedBy: .whitespacesAndNewlines).joined() == localName.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+//                        {
+//                            //blePeripheral = self.peripherals[i]
+//                            //                            if(peripheral.name! == BLEPeripheralforlocalname){
+//                            blePeripheral = self.peripherals[i]
+//                            connectedperipheral = (blePeripheral?.name)!
+//
+//                            connectToDevice()
+//                            break
+//                            //                            }
+//                        }
+                        
+                        
+                        else if(Vehicaldetails.sharedInstance.OriginalNamesOfLink.count > 0)
+                            {
+                            self.web.sentlog(func_name: "OriginalNamesOfLink name \(Vehicaldetails.sharedInstance.OriginalNamesOfLink).", errorfromserverorlink:"", errorfromapp: "")
+                            for ln in 0  ..< Vehicaldetails.sharedInstance.OriginalNamesOfLink.count
+                            {
+                                if(peripheral.name! == "nil" || peripheral.name! == "(null)")
+                                {}
+                                else{
+                                if( "\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                {
+                                    print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(peripheral.name!)")
+                                    blePeripheral = self.peripherals[i]
+                                    connectedperipheral = (blePeripheral?.name)!
+                                    defaults.set(blePeripheral?.name!, forKey: "LasttransactionSSID")
+                                    //                                defaults.set("\(blePeripheral!.identifier)", forKey: "Lasttransactionidentifier")
+                                    connectToDevice()
+                                    break
+                                    
+                                }
+//                                else if("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased().components(separatedBy: .whitespacesAndNewlines).joined() == localName.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+//                                {
+//                                    print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(localName)")
+//                                    //blePeripheral = self.peripherals[i]
+//                                    //                            if(peripheral.name! == BLEPeripheralforlocalname){
+//                                    blePeripheral = self.peripherals[i]
+//                                    connectedperipheral = (blePeripheral?.name)!
+//
+//                                    connectToDevice()
+//                                    break
+//
+//                                    //                            }
+//                                }
+                            }
+                        }
+                            
+                        }
+                        
+                        
+                    }
+                    }
+                    
+                }
+                if(self.connectedperipheral == "")
+                {
+                    for i in 0  ..< peripherals.count
+                    {
+                        print(peripherals,peripherals.count)
+                        if(peripherals.count == 0)
+                        {
+                            print(peripherals,peripherals.count)
+                        }
+                        else{
+                             peripheral = self.peripherals[i]
+                            
+                            if(peripheral.name! == "nil" || peripheral.name! == "(null)")
+                            {}
+                            else{
+                            if( Vehicaldetails.sharedInstance.SSId.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                            {
+                                
+                                blePeripheral = self.peripherals[i]
+                                connectedperipheral = (blePeripheral?.name)!
+                                defaults.set(blePeripheral?.name!, forKey: "LasttransactionSSID")
+                                //                            defaults.set("\(blePeripheral!.identifier)", forKey: "Lasttransactionidentifier")
+                                connectToDevice()
+                                break
+                            }
+//                            else if(Vehicaldetails.sharedInstance.SSId.trimmingCharacters(in: .whitespacesAndNewlines).uppercased().components(separatedBy: .whitespacesAndNewlines).joined() == localName.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+//                            {
+//                                //blePeripheral = self.peripherals[i]
+//                                //                            if(peripheral.name! == BLEPeripheralforlocalname){
+//                                blePeripheral = self.peripherals[i]
+//                                connectedperipheral = (blePeripheral?.name)!
+//
+//                                connectToDevice()
+//                                break
+//                                //                            }
+//                            }
+                            
+                            
+                            else if(Vehicaldetails.sharedInstance.OriginalNamesOfLink.count > 0)
+                            {
+                                self.web.sentlog(func_name: "OriginalNamesOfLink name \(Vehicaldetails.sharedInstance.OriginalNamesOfLink).", errorfromserverorlink:"", errorfromapp: "")
+                                for ln in 0  ..< Vehicaldetails.sharedInstance.OriginalNamesOfLink.count
+                                {
+                                    if(peripheral.name! == "nil" || peripheral.name! == "(null)")
+                                    {}
+                                    else{
+                                        if( "\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                        {
+                                            print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(peripheral.name!)")
+                                            blePeripheral = self.peripherals[i]
+                                            connectedperipheral = (blePeripheral?.name)!
+                                            defaults.set(blePeripheral?.name!, forKey: "LasttransactionSSID")
+                                            //                                defaults.set("\(blePeripheral!.identifier)", forKey: "Lasttransactionidentifier")
+                                            connectToDevice()
+                                            break
+                                            
+                                        }
+//                                        else if("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased().components(separatedBy: .whitespacesAndNewlines).joined() == localName.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+//                                        {
+//                                            print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(localName)")
+//                                            //blePeripheral = self.peripherals[i]
+//                                            //                            if(peripheral.name! == BLEPeripheralforlocalname){
+//                                            blePeripheral = self.peripherals[i]
+//                                            connectedperipheral = (blePeripheral?.name)!
+//
+//                                            connectToDevice()
+//                                            break
+//
+//                                            //                            }
+//                                        }
+                                    }
+                                }
+                            }
+                            
+                            //                    if( defaults.value(forKey: "Lasttransactionidentifier")! as! String == "\(peripheral.identifier)"){
+                            //                                                self.web.sentlog(func_name: "\(blePeripheral!.identifier),\(defaults.value(forKey: "Lasttransactionidentifier"))! as! String,\(peripheral.identifier)", errorfromserverorlink: "", errorfromapp: "")
+                            //                                                print("\(blePeripheral!.identifier)",defaults.value(forKey: "Lasttransactionidentifier")! as! String,"\(peripheral.identifier)")
+                            //                                                                            blePeripheral = self.peripherals[i]
+                            //                                                                            connectedperipheral = (blePeripheral?.name)!
+                            //                                                                            defaults.set(blePeripheral?.name!, forKey: "LasttransactionSSID")
+                            //                                                                            connectToDevice()
+                            //                                                                            break
+                            //                                                                            }
+                        }
+                    }
+                       
+                        }
+                  
+                        self.countfailBLEConn = self.countfailBLEConn + 1
+                        
+                        self.web.sentlog(func_name: "Attempt \(countfailBLEConn)", errorfromserverorlink: "", errorfromapp: "")
+                        
+                        if (self.countfailBLEConn == 5){
+                            
+
+                            self.web.sentlog(func_name: "App Not able to Connect BT Link and Subscribed peripheral Connection. Attempt  \(countfailBLEConn)", errorfromserverorlink: "", errorfromapp: "")
+
+                            self.web.sentlog(func_name: "App Switches BT to UDP...", errorfromserverorlink: "", errorfromapp: "")
+                            
+                            let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                            self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6")
+                            
+                            Vehicaldetails.sharedInstance.HubLinkCommunication = "UDP"
+                            DispatchQueue.main.async() {
+
+                                self.performSegue(withIdentifier: "GoUDP", sender: self)
+                            }
+//                            appconnecttoUDP = true
+
+                        }
+                        else{
+                            if(ifSubscribed == true){}
+                            else{
+                                self.web.sentlog(func_name: " Peripherals Found restart Scan...", errorfromserverorlink:"Number of Peripherals Found: \(peripherals.count)", errorfromapp: "\(self.peripherals)")
+                                self.startScan()
+                            }
+                        }
+                    
+                }
+            }
+        }
+    }
+    }
+    //-Connection
+    func connectToDevice() {
+        
+        if(blePeripheral == nil)
+        {}
+        else{
+            centralManager?.connect(blePeripheral!, options: nil)
+            self.web.sentlog(func_name: "connecting to BT link Device \(blePeripheral!)", errorfromserverorlink:"", errorfromapp: "")
+//            AppconnectedtoBLE = true
+//            getBLEInfo()
+        }
+    }
     
     @IBAction func preAuthentication(sender: AnyObject) {
         Alert(message: "You currently have no cellular service and will be performing an Offline Transaction. After finishing, please leave app open until you regain service.")
@@ -200,7 +555,15 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     override func viewDidLoad() {
         
         super.viewDidLoad()
+        
+       
+        self.progressview.progress = 0.0
+        progressview.isHidden = true
+        progressviewtext.isHidden = true
+        Upgrade.isHidden = true
+        
         Activity.isHidden = true
+        
         Vehicaldetails.sharedInstance.HubLinkCommunication = ""
         version.text = "Version \(Version)"
         version_2.text = "Version \(Version)"
@@ -243,34 +606,34 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         Vehicaldetails.sharedInstance.Odometerno = ""
         Vehicaldetails.sharedInstance.hours = ""
         
-        getdatauser()
-        //check the downloadvehiclesforphone & DownloadPreAuthDepartmentData in mobile device.
-        if(defaults.string(forKey: "dateof_DownloadVehiclesForphonefilename") == nil)   {
-            _ = web.GetVehiclesForPhone()
-            
-            sentcalltogetdatavehicle = true
-        }
-        else{
-            if(cf.checkPath(fileName: defaults.string(forKey: "dateof_DownloadVehiclesForphonefilename")!) == true)
-            {
-                print(defaults.string(forKey: "dateof_DownloadVehiclesForphonefilename")!)
-            }
-            else{
-                //                _ = web.GetVehiclesForPhone()
-                _ = web.GetDepartmentsForPhone()
-                sentcalltogetdatavehicle = true
-            }
-        }
-        if(defaults.string(forKey: "dateof_DownloadPreAuthDepartmentData") == nil)
-        {
-            _ = web.GetDepartmentsForPhone()
-            sentcalltogetdatavehicle = true
-        }
-        else
-        if(cf.checkPath(fileName: defaults.string(forKey: "dateof_DownloadPreAuthDepartmentData")!) == true)
-        {
-            print(defaults.string(forKey: "dateof_DownloadPreAuthDepartmentData")!)
-        }
+        //getdatauser()
+//        //check the downloadvehiclesforphone & DownloadPreAuthDepartmentData in mobile device.
+//        if(defaults.string(forKey: "dateof_DownloadVehiclesForphonefilename") == nil)   {
+////            _ = web.GetVehiclesForPhone()
+//            
+//            sentcalltogetdatavehicle = true
+//        }
+//        else{
+//            if(cf.checkPath(fileName: defaults.string(forKey: "dateof_DownloadVehiclesForphonefilename")!) == true)
+//            {
+//                print(defaults.string(forKey: "dateof_DownloadVehiclesForphonefilename")!)
+//            }
+//            else{
+//                //                _ = web.GetVehiclesForPhone()
+////                _ = web.GetDepartmentsForPhone()
+//               // sentcalltogetdatavehicle = true
+//            }
+//        }
+//        if(defaults.string(forKey: "dateof_DownloadPreAuthDepartmentData") == nil)
+//        {
+//            _ = web.GetDepartmentsForPhone()
+//            sentcalltogetdatavehicle = true
+//        }
+//        else
+//        if(cf.checkPath(fileName: defaults.string(forKey: "dateof_DownloadPreAuthDepartmentData")!) == true)
+//        {
+//            print(defaults.string(forKey: "dateof_DownloadPreAuthDepartmentData")!)
+//        }
 
         
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
@@ -643,6 +1006,9 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                             siteID = []
                             HoseId = []
                             Is_upgrade = []
+                            Firmware_Version = []
+                            File_Path = []
+                            Firmware_FileName
                             pulsartimeadjust = []
                             IFISBusy = []
                             Is_HoseNameReplaced = []
@@ -656,6 +1022,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                             Bluetooth_MacAddress = []
                             Mac_Address = []
                             Communication_Type = []
+                            
                             
                             
                             defaults.removeObject(forKey: "SSID")
@@ -705,6 +1072,10 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                         Communication_Type.append(HubLinkCommunication as String)
                                         let IsResetSwitchTimeBounce = JsonRow["IsResetSwitchTimeBounce"] as! NSNumber
                                         let Original_NamesOfLink = JsonRow["OriginalNamesOfLink"] as! NSArray
+                                        let filepath = JsonRow["FilePath"] as! NSString as String
+                                        let FirmwareVersion = JsonRow["FirmwareVersion"] as! NSString as String
+                                        let FirmwareFileName = JsonRow["FirmwareFileName"] as! NSString as String
+                                        
                                         
                                         ssid.append(WifiSSId as String)
                                         preSSID.append(PrevWifiSSId as String)
@@ -726,6 +1097,9 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                         Bluetooth_MacAddress.append(BluetoothMacAddress as String)
                                         Mac_Address.append(MacAddress as String)
                                         Is_ResetSwitchTimeBounce.append("\(IsResetSwitchTimeBounce)")
+                                        File_Path.append(filepath)
+                                        Firmware_Version.append(FirmwareVersion)
+                                        Firmware_FileName.append(FirmwareFileName)
                                         print(Uhosenumber)
                                     }
                                     
@@ -864,7 +1238,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                     version.isHidden = false
                                     supportinfo.isHidden = true
                                     warningLable.isHidden = false
-                                    //refreshButton.isHidden = false
+                                    refreshButton.isHidden = false
                                     warningLable.text = "\(ResponseText)"//no hose found Please contact administrater"
                                 }
                             }
@@ -925,10 +1299,16 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                         
                         if(ResponseText == "New Registration")
                         {
-                            let appDel = UIApplication.shared.delegate! as! AppDelegate
-                            // Call a method on the CustomController property of the AppDelegate
-                            defaults.set(0, forKey: "Register")
-                            appDel.start()
+                            if(IsGobuttontapped == true) //2286
+                            {
+                                self.registerAlert(message: "Your device had been deactivated by your Manager. Please press register if you would like to have it reactivated")
+                            }
+                            else{
+                                let appDel = UIApplication.shared.delegate! as! AppDelegate
+                                // Call a method on the CustomController property of the AppDelegate
+                                defaults.set(0, forKey: "Register")
+                                appDel.start()
+                            }
                         }
                         else
                         if(ResponseText == "notapproved")
@@ -937,7 +1317,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                             scrollview.isHidden = true
                             version.isHidden = false
                             warningLable.isHidden = false
-                            //refreshButton.isHidden = false
+                            refreshButton.isHidden = false
                             preauth.isHidden = true
                             self.navigationItem.title = "Thank you for registering"
                             warningLable.text = NSLocalizedString("Regisration", comment:"")
@@ -1029,8 +1409,8 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        
-        
+      
+        getdatauser()
         if( self.cf.getSSID() != "" ) {
             print("SSID: \(self.cf.getSSID())")
             if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT"){}
@@ -1085,6 +1465,54 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                 self.cf.showUpdateWithForce()
                 self.defaults.set("\(soon)",forKey: "Date")
             }
+        }
+        if(self.defaults.string(forKey: "dateof_DownloadVehiclesForphonefilename") == nil)   {
+            //self.showAlert(message: "Please wait we are gathering your data..")
+            Upgrade.isHidden = false
+            progressviewtext.isHidden = false
+            progressviewtext.text = "Loading....."
+            self.Activity.startAnimating()
+            self.Activity.isHidden = false
+        }
+        else
+        {
+            Upgrade.isHidden = true
+            progressviewtext.text = ""
+        }
+        delay(1){
+            //check the downloadvehiclesforphone & DownloadPreAuthDepartmentData in mobile device.
+            if(self.defaults.string(forKey: "dateof_DownloadVehiclesForphonefilename") == nil)   {
+                       
+                _ = self.web.GetVehiclesForPhone()
+                
+                self.sentcalltogetdatavehicle = true
+            }
+            else{
+                if(self.cf.checkPath(fileName: self.defaults.string(forKey: "dateof_DownloadVehiclesForphonefilename")!) == true)
+                {
+                    print(self.defaults.string(forKey: "dateof_DownloadVehiclesForphonefilename")!)
+                }
+                else{
+                    //                _ = web.GetVehiclesForPhone()
+                    _ = self.web.GetDepartmentsForPhone()
+                    // sentcalltogetdatavehicle = true
+                }
+            }
+            if(self.defaults.string(forKey: "dateof_DownloadPreAuthDepartmentData") == nil)
+            {
+                _ = self.web.GetDepartmentsForPhone()
+                self.sentcalltogetdatavehicle = true
+            }
+            else
+            if(self.cf.checkPath(fileName: self.defaults.string(forKey: "dateof_DownloadPreAuthDepartmentData")!) == true)
+            {
+                print(self.defaults.string(forKey: "dateof_DownloadPreAuthDepartmentData")!)
+            }
+            self.Activity.stopAnimating()
+            self.Activity.isHidden = true
+            self.Upgrade.isHidden = true
+            self.progressviewtext.isHidden = true
+            self.progressviewtext.text = ""
         }
     }
     
@@ -1153,7 +1581,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         unsync.unsyncP_typestatus()
         self.unsync.Send10trans()
         _ = preauthunsyncTransaction()
-        
+       
         self.Activity.startAnimating()
         self.Activity.isHidden = false
         self.go.isEnabled = false
@@ -1303,9 +1731,21 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                                             fVC.connectToBLE()
                                                                 
                                                             }
-                                                            
+                                                            if(self.defaults.string(forKey: "Companyname") == "Company2")
+                                                            {
+                                                                if(self.IsVehicleNumberRequire == "True"){
+                                                                    let test_transaction = self.web.Testtransaction()
+                                                                    if(test_transaction.contains("success")){
+                                                                        self.performSegue(withIdentifier: "fueling", sender: self)
+                                                                    }
+                                                                }
+                                                            }
+                                                            else
+                                                            {
                                                             if(self.IsVehicleNumberRequire == "True"){
-                                                                self.performSegue(withIdentifier: "GO", sender: self)
+                                                               
+                                                                    self.performSegue(withIdentifier: "GO", sender: self)
+                                                                
                                                             }
                                                             else{
                                                                 if(self.IsDepartmentRequire == "True"){
@@ -1323,6 +1763,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                                                             self.senddata(deptno: self.IsDepartmentRequire,ppin:self.IsPersonnelPINRequire,other:self.IsOtherRequire)
                                                                         }
                                                                     }
+                                                                }
                                                                 }
                                                             }
                                                         }
@@ -1419,6 +1860,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                         }
                     }
                     
+                    
                     if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID()){
                         
                         if(Vehicaldetails.sharedInstance.HubLinkCommunication == "UDP")
@@ -1469,7 +1911,9 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     @IBAction func refreshButtontappd(sender: AnyObject)
     {
         IsrefreshButtontapped = true
-        viewDidLoad()
+       // viewDidLoad()
+        //viewDidAppear(true)
+        getdatauser()
         unsync.unsyncTransaction()
         unsync.unsyncP_typestatus()
        
@@ -1530,6 +1974,8 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             Vehicaldetails.sharedInstance.LinkFlaggedMessage = LinkFlagged_Message[0]
             Vehicaldetails.sharedInstance.MacAddress = Mac_Address[0]
             Vehicaldetails.sharedInstance.BTMacAddress = Bluetooth_MacAddress[0]
+            Vehicaldetails.sharedInstance.FilePath = File_Path[0]
+            Vehicaldetails.sharedInstance.FirmwareVersion = Firmware_Version[0]
             return ssid[row]
         }
         return ""
@@ -1579,8 +2025,28 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             Vehicaldetails.sharedInstance.LinkFlaggedMessage = LinkFlagged_Message[index]
             Vehicaldetails.sharedInstance.MacAddress = Mac_Address[index]
             Vehicaldetails.sharedInstance.BTMacAddress = Bluetooth_MacAddress[index]
-            print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced,Vehicaldetails.sharedInstance.prevSSID,Vehicaldetails.sharedInstance.OriginalNamesOfLink,Vehicaldetails.sharedInstance.BTMacAddress )
+            Vehicaldetails.sharedInstance.FilePath = File_Path[index]
+            Vehicaldetails.sharedInstance.FirmwareVersion = Firmware_Version[index]
+            
+            print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced,Vehicaldetails.sharedInstance.prevSSID,Vehicaldetails.sharedInstance.OriginalNamesOfLink,Vehicaldetails.sharedInstance.BTMacAddress,Vehicaldetails.sharedInstance.FilePath,Vehicaldetails.sharedInstance.FirmwareVersion )
             defaults.set(siteid, forKey: "SiteID")
+            
+            if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
+            {
+                if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
+                {
+                    centralManager = CBCentralManager(delegate: self, queue: nil)
+                    progressview.isHidden = false
+                    progressviewtext.isHidden = false
+                    self.Activity.startAnimating()
+                    self.Activity.isHidden = false
+                    Upgrade.isHidden = false
+                    progressviewtext.text = "Softerware update in progress \n Please wait several seconds....."
+                    go.isEnabled = false
+                    upgradestarttimer.invalidate()
+                    upgradestarttimer = Timer.scheduledTimer(timeInterval: (Double(2)*60), target: self, selector: #selector(ViewController.Stopupgradetimer), userInfo: nil, repeats: false)
+                }
+            }
             
             let Json = systemdata.value(forKey: "SSIDDataObj") as! NSArray
             let rowCount = Json.count
@@ -1679,6 +2145,34 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         return "False"
     }
     
+    func registerAlert(message: String)
+    {
+        let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertController.Style.alert)
+        // Background color.
+        let backView = alertController.view.subviews.last?.subviews.last
+        backView?.layer.cornerRadius = 10.0
+        backView?.backgroundColor = UIColor.white
+        
+        let message  = message
+        var messageMutableString = NSMutableAttributedString()
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedString.Key.font:UIFont(name: "Georgia", size: 25.0)!])
+        
+        alertController.setValue(messageMutableString, forKey: "attributedMessage")
+        
+        // Action.
+        let action =  UIAlertAction(title: NSLocalizedString("REGISTER", comment:""), style: UIAlertAction.Style.default) { action in //self.//
+            
+            self.cf.delay(1){
+                let appDel = UIApplication.shared.delegate! as! AppDelegate
+                // Call a method on the CustomController property of the AppDelegate
+                self.defaults.set(0, forKey: "Register")
+                appDel.start()
+            }
+        }
+        alertController.addAction(action)
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
     func Upload(jsonstring: String,filename:String,siteName:String)
     {
         let FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
@@ -1733,5 +2227,665 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         task.resume()
         _ = semaphore.wait(timeout: DispatchTime.distantFuture)
     }
+    
+    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral,advertisementData: [String : Any], rssi RSSI: NSNumber) {
+        
+
+            if(peripheral.name == "nil" || peripheral.name == "(null)")
+            {
+                
+                self.web.sentlog(func_name: "onFuelingScreen peripheral \(peripheral), RSSI \(RSSI)", errorfromserverorlink: "Peripheral name: \(String(describing: peripheral.name))", errorfromapp:"")
+               
+            }
+            
+            else{
+                blePeripheral = peripheral
+                self.peripherals.append(peripheral)
+                self.RSSIs.append(RSSI)
+                self.web.sentlog(func_name: "On FuelingScreen append the blePeripherals \(peripherals.count),RSSI \(RSSI)", errorfromserverorlink: "\(peripherals)", errorfromapp:"")
+                peripheral.delegate = self
+
+            }
+        
+        if blePeripheral == nil {
+    //            print("Found new pheripheral devices with services")
+    //            print("Peripheral name: \(String(describing: peripheral.name))")
+    //            print("**********************************")
+    //            print ("Advertisement Data : \(advertisementData)")
+            //self.web.sentlog(func_name: "Peripheral Data : \(blePeripheral)", errorfromserverorlink: "Peripheral name: \(peripheral))", errorfromapp:"")
+        }
+    }
+    
+    /*
+     Invoked when you discover the peripheral’s available services.
+     This method is invoked when your app calls the discoverServices(_:) method. If the services of the peripheral are successfully discovered, you can access them through the peripheral’s services property. If successful, the error parameter is nil. If unsuccessful, the error parameter returns the cause of the failure.
+     */
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+        print("*******************************************************")
+        
+        if ((error) != nil) {
+            print("Error discovering services: \(error!.localizedDescription)")
+            return
+        }
+        
+        guard let services = peripheral.services else {
+            return
+        }
+        //We need to discover the all characteristic
+        print(services)
+        for service in services {
+            
+            peripheral.discoverCharacteristics(nil, for: service)
+            
+            print(service)
+            
+            if service.uuid.isEqual(CBUUID(string:"725e0bc8-6f00-4d2d-a4af-96138ce599b9")){
+                
+                connectedservice = "725e0bc8-6f00-4d2d-a4af-96138ce599b9"
+            }
+            else if service.uuid.isEqual(CBUUID(string:"725e0bc8-6f00-4d2d-a4af-96138ce599b7")){
+                connectedservice = "725e0bc8-6f00-4d2d-a4af-96138ce599b7"
+            } else if service.uuid.isEqual(CBUUID(string:"725e0bc8-6f00-4d2d-a4af-96138ce599b6")){
+                connectedservice = "725e0bc8-6f00-4d2d-a4af-96138ce599b6"
+            }
+        }
+        
+        peripheral.readRSSI()
+        print("Discovered Services: \(services)")
+    }
+    
+    /*
+     Invoked when you discover the characteristics of a specified service.
+     This method is invoked when your app calls the discoverCharacteristics(_:for:) method. If the characteristics of the specified service are successfully discovered, you can access them through the service's characteristics property. If successful, the error parameter is nil. If unsuccessful, the error parameter returns the cause of the failure.
+     */
+    
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+        
+        print("*******************************************************")
+        
+        if ((error) != nil) {
+            print("Error discovering services: \(error!.localizedDescription)")
+            return
+        }
+        
+        guard let characteristics = service.characteristics else {
+            return
+        }
+        
+        print("Found \(characteristics.count) characteristics!")
+        
+        for characteristic in characteristics {
+            //looks for the right characteristic
+            
+            if characteristic.uuid.isEqual(CBUUID(string:kBLE_Characteristic_uuid_Rx))  {
+                rxCharacteristic = characteristic
+                
+                if(iskBLE_Characteristic_uuid_Tx_setnotifytrue == true){}
+                else{
+                //Once found, subscribe to the this particular characteristic...
+                if(isNotifyenable == false){
+                    peripheral.setNotifyValue(true, for: rxCharacteristic!)
+                    iskBLE_Characteristic_uuid_Tx_setnotifytrue = true
+                    // We can return after calling CBPeripheral.setNotifyValue because CBPeripheralDelegate's
+                    // didUpdateNotificationStateForCharacteristic method will be called automatically
+                    peripheral.readValue(for: characteristic)
+                    print("Rx Characteristic: \(characteristic.uuid)")
+                }
+                }
+            }
+            if characteristic.uuid.isEqual(CBUUID(string:kBLE_Characteristic_uuid_Tx)){
+                txCharacteristic = characteristic
+                print("Tx Characteristic: \(characteristic.uuid)")
+            }
+            if characteristic.uuid.isEqual(CBUUID(string:kBLE_Characteristic_uuid_Tx_upload))  {
+                rxCharacteristic = characteristic
+                if(iskBLE_Characteristic_uuid_Tx_upload_setnotifytrue == true){}
+                else{
+                //Once found, subscribe to the this particular characteristic...
+                if(isNotifyenable == false){
+                    peripheral.setNotifyValue(true, for: rxCharacteristic!)
+                    iskBLE_Characteristic_uuid_Tx_upload_setnotifytrue = true
+                    // We can return after calling CBPeripheral.setNotifyValue because CBPeripheralDelegate's
+                    // didUpdateNotificationStateForCharacteristic method will be called automatically
+                    peripheral.readValue(for: characteristic)
+                    print("Rx Characteristic: \(characteristic.uuid)")
+                }
+              }
+            }
+            if characteristic.uuid.isEqual(CBUUID(string:kBLE_Characteristic_uuid_Tx_upload)){
+                txCharacteristicupload = characteristic
+                print("Tx Characteristic: \(characteristic.uuid)")
+            }
+            peripheral.discoverDescriptors(for: characteristic)
+        }
+    }
+    
+    
+    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
+        guard characteristic == rxCharacteristic,
+              let characteristicValue = characteristic.value,
+              let ASCIIstring = NSString(data: characteristicValue,
+                                         encoding: String.Encoding.utf8.rawValue)
+        else { return }
+        // BLE infor command response old link version
+        characteristicASCIIValue = ASCIIstring as String
+        print(characteristicASCIIValue)
+        if((characteristicASCIIValue as String).contains("L10:"))
+        {
+            Last10transaction = (characteristicASCIIValue as String)
+            self.web.sentlog(func_name: " Get response from info command to link \(characteristicASCIIValue)", errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"")
+        }
+        
+        if(characteristicASCIIValue == "Notify enabled..." || characteristicASCIIValue == "LinkBlue notify enabled..." || characteristicASCIIValue == "{\"notify\" : \"enabled\"}")
+        {
+            isNotifyenable = true
+        }
+        if("\(characteristicASCIIValue)".contains("{\"pulse\":"))
+        {
+//            cf.delay(1){
+            //sleep(1)
+//            self.parsepulsedata()
+//            }
+        }
+        
+        if((characteristicASCIIValue as String).contains("pulse:"))
+        {
+            let Split = self.characteristicASCIIValue.components(separatedBy: ":")
+            if(Split.count == 2){
+                let reply1 = Split[0]
+                let count = Split[1]
+                let dc = count.trimmingCharacters(in: .whitespaces)
+                let datacount =  Int(dc as String)!
+                
+                if(reply1 == "pulse" ){
+                    print("\(self.characteristicASCIIValue)")
+                    //                        if(appdisconnects_automatically == true)
+                    //                        {
+                    //
+                    //                        }
+                    //                        else{
+                    self.web.sentlog(func_name: " BLE Response from link is \(self.characteristicASCIIValue)", errorfromserverorlink:"", errorfromapp: "")
+                    //                        }
+                    //                        if(datacount > 100)
+                    //                        {
+                    //                            self.GetPulserBLE(counts:"\(100)")
+                    //                        }
+                    //                        else{
+                    self.countfromlink = datacount
+//                    delay(1){
+//                    self.getPulserBLE(counts:"\(datacount)")
+//                                            }
+//                    self.displaytime.text = ""
+                    
+                }
+                
+                else if(self.characteristicASCIIValue == "pulse: 0")
+                {
+                }
+            }
+        }
+        
+        
+        
+        
+        //#2177
+        print("Value Recieved: \((characteristicASCIIValue as String))")
+        if("\(self.characteristicASCIIValue)".contains("{\"pulser_type\""))
+        {
+            self.web.sentlog(func_name: " BLE Response from link is \(self.characteristicASCIIValue)", errorfromserverorlink:"", errorfromapp: "")
+        }
+        if("\(self.characteristicASCIIValue)".contains("{\"pulser_type\":1}$$"))
+        {
+            defaults.set("1", forKey: "UpdateSwitchTimeBounceForLink")
+        }
+        else if("\(self.characteristicASCIIValue)".contains("{\"pulser_type\":2}$$"))
+        {
+            defaults.set("2", forKey: "UpdateSwitchTimeBounceForLink")
+        }
+        else if("\(self.characteristicASCIIValue)".contains("{\"pulser_type\":3}$$"))
+        {
+            defaults.set("3", forKey: "UpdateSwitchTimeBounceForLink")
+        }
+        else if("\(self.characteristicASCIIValue)".contains("{\"pulser_type\":4}$$"))
+        {
+            defaults.set("4", forKey: "UpdateSwitchTimeBounceForLink")
+        }
+        
+        NotificationCenter.default.post(name:NSNotification.Name(rawValue: "Notify"), object: self)
+        
+        
+        guard let characteristicData = characteristic.value,
+              let stringFromData = String(data: characteristicData, encoding: .utf8) else { return }
+        
+        
+        
+        guard characteristic == txCharacteristicupload,
+              let characteristicValue = characteristic.value,
+              let stringFromData = String(data: characteristicData, encoding: .utf8)
+        else{return}
+        // Have we received the end-of-message token?
+        if stringFromData == "EOM" {
+            // End-of-message case: show the data.
+            // Dispatch the text view update to the main queue for updating the UI, because
+            // we don't know which thread this method will be called back on.
+            DispatchQueue.main.async() {
+                //self.textView.text = String(data: self.data, encoding: .utf8)
+            }
+            
+            // Write test data
+            
+        } else {
+            // Otherwise, just append the data to what we have previously received.
+            sendData()//bin_data.append(characteristicData)
+        }
+    }
+    
+    
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverDescriptorsFor characteristic: CBCharacteristic, error: Error?) {
+        print("*******************************************************")
+        
+        if error != nil {
+            print("\(error.debugDescription)")
+            return
+        }
+        guard let descriptors = characteristic.descriptors else { return }
+        
+        descriptors.forEach { descript in
+            print("function name: DidDiscoverDescriptorForChar \(String(describing: descript.description))")
+            print("Rx Value \(String(describing: rxCharacteristic?.value))")
+            print("Tx Value \(String(describing: txCharacteristic?.value))")
+            //if it is subscribed the Notification has begun for: E49227E8-659F-4D7E-8E23-8C6EEA5B9173
+        }
+    }
+    
+    func peripheralDidUpdateName(_ peripheral: CBPeripheral)
+    {
+       print(peripheral)
+        
+    }
+    
+    func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
+        print("*******************************************************")
+        
+        if (error != nil) {
+            print("Error changing notification state:\(String(describing: error?.localizedDescription))")
+            ifSubscribed = false
+            
+        } else {
+            print("Characteristic's value subscribed")
+        }
+        
+        if (characteristic.isNotifying) {
+            ifSubscribed = true
+            web.sentlog(func_name: "Connected to BT link, Subscribed. Set Notify enabled... to true in BLE transaction for ID:", errorfromserverorlink: "\(characteristic.uuid)", errorfromapp: ""); print("Subscribed. Notification has begun for: \(characteristic.uuid)")
+           
+                if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
+                {
+                    if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
+                    {
+                        if(isupload_file == true){}
+                        else{
+                            self.uploadbinfile()
+                          
+//                            _ = self.firmwareUpdateDemo()
+//                            self.sendData()
+//                            _ = self.web.UpgradeCurrentiotVersiontoserver()
+                            self.web.sentlog(func_name: "Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                        }
+
+                    }
+                 
+                   
+                }
+             
+        }
+        else
+        {
+            ifSubscribed = false
+        }
+
+    }
+    
+    func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
+        guard error == nil else {
+            print("Error discovering services: error \(error)")
+            return
+        }
+        print("Message sent\(CBCharacteristic.self)")
+    }
+    
+    
+    // Stub to stop run-time warning
+    func peripheral(_ peripheral: CBPeripheral, didModifyServices invalidatedServices: [CBService]) {
+        
+    }
+    
+    /*
+     *  This is called when peripheral is ready to accept more data when using write without response
+     */
+
+    func peripheralIsReady(toSendWriteWithoutResponse peripheral: CBPeripheral)
+    {
+        self.sendData()
+    }
+  
+    
+    //     MARK: - Helper Methods
+    @objc func Stopupgradetimer()
+    {
+        upgradestarttimer.invalidate()
+        Upgrade.isHidden = true
+        self.Activity.stopAnimating()
+        self.Activity.isHidden = true
+        disconnectFromDevice()
+    }
+    
+    
+    func sendData() {
+        
+        progressview.isHidden = false
+        progressviewtext.isHidden = false
+        if let discoveredPeripheral = blePeripheral{
+            if let txCharacteristic = txCharacteristicupload
+            {
+                sentDataPacket = firmwareUpdateDemo()
+                if sentDataPacket != nil {
+                    discoveredPeripheral.writeValue(sentDataPacket!, for: txCharacteristic, type: CBCharacteristicWriteType.withoutResponse)
+                }
+                else{
+                    
+                    // discoveredPeripheral.writeValue("EOM".data(using: String.Encoding.utf8)!, for: txCharacteristic, type: .withoutResponse)
+                }
+            }
+        }
+    }
+    
+    
+    func firmwareUpdateDemo() -> Data? {
+        //let subData:Data
+        guard let discoveredPeripheral = blePeripheral,
+              let txCharacteristic = txCharacteristicupload
+        else { return nil}
+        let mtu = discoveredPeripheral.maximumWriteValueLength(for: CBCharacteristicWriteType.withoutResponse)
+        
+        if(bindata == nil){
+            uploadbinfile()
+        }
+        else {
+            guard bindata!.count > 0 else {
+                
+                
+                // set label for progress value
+                
+                self.progressviewtext.text = "Done Upgrade \(Int(self.progressview.progress * 100))% \n please tap GO...."
+                _ = self.web.UpgradeCurrentVersiontoserver()
+                self.web.sentlog(func_name: " Finished Upgrade Process", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                
+               
+                go.isEnabled = true
+                delay(3)
+                {
+                    self.Upgrade.isHidden = true
+                    self.disconnectFromDevice()
+                }
+                
+               
+                return nil
+            }
+            upgradestarttimer.invalidate()
+            self.Activity.stopAnimating()
+            self.Activity.isHidden = true
+            progressview.isHidden = false
+            progressviewtext.isHidden = false
+            let iteration:Float = Float(totalbindatacount / mtu)
+            let onepercentoffile:Float = 1/iteration
+            print(iteration,Float(Double(onepercentoffile)))
+            iterationcountforupgrade = iterationcountforupgrade + 1
+            self.progressview.progress += Float(Double(onepercentoffile))
+            self.progressviewtext.text = "Softerware update in progress \(Int(self.progressview.progress * 100))%"
+            
+            var range:Range<Data.Index>
+            // Create a range based on the length of data to return
+            if (bindata!.count) >= mtu{
+                range = (0..<mtu)
+            }
+            else{
+                
+                range = (0..<(bindata!.count))
+            }
+            // Get a new copy of data
+            subData = bindata!.subdata(in: range)
+            // Mutate data
+            bindata!.removeSubrange(range)
+            print(range,subData,bindata!)
+            // Return the new copy of data
+            
+        }
+        
+        return subData
+    }
+    
+    //BTUpgrade
+    
+    func uploadbinfile(){
+        //Download new link from Server using getbinfile and upload/Flash the file to FS link.
+        //            DispatchQueue.main.async(execute: {
+        //                self.web.beginBackgroundUpdateTask()
+        //                if(self.bindata == nil){
+       
+            isupload_file = true
+            self.bindata = self.getbinfile() as Data
+            //                }
+            //                else{
+            self.totalbindatacount = self.bindata!.count
+            print(self.bindata!.count)
+            self.outgoingData(inputText: "LK_COMM=upgrade \(self.bindata!.count)")
+            self.web.sentlog(func_name: " Send LK_COMM=upgrade \(self.bindata!.count) to link", errorfromserverorlink: "" , errorfromapp:"")
+            NotificationCenter.default.removeObserver(self)
+            self.updateIncomingData()
+            //                }
+            
+            // End the background task.
+            
+            //                self.web.endBackgroundUpdateTask()
+            //            })
+        
+    }
+    
+    func getbinfile() -> Data
+    {
+            
+            let urlPath:String = Vehicaldetails.sharedInstance.FilePath
+        
+            let objectUrl = URL(string:urlPath.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
+            let request: NSMutableURLRequest = NSMutableURLRequest(url:objectUrl! as URL)
+            request.httpMethod = "GET"
+            
+            let session = Foundation.URLSession.shared
+            let semaphore = DispatchSemaphore(value: 0)
+            let task =  session.dataTask(with: request as URLRequest) { data, response, error in
+                if let data = data {
+                    
+                    self.replydata = data as NSData
+                } else {
+                    print(error!)
+                }
+                semaphore.signal()
+            }
+            task.resume()
+            _ = semaphore.wait(timeout: DispatchTime.distantFuture)
+            return replydata as Data
+        
+    }
+   
+    func outgoingData (inputText:String) {
+        
+        self.web.sentlog(func_name: " BLE sent request to link is \(inputText)", errorfromserverorlink:"", errorfromapp: "")
+        writeValue(data: inputText)
+        
+        let attribString = NSAttributedString(string: inputText)//, attributes: convertToOptionalNSAttributedStringKeyDictionary(myAttributes1))
+        let newAsciiText = NSMutableAttributedString(attributedString: self.consoleAsciiText!)
+        newAsciiText.append(attribString)
+        consoleAsciiText = newAsciiText
+    }
+    
+    
+    func writeValue(data: String){
+        let valueString = (data as NSString).data(using: String.Encoding.utf8.rawValue)
+        //change the "data" to valueString
+        if let blePeripheral = blePeripheral{
+            if let txCharacteristic = txCharacteristic
+            {
+                blePeripheral.writeValue(valueString!, for: txCharacteristic, type: CBCharacteristicWriteType.withResponse)
+            }
+        }
+    }
+    
+    
+    func updateIncomingData()
+    {
+        observationToken = NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "Notify"), object: nil , queue: nil){ [self]
+            notification in
+            print(connectedservice)
+            if(connectedservice == "725e0bc8-6f00-4d2d-a4af-96138ce599b9"){
+                self.newAsciiText.append(NSAttributedString(string:(characteristicASCIIValue as String)))
+                if("\(self.newAsciiText)".contains("$$"))
+                {
+                    let jsondata = newAsciiText
+                    //                    self.baseTextView = "\(jsondata)"
+                }
+                //                NotificationCenter.default.removeObserver(self.observationToken!)
+                //integrtedresponse = newAsciiText as String
+                //                print(baseTextView,newAsciiText)
+                
+                print("\(self.newAsciiText)")
+                
+                
+                if(self.characteristicASCIIValue.contains("{\"upgrade\":'true'}"))
+                {
+                    //self.web.sentlog(func_name: " Response from link \(characteristicASCIIValue)", errorfromserverorlink: "" , errorfromapp:"")
+                    if (isdisconnected == true)
+                    {
+                        //                        do{
+                        //
+                        //                            try self.stoprelay()
+                        //
+                        //                        }
+                        //
+                        //                        catch let error as NSError {
+                        //                            print ("Error: \(error.domain)")
+                        //                        }
+                    }
+                    else{
+                        if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
+                        {
+                            if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
+                            {
+                                
+                                //                            self.web.sentlog(func_name: " Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                                //                            if(self.bindata == nil){
+                                //                                self.uploadbinfile()
+                                //                            }
+                                // self.web.sentlog(func_name: "StopButtonTapped Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                                //self.Firmwareupdate()
+                                //                            firmwareUpdateDemo()
+                                                            sendData()
+                                //                              _ = self.web.UpgradeCurrentiotVersiontoserver()
+                                
+                            }
+                        }
+                        else{
+                            self.web.sentlog(func_name: " BLE Response from link is \(characteristicASCIIValue)", errorfromserverorlink:"", errorfromapp: "")
+                            
+                            
+                        }
+                    }
+                }
+                else
+                {
+                    
+//                        Upgrade.isHidden = true
+                   
+                }
+            }
+            NotificationCenter.default.removeObserver(self)
+        }
+    }
+    
+    
+    
+    
+    /*
+     Called when the central manager discovers a peripheral while scanning. Also, once peripheral is connected, cancel scanning.
+     */
+   
+    
+    func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
+        if error != nil {
+            print("Failed to connect to peripheral")
+            return
+        }
+    }
+    
+    func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral)
+    {
+            
+            peripheral.delegate = self
+        
+            peripheral.discoverServices(nil)
+            print("connected to \(peripheral)")
+//        peripheral.readRSSI()
+//        self.startReadRSSI()
+        }
+    
+    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+        //let BLEService_UUID = CBUUID(string: kBLEService_UUID)
+        print("*****************************")
+        print("Connection complete")
+        print("Peripheral info: \(String(describing: blePeripheral))")
+        
+        //Stop Scan- We don't need to scan once we've connected to a peripheral. We got what we came for.
+        centralManager?.stopScan()
+        print("Scan Stopped")
+        
+        //Erase data that we might have
+        
+        data.length = 0
+        
+        //Discovery callback
+        peripheral.delegate = self
+        //Only look for services that matches transmit uuid
+        
+        peripheral.discoverServices([CBUUID(string:"725e0bc8-6f00-4d2d-a4af-96138ce599b7")])
+        peripheral.discoverServices([CBUUID(string:"725e0bc8-6f00-4d2d-a4af-96138ce599b9")])
+        peripheral.discoverServices([CBUUID(string:"725e0bc8-6f00-4d2d-a4af-96138ce599b6")])
+        
+//        peripheral.readRSSI()
+//        self.startReadRSSI()
+//        print("Discovered Services: \(services)")
+    }
+    
+    func disconnectFromDevice()
+    {
+        if blePeripheral != nil {
+//
+            
+            self.cf.delay(0.2){
+                if(self.rxCharacteristic == nil){}
+                else{
+                    self.blePeripheral!.setNotifyValue(false, for: self.rxCharacteristic!)
+                    
+                }
+                
+                self.centralManager.cancelPeripheralConnection(self.blePeripheral!)
+                self.centralManager.cancelPeripheralConnection(self.blePeripheral!)
+                self.isdisconnected = true
+            }
+            
+            self.web.sentlog(func_name: "Disconnecting Device from link \(Vehicaldetails.sharedInstance.SSId)", errorfromserverorlink: "", errorfromapp:"")
+            
+        }
+    }
 }
+
 

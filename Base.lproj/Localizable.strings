@@ -87,6 +87,12 @@
 "ConnectWifi" = "Connect Wifi";
 "Warningfueling" = "Caution: Do NOT leave this screen while fueling. Pump may TURN OFF!";
 "SwitchoffyourWiFi" = "Please switch off your wifi before proceeding. \n To switch off the wifi you can use the shortcut.  If you have an iPhone with Touch ID, swipe up from the bottom of the screen. If you have an iPhone with Face ID, swipe down from the upper right. Then tap on the wifi icon to switch it off.";
+
 "warningOdoHour" = "You have entered a reading that was previously entered. Please check and try again. If the issue persists, please contact your Manager.";
+
 "tankempty" = "The system is low on fuel and must be refilled before fueling can start.\n Please contact your Manager.";
+
+"preauthwaringMsg" = "You do not have enough cellular coverage to perform this transaction. Please return to where you have coverage and reopen the APP for at least two minutes. During this time, an offline database will be loaded onto your device where you can return to perform your transaction(s). The transaction(s) will be loaded into the Cloud once you return again to where you have cellular coverage. If you have any questions, please contact Support.";
+
+"AllowOfflinePreauthorizedTransactions" = "We have detected that your device is not in cellular range sufficient to perform this transaction. We do have the ability to allow you to use this device, in an offline mode, however, your Manager has removed that option in your profile. Please contact your Manager.";
 

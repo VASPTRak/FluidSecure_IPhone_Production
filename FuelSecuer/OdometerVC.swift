@@ -116,6 +116,34 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
         viewWillAppear(true)
     }
     
+    func Alert(message: String)
+    {
+        let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertController.Style.alert)
+        // Background color.
+        let backView = alertController.view.subviews.last?.subviews.last
+        backView?.layer.cornerRadius = 10.0
+        backView?.backgroundColor = UIColor.white
+        
+        let message  = message
+        var messageMutableString = NSMutableAttributedString()
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedString.Key.font:UIFont(name: "Georgia", size: 25.0)!])
+        
+        alertController.setValue(messageMutableString, forKey: "attributedMessage")
+        
+        // Action.
+        let action =  UIAlertAction(title: NSLocalizedString("REGISTER", comment:""), style: UIAlertAction.Style.default) { action in //self.//
+            
+            self.cf.delay(1){
+                let appDel = UIApplication.shared.delegate! as! AppDelegate
+                // Call a method on the CustomController property of the AppDelegate
+                defaults.set(0, forKey: "Register")
+                appDel.start()
+            }
+        }
+        alertController.addAction(action)
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
     func Action(sender:UIButton!)
     {
         self.dismiss(animated: true, completion: nil)
@@ -292,7 +320,16 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
                         self.performSegue(withIdentifier: "pin", sender: self)
                     }
                 }
-                showAlert(message: "\(ResponceText)")
+                delay(1){
+                    if(ResponceText.contains("Mobile is not registered in the system, Please contact administrator."))
+                    {
+                        self.Alert(message: "Your device had been deactivated by your Manager. Please press register if you would like to have it reactivated")
+                    }
+                    else{
+                        self.showAlert(message: "\(ResponceText)")
+                    }
+                    self.Alert(message: "\(ResponceText)")
+                }//showAlert(message: "\(ResponceText)")
             }
         }
     }

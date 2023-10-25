@@ -1380,7 +1380,8 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         
         if(Vehicaldetails.sharedInstance.DoNotAllowOfflinePreauthorizedTransactions == "True")
         {
-            showAlert(message:"We have detected that your device is not in cellular range sufficient to perform this transaction. We do have the ability to allow you to use this device, in an offline mode, however, your Manager has removed that option in your profile. Please contact your Manager.")//NSLocalizedString("HelptextSelectedSite", comment:"")
+            //showAlert(message:"We have detected that your device is not in cellular range sufficient to perform this transaction. We do have the ability to allow you to use this device, in an offline mode, however, your Manager has removed that option in your profile. Please contact your Manager.")//
+            showAlert(message:NSLocalizedString("AllowOfflinePreauthorizedTransactions", comment:""))
         }
         
         
@@ -1610,7 +1611,8 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                 //#1761
                 if(Vehicaldetails.sharedInstance.PulseRatio == "")
                  {
-                    Alert(message:"You do not have enough cellular coverage to perform this transaction. Please return to where you have coverage and reopen the APP for at least two minutes. During this time, an offline database will be loaded onto your device where you can return to perform your transaction(s). The transaction(s) will be loaded into the Cloud once you return again to where you have cellular coverage. If you have any questions, please contact Support.")
+                    self.Alert(message: NSLocalizedString("preauthwaringMsg", comment:""))
+                    //Alert(message:"You do not have enough cellular coverage to perform this transaction. Please return to where you have coverage and reopen the APP for at least two minutes. During this time, an offline database will be loaded onto your device where you can return to perform your transaction(s). The transaction(s) will be loaded into the Cloud once you return again to where you have cellular coverage. If you have any questions, please contact Support.")
                 }
                  else{
                 print("ssID Match")

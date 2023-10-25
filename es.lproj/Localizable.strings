@@ -87,3 +87,9 @@
 "Warningfueling" =
 "Precaución: ¡NO abandone esta pantalla mientras está cargando combustible, la bomba puede apagarse!";
 "Pulsardisconnected" = "Pulsar disconnected";
+
+"warningOdoHour" = "Ha ingresado una lectura que se ingresó anteriormente. Verifique e intente nuevamente. Si el problema persiste, comuníquese con su Gerente.";
+
+"preauthwaringMsg" = "No tienes suficiente cobertura celular para realizar esta transacción. Vuelva a donde tiene cobertura y vuelva a abrir la aplicación durante al menos dos minutos. Durante este tiempo, se cargará una base de datos fuera de línea en su dispositivo donde podrá regresar para realizar su(s) transacción(es). La(s) transacción(es) se cargarán en la nube una vez que regrese nuevamente a donde tiene cobertura celular. Si tiene alguna pregunta, comuníquese con Soporte.";
+
+"AllowOfflinePreauthorizedTransactions" = "Hemos detectado que su dispositivo no tiene suficiente alcance celular para realizar esta transacción. Tenemos la capacidad de permitirle usar este dispositivo, en modo fuera de línea, sin embargo, su Gerente ha eliminado esa opción en su perfil. Póngase en contacto con su Gerente.";
