@@ -976,7 +976,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = LY75MT5XE6;
 				ENABLE_BITCODE = YES;
 				ENABLE_ON_DEMAND_RESOURCES = YES;
@@ -984,7 +984,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = FluidSecure;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.18.30;
+				MARKETING_VERSION = 1.18.31;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Trakengg.Fluidsecure;
 				PRODUCT_NAME = FuelSecure;
 				PROVISIONING_PROFILE = "";
@@ -1006,7 +1006,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = LY75MT5XE6;
 				ENABLE_BITCODE = NO;
 				ENABLE_ON_DEMAND_RESOURCES = YES;
@@ -1014,7 +1014,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = FluidSecure;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.18.30;
+				MARKETING_VERSION = 1.18.31;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Trakengg.Fluidsecure;
 				PRODUCT_NAME = FuelSecure;
 				PROVISIONING_PROFILE = "";

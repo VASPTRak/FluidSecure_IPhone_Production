@@ -6177,7 +6177,7 @@ extension FuelquantityVC: CBPeripheralDelegate {
                                        // self.web.sentlog(func_name: " Send info command to link", errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"")
                                     }
                             }
-                    //        }
+                            }
                 print(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce)
                                     if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1")
                                     {
@@ -6203,7 +6203,7 @@ extension FuelquantityVC: CBPeripheralDelegate {
                         //                            self.showAlert(message: "Macaddress is not matched \(Vehicaldetails.sharedInstance.BTMacAddress)" )
                         //                        }
                     }
-                }
+                
             }
             //#2350 allow BLE transaction with out click start button
             if(self.defaults.string(forKey: "Companyname") == "Company2")

@@ -7,38 +7,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "E5933656-5B85-4146-B15F-1B33859FADD9"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "FuelSecuer/FuelquantityVC.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "6020"
-            endingLineNumber = "6020"
-            landmarkName = "peripheral(_:didUpdateValueFor:error:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "ECA82ABB-3A03-4C80-BA69-92DD89F18F2F"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "FuelSecuer/FuelquantityVC.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5991"
-            endingLineNumber = "5991"
-            landmarkName = "peripheral(_:didUpdateValueFor:error:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "4F8C83A6-3F5E-4DD6-8D03-17B9DB63DE8B"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -49,6 +17,229 @@
             startingLineNumber = "4974"
             endingLineNumber = "4974"
             landmarkName = "updateIncomingData()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8BEE6185-12B8-4620-AAB4-B5F920CE4C53"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FuelSecuer/FuelquantityVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "768"
+            endingLineNumber = "768"
+            landmarkName = "viewDidAppear(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "83A2DB01-E666-42B7-B3AE-3FA4538BE839"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FuelSecuer/FuelquantityVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "860"
+            endingLineNumber = "860"
+            landmarkName = "viewDidAppear(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0B785064-DA5F-483E-AEDB-50D63D4918A8"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FuelSecuer/FuelquantityVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2257"
+            endingLineNumber = "2257"
+            landmarkName = "stopButtontapped()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "0B785064-DA5F-483E-AEDB-50D63D4918A8 - 7f4ef5838d27c7e7"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in FuelSecure.FuelquantityVC.stopButtontapped() -&gt; ()"
+                  moduleName = "FuelSecure"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/vasp/Desktop/FluidSecure%20app%20Lastest%20code%2029%20Apr%202023/Production/10Oct23/1.18.29(1)%232286%232344%232365%232366,%232350/FuelSecuer/FuelquantityVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "2257"
+                  endingLineNumber = "2257"
+                  offsetFromSymbolStart = "152">
+               </Location>
+               <Location
+                  uuid = "0B785064-DA5F-483E-AEDB-50D63D4918A8 - 7f4ef5838d27c7e7"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in FuelSecure.FuelquantityVC.stopButtontapped() -&gt; ()"
+                  moduleName = "FuelSecure"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/vasp/Desktop/FluidSecure%20app%20Lastest%20code%2029%20Apr%202023/Production/10Oct23/1.18.29(1)%232286%232344%232365%232366,%232350/FuelSecuer/FuelquantityVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "2257"
+                  endingLineNumber = "2257"
+                  offsetFromSymbolStart = "88">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8B1BFEA3-D61C-41D7-8395-705278620B13"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FuelSecuer/FuelquantityVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2253"
+            endingLineNumber = "2253"
+            landmarkName = "stopButtontapped()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "8B1BFEA3-D61C-41D7-8395-705278620B13 - 17612d3b3172176f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "FuelSecure.FuelquantityVC.stopButtontapped() -&gt; ()"
+                  moduleName = "FuelSecure"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/vasp/Desktop/FluidSecure%20app%20Lastest%20code%2029%20Apr%202023/Production/10Oct23/1.18.29(1)%232286%232344%232365%232366,%232350/FuelSecuer/FuelquantityVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "2253"
+                  endingLineNumber = "2253"
+                  offsetFromSymbolStart = "4996">
+               </Location>
+               <Location
+                  uuid = "8B1BFEA3-D61C-41D7-8395-705278620B13 - 7f4ef5838d27c021"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in FuelSecure.FuelquantityVC.stopButtontapped() -&gt; ()"
+                  moduleName = "FuelSecure"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/vasp/Desktop/FluidSecure%20app%20Lastest%20code%2029%20Apr%202023/Production/10Oct23/1.18.29(1)%232286%232344%232365%232366,%232350/FuelSecuer/FuelquantityVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "2255"
+                  endingLineNumber = "2255"
+                  offsetFromSymbolStart = "92">
+               </Location>
+               <Location
+                  uuid = "8B1BFEA3-D61C-41D7-8395-705278620B13 - 7f4ef5838d27c7e7"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in FuelSecure.FuelquantityVC.stopButtontapped() -&gt; ()"
+                  moduleName = "FuelSecure"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/vasp/Desktop/FluidSecure%20app%20Lastest%20code%2029%20Apr%202023/Production/10Oct23/1.18.29(1)%232286%232344%232365%232366,%232350/FuelSecuer/FuelquantityVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "2257"
+                  endingLineNumber = "2257"
+                  offsetFromSymbolStart = "88">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "140ECE3C-43EC-4737-BEFA-1C8757092A43"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FuelSecuer/FuelquantityVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2255"
+            endingLineNumber = "2255"
+            landmarkName = "stopButtontapped()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "140ECE3C-43EC-4737-BEFA-1C8757092A43 - 7f4ef5838d27c021"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in FuelSecure.FuelquantityVC.stopButtontapped() -&gt; ()"
+                  moduleName = "FuelSecure"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/vasp/Desktop/FluidSecure%20app%20Lastest%20code%2029%20Apr%202023/Production/10Oct23/1.18.29(1)%232286%232344%232365%232366,%232350/FuelSecuer/FuelquantityVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "2255"
+                  endingLineNumber = "2255"
+                  offsetFromSymbolStart = "92">
+               </Location>
+               <Location
+                  uuid = "140ECE3C-43EC-4737-BEFA-1C8757092A43 - 7f4ef5838d27c7e7"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in FuelSecure.FuelquantityVC.stopButtontapped() -&gt; ()"
+                  moduleName = "FuelSecure"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/vasp/Desktop/FluidSecure%20app%20Lastest%20code%2029%20Apr%202023/Production/10Oct23/1.18.29(1)%232286%232344%232365%232366,%232350/FuelSecuer/FuelquantityVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "2257"
+                  endingLineNumber = "2257"
+                  offsetFromSymbolStart = "88">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D723B3C3-8F43-420F-ACD0-2AB64FFA2878"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FuelSecuer/FuelquantityVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "5597"
+            endingLineNumber = "5597"
+            landmarkName = "centralManager(_:didDisconnectPeripheral:error:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4B236F9A-C46A-4D2A-A98D-65965A1FA245"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FuelSecuer/FuelquantityVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "5563"
+            endingLineNumber = "5563"
+            landmarkName = "centralManager(_:didDisconnectPeripheral:error:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
