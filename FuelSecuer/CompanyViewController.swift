@@ -62,7 +62,9 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
     var Communication_Type = [String]()
     var groupAdminCompanyListCompanyID = [String]()
     var groupAdminCompanyList = [String]()
+    var groupAdminIsRootCompany = [String]()
     var companyid :String = ""
+    var IsRoot_Company:String = ""
     var IsGobuttontapped : Bool = false
     var now:Date!
     
@@ -421,6 +423,7 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
                    }
                    else{
                     groupAdminCompanyList = []
+                    groupAdminIsRootCompany = []
                     groupAdminCompanyListCompanyID = []
                        let Message = sysdata["ResponceMessage"] as! NSString
                        let ResponseText = sysdata["ResponceText"] as! NSString
@@ -508,9 +511,11 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
                             let JsonRow = CompanyJson[i] as! NSDictionary
                             let CompanyId = JsonRow["CompanyId"] as! NSString
                             let CompanyName = JsonRow["CompanyName"] as! NSString
-                            print(CompanyId,CompanyName)
+                            let IsRootCompany = JsonRow["IsRootCompany"] as! NSString
+                            print(CompanyId,CompanyName,IsRootCompany)
                             groupAdminCompanyList.append(CompanyName as String)
                             groupAdminCompanyListCompanyID.append(CompanyId as String)
+                            groupAdminIsRootCompany.append(IsRootCompany as String)
                         }
 
 
@@ -1486,6 +1491,9 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
                 self.go.isEnabled = true
             }
             else{
+                
+                //#2437
+                Vehicaldetails.sharedInstance.selectedCompanybyGA = self.wifiNameTextField.text!
                 let data1:Data = self.reply.data(using: String.Encoding.utf8)!
                 
                 do {
@@ -1786,8 +1794,13 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
         if(pickerView == pickerViewLocation)
         {
             self.wifiNameTextField.text = groupAdminCompanyList[0]
-            
-            
+            IsRoot_Company = groupAdminIsRootCompany[0]
+            if(IsRoot_Company == "1")
+            {
+                //#2437
+                Vehicaldetails.sharedInstance.GACompany = groupAdminCompanyList[0]
+                print( Vehicaldetails.sharedInstance.GACompany , groupAdminCompanyList[0])
+            }
             
             
             return groupAdminCompanyList[row]
@@ -1812,6 +1825,13 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
             
              companyid = groupAdminCompanyListCompanyID[index]
             _ = groupAdminCompanyList[index]
+            IsRoot_Company = groupAdminIsRootCompany[index]
+            if(IsRoot_Company == "1")
+            {
+                //#2437
+                Vehicaldetails.sharedInstance.GACompany = groupAdminCompanyList[index]
+                print( Vehicaldetails.sharedInstance.GACompany , groupAdminCompanyList[index])
+            }
            
             
           

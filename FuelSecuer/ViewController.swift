@@ -322,32 +322,53 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                             {
                                 if(peripheral.name! == "nil" || peripheral.name! == "(null)")
                                 {}
-                                else{
-                                if( "\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                else
                                 {
-                                    print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(peripheral.name!)")
-                                    blePeripheral = self.peripherals[i]
-                                    connectedperipheral = (blePeripheral?.name)!
-                                    defaults.set(blePeripheral?.name!, forKey: "LasttransactionSSID")
-                                    //                                defaults.set("\(blePeripheral!.identifier)", forKey: "Lasttransactionidentifier")
-                                    connectToDevice()
-                                    break
+                                    //2441
+                                    for p in 0  ..< peripherals.count
+                                    {
+                                        print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased(), peripherals[p].name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                        print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])", peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                        if( "\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == peripherals[p].name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                        {
+                                            print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(peripheral.name!)")
+                                            blePeripheral = self.peripherals[i]
+                                            connectedperipheral = (blePeripheral?.name)!
+                                            defaults.set(blePeripheral?.name!, forKey: "LasttransactionSSID")
+                                            //                                defaults.set("\(blePeripheral!.identifier)", forKey: "Lasttransactionidentifier")
+                                            connectToDevice()
+                                            break
+                                            
+                                        }
+                                    }
                                     
                                 }
-//                                else if("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased().components(separatedBy: .whitespacesAndNewlines).joined() == localName.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
 //                                {
-//                                    print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(localName)")
-//                                    //blePeripheral = self.peripherals[i]
-//                                    //                            if(peripheral.name! == BLEPeripheralforlocalname){
+//                                if( "\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+//                                {
+//                                    print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(peripheral.name!)")
 //                                    blePeripheral = self.peripherals[i]
 //                                    connectedperipheral = (blePeripheral?.name)!
-//
+//                                    defaults.set(blePeripheral?.name!, forKey: "LasttransactionSSID")
+//                                    //                                defaults.set("\(blePeripheral!.identifier)", forKey: "Lasttransactionidentifier")
 //                                    connectToDevice()
 //                                    break
-//
-//                                    //                            }
+//                                    
 //                                }
-                            }
+////                                else if("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased().components(separatedBy: .whitespacesAndNewlines).joined() == localName.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+////                                {
+////                                    print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(localName)")
+////                                    //blePeripheral = self.peripherals[i]
+////                                    //                            if(peripheral.name! == BLEPeripheralforlocalname){
+////                                    blePeripheral = self.peripherals[i]
+////                                    connectedperipheral = (blePeripheral?.name)!
+////
+////                                    connectToDevice()
+////                                    break
+////
+////                                    //                            }
+////                                }
+//                            }
                         }
                             
                         }
@@ -402,32 +423,53 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                 {
                                     if(peripheral.name! == "nil" || peripheral.name! == "(null)")
                                     {}
-                                    else{
-                                        if( "\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                    else
+                                    {
+                                        //2441
+                                        for p in 0  ..< peripherals.count
                                         {
-                                            print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(peripheral.name!)")
-                                            blePeripheral = self.peripherals[i]
-                                            connectedperipheral = (blePeripheral?.name)!
-                                            defaults.set(blePeripheral?.name!, forKey: "LasttransactionSSID")
-                                            //                                defaults.set("\(blePeripheral!.identifier)", forKey: "Lasttransactionidentifier")
-                                            connectToDevice()
-                                            break
-                                            
+                                            print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased(), peripherals[p].name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                            print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])", peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                            if( "\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == peripherals[p].name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                            {
+                                                print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(peripheral.name!)")
+                                                blePeripheral = self.peripherals[i]
+                                                connectedperipheral = (blePeripheral?.name)!
+                                                defaults.set(blePeripheral?.name!, forKey: "LasttransactionSSID")
+                                                //                                defaults.set("\(blePeripheral!.identifier)", forKey: "Lasttransactionidentifier")
+                                                connectToDevice()
+                                                break
+                                                
+                                            }
                                         }
-//                                        else if("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased().components(separatedBy: .whitespacesAndNewlines).joined() == localName.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                       
+                                    }
+//                                    {
+//                                        if( "\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
 //                                        {
-//                                            print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(localName)")
-//                                            //blePeripheral = self.peripherals[i]
-//                                            //                            if(peripheral.name! == BLEPeripheralforlocalname){
+//                                            print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(peripheral.name!)")
 //                                            blePeripheral = self.peripherals[i]
 //                                            connectedperipheral = (blePeripheral?.name)!
-//
+//                                            defaults.set(blePeripheral?.name!, forKey: "LasttransactionSSID")
+//                                            //                                defaults.set("\(blePeripheral!.identifier)", forKey: "Lasttransactionidentifier")
 //                                            connectToDevice()
 //                                            break
-//
-//                                            //                            }
+//                                            
 //                                        }
-                                    }
+////                                        else if("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased().components(separatedBy: .whitespacesAndNewlines).joined() == localName.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+////                                        {
+////                                            print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(localName)")
+////                                            //blePeripheral = self.peripherals[i]
+////                                            //                            if(peripheral.name! == BLEPeripheralforlocalname){
+////                                            blePeripheral = self.peripherals[i]
+////                                            connectedperipheral = (blePeripheral?.name)!
+////
+////                                            connectToDevice()
+////                                            break
+////
+////                                            //                            }
+////                                        }
+//                                    }
                                 }
                             }
                             
@@ -1647,9 +1689,11 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                         Vehicaldetails.sharedInstance.OriginalNamesOfLink = self.OriginalNamesOfLink[id] as! NSMutableArray
                                         Vehicaldetails.sharedInstance.IsHoseNameReplaced = self.Is_HoseNameReplaced[id]
                                         Vehicaldetails.sharedInstance.ReplaceableHoseName = self.ReplaceableHosename[id]
-                                        print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced)
+                                       
                                         Vehicaldetails.sharedInstance.HubLinkCommunication = self.Communication_Type[id]
                                         Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce = self.Is_ResetSwitchTimeBounce[id]
+                                        
+                                        print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced,Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce,self.Is_ResetSwitchTimeBounce[id])
                                     }
                                 }
                                 print(Vehicaldetails.sharedInstance.IsDefective )
@@ -1733,13 +1777,54 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                                             }
                                                             if(self.defaults.string(forKey: "Companyname") == "Company2")
                                                             {
-                                                                if(self.IsVehicleNumberRequire == "True"){
-                                                                    let test_transaction = self.web.Testtransaction()
-                                                                    if(test_transaction.contains("success")){
-                                                                        self.performSegue(withIdentifier: "fueling", sender: self)
+                                                                print(Vehicaldetails.sharedInstance.GACompany.trimmingCharacters(in: .whitespacesAndNewlines).uppercased(), Vehicaldetails.sharedInstance.selectedCompanybyGA.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                                                //2437
+                                                                if(Vehicaldetails.sharedInstance.selectedCompanybyGA.contains("Demo-") || Vehicaldetails.sharedInstance.GACompany.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == Vehicaldetails.sharedInstance.selectedCompanybyGA.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                                                {
+                                                                    
+                                                                    if(self.IsVehicleNumberRequire == "True"){
+                                                                        
+                                                                        self.performSegue(withIdentifier: "GO", sender: self)
+                                                                        
+                                                                    }
+                                                                    else{
+                                                                        if(self.IsDepartmentRequire == "True"){
+                                                                            self.performSegue(withIdentifier: "dept", sender: self)
+                                                                        }
+                                                                        else{
+                                                                            if(self.IsPersonnelPINRequire == "True"){
+                                                                                self.performSegue(withIdentifier: "pin", sender: self)
+                                                                            }
+                                                                            else{
+                                                                                if(self.IsOtherRequire == "True"){
+                                                                                    self.performSegue(withIdentifier: "other", sender: self)
+                                                                                }
+                                                                                else{
+                                                                                    self.senddata(deptno: self.IsDepartmentRequire,ppin:self.IsPersonnelPINRequire,other:self.IsOtherRequire)
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                                else{
+                                                                    
+                                                                    
+                                                                    if(self.IsVehicleNumberRequire == "True"){
+                                                                        let test_transaction = self.web.Testtransaction()
+                                                                        if(test_transaction.contains("success")){
+                                                                            self.performSegue(withIdentifier: "fueling", sender: self)
+                                                                        }
                                                                     }
                                                                 }
                                                             }
+//                                                            {
+//                                                                if(self.IsVehicleNumberRequire == "True"){
+//                                                                    let test_transaction = self.web.Testtransaction()
+//                                                                    if(test_transaction.contains("success")){
+//                                                                        self.performSegue(withIdentifier: "fueling", sender: self)
+//                                                                    }
+//                                                                }
+//                                                            }
                                                             else
                                                             {
                                                             if(self.IsVehicleNumberRequire == "True"){
@@ -2028,7 +2113,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             Vehicaldetails.sharedInstance.FilePath = File_Path[index]
             Vehicaldetails.sharedInstance.FirmwareVersion = Firmware_Version[index]
             
-            print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced,Vehicaldetails.sharedInstance.prevSSID,Vehicaldetails.sharedInstance.OriginalNamesOfLink,Vehicaldetails.sharedInstance.BTMacAddress,Vehicaldetails.sharedInstance.FilePath,Vehicaldetails.sharedInstance.FirmwareVersion )
+            print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced,Vehicaldetails.sharedInstance.prevSSID,Vehicaldetails.sharedInstance.OriginalNamesOfLink,Vehicaldetails.sharedInstance.BTMacAddress,Vehicaldetails.sharedInstance.FilePath,Vehicaldetails.sharedInstance.FirmwareVersion,Vehicaldetails.sharedInstance.PulserTimingAdjust )
             defaults.set(siteid, forKey: "SiteID")
             
             if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")

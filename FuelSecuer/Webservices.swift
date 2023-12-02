@@ -628,7 +628,7 @@ class Webservices:NSObject {
             if let data = data {
                // print(String(data: data, encoding: String.Encoding.utf8)!)
                 self.reply = NSString(data: data, encoding:String.Encoding.utf8.rawValue)!as String
-                 print(self.reply)
+//                 print(self.reply)
                 let text = self.reply
                 if text!.contains("ResponceMessage"){
                     
@@ -639,7 +639,7 @@ class Webservices:NSObject {
                 
                 let test = String((text?.filter { !" \n".contains($0) })!)
                 let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
-                print(newString)
+//                print(newString)
                 if(newString.contains("success"))
                 {
                     self.sentlog(func_name: "<Check Approve> Authenticate:I: \(lat!),\(long!), Devicetype:\(UIDevice().type), uuid(\(uuid)), iOS_version:\(UIDevice.current.systemVersion) , App_version \(Version)", errorfromserverorlink: " ",errorfromapp: "")
@@ -1074,7 +1074,7 @@ class Webservices:NSObject {
                 print(String(data: data, encoding: String.Encoding.utf8)!)
                 self.reply = NSString(data: data, encoding:String.Encoding.utf8.rawValue)! as String
                  print(self.reply)
-                self.sentlog(func_name: "UpdatePulserTypeOfLINK Service Function", errorfromserverorlink: " Response from Server $$ \(self.reply)!!", errorfromapp: " " )
+                self.sentlog(func_name: "UpdatePulserTypeOfLINK Service Function \(bodyData)", errorfromserverorlink: " Response from Server $$ \(self.reply)!!", errorfromapp: " " )
                 // print(response!)
             } else {
                 //  print(error!)

@@ -25,11 +25,11 @@ extension UIViewController {
         let alertController = UIAlertController(title: alertTitle, message: alertMessage, preferredStyle: .alert)
                 
         
-        let notNowButton = UIAlertAction(title: "Update Later", style: .default) { (action:UIAlertAction) in
-            print("Don't Call API");
-            
-        }
-        alertController.addAction(notNowButton)
+//        let notNowButton = UIAlertAction(title: "Update Later", style: .default) { (action:UIAlertAction) in
+//            print("Don't Call API");
+//            
+//        }
+//        alertController.addAction(notNowButton)
      
         
         let updateButton = UIAlertAction(title: "Update Now", style: .default) { (action:UIAlertAction) in

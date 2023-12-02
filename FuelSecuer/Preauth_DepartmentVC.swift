@@ -339,7 +339,7 @@ class Preauth_DepartmentVC: UIViewController,UITextFieldDelegate {
                     else{
                         
                         
-//                        Vehicaldetails.sharedInstance.MinLimit = "0"
+                        Vehicaldetails.sharedInstance.MinLimit = "0"
                     self.performSegue(withIdentifier: "Go", sender: self)
                     }
 //                }

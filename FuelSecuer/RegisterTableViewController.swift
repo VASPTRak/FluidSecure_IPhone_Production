@@ -209,7 +209,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                     defaults.set(emailTextField.text, forKey: "address")
                     defaults.set(uuid, forKey: "uuid")
                     defaults.set(uuid,forKey: "\(brandname)")
-                    
+
                     
                     if(brandname == "FluidSecure"){
                     if(defaults.string(forKey: "\(brandname)") != nil) {

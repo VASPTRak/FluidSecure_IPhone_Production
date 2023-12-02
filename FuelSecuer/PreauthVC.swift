@@ -792,7 +792,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         }
         
         var myMutableStringTitle = NSMutableAttributedString()
-        let Name  = "Enter Title" // PlaceHolderText
+        let Name  = "Select Hose to Use" //"Enter Title"// PlaceHolderText
         
         myMutableStringTitle = NSMutableAttributedString(string:Name, attributes: [NSAttributedString.Key.font:UIFont(name: "Georgia", size: 30.0)!]) // Font
         myMutableStringTitle.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white, range:NSRange(location:0,length:Name.count))    // Color
