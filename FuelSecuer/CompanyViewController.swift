@@ -122,7 +122,7 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
                 let controller = storyboard.instantiateViewController(withIdentifier: "InitialController") as UIViewController
                 controller.modalPresentationStyle = .fullScreen
                 self.present(controller, animated: true, completion: nil)
-                self.web.sentlog(func_name: "Tapped preAuthTransaction Button", errorfromserverorlink: "", errorfromapp: "")
+                self.web.sentlog(func_name: "Starts preAuthTransaction", errorfromserverorlink: "", errorfromapp: "")
             }
         }
         alertController.addAction(action)
@@ -183,7 +183,7 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
             let controller = storyboard.instantiateViewController(withIdentifier: "InitialController") as UIViewController
             controller.modalPresentationStyle = .fullScreen
             self.present(controller, animated: true, completion: nil)
-            self.web.sentlog(func_name: "Tapped preAuthTransaction Button", errorfromserverorlink: "", errorfromapp: "")
+            self.web.sentlog(func_name: "Starts preAuthTransaction", errorfromserverorlink: "", errorfromapp: "")
         //}
         
     }

@@ -391,13 +391,13 @@ class TCPCommunication:NSObject,StreamDelegate
         let outputdata = stringbuffer
         let text = stringbuffer
         let test = String((text.filter { !" \n".contains($0) }))
-        let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
-        print(newString)
-        let responsestring = newString.replacingOccurrences(of: "\0" , with: " ", options: .literal, range: nil)
-        let newString1 =  String((responsestring.filter { !" \n".contains($0) }))
-        self.web.sentlog(func_name: "Sent changessidname \(wifissid)  request to link", errorfromserverorlink: " Response from Link $$\(newString1)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+        let new_String = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+        print(new_String)
+        let responsestring = new_String.replacingOccurrences(of: "\0" , with: " ", options: .literal, range: nil)
+        let new_String1 =  String((responsestring.filter { !" \n".contains($0) }))
+        self.web.sentlog(func_name: "Sent changessidname \(wifissid)  request to link", errorfromserverorlink: " Response from Link $$\(new_String1)!!",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
         
-        print(outputdata)
+        print(outputdata,new_String1)
         print(datastring)
         print(Vehicaldetails.sharedInstance.PulserStopTime)
     }
@@ -523,6 +523,8 @@ class TCPCommunication:NSObject,StreamDelegate
         print( outputdata)
         
         self.web.sentlog(func_name: "Reset Link. completed the upgrade process.", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+        Vehicaldetails.sharedInstance.isUpgradeComplete = "True"
+       // _ = self.web.UpgradeCurrentVersiontoserver()
     }
     
     func uploadbinfile()
@@ -530,7 +532,7 @@ class TCPCommunication:NSObject,StreamDelegate
         //Download new link from Server using getbinfile and upload/Flash the file to FS link.
         self.bindata = self.getbinfile()
        
-        self.web.sentlog(func_name: "Download binfile to flashthe FS link", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+        self.web.sentlog(func_name: "Download binfile to flash the FS link", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
        
         let Url:String = "http://192.168.4.1:80"
         let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)

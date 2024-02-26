@@ -639,7 +639,7 @@ class Webservices:NSObject {
                 
                 let test = String((text?.filter { !" \n".contains($0) })!)
                 let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
-//                print(newString)
+                print(newString)
                 if(newString.contains("success"))
                 {
                     self.sentlog(func_name: "<Check Approve> Authenticate:I: \(lat!),\(long!), Devicetype:\(UIDevice().type), uuid(\(uuid)), iOS_version:\(UIDevice.current.systemVersion) , App_version \(Version)", errorfromserverorlink: " ",errorfromapp: "")
@@ -962,6 +962,48 @@ class Webservices:NSObject {
     }
     
     
+//    func UpdateGetPulserTypeFromLINKFlag() -> String {
+//        FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
+//       
+//        let Siteid = Vehicaldetails.sharedInstance.siteID
+//        let p_type = defaults.string(forKey: "UpdateSwitchTimeBounceForLink")
+//        let Url:String = FSURL
+//        let Email = defaults.string(forKey: "address")
+//        let uuid = defaults.string(forKey: "uuid")
+//        let string = uuid! + ":" + Email! + ":" + "UpdateGetPulserTypeFromLINKFlag"
+//        let Base64 = convertStringToBase64(string: string)
+//        let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
+//        
+//        print(string)
+//        request.httpMethod = "POST"
+//        request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
+//        let bodyData = "{\"SiteId\":\"\(Siteid)\",\"GetPulserTypeFromLINK\":\"\(p_type!)\"}"//
+//        print(bodyData)
+//        request.httpBody = bodyData.data(using: String.Encoding.utf8)
+//        request.timeoutInterval = 10
+//        
+//        let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
+//            if let data = data {
+//                print(String(data: data, encoding: String.Encoding.utf8)!)
+//                self.reply = NSString(data: data, encoding:String.Encoding.utf8.rawValue)! as String
+//                // print(self.reply)
+//                // print(response!)
+//            } else {
+//                //  print(error!)
+//                let text = (error?.localizedDescription)! //+ error.debugDescription
+//                let test = String((text.filter { !" \n".contains($0) }))
+//                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+//                // print(newString)
+//                self.sentlog(func_name: "UpdateGetPulserTypeFromLINKFlag Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//                self.reply = "-1" + "#" + "\(error!)"
+//            }
+//        }
+//        task.resume()
+//        return reply //+ "#" + ""
+//    }
+    
+    
+    
     func UpgradeCurrentVersiontoserver() -> String {
         FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
         let Version = Vehicaldetails.sharedInstance.FirmwareVersion
@@ -981,6 +1023,7 @@ class Webservices:NSObject {
         print(bodyData)
         request.httpBody = bodyData.data(using: String.Encoding.utf8)
         request.timeoutInterval = 10
+        self.sentlog(func_name: "Upgrade Current Version toserver body data \(bodyData)", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " ")
         
         let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
             if let data = data {
@@ -988,6 +1031,7 @@ class Webservices:NSObject {
                 self.reply = NSString(data: data, encoding:String.Encoding.utf8.rawValue)! as String
                 // print(self.reply)
                 // print(response!)
+                self.sentlog(func_name: "Upgrade Current Version toserver UpgradeCurrentVersionWithUgradableVersion Service Function", errorfromserverorlink: " Response from Server $$ \(self.reply!)!!", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
             } else {
                 //  print(error!)
                 let text = (error?.localizedDescription)! //+ error.debugDescription
@@ -1054,7 +1098,7 @@ class Webservices:NSObject {
         let string = uuid! + ":" + Email! + ":" + "UpdatePulserTypeOfLINK"
         let Base64 = convertStringToBase64(string: string)
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
-        var p_type = defaults.string(forKey: "UpdateSwitchTimeBounceForLink")
+        let p_type = defaults.string(forKey: "UpdateSwitchTimeBounceForLink")
 
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM/dd/yyyy HH:mm:ss"
@@ -3096,7 +3140,7 @@ class Webservices:NSObject {
                         }
                         else if(Vehicaldetails.sharedInstance.FirmwareVersion != "\(iot_version)"){
                             Vehicaldetails.sharedInstance.IsFirmwareUpdate = true
-                            Vehicaldetails.sharedInstance.FirmwareVersion = "\(iot_version)"
+//                            Vehicaldetails.sharedInstance.FirmwareVersion = "\(iot_version)"
                         }
                         
                         if(self.isLINKDisconnectionError == true)

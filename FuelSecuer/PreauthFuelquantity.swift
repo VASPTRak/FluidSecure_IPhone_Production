@@ -81,7 +81,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
     var Count_Fdcheck = 0
     var countwififailConn:Int = 0
     var Last10transaction = ""
-    var iflinkison = false
+    var isrelayon = false
     var sendrename_linkname = false
     
     var sentDataPacket:Data!
@@ -142,6 +142,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
     // var timer_noConnection_withlink = Timer()
     var timer_quantityless_thanprevious = Timer()  ///#selector(FuelquantityVC.stoprelay) to stop the app
     var timer_conutnotupdateprevious = Timer()
+    var stoptimerIspulsarcountsamefor10sec:Timer = Timer()
     
     var y :CGFloat = CGFloat()
     var isokbuttontapped = false
@@ -185,8 +186,8 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
     var connectedservice:String = ""
     private var observationToken: Any?
     var isNotifyenable = false
-    
-    
+//    var isrelayon = false
+    var isBTlinkDisconnect = false
     
     //@IBOutlet var Waitp: UILabel!
     @IBOutlet var Pwait: UILabel!
@@ -1395,30 +1396,65 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                 let appDel = UIApplication.shared.delegate! as! AppDelegate
                 // Call a method on the CustomController property of the AppDelegate
                 self.cf.delay(0.5) {
-                    if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
-                    {
-                        let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
-                        self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "7")//did not press start (start appeared, was never pressed):  User did not Press Start
+                    if(Vehicaldetails.sharedInstance.HubLinkCommunication == "HTTP"){
+                        if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
+                        {
+                            let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                            self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "7")//did not press start (start appeared, was never pressed):  User did not Press Start
+                        }
+                        else if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID())
+                        {
+                            let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                            self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6") //unable to start (start never appeared): Potential Wifi Connection Issue
+                            //self.potentialfix()
+                        }
+                        // put the delayed action/function here
+                        let systemVersion = UIDevice.current.systemVersion
+                        print("iOS\(systemVersion)")
+                        
+                        //iPhone or iPad
+                        let model = UIDevice.current.model
+                        
+                        print("device type=\(model)")
+                        self.web.sentlog(func_name: " CancelButtonTapped", errorfromserverorlink: "", errorfromapp: "")
+                        appDel.start()
+                        self.Activity.style = UIActivityIndicatorView.Style.gray;
+                        self.Activity.startAnimating()
+                        self.timerview.invalidate()
                     }
-                    else if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID())
-                    {
-                        let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
-                        self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6") //unable to start (start never appeared): Potential Wifi Connection Issue
-                        //self.potentialfix()
+                    else if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT"){
+                        self.web.sentlog(func_name: " CancelButtonTapped", errorfromserverorlink: "", errorfromapp: "")
+                        if (self.isokbuttontapped == true)
+                        {
+                            //                cleanup()
+                        }
+                        else{
+                            if(self.ifSubscribed == true){
+                                print(self.Last_Count)
+                                if(self.Last_Count == "0" || self.Last_Count == nil)
+                                {
+                                    let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                                    self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "5")
+                                }
+                                //                    cleanup()
+                                self.isviewdidDisappear = true
+                                if(self.isrelayon == true){
+                                    self.outgoingData(inputText: "LK_COMM=relay:12345=OFF")
+                                    self.updateIncomingData()
+                                }
+                                self.disconnectFromDevice()
+                                appDel.start()
+                                self.Activity.style = UIActivityIndicatorView.Style.gray;
+                                self.Activity.startAnimating()
+                                self.timerview.invalidate()
+                            }
+                            else
+                            {
+                                let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                                self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6")
+                            }
+                        }
                     }
-                    // put the delayed action/function here
-                    let systemVersion = UIDevice.current.systemVersion
-                    print("iOS\(systemVersion)")
-                    
-                    //iPhone or iPad
-                    let model = UIDevice.current.model
-                    
-                    print("device type=\(model)")
-                    self.web.sentlog(func_name: " CancelButtonTapped", errorfromserverorlink: "", errorfromapp: "")
-                    appDel.start()
-                    self.Activity.style = UIActivityIndicatorView.Style.gray;
-                    self.Activity.startAnimating()
-                    self.timerview.invalidate()
                 }
             }
             
@@ -1574,12 +1610,132 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
         self.present(alertController, animated: true, completion: nil)
     }
     
+    func reconnectToLink()
+    {
+        //no response from link timeout
+        if(Last_Count == nil){
+            Last_Count = "0.0"
+        }
+        let text = reply1//error.localizedDescription + error.debugDescription
+        let test = String((text?.filter { !" \n".contains($0) })!)
+        let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+        print(newString)
+        self.web.sentlog(func_name: " Pulser ", errorfromserverorlink: "\(Last_Count!)", errorfromapp: "")
+        sendtransactioncausereinstate = true
+        //defaults.setValue(Last_Count, forKey: "reinstatingtransaction")
+        
+        if(sendtransactioncausereinstate == true)
+        {
+            if(Last_Count == "0" || Last_Count == "0.0")
+            {}
+            else{
+                isBTlinkDisconnect = true
+                let FuelQuan = self.cf.calculate_fuelquantity(quantitycount: Int(Last_Count as String)!)
+                Sendtransaction(fuelQuantity: "\(FuelQuan)")
+                Interrupted_TransactionFlag = "y"
+                self.web.UpdateInterruptedTransactionFlag(TransactionId: "\(Vehicaldetails.sharedInstance.TransactionId)",Flag: Interrupted_TransactionFlag)
+                appdisconnects_automatically = true
+                
+                sendtransactioncausereinstate = false
+            }
+        }
+        countfailConn += 1
+        print(countfailConn)
+        if(countfailConn == 2){
+            if #available(iOS 11.0, *) {
+                // NEHotspotConfigurationManager.shared.removeConfiguration(forSSID: SSID)
+                if(reinstatingtransactionattempts == 2)
+                {}
+                else{
+                    playAlarm()
+                    displaytime.text = NSLocalizedString("Reconnect" , comment:"")
+                    displaytime.textColor = UIColor.red
+                    self.web.wifisettings(pagename:"Getpulsar_fuelquantity")
+                }
+                // countfailConn = 0
+            } else {
+                // Fallback on earlier versions
+            }
+            
+        }else if(countfailConn > 2) {
+            do{
+                reinstatingtransactionattempts = reinstatingtransactionattempts + 1
+                print(reinstatingtransactionattempts,countfailConn)
+                if(reinstatingtransactionattempts > 3)
+                {
+                    displaytime.text = ""
+                    self.timerview.invalidate()
+                    try! stoprelay()
+                    
+                    self.web.sentlog(func_name: " reinstating transaction attempts > 3 auto stops transaction.", errorfromserverorlink: "\(Last_Count!)", errorfromapp: "")
+                }
+                else{
+                    //                    playAlarm()
+                    displaytime.text = NSLocalizedString("Reconnect" , comment:"")//"Reconnecting to pump, please wait briefly. Do not turn pump off."
+                    displaytime.textColor = UIColor.red
+                    reinstatingtransaction = true
+                    if(Last_Count == nil){
+                        Last_Count = "0.0"
+                    }
+                    
+                    
+                    defaults.setValue(Last_Count, forKey: "reinstatingtransaction")   // save Last_Count as previous value
+                    self.web.sentlog(func_name: "pulse count\(Last_Count!) save to app and link resets. ,Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+                    appdisconnects_automatically = true
+                    self.stoptimerIspulsarcountsame.invalidate()
+                    self.timerview.invalidate()
+                    self.GetPulsarstartimer.invalidate()
+                    //self.GetPulsarstartimer.invalidate()
+                    
+                    timer_quantityless_thanprevious.invalidate()
+                    stoptimergotostart.invalidate()
+                    stoptimer_gotostart.invalidate()
+                    cf.delay(0.1){
+                        self.IsStartbuttontapped = false
+                        self.resumetimer() /// reinstate the transaction.
+                        self.viewDidAppear(true)
+                        self.countwififailConn = 0
+                    }
+                }
+            }
+            catch let error as NSError {
+                print ("Error: \(error.domain)")
+                self.web.sentlog(func_name: "stoprelay", errorfromserverorlink: "\(error)", errorfromapp:"Error: \(error.domain)")
+            }
+        }
+    }
     
     @objc func stopButtontapped()
     {
-        
+        print(Last_Count)
+        if(self.Last_Count == "0.0" || Last_Count == "0")
+        {
+            let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+            self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "5")
+            
+        }
+        else
+        {
+            if(isBTlinkDisconnect == true)
+            {
+                //2347
+                let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "10")
+                self.web.sentlog(func_name: " BT Comm Interruption ", errorfromserverorlink: "\(CBCentralManager.self)", errorfromapp: "")
+                if(AppconnectedtoBLE == true ){
+                    disconnectFromDevice()
+                }
+            }
+        }
         
         if(AppconnectedtoBLE == true ){
+            if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1")
+            {
+
+                self.sendpulsar_type()
+            }
+            outgoingData(inputText: "LK_COMM=p_type?")
+            updateIncomingData()
             
             if(self.connectedservice == "725e0bc8-6f00-4d2d-a4af-96138ce599b9")
             {
@@ -2479,23 +2635,103 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
     //        }
     //    }
     
+    @objc func gotoStart(){
+        isgotostartcalled = true
+        self.timerview.invalidate()
+        self.stoptimergotostart.invalidate()
+        self.stoptimer_gotostart.invalidate()
+        self.timerview.invalidate()
+        if(Cancel_Button_tapped == true)
+        {
+            self.web.sentlog(func_name:" Go to start cancel_botton tapped", errorfromserverorlink: "", errorfromapp: "")
+        }
+        else{
+            
+            if(IsStartbuttontapped == true)
+            {
+                
+            }  /// Is Start button tapped is true then do nothing
+            else {
+                
+                if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
+                {
+                    let appDel = UIApplication.shared.delegate! as! AppDelegate
+                    if(self.ifSubscribed == true){
+                        //print(self.Last_Count)
+                        if(self.Last_Count == "0" || self.Last_Count == nil)
+                        {
+                            let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                            self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "5")
+                        }
+                        //                    cleanup()
+                        self.isviewdidDisappear = true
+                        if(isrelayon == true){
+                            self.outgoingData(inputText: "LK_COMM=relay:12345=OFF")
+                            self.updateIncomingData()
+                        }
+                        
+                        self.disconnectFromDevice()
+                        appDel.start()
+                        self.Activity.style = UIActivityIndicatorView.Style.gray;
+                        self.Activity.startAnimating()
+                        self.timerview.invalidate()
+                        let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                        self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "5")
+                       
+                        
+                    }
+                }
+                else if(Vehicaldetails.sharedInstance.HubLinkCommunication == "HTTP"){
+                    if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
+                    {
+                        if(self.showstart == "true") {
+                            let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                            self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "7")//did not press start (start appeared, was never pressed):  User did not Press Start
+                        }
+                        else
+                        {
+                            let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                            self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6")
+                        }
+                    }
+                    else if(Vehicaldetails.sharedInstance.SSId != self.cf.getSSID())
+                    {
+                        let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                        self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6") //unable to start (start never appeared): Potential Wifi Connection Issue
+                        //potentialfix()
+                    }
+                    
+                    self.web.sentlog(func_name:" Fueling_screen_timeout, back to home screen", errorfromserverorlink: "", errorfromapp: "")
+                    FDcheckBLEtimer.invalidate()
+                    self.web.sentlog(func_name: "data send to server Final Quantity = \(self.Quantity1.text) ,Final Pulse Count = \(self.pulse.text)", errorfromserverorlink: "", errorfromapp: "")
+                    let appDel = UIApplication.shared.delegate! as! AppDelegate
+                    appDel.start()
+                    stoptimer_gotostart.invalidate()
+                    stoptimergotostart.invalidate()
+                    self.timerview.invalidate()
+                }
+            }
+        }
+    }
+    
     @objc func GetPulser()
     {
-        //if Transaction ID = 0 app stops the connection and send to fueling screen. Stops all Timer
+        
+        //if Transaction ID = 0 app stops the connection and send to select hose screen. Stops all Timer
         if("\(Vehicaldetails.sharedInstance.TransactionId)" == "0")
         {
-            self.GetPulsarstartimer.invalidate()
+            FDcheckBLEtimer.invalidate()
             self.timerview.invalidate()
-            gotostart()
-            self.GetPulsarstartimer.invalidate()
+            self.gotoStart()
+            self.FDcheckBLEtimer.invalidate()
             self.web.sentlog(func_name:" AppStops because transaction id 0, Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
         }
         else
         {
-            
             let dateFormatter = DateFormatter()
             Warning.text = NSLocalizedString("Warningfueling", comment:"")
             Warning.isHidden = false
+            self.Stop.isEnabled = true
             dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZ"
             dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
             let defaultTimeZoneStr = dateFormatter.string(from: Date());
@@ -2508,573 +2744,1077 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
             if(Last_Count == nil){
                 Last_Count = "0.0"
             }
-            
-            let replyGetpulsar1 = web.GetPulser()
-            
-            print(replyGetpulsar1)
-            let Split = replyGetpulsar1.components(separatedBy: "#")
-            reply1 = Split[0]
-            //let error = Split[1]
-            //  print(reply1)
-            if(self.reply1 == nil || self.reply1 == "-1")
+            if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())  /// Check if it is connected to selected  hose
             {
-                //no response from link timeout
-                if(Last_Count == nil){
-                    Last_Count = "0.0"
-                }
-                let text = reply1//error.localizedDescription + error.debugDescription
-                let test = String((text?.filter { !" \n".contains($0) })!)
-                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
-                print(newString)
-                self.web.sentlog(func_name: " Pulser ", errorfromserverorlink: "\(Last_Count!)", errorfromapp: "")
-                sendtransactioncausereinstate = true
-                //defaults.setValue(Last_Count, forKey: "reinstatingtransaction")
+                let replyGetpulsar1 = web.GetPulser()
                 
-                if(sendtransactioncausereinstate == true)
+                print(replyGetpulsar1)
+                let Split = replyGetpulsar1.components(separatedBy: "#")
+                reply1 = Split[0]
+                //let error = Split[1]
+                //  print(reply1)
+                if(self.reply1 == nil || self.reply1 == "-1")
                 {
-                    let FuelQuan = self.cf.calculate_fuelquantity(quantitycount: Int(Float(Last_Count as String)!))
-                    Sendtransaction(fuelQuantity: "\(FuelQuan)")
-                    Interrupted_TransactionFlag = "y"
-                    self.web.UpdateInterruptedTransactionFlag(TransactionId: "\(Vehicaldetails.sharedInstance.TransactionId)",Flag: Interrupted_TransactionFlag)
-                    appdisconnects_automatically = true
-                    
-                    //web.sentlog(func_name: "TXTN ID: \(Vehicaldetails.sharedInstance.TransactionId),Flag: \(Interrupted_TransactionFlag)", errorfromserverorlink: "", errorfromapp: "")
-                    
-                    
-                    sendtransactioncausereinstate = false
+                    reconnectToLink()
                     
                 }
-                countfailConn += 1
-                print(countfailConn)
-                if(countfailConn == 2){
-                    if #available(iOS 11.0, *) {
-                        // NEHotspotConfigurationManager.shared.removeConfiguration(forSSID: SSID)
-                        if(reinstatingtransactionattempts == 2)
-                        {}
-                        else{
-                            playAlarm()
-                            displaytime.text = NSLocalizedString("Reconnect" , comment:"")
-                            displaytime.textColor = UIColor.red
-                            self.web.wifisettings(pagename:"Getpulsar_fuelquantity")
-                        }
-                        // countfailConn = 0
-                    } else {
-                        // Fallback on earlier versions
-                    }
-                    
-                }else if(countfailConn > 2) {
-                    do{
-                        reinstatingtransactionattempts = reinstatingtransactionattempts + 1
-                        print(reinstatingtransactionattempts,countfailConn)
-                        if(reinstatingtransactionattempts > 3)
-                        {
-                            displaytime.text = ""
-                            self.timerview.invalidate()
-                            try! stoprelay()
-                            
-                            self.web.sentlog(func_name: " reinstating transaction attempts > 3 auto stops transaction.", errorfromserverorlink: "\(Last_Count!)", errorfromapp: "")
-                        }
-                        else{
-                            //                    playAlarm()
-                            displaytime.text = NSLocalizedString("Reconnect" , comment:"")//"Reconnecting to pump, please wait briefly. Do not turn pump off."
-                            displaytime.textColor = UIColor.red
-                            reinstatingtransaction = true
-                            if(Last_Count == nil){
-                                Last_Count = "0.0"
-                            }
-                            
-                            
-                            defaults.setValue(Last_Count, forKey: "reinstatingtransaction")   // save Last_Count as previous value
-                            self.web.sentlog(func_name: "pulse count\(Last_Count!) save to app and link resets. ,Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
-                            appdisconnects_automatically = true
-                            self.stoptimerIspulsarcountsame.invalidate()
-                            self.timerview.invalidate()
-                            // self.GetPulsarstartimer.invalidate()
-                            //self.GetPulsarstartimer.invalidate()
-                            
-                            timer_quantityless_thanprevious.invalidate()
-                            stoptimergotostart.invalidate()
-                            stoptimer_gotostart.invalidate()
-                            cf.delay(0.1){
-                                self.IsStartbuttontapped = false
-                                self.resumetimer() /// reinstate the transaction.
-                                self.viewDidAppear(true)
-                                self.countwififailConn = 0
-                            }
-                        }
-                    }
-                    catch let error as NSError {
-                        print ("Error: \(error.domain)")
-                        self.web.sentlog(func_name: "stoprelay", errorfromserverorlink: "\(error)", errorfromapp:"Error: \(error.domain)")
-                    }
-                }
-            }
-            else
-            {
-                //timer_noConnection_withlink.invalidate()
-                let data1 = self.reply1.data(using: String.Encoding.utf8)!
-                do{
-                    self.sysdata1 = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
-                }catch let error as NSError {
-                    let text = error.localizedDescription //+ error.debugDescription
-                    let test = String((text.filter { !" \n".contains($0) }))
-                    let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
-                    print(newString)
-                    self.web.sentlog(func_name: " Pulsar :", errorfromserverorlink: "\(Last_Count!)", errorfromapp: "")
-                    print ("Error: \(error.domain)")
-                }
-                
-                if(self.sysdata1 == nil){}
                 else
                 {
-                    // print(reply1)
-                    let text = reply1
-                    let test = String((text?.filter { !" \n".contains($0) })!)
-                    let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
-                    print(newString)
-                    
-                    //  print(sysdata1)
-                    let objUserData = self.sysdata1.value(forKey: "pulsar_status") as! NSDictionary
-                    
-                    var counts = objUserData.value(forKey: "counts") as! NSString
-                    let pulsar_status = objUserData.value(forKey: "pulsar_status") as! NSNumber
-                    let pulsar_secure_status = objUserData.value(forKey: "pulsar_secure_status") as! NSNumber
-                    //                if (reinstatingtransaction == true)
-                    //                {
-                    ////                    let pulsedata = defaults.string(forKey: "reinstatingtransaction")
-                    ////                    print(pulsedata!,counts)
-                    ////                    let totalpulsecount = Int(pulsedata! as String)! + Int(counts as String)!
-                    ////                    print(pulsedata!,counts,totalpulsecount)
-                    //                    Last_Count = counts as String //+ defaults.string(forKey: "reinstatingtransaction")!
-                    //
-                    //                }
-                    //                else
-                    //                {
-                    if(Last_Count == nil){
-                        Last_Count = "0.0"
+                    //timer_noConnection_withlink.invalidate()
+                    let data1 = self.reply1.data(using: String.Encoding.utf8)!
+                    do{
+                        self.sysdata1 = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
+                    }catch let error as NSError {
+                        let text = error.localizedDescription //+ error.debugDescription
+                        let test = String((text.filter { !" \n".contains($0) }))
+                        let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                        print(newString)
+                        self.web.sentlog(func_name: " Pulsar :\(Last_Count)", errorfromserverorlink: " \(newString)", errorfromapp: "")
+                        print ("Error: \(error.domain)")
                     }
                     
-                    if(counts.doubleValue >= (Last_Count as NSString).doubleValue)
-                    {
-                        self.Last_Count = counts as String?
-                    }
+                    if(self.sysdata1 == nil){}
                     else
                     {
-                        if(appdisconnects_automatically == true)
-                        {
-                            
-                        }
-                        else{
-                            appdisconnects_automatically = true /// added this line because link is reset but not got the confirmation from link to app no timeout happends here if Last count  > count then
-                            
-                            counts = Last_Count as NSString
-                            
-                        }
-                    }
-                    
-                    
-                    //                }
-                    //transactiondata(Pulsarcount: Last_Count)
-                    self.defaults.set(self.Last_Count, forKey: "LastCount")//previouspulsedata
-                    if(appdisconnects_automatically == true){}
-                    else{
-                        self.web.sentlog(func_name: " Pulsar :", errorfromserverorlink: " \(Last_Count!)",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + "Connected link : \(self.cf.getSSID())")
-                    }
-                    if (counts == ""){
-                        self.emptypulsar_count += 1
-                        if(self.emptypulsar_count == 3){
-                            Vehicaldetails.sharedInstance.gohome = true
-                            self.timerview.invalidate()
-                            self.stoptimerIspulsarcountsame.invalidate()
-                            self.GetPulsarstartimer.invalidate()
-                            
-                            //timer_noConnection_withlink.invalidate()
-                            self.timer_quantityless_thanprevious.invalidate()
-                            self.stoptimergotostart.invalidate()
-                            self.stoptimer_gotostart.invalidate()
-                            
-                            let appDel = UIApplication.shared.delegate! as! AppDelegate
-                            self.web.sentlog(func_name: " Get emptypulsar_count function (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
-                            appDel.start()
-                            self.timerview.invalidate()
-                            
-                        }
-                    }
-                    else if (counts == "0")
-                    {
+                        // print(reply1)
+                        let text = reply1
+                        let test = String((text?.filter { !" \n".contains($0) })!)
+                        let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                        print(newString)
+                        
+                        //  print(sysdata1)
+                        let objUserData = self.sysdata1.value(forKey: "pulsar_status") as! NSDictionary
+                        
+                        var counts = objUserData.value(forKey: "counts") as! NSString
+                        //let pulsar_status = objUserData.value(forKey: "pulsar_status") as! NSNumber
+                        let pulsar_secure_status = objUserData.value(forKey: "pulsar_secure_status") as! NSNumber
+                        
                         if(Last_Count == nil){
                             Last_Count = "0.0"
                         }
-                        let v = self.quantity.count
-                        self.quantity.append("0")
-                        if(v >= 2){
-                            print(self.quantity[v-1],self.quantity[v-2])
-                            if(self.quantity[v-1] == self.quantity[v-2]){
-                                self.total_count += 1
-                                if(self.total_count >= 3){
-                                    Ispulsarcountsame = true
-                                    stoptimerIspulsarcountsame.invalidate()
-                                    Samecount = Last_Count
-                                    
-                                    
-                                    Samecount = Last_Count
-                                    self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpon_time as NSString).doubleValue, target: self, selector: #selector(PreauthFuelquantity.stopIspulsarcountsame), userInfo: nil, repeats: false)
-                                    
-                                    self.web.sentlog(func_name:"Get pulse count was the same while fueling function pump on time - \(Vehicaldetails.sharedInstance.pumpon_time),Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
-                                }}}
-                    }
-                    else{
                         
-                        self.emptypulsar_count = 0
-                        if (counts != "0"){
-                            displaytime.text = ""
-                            if(appdisconnects_automatically == true){
-                                //self.web.sentlog(func_name:"appdisconnects_automatically: \(appdisconnects_automatically) sendInterrupted_TransactionFlagN: \(sendInterrupted_TransactionFlagN)", errorfromserverorlink: "", errorfromapp: "")
-                                if((counts as NSString).doubleValue > (Last_Count as NSString).doubleValue){
-                                    Ispulsarcountsame = false
-                                    stoptimerIspulsarcountsame.invalidate()
-                                }
-                                var pulsedata = defaults.string(forKey: "reinstatingtransaction")
-                                if(Interrupted_TransactionFlag == "y")
-                                {
-                                    self.InterruptedTransactionFlag = false
-                                    if((pulsedata! as NSString).doubleValue > 0)
-                                    {
-                                        Interrupted_TransactionFlag = "n"
-                                        self.web.UpdateInterruptedTransactionFlag(TransactionId: "\(Vehicaldetails.sharedInstance.TransactionId)",Flag: "n")
-                                        // web.sentlog(func_name: "TXTN ID: \(Vehicaldetails.sharedInstance.TransactionId),Flag: \(Interrupted_TransactionFlag)", errorfromserverorlink: "", errorfromapp: "")
+                        if(counts.doubleValue >= (Last_Count as NSString).doubleValue)
+                        {
+                            self.Last_Count = counts as String?
+                        }
+                        else
+                        {
+                            if(appdisconnects_automatically == true)
+                            {
+                                
+                            }
+                            else{
+                                appdisconnects_automatically = true /// added this line because link is reset but not got the confirmation from link to app no timeout happends here if Last count  > count then
+                                
+                                counts = Last_Count as NSString
+                                
+                            }
+                        }
+                        
+                        self.defaults.set(self.Last_Count, forKey: "LastCount")//previouspulsedata
+                        if(appdisconnects_automatically == true){}
+                        else{
+                            self.web.sentlog(func_name: " ", errorfromserverorlink: " Pulsar : \(Last_Count!)",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + "Connected link : \(self.cf.getSSID())")
+                        }
+                        if (counts == ""){
+                            self.emptypulsar_count += 1
+                            if(self.emptypulsar_count == 3){
+                                Vehicaldetails.sharedInstance.gohome = true
+                                self.timerview.invalidate()
+                                self.stoptimerIspulsarcountsame.invalidate()
+                                self.GetPulsarstartimer.invalidate()
+                                
+                                //timer_noConnection_withlink.invalidate()
+                                self.timer_quantityless_thanprevious.invalidate()
+                                self.stoptimergotostart.invalidate()
+                                self.stoptimer_gotostart.invalidate()
+                                self.web.sentlog(func_name: "data send to server Final Quantity = \(self.Quantity1.text) ,Final Pulse Count = \(self.pulse.text)", errorfromserverorlink: "", errorfromapp: "")
+                                let appDel = UIApplication.shared.delegate! as! AppDelegate
+                                self.web.sentlog(func_name: " Get emptypulsar_count function (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+                                appDel.start()
+                                self.timerview.invalidate()
+                                
+                            }
+                        }
+                        else if (counts == "0")
+                        {
+                            if(Last_Count == nil){
+                                Last_Count = "0.0"
+                            }
+                            let v = self.quantity.count
+                            self.quantity.append("0")
+                            if(v >= 2){
+                                print(self.quantity[v-1],self.quantity[v-2])
+                                if(self.quantity[v-1] == self.quantity[v-2]){
+                                    self.total_count += 1
+                                    if(self.total_count == 3){
+                                        Ispulsarcountsame = true
+                                        stoptimerIspulsarcountsame.invalidate()
+                                        Samecount = Last_Count
                                         
-                                        print(Interrupted_TransactionFlag,sendInterrupted_TransactionFlagN)
-                                        sendInterrupted_TransactionFlagN = false
-                                    }
-                                }
-                                
-                                
-                                
-                                if(sendInterrupted_TransactionFlagN == true){
-                                    if((pulsedata! as NSString).doubleValue > 0)
-                                    {
-                                        Interrupted_TransactionFlag = "n"
-                                        self.web.UpdateInterruptedTransactionFlag(TransactionId: "\(Vehicaldetails.sharedInstance.TransactionId)",Flag: "n")
-                                        // web.sentlog(func_name: "TXTN ID: \(Vehicaldetails.sharedInstance.TransactionId),Flag: \(Interrupted_TransactionFlag)", errorfromserverorlink: "", errorfromapp: "")
                                         
-                                        print(Interrupted_TransactionFlag,sendInterrupted_TransactionFlagN)
-                                        sendInterrupted_TransactionFlagN = false
-                                    }
-                                    
-                                }
-                                print("pulsedata:\( pulsedata!),Counts: \(counts),LastCount: \( Last_Count)")
-                                let totalpulsecount = Int(pulsedata! as String)! + Int(counts as String)!
-                                //                            print("pulsedata: \( pulsedata!),Counts:\(counts),totalpulsecount: \(totalpulsecount)")
-                                //                            self.tpulse.text = "\(totalpulsecount)"
-                                
-                                if(totalpulsecount < Int(Last_Count as String)!)
-                                {
-                                    defaults.setValue(Last_Count, forKey: "reinstatingtransaction")
-                                    self.web.sentlog(func_name: "pulse count\(Last_Count!) save to app and link resets. ,Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
-                                    print("pulsedata:\( pulsedata!),Counts: \(counts),LastCount: \( Last_Count)")
-                                    pulsedata = Last_Count
-                                    //                                print("pulsedata:\( pulsedata!),Counts: \(counts),LastCount: \( Last_Count)")
-                                    //                                //sentlog
-                                    //                                GetPulsarstartimer.invalidate()
-                                    //                                GetPulsarstartimer.invalidate()
-                                    //                                self.web.sentlog(func_name: "Fueling Page getting pulsar count after try to reconnect  Count \(Last_Count!) previous count \(totalpulsecount) ", errorfromserverorlink: " "/*Response from link $$ \(newString1)!!*/,errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-                                    //                                counts = Last_Count as! NSString
-                                    //                                 totalpulsecount = Int(pulsedata! as String)! + Int(counts as String)!
-                                    //                               // self.Last_Count = "\(totalpulsecount)" as String?
-                                    //                                stopButtontapped()
-                                    //                                GetPulsarstartimer.invalidate()
-                                    //                                GetPulsarstartimer.invalidate()
-                                    
-                                }else{
-                                    // self.quantity.append("\(y) ")
-                                    timer_quantityless_thanprevious.invalidate()
-                                    let pulsedata = defaults.string(forKey: "reinstatingtransaction")
-                                    print("pulsedata:\( pulsedata!),Counts: \(counts),LastCount: \( Last_Count)")
-                                    var totalpulsecount = Int(pulsedata! as String)! + Int(counts as String)!
-                                    print("pulsedata: \( pulsedata!),Counts:\(counts),totalpulsecount: \(totalpulsecount)")
-                                    self.web.sentlog(func_name: " Pulsar :", errorfromserverorlink: " \(totalpulsecount) = \(pulsedata!) + \(counts)",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + "Connected link : \(self.cf.getSSID())")
-                                    self.tpulse.text = "\(totalpulsecount)"
-                                    self.Last_Count = "\(totalpulsecount)" as String?
-                                    let v = self.quantity.count
-                                    let FuelQuan = self.cf.calculate_fuelquantity(quantitycount: Int(totalpulsecount))
-                                    let y = Double(round(100*FuelQuan)/100)
-                                    if(Vehicaldetails.sharedInstance.Language == "es-ES"){
-                                        let y = Double(round(100*FuelQuan)/100)
-                                        self.tquantity.text = "\(y) ".replacingOccurrences(of: ".", with: ",", options: .literal, range: nil)
-                                        print(self.tquantity.text!)
-                                    }
-                                    else {
-                                        let y = Double(round(100*FuelQuan)/100)
-                                        self.tquantity.text = "\(y) "
-                                    }
-                                    
-                                    self.Last_Count = "\(totalpulsecount)"
-                                    //                                let v = self.quantity.count
-                                    //                                let FuelQuan = self.cf.calculate_fuelquantity(quantitycount: Int(counts as String)!)
-                                    //                                let y = Double(round(100*FuelQuan)/100)
-                                    if(Vehicaldetails.sharedInstance.Language == "es-ES"){
-                                        let y = Double(round(100*FuelQuan)/100)
-                                        self.tquantity.text = "\(y) ".replacingOccurrences(of: ".", with: ",", options: .literal, range: nil)
-                                        print(self.tquantity.text!)
-                                    }
-                                    else {
-                                        let y = Double(round(100*FuelQuan)/100)
-                                        self.tquantity.text = "\(y) "
-                                    }
-                                    self.tpulse.text = "\(totalpulsecount)"
-                                    self.quantity.append("\(y) ")
-                                    
-                                    
-                                    print(self.tquantity.text!, "\(y)" ,self.tquantity.text!,y,Vehicaldetails.sharedInstance.pumpoff_time,quantity)
-                                    let defaultTimeZoneStr1 = dateFormatter.string(from: Date());
-                                    print("Inside loop GetPulser" + defaultTimeZoneStr1)
-                                    if(v >= 2){
-                                        print(self.quantity[v-1],self.quantity[v-2])
-                                        if(self.quantity[v-1] == self.quantity[v-2]){
-                                            self.total_count += 1
-                                            if(self.total_count == 3){
-                                                Ispulsarcountsame = true
-                                                stoptimerIspulsarcountsame.invalidate()
-                                                Samecount = Last_Count
-                                                self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(PreauthFuelquantity.stopIspulsarcountsame), userInfo: nil, repeats: false)
-                                                
-                                                self.web.sentlog(func_name: "get pulse count was the same while fueling function pump off time - \(Vehicaldetails.sharedInstance.pumpoff_time),Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
-                                            }
-                                        }
-                                        else
-                                        {
-                                            total_count = 0
-                                            if(Int(Vehicaldetails.sharedInstance.MinLimit) == 0){}
-                                            else{
-                                                
-                                                if(Int(Vehicaldetails.sharedInstance.MinLimit)! <= Int(FuelQuan)){
-                                                    
-                                                    _ = self.web.SetPulser0()
-                                                    print(Vehicaldetails.sharedInstance.MinLimit)
-                                                    if(Vehicaldetails.sharedInstance.LimitReachedMessage != ""){
-                                                        self.showAlert(message:"\(Vehicaldetails.sharedInstance.LimitReachedMessage)" )
-                                                    }
-                                                    //self.showAlert(message: NSLocalizedString("Fueldaylimit", comment:"") )//"You are fuel day limit reached.")
-                                                    self.web.sentlog(func_name:" Auto stops transaction Limit Reached ",errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"Connetced link \( self.cf.getSSID())")
-                                                    self.stopButtontapped()
-                                                }
-                                            }
-                                        }
+                                        Samecount = Last_Count
+                                        self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpon_time as NSString).doubleValue, target: self, selector: #selector(FuelquantityVC.stopIspulsarcountsame), userInfo: nil, repeats: false)
+                                        
+                                        self.stoptimerIspulsarcountsamefor10sec.invalidate()
+                                        self.stoptimerIspulsarcountsamefor10sec = Timer.scheduledTimer(timeInterval: 5, target: self, selector:#selector(FuelquantityVC.sendTransaction_ifgetsamecount), userInfo: nil, repeats: false)
+                                        
+                                        self.web.sentlog(func_name:"Get pulse count was the same while fueling function pump on time - \(Vehicaldetails.sharedInstance.pumpon_time),Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
                                     }
                                 }
                             }
-                            else{
-                                self.defaults.set(Vehicaldetails.sharedInstance.TransactionId, forKey: "transactionID")
-                                self.defaults.set(Vehicaldetails.sharedInstance.PulseRatio, forKey: "pulsarratio")
-                                self.start.isHidden = true
-                                self.cancel.isHidden = true
-                                // stoptimerIspulsarcountsame.invalidate()
-                                //transaction Status send only one time.
-                                let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
-                                if(reply_server == "")
-                                {
-                                    self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "8")
-                                    reply_server = "Sendtransaction"
-                                }
-                                print(self.tpulse.text!, counts)
-                                
-                                
-                                
-                                if (self.tpulse.text! == (counts as String) as String){
+                        }
+                        else{
+                            
+                            self.emptypulsar_count = 0
+                            if (counts != "0"){
+                                displaytime.text = ""
+                                if(appdisconnects_automatically == true){
                                     
-                                }
-                                if(Last_Count == nil){
-                                    Last_Count = "0.0"
-                                }
-                                
-                                if(counts.doubleValue >= (Last_Count as NSString).doubleValue)
-                                {
-                                    if(counts.doubleValue > (Last_Count as NSString).doubleValue){
+                                    if((counts as NSString).doubleValue > (Last_Count as NSString).doubleValue){
                                         Ispulsarcountsame = false
                                         stoptimerIspulsarcountsame.invalidate()
                                     }
-                                    timer_quantityless_thanprevious.invalidate()
-                                    
-                                    let v = self.quantity.count
-                                    let FuelQuan = self.cf.calculate_fuelquantity(quantitycount: Int(counts as String)!)
-                                    let y = Double(round(100*FuelQuan)/100)
-                                    if(Vehicaldetails.sharedInstance.Language == "es-ES"){
-                                        let y = Double(round(100*FuelQuan)/100)
-                                        self.tquantity.text = "\(y) ".replacingOccurrences(of: ".", with: ",", options: .literal, range: nil)
-                                        print(self.tquantity.text!)
+                                    var pulsedata = defaults.string(forKey: "reinstatingtransaction")
+                                    print(pulsedata)
+                                    if(pulsedata == nil){
+                                        pulsedata = "0"
                                     }
-                                    else {
-                                        let y = Double(round(100*FuelQuan)/100)
-                                        self.tquantity.text = "\(y) "
+                                    //                            else{
+                                    if(Interrupted_TransactionFlag == "y")
+                                    {
+                                        self.InterruptedTransactionFlag = false
+                                        if((pulsedata! as NSString).doubleValue > 0)///test again pulsedata getting nil
+                                        {
+                                            Interrupted_TransactionFlag = "n"
+                                            self.web.UpdateInterruptedTransactionFlag(TransactionId: "\(Vehicaldetails.sharedInstance.TransactionId)",Flag: "n")
+                                            
+                                            
+                                            print(Interrupted_TransactionFlag,sendInterrupted_TransactionFlagN)
+                                            sendInterrupted_TransactionFlagN = false
+                                        }
                                     }
                                     
-                                    self.tpulse.text = (counts as String) as String
-                                    self.quantity.append("\(y) ")
                                     
-                                    print(self.tquantity.text!, "\(y)" ,self.tquantity.text!,y,Vehicaldetails.sharedInstance.pumpoff_time)
-                                    let defaultTimeZoneStr1 = dateFormatter.string(from: Date());
-                                    print("Inside loop GetPulser" + defaultTimeZoneStr1)
-                                    if(v >= 2){
-                                        print(self.quantity[v-1],self.quantity[v-2])
-                                        if(self.quantity[v-1] == self.quantity[v-2]){
-                                            self.total_count += 1
-                                            if(self.total_count == 3){
-                                                Ispulsarcountsame = true
-                                                stoptimerIspulsarcountsame.invalidate()
-                                                Samecount = Last_Count
-                                                self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(PreauthFuelquantity.stopIspulsarcountsame), userInfo: nil, repeats: false)
-                                                
-                                                self.web.sentlog(func_name: "Get pulse count was the same while fueling function pump off  - after \(Vehicaldetails.sharedInstance.pumpoff_time) Seconds if you get the same count ,Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
-                                            }
+                                    if(sendInterrupted_TransactionFlagN == true){
+                                        if((pulsedata! as NSString).doubleValue > 0)
+                                        {
+                                            Interrupted_TransactionFlag = "n"
+                                            self.web.UpdateInterruptedTransactionFlag(TransactionId: "\(Vehicaldetails.sharedInstance.TransactionId)",Flag: "n")
+                                            // web.sentlog(func_name: "TXTN ID: \(Vehicaldetails.sharedInstance.TransactionId),Flag: \(Interrupted_TransactionFlag)", errorfromserverorlink: "", errorfromapp: "")
+                                            
+                                            print(Interrupted_TransactionFlag,sendInterrupted_TransactionFlagN)
+                                            sendInterrupted_TransactionFlagN = false
+                                        }
+                                    }
+                                   // print("LastCount: \( Last_Count),pulsedata:\( pulsedata!),Counts: \(counts)")
+                                    let totalpulsecount = Int(pulsedata! as String)! + Int(counts as String)!
+                                    
+                                    
+                                    if(totalpulsecount < Int(Last_Count as String)!)
+                                    {
+                                        defaults.setValue(Last_Count, forKey: "reinstatingtransaction")
+                                        self.web.sentlog(func_name: "pulse count\(Last_Count!) save to app and link resets. ,Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+                                        //print("Counts: \(counts),pulsedata:\( pulsedata!),LastCount: \( Last_Count)")
+                                        pulsedata = Last_Count
+                                        
+                                        
+                                        
+                                    }else{
+                                        
+                                        timer_quantityless_thanprevious.invalidate()
+                                        var pulsedata = defaults.string(forKey: "reinstatingtransaction")
+                                        if(pulsedata == nil){
+                                            pulsedata = "0"
+                                        }
+                                        //                                else{
+                                        Interrupted_TransactionFlag = "n"
+                                        self.web.UpdateInterruptedTransactionFlag(TransactionId: "\(Vehicaldetails.sharedInstance.TransactionId)",Flag: "n")
+                                        print("pulsedata:\( pulsedata!),Counts: \(counts),LastCount: \( Last_Count)")
+                                        var totalpulsecount = Int(pulsedata! as String)! + Int(counts as String)!
+                                        print("pulsedata: \( pulsedata!),Counts:\(counts),totalpulsecount: \(totalpulsecount)")
+                                        self.web.sentlog(func_name: "", errorfromserverorlink: " Pulsar : \(totalpulsecount) = \(pulsedata!) + \(counts)" ,errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + "Connected link : \(self.cf.getSSID())")
+                                        self.tpulse.text = "\(totalpulsecount)"
+                                        self.Last_Count = "\(totalpulsecount)" as String?
+                                        let v = self.quantity.count
+                                        let FuelQuan = self.cf.calculate_fuelquantity(quantitycount: Int(totalpulsecount))
+                                        let y = Double(round(100*FuelQuan)/100)
+                                        if(Vehicaldetails.sharedInstance.Language == "es-ES"){
+                                            let y = Double(round(100*FuelQuan)/100)
+                                            self.tquantity.text = "\(y) ".replacingOccurrences(of: ".", with: ",", options: .literal, range: nil)
+                                            print(self.tquantity.text!)
                                         }
                                         else {
-                                            self.total_count = 0
-                                            
-                                            if(pulsar_secure_status == 0){
-                                                
-                                            }
-                                            else if(pulsar_secure_status == 1)
-                                            {
-                                                self.displaytime.text = "5"
-                                            }
-                                            
-                                            else if(pulsar_secure_status == 2)
-                                            {
-                                                self.displaytime.text = "4"
-                                            }
-                                            
-                                            else if(pulsar_secure_status == 3)
-                                            {
-                                                self.displaytime.text = "3"
-                                            }
-                                            
-                                            else if(pulsar_secure_status == 4)
-                                            {
-                                                self.displaytime.text = "2"
-                                            }
-                                            
-                                            else if(pulsar_secure_status == 5)
-                                            {
-                                                self.displaytime.text = "1 \n \n " + NSLocalizedString("Pulsardisconnected", comment: "")
-                                                self.web.sentlog(func_name:" Auto stops transaction because pulsar_secure_status == 5 ",errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"Connetced link \( self.cf.getSSID())")
-                                                self.stopButtontapped()
-                                            }
-                                            
-                                            if(Int(Vehicaldetails.sharedInstance.MinLimit) == 0){}
-                                            else{
-                                                
-                                                if(Int(Vehicaldetails.sharedInstance.MinLimit)! <= Int(FuelQuan)){
+                                            let y = Double(round(100*FuelQuan)/100)
+                                            self.tquantity.text = "\(y) "
+                                        }
+                                        
+                                        self.Last_Count = "\(totalpulsecount)"
+                                        
+                                        if(Vehicaldetails.sharedInstance.Language == "es-ES"){
+                                            let y = Double(round(100*FuelQuan)/100)
+                                            self.tquantity.text = "\(y) ".replacingOccurrences(of: ".", with: ",", options: .literal, range: nil)
+                                            print(self.tquantity.text!)
+                                        }
+                                        else {
+                                            let y = Double(round(100*FuelQuan)/100)
+                                            self.tquantity.text = "\(y) "
+                                        }
+                                        self.tpulse.text = "\(totalpulsecount)"
+                                        self.quantity.append("\(y) ")
+                                        
+                                        
+                                        print(self.tquantity.text!, "\(y)" ,self.tquantity.text!,y,Vehicaldetails.sharedInstance.pumpoff_time,quantity)
+                                        let defaultTimeZoneStr1 = dateFormatter.string(from: Date());
+                                        print("Inside loop GetPulser" + defaultTimeZoneStr1)
+                                        if(v >= 2){
+                                            print(self.quantity[v-1],self.quantity[v-2])
+                                            if(self.quantity[v-1] == self.quantity[v-2]){
+                                                self.total_count += 1
+                                                if(self.total_count == 3){
+                                                    Ispulsarcountsame = true
+                                                    stoptimerIspulsarcountsame.invalidate()
+                                                    Samecount = Last_Count
+                                                    self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(FuelquantityVC.stopIspulsarcountsame), userInfo: nil, repeats: false)
                                                     
-                                                    _ = self.web.SetPulser0()
-                                                    print(Vehicaldetails.sharedInstance.MinLimit)
-                                                    if(Vehicaldetails.sharedInstance.LimitReachedMessage != ""){
-                                                        self.showAlert(message:"\(Vehicaldetails.sharedInstance.LimitReachedMessage)" )
-                                                    }//"You are fuel day limit reached.")
-                                                    self.web.sentlog(func_name:" Auto stops transaction Limit Reached ",errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"Connetced link \( self.cf.getSSID())")
-                                                    self.stopButtontapped()
+                                                    self.web.sentlog(func_name: "get pulse count was the same while fueling function pump off time - \(Vehicaldetails.sharedInstance.pumpoff_time),Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+                                                }
+                                            }
+                                            else
+                                            {
+                                                total_count = 0
+                                                if(Int(Vehicaldetails.sharedInstance.MinLimit) == 0){}
+                                                else{
+                                                    
+                                                    if(Int(Vehicaldetails.sharedInstance.MinLimit)! <= Int(FuelQuan)){
+                                                        
+                                                        _ = self.web.SetPulser0()
+                                                        print(Vehicaldetails.sharedInstance.MinLimit)
+                                                        if(Vehicaldetails.sharedInstance.LimitReachedMessage != ""){
+                                                            self.showAlert(message:"\(Vehicaldetails.sharedInstance.LimitReachedMessage)" )
+                                                        }
+                                                        
+                                                        self.web.sentlog(func_name:" Auto stops transaction Limit Reached ",errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"Connetced link \( self.cf.getSSID())")
+                                                        self.stopButtontapped()
+                                                    }
                                                 }
                                             }
                                         }
                                     }
                                 }
                                 else{
-                                    timer_quantityless_thanprevious.invalidate()
-                                    timer_quantityless_thanprevious = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(PreauthFuelquantity.stoprelay), userInfo: nil, repeats: false)
-                                    self.web.sentlog(func_name: "Get Pulsar", errorfromserverorlink: "\("lower qty. than the prior one.")", errorfromapp: "")
-                                    print("lower qty. than the prior one.")
+                                    self.defaults.set(Vehicaldetails.sharedInstance.TransactionId, forKey: "transactionID")
+                                    self.defaults.set(Vehicaldetails.sharedInstance.PulseRatio, forKey: "pulsarratio")
+                                    self.start.isHidden = true
+                                    self.cancel.isHidden = true
+                                    // stoptimerIspulsarcountsame.invalidate()
+                                    //transaction Status send only one time.
+                                    let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                                    if(reply_server == "")
+                                    {
+                                        self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "8")
+                                        reply_server = "Sendtransaction"
+                                    }
+                                    print(self.tpulse.text!, counts)
+                                    
+                                    if (self.tpulse.text! == (counts as String) as String){
+                                        
+                                    }
+                                    if(Last_Count == nil){
+                                        Last_Count = "0.0"
+                                    }
+                                    
+                                    if(counts.doubleValue >= (Last_Count as NSString).doubleValue)
+                                    {
+                                        if(counts.doubleValue > (Last_Count as NSString).doubleValue){
+                                            Ispulsarcountsame = false
+                                            stoptimerIspulsarcountsame.invalidate()
+                                        }
+                                        timer_quantityless_thanprevious.invalidate()
+                                        
+                                        let v = self.quantity.count
+                                        let FuelQuan = self.cf.calculate_fuelquantity(quantitycount: Int(counts as String)!)
+                                        let y = Double(round(100*FuelQuan)/100)
+                                        if(Vehicaldetails.sharedInstance.Language == "es-ES"){
+                                            let y = Double(round(100*FuelQuan)/100)
+                                            self.tquantity.text = "\(y) ".replacingOccurrences(of: ".", with: ",", options: .literal, range: nil)
+                                            print(self.tquantity.text!)
+                                        }
+                                        else {
+                                            let y = Double(round(100*FuelQuan)/100)
+                                            self.tquantity.text = "\(y) "
+                                        }
+                                        
+                                        self.tpulse.text = (counts as String) as String
+                                        self.quantity.append("\(y) ")
+                                        
+                                        print(self.tquantity.text!, "\(y)" ,self.tquantity.text!,y,Vehicaldetails.sharedInstance.pumpoff_time)
+                                        let defaultTimeZoneStr1 = dateFormatter.string(from: Date());
+                                        print("Inside loop GetPulser" + defaultTimeZoneStr1)
+                                        if(v >= 2){
+                                            print(self.quantity[v-1],self.quantity[v-2])
+                                            if(self.quantity[v-1] == self.quantity[v-2]){
+                                                self.total_count += 1
+                                                if(self.total_count == 3){
+                                                    Ispulsarcountsame = true
+                                                    stoptimerIspulsarcountsame.invalidate()
+                                                    Samecount = Last_Count
+                                                    self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(FuelquantityVC.stopIspulsarcountsame), userInfo: nil, repeats: false)
+                                                    
+                                                    self.web.sentlog(func_name: "Get pulse count was the same while fueling function pump off  - after \(Vehicaldetails.sharedInstance.pumpoff_time) Seconds if you get the same count ,Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+                                                    self.stoptimerIspulsarcountsamefor10sec.invalidate()
+                                                    self.stoptimerIspulsarcountsamefor10sec = Timer.scheduledTimer(timeInterval: 5, target: self, selector:#selector(FuelquantityVC.sendTransaction_ifgetsamecount), userInfo: nil, repeats: false)
+                                                }
+                                            }
+                                            else {
+                                                self.total_count = 0
+                                                
+                                                if(pulsar_secure_status == 0){
+                                                    
+                                                }
+                                                else if(pulsar_secure_status == 1)
+                                                {
+                                                    self.displaytime.text = "5"
+                                                }
+                                                
+                                                else if(pulsar_secure_status == 2)
+                                                {
+                                                    self.displaytime.text = "4"
+                                                }
+                                                
+                                                else if(pulsar_secure_status == 3)
+                                                {
+                                                    self.displaytime.text = "3"
+                                                }
+                                                
+                                                else if(pulsar_secure_status == 4)
+                                                {
+                                                    self.displaytime.text = "2"
+                                                }
+                                                
+                                                else if(pulsar_secure_status == 5)
+                                                {
+                                                    self.displaytime.text = "1 \n \n " + NSLocalizedString("Pulsardisconnected", comment: "")
+                                                    self.web.sentlog(func_name:" Auto stops transaction because pulsar_secure_status == 5 ",errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"Connetced link \( self.cf.getSSID())")
+                                                    self.stopButtontapped()
+                                                }
+                                                
+                                                if(Int(Vehicaldetails.sharedInstance.MinLimit) == 0){}
+                                                else{
+                                                    
+                                                    if(Int(Vehicaldetails.sharedInstance.MinLimit)! <= Int(FuelQuan)){
+                                                        
+                                                        _ = self.web.SetPulser0()
+                                                        print(Vehicaldetails.sharedInstance.MinLimit)
+                                                        if(Vehicaldetails.sharedInstance.LimitReachedMessage != ""){
+                                                            self.showAlert(message:"\(Vehicaldetails.sharedInstance.LimitReachedMessage)" )
+                                                        }//"You are fuel day limit reached.")
+                                                        self.web.sentlog(func_name:" Auto stops transaction Limit Reached ",errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"Connetced link \( self.cf.getSSID())")
+                                                        self.stopButtontapped()
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else{
+                                        timer_quantityless_thanprevious.invalidate()
+                                        timer_quantityless_thanprevious = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(FuelquantityVC.stoprelay), userInfo: nil, repeats: false)
+                                        self.web.sentlog(func_name: "Get Pulsar", errorfromserverorlink: "\("lower qty. than the prior one.")", errorfromapp: "")
+                                        print("lower qty. than the prior one.")
+                                    }
                                 }
+                                //                            if(pulsar_status == 0)
+                                //                            {
+                                //
+                                //                                do{
+                                //                                    playAlarm()
+                                //                                    GetPulsarstartimer.invalidate()
+                                //                                    displaytime.text = NSLocalizedString("Reconnect" , comment:"")//"Reconnecting to pump, please wait briefly. Do not turn pump off."
+                                //                                    displaytime.textColor = UIColor.red
+                                //                                    reinstatingtransaction = true
+                                //                                    if(Last_Count == nil){
+                                //                                        Last_Count = "0.0"
+                                //                                    }
+                                //                                    reinstatingtransactionattempts = reinstatingtransactionattempts + 1
+                                //
+                                //                                    if(reinstatingtransactionattempts >= 3)
+                                //                                    {
+                                //                                        GetPulsarstartimer.invalidate()
+                                //                                        displaytime.text = ""
+                                //                                        try! stoprelay()
+                                //                                        self.web.sentlog(func_name: " reinstating transaction attempts > 3 and pulsar_status == 0 auto stops transaction.", errorfromserverorlink: "\(Last_Count!)", errorfromapp: "")
+                                //
+                                //                                    }
+                                //                                    else{
+                                //
+                                //                                        defaults.setValue(Last_Count, forKey: "reinstatingtransaction")
+                                //
+                                //                                        self.web.sentlog(func_name: "pulse count\(Last_Count!) save to app and link resets because pulsar_status == 0. ,Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+                                //                                        appdisconnects_automatically = true
+                                //                                        self.stoptimerIspulsarcountsame.invalidate()
+                                //                                        self.timerview.invalidate()
+                                //
+                                //
+                                //                                        timer_quantityless_thanprevious.invalidate()
+                                //                                        stoptimergotostart.invalidate()
+                                //                                        stoptimer_gotostart.invalidate()
+                                //                                        cf.delay(0.1){
+                                //                                            self.IsStartbuttontapped = false
+                                //                                            self.resumetimer() /// reinstate the transaction.
+                                //                                            self.viewDidAppear(true)
+                                //                                            self.countwififailConn = 0
+                                //
+                                //                                        }
+                                //                                    }
+                                //                                    //try self.stoprelay()
+                                //                                }
+                                //                                catch let error as NSError {
+                                //                                    print ("Error: \(error.domain)")
+                                //                                    self.web.sentlog(func_name: "stoprelay", errorfromserverorlink: "\(error)", errorfromapp:"Error: \(error.domain)")
+                                //                                }
+                                //
+                                //                            }
+                                
                             }
-                            //                        if(pulsar_status == 0)
-                            //                        {
-                            //
-                            //                            do{
-                            //                                playAlarm()
-                            //                                GetPulsarstartimer.invalidate()
-                            //                                    displaytime.text = NSLocalizedString("Reconnect" , comment:"")//"Reconnecting to pump, please wait briefly. Do not turn pump off."
-                            //                                    displaytime.textColor = UIColor.red
-                            //                                    reinstatingtransaction = true
-                            //                                    if(Last_Count == nil){
-                            //                                        Last_Count = "0.0"
-                            //                                    }
-                            //                                    reinstatingtransactionattempts = reinstatingtransactionattempts + 1
-                            //
-                            //                                    if(reinstatingtransactionattempts >= 3)
-                            //                                    {
-                            //                                        GetPulsarstartimer.invalidate()
-                            //                                        displaytime.text = ""
-                            //                                        try! stoprelay()
-                            //                                        self.web.sentlog(func_name: " reinstating transaction attempts > 3 and pulsar_status == 0 auto stops transaction.", errorfromserverorlink: "\(Last_Count!)", errorfromapp: "")
-                            //
-                            //                                    }
-                            //                                    else{
-                            //
-                            //                                    defaults.setValue(Last_Count, forKey: "reinstatingtransaction")
-                            //
-                            //                                        self.web.sentlog(func_name: "pulse count\(Last_Count!) save to app and link resets because pulsar_status == 0. ,Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
-                            //                                    appdisconnects_automatically = true
-                            //                                    self.stoptimerIspulsarcountsame.invalidate()
-                            //                                    self.timerview.invalidate()
-                            //                                // self.GetPulsarstartimer.invalidate()
-                            //                                    // self.GetPulsarstartimer.invalidate()
-                            //
-                            //                                    timer_quantityless_thanprevious.invalidate()
-                            //                                    stoptimergotostart.invalidate()
-                            //                                    stoptimer_gotostart.invalidate()
-                            //                                        cf.delay(0.1){
-                            //                                            self.IsStartbuttontapped = false
-                            //                                            self.resumetimer() /// reinstate the transaction.
-                            //                                            self.viewDidAppear(true)
-                            //                                            self.countwififailConn = 0
-                            ////                                            self.resumetimer()
-                            ////                                            self.viewDidAppear(true)
-                            //                                        }
-                            //                                    }
-                            //                                 //try self.stoprelay()
-                            //                            }
-                            //                            catch let error as NSError {
-                            //                                print ("Error: \(error.domain)")
-                            //                                self.web.sentlog(func_name: "stoprelay", errorfromserverorlink: "\(error)", errorfromapp:"Error: \(error.domain)")
-                            //                            }
-                            //                            // self.stoprelay()
-                            //                        }
-                            //                            }
-                        }//}
-                        else{
-                            if(Last_Count == nil){
-                                Last_Count = "0.0"
-                            }
-                            let v = self.quantity.count
-                            let FuelQuan = self.cf.calculate_fuelquantity(quantitycount: Int(counts as String)!)
-                            let y = Double(round(100*FuelQuan)/100)
-                            
-                            self.quantity.append("\(y) ")
-                            
-                            print(self.tquantity.text!, "\(y)" ,self.tquantity.text!,y,Vehicaldetails.sharedInstance.pumpoff_time)
-                            let defaultTimeZoneStr1 = dateFormatter.string(from: Date());
-                            print("Inside loop GetPulser" + defaultTimeZoneStr1)
-                            if(v >= 2){
-                                if(self.self.quantity[v-1] == self.quantity[v-2]){
-                                    self.total_count += 1
-                                    if(self.total_count == 3){
-                                        Ispulsarcountsame = true
-                                        Samecount = Last_Count
-                                        stoptimerIspulsarcountsame.invalidate()
-                                        
-                                        self.web.sentlog(func_name:  "Get pulse count was the same while fueling function, pump off  - after \(Vehicaldetails.sharedInstance.pumpoff_time) Seconds if you get the same count ,Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
-                                        
-                                        self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(PreauthFuelquantity.stopIspulsarcountsame), userInfo: nil, repeats: false)
+                            else{
+                                if(Last_Count == nil){
+                                    Last_Count = "0.0"
+                                }
+                                let v = self.quantity.count
+                                let FuelQuan = self.cf.calculate_fuelquantity(quantitycount: Int(counts as String)!)
+                                let y = Double(round(100*FuelQuan)/100)
+                                
+                                self.quantity.append("\(y) ")
+                                
+                                print(self.tquantity.text!, "\(y)" ,self.tquantity.text!,y,Vehicaldetails.sharedInstance.pumpoff_time)
+                                let defaultTimeZoneStr1 = dateFormatter.string(from: Date());
+                                print("Inside loop GetPulser" + defaultTimeZoneStr1)
+                                if(v >= 2){
+                                    if(self.self.quantity[v-1] == self.quantity[v-2]){
+                                        self.total_count += 1
+                                        if(self.total_count == 3){
+                                            Ispulsarcountsame = true
+                                            Samecount = Last_Count
+                                            stoptimerIspulsarcountsame.invalidate()
+                                            
+                                            self.web.sentlog(func_name:  "Get pulse count was the same while fueling function, pump off  - after \(Vehicaldetails.sharedInstance.pumpoff_time) Seconds if you get the same count ,Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+                                            
+                                            self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(FuelquantityVC.stopIspulsarcountsame), userInfo: nil, repeats: false)
+                                            self.stoptimerIspulsarcountsamefor10sec.invalidate()
+                                            self.stoptimerIspulsarcountsamefor10sec = Timer.scheduledTimer(timeInterval: 5, target: self, selector:#selector(FuelquantityVC.sendTransaction_ifgetsamecount), userInfo: nil, repeats: false)
+                                        }
                                     }
                                 }
                             }
-                            
                         }
                     }
                 }
             }
+            else
+            {
+                reconnectToLink()
+            }
         }
         
     }
+//    {
+//        //if Transaction ID = 0 app stops the connection and send to fueling screen. Stops all Timer
+//        if("\(Vehicaldetails.sharedInstance.TransactionId)" == "0")
+//        {
+//            self.GetPulsarstartimer.invalidate()
+//            self.timerview.invalidate()
+//            gotostart()
+//            self.GetPulsarstartimer.invalidate()
+//            self.web.sentlog(func_name:" AppStops because transaction id 0, Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+//        }
+//        else
+//        {
+//            
+//            let dateFormatter = DateFormatter()
+//            Warning.text = NSLocalizedString("Warningfueling", comment:"")
+//            Warning.isHidden = false
+//            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZ"
+//            dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
+//            let defaultTimeZoneStr = dateFormatter.string(from: Date());
+//            
+//            print("before GetPulser" + defaultTimeZoneStr)
+//            //cf.delay(0.5) {
+//            let defaultTimeZoneStr1 = dateFormatter.string(from: Date());
+//            print("before send GetPulser" + defaultTimeZoneStr1)
+//            //self.Last_Count = "0"
+//            if(Last_Count == nil){
+//                Last_Count = "0.0"
+//            }
+//            
+//            let replyGetpulsar1 = web.GetPulser()
+//            
+//            print(replyGetpulsar1)
+//            let Split = replyGetpulsar1.components(separatedBy: "#")
+//            reply1 = Split[0]
+//            //let error = Split[1]
+//            //  print(reply1)
+//            if(self.reply1 == nil || self.reply1 == "-1")
+//            {
+//                reconnectToLink()
+//            }
+////            {
+////                //no response from link timeout
+////                if(Last_Count == nil){
+////                    Last_Count = "0.0"
+////                }
+////                let text = reply1//error.localizedDescription + error.debugDescription
+////                let test = String((text?.filter { !" \n".contains($0) })!)
+////                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+////                print(newString)
+////                self.web.sentlog(func_name: " Pulser ", errorfromserverorlink: "\(Last_Count!)", errorfromapp: "")
+////                sendtransactioncausereinstate = true
+////                //defaults.setValue(Last_Count, forKey: "reinstatingtransaction")
+////                
+////                if(sendtransactioncausereinstate == true)
+////                {
+////                    let FuelQuan = self.cf.calculate_fuelquantity(quantitycount: Int(Float(Last_Count as String)!))
+////                    Sendtransaction(fuelQuantity: "\(FuelQuan)")
+////                    Interrupted_TransactionFlag = "y"
+////                    self.web.UpdateInterruptedTransactionFlag(TransactionId: "\(Vehicaldetails.sharedInstance.TransactionId)",Flag: Interrupted_TransactionFlag)
+////                    appdisconnects_automatically = true
+////                    
+////                    //web.sentlog(func_name: "TXTN ID: \(Vehicaldetails.sharedInstance.TransactionId),Flag: \(Interrupted_TransactionFlag)", errorfromserverorlink: "", errorfromapp: "")
+////                    
+////                    
+////                    sendtransactioncausereinstate = false
+////                    
+////                }
+////                countfailConn += 1
+////                print(countfailConn)
+////                if(countfailConn == 2){
+////                    if #available(iOS 11.0, *) {
+////                        // NEHotspotConfigurationManager.shared.removeConfiguration(forSSID: SSID)
+////                        if(reinstatingtransactionattempts == 2)
+////                        {}
+////                        else{
+////                            playAlarm()
+////                            displaytime.text = NSLocalizedString("Reconnect" , comment:"")
+////                            displaytime.textColor = UIColor.red
+////                            self.web.wifisettings(pagename:"Getpulsar_fuelquantity")
+////                        }
+////                        // countfailConn = 0
+////                    } else {
+////                        // Fallback on earlier versions
+////                    }
+////                    
+////                }else if(countfailConn > 2) {
+////                    do{
+////                        reinstatingtransactionattempts = reinstatingtransactionattempts + 1
+////                        print(reinstatingtransactionattempts,countfailConn)
+////                        if(reinstatingtransactionattempts > 3)
+////                        {
+////                            displaytime.text = ""
+////                            self.timerview.invalidate()
+////                            try! stoprelay()
+////                            
+////                            self.web.sentlog(func_name: " reinstating transaction attempts > 3 auto stops transaction.", errorfromserverorlink: "\(Last_Count!)", errorfromapp: "")
+////                        }
+////                        else{
+////                            //                    playAlarm()
+////                            displaytime.text = NSLocalizedString("Reconnect" , comment:"")//"Reconnecting to pump, please wait briefly. Do not turn pump off."
+////                            displaytime.textColor = UIColor.red
+////                            reinstatingtransaction = true
+////                            if(Last_Count == nil){
+////                                Last_Count = "0.0"
+////                            }
+////                            
+////                            
+////                            defaults.setValue(Last_Count, forKey: "reinstatingtransaction")   // save Last_Count as previous value
+////                            self.web.sentlog(func_name: "pulse count\(Last_Count!) save to app and link resets. ,Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+////                            appdisconnects_automatically = true
+////                            self.stoptimerIspulsarcountsame.invalidate()
+////                            self.timerview.invalidate()
+////                            // self.GetPulsarstartimer.invalidate()
+////                            //self.GetPulsarstartimer.invalidate()
+////                            
+////                            timer_quantityless_thanprevious.invalidate()
+////                            stoptimergotostart.invalidate()
+////                            stoptimer_gotostart.invalidate()
+////                            cf.delay(0.1){
+////                                self.IsStartbuttontapped = false
+////                                self.resumetimer() /// reinstate the transaction.
+////                                self.viewDidAppear(true)
+////                                self.countwififailConn = 0
+////                            }
+////                        }
+////                    }
+////                    catch let error as NSError {
+////                        print ("Error: \(error.domain)")
+////                        self.web.sentlog(func_name: "stoprelay", errorfromserverorlink: "\(error)", errorfromapp:"Error: \(error.domain)")
+////                    }
+////                }
+////            }
+//            else
+//            {
+//                //timer_noConnection_withlink.invalidate()
+//                let data1 = self.reply1.data(using: String.Encoding.utf8)!
+//                do{
+//                    self.sysdata1 = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
+//                }catch let error as NSError {
+//                    let text = error.localizedDescription //+ error.debugDescription
+//                    let test = String((text.filter { !" \n".contains($0) }))
+//                    let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+//                    print(newString)
+//                    self.web.sentlog(func_name: " Pulsar :", errorfromserverorlink: "\(Last_Count!)", errorfromapp: "")
+//                    print ("Error: \(error.domain)")
+//                }
+//                
+//                if(self.sysdata1 == nil){}
+//                else
+//                {
+//                    // print(reply1)
+//                    let text = reply1
+//                    let test = String((text?.filter { !" \n".contains($0) })!)
+//                    let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+//                    print(newString)
+//                    
+//                    //  print(sysdata1)
+//                    let objUserData = self.sysdata1.value(forKey: "pulsar_status") as! NSDictionary
+//                    
+//                    var counts = objUserData.value(forKey: "counts") as! NSString
+//                    let pulsar_status = objUserData.value(forKey: "pulsar_status") as! NSNumber
+//                    let pulsar_secure_status = objUserData.value(forKey: "pulsar_secure_status") as! NSNumber
+//                    //                if (reinstatingtransaction == true)
+//                    //                {
+//                    ////                    let pulsedata = defaults.string(forKey: "reinstatingtransaction")
+//                    ////                    print(pulsedata!,counts)
+//                    ////                    let totalpulsecount = Int(pulsedata! as String)! + Int(counts as String)!
+//                    ////                    print(pulsedata!,counts,totalpulsecount)
+//                    //                    Last_Count = counts as String //+ defaults.string(forKey: "reinstatingtransaction")!
+//                    //
+//                    //                }
+//                    //                else
+//                    //                {
+//                    if(Last_Count == nil){
+//                        Last_Count = "0.0"
+//                    }
+//                    
+//                    if(counts.doubleValue >= (Last_Count as NSString).doubleValue)
+//                    {
+//                        self.Last_Count = counts as String?
+//                    }
+//                    else
+//                    {
+//                        if(appdisconnects_automatically == true)
+//                        {
+//                            
+//                        }
+//                        else{
+//                            appdisconnects_automatically = true /// added this line because link is reset but not got the confirmation from link to app no timeout happends here if Last count  > count then
+//                            
+//                            counts = Last_Count as NSString
+//                            
+//                        }
+//                    }
+//                    
+//                    
+//                    //                }
+//                    //transactiondata(Pulsarcount: Last_Count)
+//                    self.defaults.set(self.Last_Count, forKey: "LastCount")//previouspulsedata
+//                    if(appdisconnects_automatically == true){}
+//                    else{
+//                        self.web.sentlog(func_name: " Pulsar :", errorfromserverorlink: " \(Last_Count!)",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + "Connected link : \(self.cf.getSSID())")
+//                    }
+//                    if (counts == ""){
+//                        self.emptypulsar_count += 1
+//                        if(self.emptypulsar_count == 3){
+//                            Vehicaldetails.sharedInstance.gohome = true
+//                            self.timerview.invalidate()
+//                            self.stoptimerIspulsarcountsame.invalidate()
+//                            self.GetPulsarstartimer.invalidate()
+//                            
+//                            //timer_noConnection_withlink.invalidate()
+//                            self.timer_quantityless_thanprevious.invalidate()
+//                            self.stoptimergotostart.invalidate()
+//                            self.stoptimer_gotostart.invalidate()
+//                            
+//                            let appDel = UIApplication.shared.delegate! as! AppDelegate
+//                            self.web.sentlog(func_name: " Get emptypulsar_count function (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+//                            appDel.start()
+//                            self.timerview.invalidate()
+//                            
+//                        }
+//                    }
+//                    else if (counts == "0")
+//                    {
+//                        if(Last_Count == nil){
+//                            Last_Count = "0.0"
+//                        }
+//                        let v = self.quantity.count
+//                        self.quantity.append("0")
+//                        if(v >= 2){
+//                            print(self.quantity[v-1],self.quantity[v-2])
+//                            if(self.quantity[v-1] == self.quantity[v-2]){
+//                                self.total_count += 1
+//                                if(self.total_count >= 3){
+//                                    Ispulsarcountsame = true
+//                                    stoptimerIspulsarcountsame.invalidate()
+//                                    Samecount = Last_Count
+//                                    
+//                                    
+//                                    Samecount = Last_Count
+//                                    self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpon_time as NSString).doubleValue, target: self, selector: #selector(PreauthFuelquantity.stopIspulsarcountsame), userInfo: nil, repeats: false)
+//                                    
+//                                    self.web.sentlog(func_name:"Get pulse count was the same while fueling function pump on time - \(Vehicaldetails.sharedInstance.pumpon_time),Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+//                                }}}
+//                    }
+//                    else{
+//                        
+//                        self.emptypulsar_count = 0
+//                        if (counts != "0"){
+//                            displaytime.text = ""
+//                            if(appdisconnects_automatically == true){
+//                                //self.web.sentlog(func_name:"appdisconnects_automatically: \(appdisconnects_automatically) sendInterrupted_TransactionFlagN: \(sendInterrupted_TransactionFlagN)", errorfromserverorlink: "", errorfromapp: "")
+//                                if((counts as NSString).doubleValue > (Last_Count as NSString).doubleValue){
+//                                    Ispulsarcountsame = false
+//                                    stoptimerIspulsarcountsame.invalidate()
+//                                }
+//                                var pulsedata = defaults.string(forKey: "reinstatingtransaction")
+//                                if(Interrupted_TransactionFlag == "y")
+//                                {
+//                                    self.InterruptedTransactionFlag = false
+//                                    if((pulsedata! as NSString).doubleValue > 0)
+//                                    {
+//                                        Interrupted_TransactionFlag = "n"
+//                                        self.web.UpdateInterruptedTransactionFlag(TransactionId: "\(Vehicaldetails.sharedInstance.TransactionId)",Flag: "n")
+//                                        // web.sentlog(func_name: "TXTN ID: \(Vehicaldetails.sharedInstance.TransactionId),Flag: \(Interrupted_TransactionFlag)", errorfromserverorlink: "", errorfromapp: "")
+//                                        
+//                                        print(Interrupted_TransactionFlag,sendInterrupted_TransactionFlagN)
+//                                        sendInterrupted_TransactionFlagN = false
+//                                    }
+//                                }
+//                                
+//                                
+//                                
+//                                if(sendInterrupted_TransactionFlagN == true){
+//                                    if((pulsedata! as NSString).doubleValue > 0)
+//                                    {
+//                                        Interrupted_TransactionFlag = "n"
+//                                        self.web.UpdateInterruptedTransactionFlag(TransactionId: "\(Vehicaldetails.sharedInstance.TransactionId)",Flag: "n")
+//                                        // web.sentlog(func_name: "TXTN ID: \(Vehicaldetails.sharedInstance.TransactionId),Flag: \(Interrupted_TransactionFlag)", errorfromserverorlink: "", errorfromapp: "")
+//                                        
+//                                        print(Interrupted_TransactionFlag,sendInterrupted_TransactionFlagN)
+//                                        sendInterrupted_TransactionFlagN = false
+//                                    }
+//                                    
+//                                }
+//                                print("pulsedata:\( pulsedata!),Counts: \(counts),LastCount: \( Last_Count)")
+//                                let totalpulsecount = Int(pulsedata! as String)! + Int(counts as String)!
+//                                //                            print("pulsedata: \( pulsedata!),Counts:\(counts),totalpulsecount: \(totalpulsecount)")
+//                                //                            self.tpulse.text = "\(totalpulsecount)"
+//                                
+//                                if(totalpulsecount < Int(Last_Count as String)!)
+//                                {
+//                                    defaults.setValue(Last_Count, forKey: "reinstatingtransaction")
+//                                    self.web.sentlog(func_name: "pulse count\(Last_Count!) save to app and link resets. ,Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+//                                    print("pulsedata:\( pulsedata!),Counts: \(counts),LastCount: \( Last_Count)")
+//                                    pulsedata = Last_Count
+//                                    //                                print("pulsedata:\( pulsedata!),Counts: \(counts),LastCount: \( Last_Count)")
+//                                    //                                //sentlog
+//                                    //                                GetPulsarstartimer.invalidate()
+//                                    //                                GetPulsarstartimer.invalidate()
+//                                    //                                self.web.sentlog(func_name: "Fueling Page getting pulsar count after try to reconnect  Count \(Last_Count!) previous count \(totalpulsecount) ", errorfromserverorlink: " "/*Response from link $$ \(newString1)!!*/,errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//                                    //                                counts = Last_Count as! NSString
+//                                    //                                 totalpulsecount = Int(pulsedata! as String)! + Int(counts as String)!
+//                                    //                               // self.Last_Count = "\(totalpulsecount)" as String?
+//                                    //                                stopButtontapped()
+//                                    //                                GetPulsarstartimer.invalidate()
+//                                    //                                GetPulsarstartimer.invalidate()
+//                                    
+//                                }else{
+//                                    // self.quantity.append("\(y) ")
+//                                    timer_quantityless_thanprevious.invalidate()
+//                                    let pulsedata = defaults.string(forKey: "reinstatingtransaction")
+//                                    print("pulsedata:\( pulsedata!),Counts: \(counts),LastCount: \( Last_Count)")
+//                                    var totalpulsecount = Int(pulsedata! as String)! + Int(counts as String)!
+//                                    print("pulsedata: \( pulsedata!),Counts:\(counts),totalpulsecount: \(totalpulsecount)")
+//                                    self.web.sentlog(func_name: " Pulsar :", errorfromserverorlink: " \(totalpulsecount) = \(pulsedata!) + \(counts)",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + "Connected link : \(self.cf.getSSID())")
+//                                    self.tpulse.text = "\(totalpulsecount)"
+//                                    self.Last_Count = "\(totalpulsecount)" as String?
+//                                    let v = self.quantity.count
+//                                    let FuelQuan = self.cf.calculate_fuelquantity(quantitycount: Int(totalpulsecount))
+//                                    let y = Double(round(100*FuelQuan)/100)
+//                                    if(Vehicaldetails.sharedInstance.Language == "es-ES"){
+//                                        let y = Double(round(100*FuelQuan)/100)
+//                                        self.tquantity.text = "\(y) ".replacingOccurrences(of: ".", with: ",", options: .literal, range: nil)
+//                                        print(self.tquantity.text!)
+//                                    }
+//                                    else {
+//                                        let y = Double(round(100*FuelQuan)/100)
+//                                        self.tquantity.text = "\(y) "
+//                                    }
+//                                    
+//                                    self.Last_Count = "\(totalpulsecount)"
+//                                    //                                let v = self.quantity.count
+//                                    //                                let FuelQuan = self.cf.calculate_fuelquantity(quantitycount: Int(counts as String)!)
+//                                    //                                let y = Double(round(100*FuelQuan)/100)
+//                                    if(Vehicaldetails.sharedInstance.Language == "es-ES"){
+//                                        let y = Double(round(100*FuelQuan)/100)
+//                                        self.tquantity.text = "\(y) ".replacingOccurrences(of: ".", with: ",", options: .literal, range: nil)
+//                                        print(self.tquantity.text!)
+//                                    }
+//                                    else {
+//                                        let y = Double(round(100*FuelQuan)/100)
+//                                        self.tquantity.text = "\(y) "
+//                                    }
+//                                    self.tpulse.text = "\(totalpulsecount)"
+//                                    self.quantity.append("\(y) ")
+//                                    
+//                                    
+//                                    print(self.tquantity.text!, "\(y)" ,self.tquantity.text!,y,Vehicaldetails.sharedInstance.pumpoff_time,quantity)
+//                                    let defaultTimeZoneStr1 = dateFormatter.string(from: Date());
+//                                    print("Inside loop GetPulser" + defaultTimeZoneStr1)
+//                                    if(v >= 2){
+//                                        print(self.quantity[v-1],self.quantity[v-2])
+//                                        if(self.quantity[v-1] == self.quantity[v-2]){
+//                                            self.total_count += 1
+//                                            if(self.total_count == 3){
+//                                                Ispulsarcountsame = true
+//                                                stoptimerIspulsarcountsame.invalidate()
+//                                                Samecount = Last_Count
+//                                                self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(PreauthFuelquantity.stopIspulsarcountsame), userInfo: nil, repeats: false)
+//                                                
+//                                                self.web.sentlog(func_name: "get pulse count was the same while fueling function pump off time - \(Vehicaldetails.sharedInstance.pumpoff_time),Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+//                                            }
+//                                        }
+//                                        else
+//                                        {
+//                                            total_count = 0
+//                                            if(Int(Vehicaldetails.sharedInstance.MinLimit) == 0){}
+//                                            else{
+//                                                
+//                                                if(Int(Vehicaldetails.sharedInstance.MinLimit)! <= Int(FuelQuan)){
+//                                                    
+//                                                    _ = self.web.SetPulser0()
+//                                                    print(Vehicaldetails.sharedInstance.MinLimit)
+//                                                    if(Vehicaldetails.sharedInstance.LimitReachedMessage != ""){
+//                                                        self.showAlert(message:"\(Vehicaldetails.sharedInstance.LimitReachedMessage)" )
+//                                                    }
+//                                                    //self.showAlert(message: NSLocalizedString("Fueldaylimit", comment:"") )//"You are fuel day limit reached.")
+//                                                    self.web.sentlog(func_name:" Auto stops transaction Limit Reached ",errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"Connetced link \( self.cf.getSSID())")
+//                                                    self.stopButtontapped()
+//                                                }
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                            else{
+//                                self.defaults.set(Vehicaldetails.sharedInstance.TransactionId, forKey: "transactionID")
+//                                self.defaults.set(Vehicaldetails.sharedInstance.PulseRatio, forKey: "pulsarratio")
+//                                self.start.isHidden = true
+//                                self.cancel.isHidden = true
+//                                // stoptimerIspulsarcountsame.invalidate()
+//                                //transaction Status send only one time.
+//                                let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+//                                if(reply_server == "")
+//                                {
+//                                    self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "8")
+//                                    reply_server = "Sendtransaction"
+//                                }
+//                                print(self.tpulse.text!, counts)
+//                                
+//                                
+//                                
+//                                if (self.tpulse.text! == (counts as String) as String){
+//                                    
+//                                }
+//                                if(Last_Count == nil){
+//                                    Last_Count = "0.0"
+//                                }
+//                                
+//                                if(counts.doubleValue >= (Last_Count as NSString).doubleValue)
+//                                {
+//                                    if(counts.doubleValue > (Last_Count as NSString).doubleValue){
+//                                        Ispulsarcountsame = false
+//                                        stoptimerIspulsarcountsame.invalidate()
+//                                    }
+//                                    timer_quantityless_thanprevious.invalidate()
+//                                    
+//                                    let v = self.quantity.count
+//                                    let FuelQuan = self.cf.calculate_fuelquantity(quantitycount: Int(counts as String)!)
+//                                    let y = Double(round(100*FuelQuan)/100)
+//                                    if(Vehicaldetails.sharedInstance.Language == "es-ES"){
+//                                        let y = Double(round(100*FuelQuan)/100)
+//                                        self.tquantity.text = "\(y) ".replacingOccurrences(of: ".", with: ",", options: .literal, range: nil)
+//                                        print(self.tquantity.text!)
+//                                    }
+//                                    else {
+//                                        let y = Double(round(100*FuelQuan)/100)
+//                                        self.tquantity.text = "\(y) "
+//                                    }
+//                                    
+//                                    self.tpulse.text = (counts as String) as String
+//                                    self.quantity.append("\(y) ")
+//                                    
+//                                    print(self.tquantity.text!, "\(y)" ,self.tquantity.text!,y,Vehicaldetails.sharedInstance.pumpoff_time)
+//                                    let defaultTimeZoneStr1 = dateFormatter.string(from: Date());
+//                                    print("Inside loop GetPulser" + defaultTimeZoneStr1)
+//                                    if(v >= 2){
+//                                        print(self.quantity[v-1],self.quantity[v-2])
+//                                        if(self.quantity[v-1] == self.quantity[v-2]){
+//                                            self.total_count += 1
+//                                            if(self.total_count == 3){
+//                                                Ispulsarcountsame = true
+//                                                stoptimerIspulsarcountsame.invalidate()
+//                                                Samecount = Last_Count
+//                                                self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(PreauthFuelquantity.stopIspulsarcountsame), userInfo: nil, repeats: false)
+//                                                
+//                                                self.web.sentlog(func_name: "Get pulse count was the same while fueling function pump off  - after \(Vehicaldetails.sharedInstance.pumpoff_time) Seconds if you get the same count ,Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+//                                            }
+//                                        }
+//                                        else {
+//                                            self.total_count = 0
+//                                            
+//                                            if(pulsar_secure_status == 0){
+//                                                
+//                                            }
+//                                            else if(pulsar_secure_status == 1)
+//                                            {
+//                                                self.displaytime.text = "5"
+//                                            }
+//                                            
+//                                            else if(pulsar_secure_status == 2)
+//                                            {
+//                                                self.displaytime.text = "4"
+//                                            }
+//                                            
+//                                            else if(pulsar_secure_status == 3)
+//                                            {
+//                                                self.displaytime.text = "3"
+//                                            }
+//                                            
+//                                            else if(pulsar_secure_status == 4)
+//                                            {
+//                                                self.displaytime.text = "2"
+//                                            }
+//                                            
+//                                            else if(pulsar_secure_status == 5)
+//                                            {
+//                                                self.displaytime.text = "1 \n \n " + NSLocalizedString("Pulsardisconnected", comment: "")
+//                                                self.web.sentlog(func_name:" Auto stops transaction because pulsar_secure_status == 5 ",errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"Connetced link \( self.cf.getSSID())")
+//                                                self.stopButtontapped()
+//                                            }
+//                                            
+//                                            if(Int(Vehicaldetails.sharedInstance.MinLimit) == 0){}
+//                                            else{
+//                                                
+//                                                if(Int(Vehicaldetails.sharedInstance.MinLimit)! <= Int(FuelQuan)){
+//                                                    
+//                                                    _ = self.web.SetPulser0()
+//                                                    print(Vehicaldetails.sharedInstance.MinLimit)
+//                                                    if(Vehicaldetails.sharedInstance.LimitReachedMessage != ""){
+//                                                        self.showAlert(message:"\(Vehicaldetails.sharedInstance.LimitReachedMessage)" )
+//                                                    }//"You are fuel day limit reached.")
+//                                                    self.web.sentlog(func_name:" Auto stops transaction Limit Reached ",errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"Connetced link \( self.cf.getSSID())")
+//                                                    self.stopButtontapped()
+//                                                }
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                                else{
+//                                    timer_quantityless_thanprevious.invalidate()
+//                                    timer_quantityless_thanprevious = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(PreauthFuelquantity.stoprelay), userInfo: nil, repeats: false)
+//                                    self.web.sentlog(func_name: "Get Pulsar", errorfromserverorlink: "\("lower qty. than the prior one.")", errorfromapp: "")
+//                                    print("lower qty. than the prior one.")
+//                                }
+//                            }
+//                            //                        if(pulsar_status == 0)
+//                            //                        {
+//                            //
+//                            //                            do{
+//                            //                                playAlarm()
+//                            //                                GetPulsarstartimer.invalidate()
+//                            //                                    displaytime.text = NSLocalizedString("Reconnect" , comment:"")//"Reconnecting to pump, please wait briefly. Do not turn pump off."
+//                            //                                    displaytime.textColor = UIColor.red
+//                            //                                    reinstatingtransaction = true
+//                            //                                    if(Last_Count == nil){
+//                            //                                        Last_Count = "0.0"
+//                            //                                    }
+//                            //                                    reinstatingtransactionattempts = reinstatingtransactionattempts + 1
+//                            //
+//                            //                                    if(reinstatingtransactionattempts >= 3)
+//                            //                                    {
+//                            //                                        GetPulsarstartimer.invalidate()
+//                            //                                        displaytime.text = ""
+//                            //                                        try! stoprelay()
+//                            //                                        self.web.sentlog(func_name: " reinstating transaction attempts > 3 and pulsar_status == 0 auto stops transaction.", errorfromserverorlink: "\(Last_Count!)", errorfromapp: "")
+//                            //
+//                            //                                    }
+//                            //                                    else{
+//                            //
+//                            //                                    defaults.setValue(Last_Count, forKey: "reinstatingtransaction")
+//                            //
+//                            //                                        self.web.sentlog(func_name: "pulse count\(Last_Count!) save to app and link resets because pulsar_status == 0. ,Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+//                            //                                    appdisconnects_automatically = true
+//                            //                                    self.stoptimerIspulsarcountsame.invalidate()
+//                            //                                    self.timerview.invalidate()
+//                            //                                // self.GetPulsarstartimer.invalidate()
+//                            //                                    // self.GetPulsarstartimer.invalidate()
+//                            //
+//                            //                                    timer_quantityless_thanprevious.invalidate()
+//                            //                                    stoptimergotostart.invalidate()
+//                            //                                    stoptimer_gotostart.invalidate()
+//                            //                                        cf.delay(0.1){
+//                            //                                            self.IsStartbuttontapped = false
+//                            //                                            self.resumetimer() /// reinstate the transaction.
+//                            //                                            self.viewDidAppear(true)
+//                            //                                            self.countwififailConn = 0
+//                            ////                                            self.resumetimer()
+//                            ////                                            self.viewDidAppear(true)
+//                            //                                        }
+//                            //                                    }
+//                            //                                 //try self.stoprelay()
+//                            //                            }
+//                            //                            catch let error as NSError {
+//                            //                                print ("Error: \(error.domain)")
+//                            //                                self.web.sentlog(func_name: "stoprelay", errorfromserverorlink: "\(error)", errorfromapp:"Error: \(error.domain)")
+//                            //                            }
+//                            //                            // self.stoprelay()
+//                            //                        }
+//                            //                            }
+//                        }//}
+//                        else{
+//                            if(Last_Count == nil){
+//                                Last_Count = "0.0"
+//                            }
+//                            let v = self.quantity.count
+//                            let FuelQuan = self.cf.calculate_fuelquantity(quantitycount: Int(counts as String)!)
+//                            let y = Double(round(100*FuelQuan)/100)
+//                            
+//                            self.quantity.append("\(y) ")
+//                            
+//                            print(self.tquantity.text!, "\(y)" ,self.tquantity.text!,y,Vehicaldetails.sharedInstance.pumpoff_time)
+//                            let defaultTimeZoneStr1 = dateFormatter.string(from: Date());
+//                            print("Inside loop GetPulser" + defaultTimeZoneStr1)
+//                            if(v >= 2){
+//                                if(self.self.quantity[v-1] == self.quantity[v-2]){
+//                                    self.total_count += 1
+//                                    if(self.total_count == 3){
+//                                        Ispulsarcountsame = true
+//                                        Samecount = Last_Count
+//                                        stoptimerIspulsarcountsame.invalidate()
+//                                        
+//                                        self.web.sentlog(func_name:  "Get pulse count was the same while fueling function, pump off  - after \(Vehicaldetails.sharedInstance.pumpoff_time) Seconds if you get the same count ,Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+//                                        
+//                                        self.stoptimerIspulsarcountsame = Timer.scheduledTimer(timeInterval: (Vehicaldetails.sharedInstance.pumpoff_time as NSString).doubleValue, target: self, selector: #selector(PreauthFuelquantity.stopIspulsarcountsame), userInfo: nil, repeats: false)
+//                                    }
+//                                }
+//                            }
+//                            
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        
+//    }
     
     
     
@@ -3358,9 +4098,15 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
     {
         self.web.sentlog(func_name: " BLE Auto stops response of FD check is empty", errorfromserverorlink:"", errorfromapp: "")
         if(AppconnectedtoBLE == true ){
-            outgoingData(inputText: "LK_COMM=relay:12345=OFF")
-            NotificationCenter.default.removeObserver(self)
-            updateIncomingData ()
+            if(isrelayon == true){
+                outgoingData(inputText: "LK_COMM=relay:12345=OFF")
+                
+                updateIncomingData ()
+            }
+            
+////            outgoingData(inputText: "LK_COMM=relay:12345=OFF")
+//            NotificationCenter.default.removeObserver(self)
+//            updateIncomingData ()
             self.IsStopbuttontappedBLE = true
             Stop.isEnabled = false
             Stop.isHidden = true
@@ -3469,7 +4215,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
             }
             else
             {
-                if(iflinkison == false){
+                if(isrelayon == false){
                     delay(0.2){
                         self.web.sentlog(func_name: "Sent Relay On Command to BT link again from FD check function because we not receive quantity in first attempt. LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
                         self.outgoingData(inputText: "LK_COMM=relay:12345=ON")
@@ -4483,7 +5229,8 @@ extension PreauthFuelquantity: CBCentralManagerDelegate {
             
             if(self.characteristicASCIIValue == "ON")
             {
-                iflinkison = true
+                //iflinkison = true
+                isrelayon = true
             }
             if(characteristicASCIIValue == "HO")
             {
@@ -4728,11 +5475,11 @@ extension PreauthFuelquantity: CBCentralManagerDelegate {
                                         for p in 0  ..< peripherals.count
                                         {
                                             print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased(), peripherals[p].name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
-                                            print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])", peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                            print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])", peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased(),self.peripherals[i],self.peripherals[p])
                                             if( "\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == peripherals[p].name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
                                             {
                                                 print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(peripheral.name!)")
-                                                blePeripheral = self.peripherals[i]
+                                                blePeripheral = self.peripherals[p]
                                                 connectedperipheral = (blePeripheral?.name)!
                                                 defaults.set(blePeripheral?.name!, forKey: "LasttransactionSSID")
                                                 //                                defaults.set("\(blePeripheral!.identifier)", forKey: "Lasttransactionidentifier")
@@ -4901,6 +5648,7 @@ extension PreauthFuelquantity: CBCentralManagerDelegate {
             disconnectFromDevice()
         }
         else{
+            isBTlinkDisconnect = true
             self.isDisconnect_Peripheral = true
             if(self.IsStopbuttontappedBLE == false){
                 self.web.sentlog(func_name: " Reconnect to Link \(IsStopbuttontappedBLE)", errorfromserverorlink: "\(CBCentralManager.self)", errorfromapp: "")
@@ -5114,6 +5862,11 @@ extension PreauthFuelquantity: CBPeripheralDelegate {
         if(characteristicASCIIValue == "Notify enabled..." || characteristicASCIIValue == "LinkBlue notify enabled..." || characteristicASCIIValue == "{\"notify\" : \"enabled\"}")
         {
             isNotifyenable = true
+        }
+        if((characteristicASCIIValue as String).contains("{\"relay\":\"ON\"}"))
+        {
+            self.web.sentlog(func_name: " BLE Response from link is \(characteristicASCIIValue)", errorfromserverorlink:"", errorfromapp: "")
+            isrelayon = true
         }
         if("\(characteristicASCIIValue)".contains("{\"pulse\":"))
         {

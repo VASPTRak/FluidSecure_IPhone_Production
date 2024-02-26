@@ -16,26 +16,60 @@ import CoreLocation
 
 extension UIViewController {
     
-    fileprivate func showAppUpdateAlert( Version : String, Force: Bool, AppURL: String) {
+     func showAppUpdateAlert( Version : String, Force: Bool, AppURL: String) {
         
+        
+        var remainingdays = 0
+        if((defaults.string(forKey: "updatedays")) != nil)
+        {
+            var days = Int(defaults.string(forKey: "updatedays")!)
+            remainingdays = 3 - days!
+            if(days! >= 3)
+            {
+                self.UpdateshowAlert(AppURL: AppURL)
+            }
+        }
+       
         let bundleName = Bundle.main.infoDictionary!["CFBundleDisplayName"] as! String;
-        let alertMessage = "\(bundleName) Version \(Version) is available on AppStore."
-        let alertTitle = "New Version"
+        let alertMessage = "A new version is available, please update your App before proceeding." //"\(bundleName) Version \(Version) is available on AppStore. App needs to be updated in \(remainingdays) days. Update to the latest version?"
+        let alertTitle = ""
         
         let alertController = UIAlertController(title: alertTitle, message: alertMessage, preferredStyle: .alert)
                 
+        // Change Message With Color and Font
         
-//        let notNowButton = UIAlertAction(title: "Update Later", style: .default) { (action:UIAlertAction) in
-//            print("Don't Call API");
-//            
-//        }
-//        alertController.addAction(notNowButton)
+        var messageMutableString = NSMutableAttributedString()
+        messageMutableString = NSMutableAttributedString(string: alertMessage as String, attributes: [NSAttributedString.Key.font:UIFont(name: "Georgia", size: 20.0)!])
+        //messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
+        alertController.setValue(messageMutableString, forKey: "attributedMessage")
+        
+        let notNowButton = UIAlertAction(title: "Update Later", style: .default) { (action:UIAlertAction) in
+            print("Don't Call API");
+            if((defaults.string(forKey: "updatedays")) != nil)
+            {
+                var days = Int(defaults.string(forKey: "updatedays")!)
+                days! += 1
+                defaults.set(days!, forKey: "updatedays")
+                if(days! >= 10)
+                {
+                    self.UpdateshowAlert(AppURL: AppURL)
+                }
+                
+            }
+            else if((defaults.string(forKey: "updatedays")) == nil)
+            {
+              defaults.set(1, forKey: "updatedays")
+            }
+            
+        }
+        alertController.addAction(notNowButton)
      
         
         let updateButton = UIAlertAction(title: "Update Now", style: .default) { (action:UIAlertAction) in
             print("Call API");
             print("No update")
-            
+            defaults.set(0, forKey: "updatedays")
+            defaults.set("true", forKey: "tappedupdatenow")
             guard let url = URL(string: AppURL) else {
                 return
             }
@@ -79,6 +113,45 @@ extension UIViewController {
     //        keychain[Constants.Keychain.UUID] = UUID
     //        return UUID
     //    }
+    
+    func UpdateshowAlert(AppURL:String)
+    {
+        let alertMessage = "A new version is available, please update your App before proceeding."//"App needs to be updated. Update to the latest version."
+        let alertController = UIAlertController(title: "", message: alertMessage, preferredStyle: UIAlertController.Style.alert)
+        // Background color.
+        let backView = alertController.view.subviews.last?.subviews.last
+        backView?.layer.cornerRadius = 10.0
+        backView?.backgroundColor = UIColor.white
+        
+        // Change Message With Color and Font
+        let message  = alertMessage
+        var messageMutableString = NSMutableAttributedString()
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedString.Key.font:UIFont(name: "Georgia", size: 20.0)!])
+        //messageMutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.darkGray, range: NSRange(location:0,length:message.count))
+        alertController.setValue(messageMutableString, forKey: "attributedMessage")
+        
+        // Action.
+        let updateButton = UIAlertAction(title: "Update Now", style: .default) { (action:UIAlertAction) in
+            print("Call API");
+            print("No update")
+            defaults.set(0, forKey: "updatedays")
+            defaults.set("true", forKey: "tappedupdatenow")
+            guard let url = URL(string: AppURL) else {
+                return
+            }
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(url)
+            }
+        }
+        alertController.addAction(updateButton)
+        self.present(alertController, animated: true, completion: nil)
+        
+//        let action = UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertAction.Style.default, handler: nil)
+//        alertController.addAction(action)
+//        self.present(alertController, animated: true, completion: nil)
+    }
     
     func showAlert(message: String)
     {
@@ -303,7 +376,7 @@ class Commanfunction {
     func showUpdateWithForce() {
         checkVersion()
     }
-    
+    //2443
     func checkVersion() {
         let info = Bundle.main.infoDictionary
         let currentVersion = info?["CFBundleShortVersionString"] as? String
@@ -312,16 +385,34 @@ class Commanfunction {
             if let error = error {
                 print(error)
             } else if info?.version == currentVersion {
+                defaults.set(0, forKey: "updatedays")
+                defaults.set("false", forKey: "tappedupdatenow")
                 print("updated")
-            } else if appStoreAppVersion!.compare(currentVersion!, options: .numeric) == .orderedDescending {
+                
+            } else if appStoreAppVersion!.compare(currentVersion!, options: .numeric) == .orderedDescending //orderedAscending for testing perpose //.orderedDescending  true
+            {
                 print("needs update")
                 DispatchQueue.main.async {
                     let topController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
-                    
-                    topController.showAppUpdateAlert(Version: (info?.version)!, Force: false, AppURL: (info?.trackViewUrl)!)
+                    if((defaults.string(forKey: "tappedupdatenow")) != nil)
+                    {
+                        var tappedupdatenow = (defaults.string(forKey: "tappedupdatenow")!)
+                        if(tappedupdatenow == "true")
+                        {
+                            topController.UpdateshowAlert(AppURL: (info?.trackViewUrl)!)
+                        }
+                        else{
+                            topController.showAppUpdateAlert(Version: (info?.version)!, Force: false, AppURL: (info?.trackViewUrl)!)
+                        }
+                    }
+                    else{
+                        topController.showAppUpdateAlert(Version: (info?.version)!, Force: false, AppURL: (info?.trackViewUrl)!)
+                    }
                 }
             }
         }
+        
+        
     }
     
     func calculate_fuelquantity(quantitycount: Int)-> Double
@@ -513,6 +604,9 @@ class Commanfunction {
 //                return (currentNetworkInfos?.first?.ssid)!
 //            }}}
 //
+    
+
+    
         func getSSID() -> String{
             
             var currentSSID:String!

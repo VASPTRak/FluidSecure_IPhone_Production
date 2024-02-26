@@ -549,7 +549,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
             let controller = storyboard.instantiateViewController(withIdentifier: "InitialController") as UIViewController
             controller.modalPresentationStyle = .fullScreen
             self.present(controller, animated: true, completion: nil)
-            self.web.sentlog(func_name: "Tapped preAuthTransaction Button", errorfromserverorlink: "", errorfromapp: "")
+            self.web.sentlog(func_name: "Starts preAuthTransaction", errorfromserverorlink: "", errorfromapp: "")
         //}
         
     }
@@ -663,7 +663,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
                 let controller = storyboard.instantiateViewController(withIdentifier: "InitialController") as UIViewController
                 controller.modalPresentationStyle = .fullScreen
                 self.present(controller, animated: true, completion: nil)
-                self.web.sentlog(func_name: "Tapped preAuthTransaction Button", errorfromserverorlink: "", errorfromapp: "")
+                self.web.sentlog(func_name: "Starts preAuthTransaction", errorfromserverorlink: "", errorfromapp: "")
             }
         }
         alertController.addAction(action)

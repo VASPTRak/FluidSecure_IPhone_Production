@@ -365,6 +365,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     var discoveredPeripheral: CBPeripheral?
     var connectedservice:String = ""
     var isupgradeBLE = false
+    var isrelayon = false
     
     private var consoleAsciiText:NSAttributedString? = NSAttributedString(string: "")
     var BLErescount = 0
@@ -382,7 +383,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     var Count_Fdcheck = 0
     var countwififailConn:Int = 0
     var Last10transaction = ""
-    var iflinkison = false
+    //var isrelayon = false
     var sendrename_linkname = false
     var isUpdateMACAddress = false
     var isBTlinkDisconnect = false
@@ -410,7 +411,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     var IsStartbuttontapped : Bool = false
     var IsStopbuttontapped:Bool = false
     var IsStopbuttontappedBLE:Bool = false
-    
+    var at_fdcheckble :Bool = false
     var Ispulsarcountsame :Bool = false
     var PulseCountSamefunctionCall :Bool = false
     var Cancel_Button_tapped :Bool = false
@@ -511,7 +512,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     @IBOutlet var dataview: UIView!
     
     @IBOutlet weak var Reconnect: UILabel!
-    //    @IBOutlet weak var progressviewtext: UILabel!
+    //@IBOutlet weak var progressviewtext: UILabel!
     //    @IBOutlet weak var progressview: UIProgressView!
     
     
@@ -1028,12 +1029,31 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                 
                 if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
                 {
-                    self.outgoingData(inputText: "LK_COMM=relay:12345=OFF")
-                    self.updateIncomingData()
-                    let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
-                    self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "5")
-                    self.disconnectFromDevice()
-                    self.goto_Start()
+                    let appDel = UIApplication.shared.delegate! as! AppDelegate
+                    if(self.ifSubscribed == true){
+                        //print(self.Last_Count)
+                        if(self.Last_Count == "0" || self.Last_Count == nil)
+                        {
+                            let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                            self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "5")
+                        }
+                        //                    cleanup()
+                        self.isviewdidDisappear = true
+                        if(isrelayon == true){
+                            self.outgoingData(inputText: "LK_COMM=relay:12345=OFF")
+                            self.updateIncomingData()
+                        }
+                        
+                        self.disconnectFromDevice()
+                        appDel.start()
+                        self.Activity.style = UIActivityIndicatorView.Style.gray;
+                        self.Activity.startAnimating()
+                        self.timerview.invalidate()
+                        let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                        self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "5")
+                       
+                        
+                    }
                 }
                 else if(Vehicaldetails.sharedInstance.HubLinkCommunication == "HTTP"){
                     if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
@@ -1188,6 +1208,18 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     
     override func viewDidDisappear(_ animated: Bool) {
         // self.disconnectFromDevice()
+        if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
+        {
+            
+            if(Vehicaldetails.sharedInstance.HubLinkCommunication == "HTTP")
+                
+            {
+                if(Vehicaldetails.sharedInstance.isUpgradeComplete == "True")
+                {
+                    _ = self.web.UpgradeCurrentVersiontoserver()
+                }
+            }
+        }
         if(Vehicaldetails.sharedInstance.HubLinkCommunication != "BT")
         {
             stoptimer_gotostart.invalidate()
@@ -1220,7 +1252,8 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
             else
             {
                 if(defaults.string(forKey: "UpdateSwitchTimeBounceForLink") != nil) {
-                    _ = web.UpdateSwitch_TimeBounceForLink()
+                   
+                        _ = web.UpdateSwitch_TimeBounceForLink()
                 }
             }
             
@@ -1750,7 +1783,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                     
                     if(self.connectedservice == "725e0bc8-6f00-4d2d-a4af-96138ce599b9")
                     {
-                        self.settransactionid()
+                        self.settransactionid()  //set transaction id
                         self.cf.delay(4){
                             self.consoleAsciiText = NSAttributedString(string: "")
                             self.newAsciiText = NSMutableAttributedString()
@@ -1777,7 +1810,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                             //                        }
                             //                        else{
                             self.newAsciiText.mutableString.replaceOccurrences(of: "\n\n", with: "\n", options: [], range: NSMakeRange(0, self.newAsciiText.length))
-                            self.cf.delay(0.1){
+                            self.cf.delay(2){
                                 self.outgoingData(inputText: "LK_COMM=relay:12345=ON")
                                 //                        self.web.sentlog(func_name: "Sent Relay On Command to BT link LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
                                 NotificationCenter.default.removeObserver(self)
@@ -1917,8 +1950,10 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                             }
                             //                    cleanup()
                             self.isviewdidDisappear = true
-                            self.outgoingData(inputText: "LK_COMM=relay:12345=OFF")
-                            self.updateIncomingData()
+                            if(self.isrelayon == true){
+                                self.outgoingData(inputText: "LK_COMM=relay:12345=OFF")
+                                self.updateIncomingData()
+                            }
                             self.disconnectFromDevice()
                             appDel.start()
                             self.Activity.style = UIActivityIndicatorView.Style.gray;
@@ -2246,19 +2281,33 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
         {
             let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
             self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "5")
+            
         }
         else
         {
             if(isBTlinkDisconnect == true)
             {
+                //2347
                 let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
                 self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "10")
                 self.web.sentlog(func_name: " BT Comm Interruption ", errorfromserverorlink: "\(CBCentralManager.self)", errorfromapp: "")
+                if(AppconnectedtoBLE == true ){
+                    disconnectFromDevice()
+                }
             }
         }
         if(AppconnectedtoBLE == true ){
+            print(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce)
+                            if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1")
+                            {
             
-            
+                                self.sendpulsar_type()
+                            }
+            if(Vehicaldetails.sharedInstance.GetPulserTypeFromLINK == "True"){
+                outgoingData(inputText: "LK_COMM=p_type?")
+                updateIncomingData()
+            }
+            //self.settransactionid()  //set transaction id
             if(self.connectedservice == "725e0bc8-6f00-4d2d-a4af-96138ce599b9")
             {
                 self.FDcheckBLEtimer.invalidate()
@@ -2271,19 +2320,22 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                     NotificationCenter.default.removeObserver(self.observationToken!)
                 }
                 self.newAsciiText.mutableString.replaceOccurrences(of: "\n\n", with: "\n", options: [], range: NSMakeRange(0, self.newAsciiText.length))
-                outgoingData(inputText: "LK_COMM=relay:12345=OFF")
-                //                        self.cf.delay(0.1){
                 
-                
-                
-                NotificationCenter.default.removeObserver(self)
-                updateIncomingData()
-                self.Stop.isEnabled = false
-                self.Stop.isHidden = true
-                self.wait.isHidden = false
-                self.waitactivity.isHidden = false
-                IsStopbuttontapped = true
-                self.FDcheckBLEtimer.invalidate()
+                self.cf.delay(1){
+                    self.outgoingData(inputText: "LK_COMM=relay:12345=OFF")
+                    //                        self.cf.delay(0.1){
+                    
+                    
+                    
+                    NotificationCenter.default.removeObserver(self)
+                    self.updateIncomingData()
+                    self.Stop.isEnabled = false
+                    self.Stop.isHidden = true
+                    self.wait.isHidden = false
+                    self.waitactivity.isHidden = false
+                    self.IsStopbuttontapped = true
+                    self.FDcheckBLEtimer.invalidate()
+                }
             }
             else{
                 self.IsStopbuttontappedBLE = true
@@ -2318,6 +2370,11 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                             self.web.sentlog(func_name:"Disconnected Device from link \(Vehicaldetails.sharedInstance.SSId).",errorfromserverorlink: "", errorfromapp:"")
                             try self.stoprelay()
                             
+                        }
+                        else
+                        {
+                            self.web.sentlog(func_name:"Disconnected Device from link \(Vehicaldetails.sharedInstance.SSId).",errorfromserverorlink: "", errorfromapp:"")
+                            try self.stoprelay()
                         }
                     }
                     
@@ -2559,7 +2616,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                                     {
                                                         print(Vehicaldetails.sharedInstance.SSId)
                                                         print(Vehicaldetails.sharedInstance.IsHoseNameReplaced)
-                                                        self.cf.delay(0.1) {     // takes a Double value for the delay in seconds
+                                                        self.cf.delay(0.1) { [self] in     // takes a Double value for the delay in seconds
                                                             if(Vehicaldetails.sharedInstance.IsHoseNameReplaced == "N"){
                                                                 if(self.AppconnectedtoBLE == true)
                                                                 {
@@ -2584,29 +2641,29 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                                             //                                                            if(Vehicaldetails.sharedInstance.IsHoseNameReplaced == "N"){
                                                             //                                                                _ = self.web.SetHoseNameReplacedFlag()
                                                             //                                                            }
-                                                            //                                                            if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
-                                                            //                                                            {
-                                                            //                                                                if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
-                                                            //                                                                {
-                                                            //                                                                    self.uploadbinfile()
-                                                            //                                                                    //                                                                    self.web.sentlog(func_name: "StopButtonTapped Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-                                                            //                                                                    _ = self.firmwareUpdateDemo()
-                                                            //                                                                    _ = self.web.UpgradeCurrentiotVersiontoserver()
-                                                            //                                                                    self.web.sentlog(func_name: "StopButtonTapped Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-                                                            //
-                                                            //
-                                                            //                                                                }
-                                                            //                                                                else
-                                                            //                                                                {
-                                                            //                                                                    self.web.sentlog(func_name: "StopButtonTapped Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-                                                            //                                                                    if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
-                                                            //                                                                    {
-                                                            //                                                                        self.tcpcon.getuser()
-                                                            //                                                                    }
-                                                            //                                                                }
-                                                            //                                                                //                            Vehicaldetails.sharedInstance.IsUpgrade = "N"
-                                                            //                                                            }
-                                                            //                                                            else{}
+                                                                                                                        if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
+                                                                                                                        {
+                                                                                                                            if(Vehicaldetails.sharedInstance.HubLinkCommunication == "HTTP")
+//                                                                                                                            {
+//                                                                                                                                self.uploadbinfile()
+//                                                                                                                                //                                                                    self.web.sentlog(func_name: "StopButtonTapped Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//                                                                                                                                _ = self.firmwareUpdateDemo()
+//                                                                                                                                _ = self.web.UpgradeCurrentiotVersiontoserver()
+//                                                                                                                                self.web.sentlog(func_name: "StopButtonTapped Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//                                                            
+//                                                            
+//                                                                                                                            }
+//                                                                                                                            else
+                                                                                                                            {
+                                                                                                                                self.web.sentlog(func_name: "StopButtonTapped Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                                                                                                                                if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
+                                                                                                                                {
+                                                                                                                                    Reconnect.isHidden = false;                                                                                   self.Reconnect.text = "Software update in progress.\nPlease wait several seconds.";                                                                                        self.tcpcon.getuser()
+                                                                                                                                }
+                                                                                                                            }
+                                                                                                                            //                            Vehicaldetails.sharedInstance.IsUpgrade = "N"
+                                                                                                                        }
+                                                                                                                        else{}
                                                             
                                                             if(self.fuelquantity > 0){
                                                                 
@@ -2894,32 +2951,41 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
         //        cf.delay(0.5) {     // takes a Double value for the delay in seconds
         // put the delayed action/function here
         
-        //        if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
-        //        {
-        //            if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
-        //            {
-        //                //                self.web.sentlog(func_name: "StopButtonTapped Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-        //
-        //                self.uploadbinfile()
-        //                self.web.sentlog(func_name: "stoprelay Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-        //                // self.firmwareUpdateDemo()
-        //                _ = self.web.UpgradeCurrentiotVersiontoserver()
-        //            }
-        //            else
-        //            {
-        //                self.web.sentlog(func_name: " stoprelay Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-        //                if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
-        //                {
-        //                    self.tcpcon.getuser()
-        ////                    _ = self.web.UpgradeCurrentiotVersiontoserver()
-        //                }
-        //            }
-        //        }
-        //
-        //        else{
-        //            _ = self.web.UpgradeCurrentiotVersiontoserver()
-        //
-        //        }
+                if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
+                {
+                    
+                    
+                    if(Vehicaldetails.sharedInstance.HubLinkCommunication == "HTTP")
+//                    {
+//                        //                self.web.sentlog(func_name: "StopButtonTapped Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//        
+//                        self.uploadbinfile()
+//                        self.web.sentlog(func_name: "stoprelay Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+//                        // self.firmwareUpdateDemo()
+//                        _ = self.web.UpgradeCurrentiotVersiontoserver()
+//                    }
+//                    else
+                    {
+                        
+                       
+                        self.web.sentlog(func_name: " stoprelay Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                        if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
+                        {
+                            Reconnect.isHidden = false
+                            self.Reconnect.text = "Software update in progress.\nPlease wait several seconds.";
+                            
+                            
+                            self.tcpcon.getuser()
+                           
+        //                    _ = self.web.UpgradeCurrentiotVersiontoserver()
+                        }
+                    }
+                }
+        
+                else{
+                    _ = self.web.UpgradeCurrentiotVersiontoserver()
+        
+                }
         self.cf.delay(1){
             self.fuelquantity = (Double(quantitycount))!/(PulseRatio as NSString).doubleValue
             if(self.fuelquantity == nil || self.fuelquantity == 0.0){
@@ -3655,7 +3721,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                             sendInterrupted_TransactionFlagN = false
                                         }
                                     }
-                                    print("LastCount: \( Last_Count),pulsedata:\( pulsedata!),Counts: \(counts)")
+                                   // print("LastCount: \( Last_Count),pulsedata:\( pulsedata!),Counts: \(counts)")
                                     let totalpulsecount = Int(pulsedata! as String)! + Int(counts as String)!
                                     
                                     
@@ -3663,7 +3729,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                     {
                                         defaults.setValue(Last_Count, forKey: "reinstatingtransaction")
                                         self.web.sentlog(func_name: "pulse count\(Last_Count!) save to app and link resets. ,Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
-                                        print("Counts: \(counts),pulsedata:\( pulsedata!),LastCount: \( Last_Count)")
+                                        //print("Counts: \(counts),pulsedata:\( pulsedata!),LastCount: \( Last_Count)")
                                         pulsedata = Last_Count
                                         
                                         
@@ -4069,10 +4135,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
             self.stopdelaytime = true
             let appDel = UIApplication.shared.delegate! as! AppDelegate
             appDel.start()
-            
-            
-            
-            
+    
         }
     }
     
@@ -4145,9 +4208,11 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     {
         self.web.sentlog(func_name: " BLE Auto stops response of FD check is empty", errorfromserverorlink:"", errorfromapp: "")
         if(AppconnectedtoBLE == true ){
-            outgoingData(inputText: "LK_COMM=relay:12345=OFF")
-            
-            updateIncomingData ()
+            if(isrelayon == true){
+                outgoingData(inputText: "LK_COMM=relay:12345=OFF")
+                
+                updateIncomingData ()
+            }
             self.IsStopbuttontappedBLE = true
             Stop.isEnabled = false
             Stop.isHidden = true
@@ -4204,6 +4269,13 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                         {
                             if(self.displaytime.text == "Fueling…...")
                             {
+                                self.FDcheckBLEtimer.invalidate()
+                                if(self.isrelayon == true){
+                                    self.outgoingData(inputText: "LK_COMM=relay:12345=OFF")
+                                    self.updateIncomingData()
+                                    self.at_fdcheckble = true
+                                }
+//                                self.disconnectFromDevice()
                                 try self.stoprelay()
                                 self.web.sentlog(func_name: "auto stops the app when app not connect the link while reconnecting." , errorfromserverorlink: "", errorfromapp: "")
                             }
@@ -4219,7 +4291,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
             }
             else
             {
-                if(iflinkison == false){
+                if(isrelayon == false){
                     delay(0.2){
                         self.web.sentlog(func_name: "Sent Relay On Command to BT link again from FD check function because we not receive quantity in first attempt. LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
                         self.outgoingData(inputText: "LK_COMM=relay:12345=ON")
@@ -4792,23 +4864,28 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                 print(self.sysdata)
                 let record_data = self.sysdata.value(forKey: "records") as! NSArray
                 let rowCount = record_data.count
+                self.web.sentlog(func_name: " BLE Response from link is \(jsonText)", errorfromserverorlink:"", errorfromapp: "")
                 // let index: Int = 0
-                for i in 0  ..< rowCount
-                {
+                if(rowCount >= 1){
                     
-                    let JsonRow = record_data[i] as! NSDictionary
-                    
-                    let date = JsonRow.value(forKey: "date") as! NSString
-                    let dflag = JsonRow.value(forKey: "dflag") as! Bool
-                    let pulse = JsonRow.value(forKey: "pulse") as! NSNumber
-                    let txtn = JsonRow.value(forKey: "txtn") as! NSString
-                    let vehicle = JsonRow.value(forKey: "vehicle") as! NSString
-                    let quantity = self.cf.calculate_fuelquantity(quantitycount: Int(truncating: pulse))
-                    
-                    let transaction_details = Last10Transactions (Transaction_id: txtn as String, Pulses: "\(pulse)", FuelQuantity: "\(quantity)", vehicle: vehicle as String, date: date as String, dflag: "\(dflag)" )
-                    self.web.sentlog(func_name: " BLE Response from link is \(jsonText)", errorfromserverorlink:"", errorfromapp: "")
-                    Vehicaldetails.sharedInstance.Last10transactions.add(transaction_details)
-                    print(date,dflag,pulse,txtn,vehicle)
+                    for i in 0  ..< rowCount
+                    {
+                        
+                        let JsonRow = record_data[i] as! NSDictionary
+                        if(JsonRow.count >= 5){
+                            let date = JsonRow.value(forKey: "date") as! NSString
+                            let dflag = JsonRow.value(forKey: "dflag") as! Bool
+                            let pulse = JsonRow.value(forKey: "pulse") as! NSNumber
+                            let txtn = JsonRow.value(forKey: "txtn") as! NSString
+                            let vehicle = JsonRow.value(forKey: "vehicle") as! NSString
+                            let quantity = self.cf.calculate_fuelquantity(quantitycount: Int(truncating: pulse))
+                            
+                            let transaction_details = Last10Transactions (Transaction_id: txtn as String, Pulses: "\(pulse)", FuelQuantity: "\(quantity)", vehicle: vehicle as String, date: date as String, dflag: "\(dflag)" )
+                            
+                            Vehicaldetails.sharedInstance.Last10transactions.add(transaction_details)
+                            print(date,dflag,pulse,txtn,vehicle)
+                        }
+                    }
                 }
             }
             catch let error as NSError {
@@ -5084,7 +5161,7 @@ extension FuelquantityVC: CBCentralManagerDelegate {
             if(self.characteristicASCIIValue == "ON")
             {
                 print(characteristicASCIIValue)
-                iflinkison = true
+                isrelayon = true
                 
             }
             
@@ -5348,11 +5425,13 @@ extension FuelquantityVC: CBCentralManagerDelegate {
                                             for p in 0  ..< peripherals.count
                                             {
                                                 print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased(), peripherals[p].name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
-                                                print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])", peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                                print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])", peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased(),self.peripherals[i],self.peripherals[p])
                                                 if( "\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == peripherals[p].name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
                                                 {
+                                                    self.web.sentlog(func_name: "\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]),\(self.peripherals[p])", errorfromserverorlink:"", errorfromapp: "")
                                                     print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(peripheral.name!)")
-                                                    blePeripheral = self.peripherals[i]
+                                                    blePeripheral = self.peripherals[p]
+                                                    //print(blePeripheral)
                                                     connectedperipheral = (blePeripheral?.name)!
                                                     defaults.set(blePeripheral?.name!, forKey: "LasttransactionSSID")
                                                     //                                defaults.set("\(blePeripheral!.identifier)", forKey: "Lasttransactionidentifier")
@@ -5436,12 +5515,14 @@ extension FuelquantityVC: CBCentralManagerDelegate {
                                                 //2441
                                                 for p in 0  ..< peripherals.count
                                                 {
-                                                    print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased(), peripherals[p].name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
-                                                    print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])", peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                                    self.web.sentlog(func_name: "\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]),\(self.peripherals[p])", errorfromserverorlink:"", errorfromapp: "")
+                                                    
+                                                    print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])", peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased(),self.peripherals[i],self.peripherals[p])
                                                     if( "\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == peripherals[p].name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
                                                     {
                                                         print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(peripheral.name!)")
-                                                        blePeripheral = self.peripherals[i]
+                                                        blePeripheral = self.peripherals[p]
+                                                        //print(blePeripheral)
                                                         connectedperipheral = (blePeripheral?.name)!
                                                         defaults.set(blePeripheral?.name!, forKey: "LasttransactionSSID")
                                                         //                                defaults.set("\(blePeripheral!.identifier)", forKey: "Lasttransactionidentifier")
@@ -5625,86 +5706,93 @@ extension FuelquantityVC: CBCentralManagerDelegate {
         else{
             isBTlinkDisconnect = true
             self.isDisconnect_Peripheral = true
-            if(self.IsStopbuttontappedBLE == false){
-                self.web.sentlog(func_name: " Reconnect to Link \(IsStopbuttontappedBLE)", errorfromserverorlink: "\(CBCentralManager.self)", errorfromapp: "")
-                FDcheckBLEtimer.invalidate()
-                
-                
-                if(self.IsStopbuttontappedBLE == true)
-                {
-                    self.web.sentlog(func_name: " Reconnect to Link \(self.IsStopbuttontappedBLE)", errorfromserverorlink: "\(CBCentralManager.self)", errorfromapp: "")
-                }
-                else{
-                    self.Reconnect.isHidden = false
-                    ifSubscribed = false
-                    self.Reconnect.text = "Reconnecting to pump."//NSLocalizedString("Reconnect" , comment:"")
-                    //displaytime.textColor = UIColor.red
-                    //                    if(Last_Count == nil){
-                    //                        Last_Count = "0"
-                    //                    }else{
-                    self.appdisconnects_automatically = true
-                    self.web.LINKDisconnectionError()
-                    self.connectToDevice()
-                    iskBLE_Characteristic_uuid_Tx_upload_setnotifytrue = false
-                    iskBLE_Characteristic_uuid_Tx_setnotifytrue = false
-                    self.delay(1){
-                        self.viewDidAppear(true)
-                        self.isNotifyenable = false
-                        //                        }
-                    }
-                }
-            }
-            else if(self.IsStopbuttontappedBLE == true)
+            if (at_fdcheckble == true)
             {
                 FDcheckBLEtimer.invalidate()
-                print("Disconnected")
-                isDisconnect_Peripheral = true
-                
-                if(Last_Count == nil){
-                    Last_Count = "0"
-                    self.web.sentlog(func_name: " Last_Count \(Last_Count!) Disconnected", errorfromserverorlink: "\(CBCentralManager.self)", errorfromapp: "")
-                    self.viewDidAppear(true)
+            }
+            else{
+                if(self.IsStopbuttontappedBLE == false){
+                    self.web.sentlog(func_name: " Reconnect to Link \(IsStopbuttontappedBLE)", errorfromserverorlink: "\(CBCentralManager.self)", errorfromapp: "")
+                    FDcheckBLEtimer.invalidate()
                     
+                    
+                    if(self.IsStopbuttontappedBLE == true)
+                    {
+                        self.web.sentlog(func_name: " Reconnect to Link \(self.IsStopbuttontappedBLE)", errorfromserverorlink: "\(CBCentralManager.self)", errorfromapp: "")
+                    }
+                    else{
+                        self.Reconnect.isHidden = false
+                        ifSubscribed = false
+                        self.Reconnect.text = "Reconnecting to pump."//NSLocalizedString("Reconnect" , comment:"")
+                        //displaytime.textColor = UIColor.red
+                        //                    if(Last_Count == nil){
+                        //                        Last_Count = "0"
+                        //                    }else{
+                        self.appdisconnects_automatically = true
+                        self.web.LINKDisconnectionError()
+                        self.connectToDevice()
+                        iskBLE_Characteristic_uuid_Tx_upload_setnotifytrue = false
+                        iskBLE_Characteristic_uuid_Tx_setnotifytrue = false
+                        self.delay(1){
+                            self.viewDidAppear(true)
+                            self.isNotifyenable = false
+                            //                        }
+                        }
+                    }
                 }
                 
-                if(Last_Count! == "0"){
-                    do{
-                        try self.stoprelay()
-                        isdisconnected = true
+                else if(self.IsStopbuttontappedBLE == true)
+                {
+                    FDcheckBLEtimer.invalidate()
+                    print("Disconnected")
+                    isDisconnect_Peripheral = true
+                    
+                    if(Last_Count == nil){
+                        Last_Count = "0"
+                        self.web.sentlog(func_name: " Last_Count \(Last_Count!) Disconnected", errorfromserverorlink: "\(CBCentralManager.self)", errorfromapp: "")
+                        self.viewDidAppear(true)
+                        
                     }
-                    catch let error as NSError {
-                        print ("Error: \(error.domain)")
-                    }
-                    isdisconnected = true
-                    //self.connectToDevice()
-                }
-                else{
-                    if (IsStopbuttontapped == true)
-                    {
-                        if(Last_Count! == "0.0"){
-                            do{
-                                try self.stoprelay()
-                                isdisconnected = true
-                            }
-                            catch let error as NSError {
-                                print ("Error: \(error.domain)")
-                            }
+                    
+                    if(Last_Count! == "0"){
+                        do{
+                            try self.stoprelay()
                             isdisconnected = true
-                            // disconnectFromDevice()
                         }
-                        else{
-                            
-                            if (isdisconnected == true)
-                            {}
-                            else
-                            {
-                                disconnectFromDevice()
+                        catch let error as NSError {
+                            print ("Error: \(error.domain)")
+                        }
+                        isdisconnected = true
+                        //self.connectToDevice()
+                    }
+                    else{
+                        if (IsStopbuttontapped == true)
+                        {
+                            if(Last_Count! == "0.0"){
+                                do{
+                                    try self.stoprelay()
+                                    isdisconnected = true
+                                }
+                                catch let error as NSError {
+                                    print ("Error: \(error.domain)")
+                                }
+                                isdisconnected = true
+                                // disconnectFromDevice()
+                            }
+                            else{
+                                
+                                if (isdisconnected == true)
+                                {}
+                                else
+                                {
+                                    disconnectFromDevice()
+                                }
                             }
                         }
-                    }
-                    else
-                    {
-                        self.web.sentlog(func_name: "Disconnected", errorfromserverorlink: "\(CBCentralManager.self)", errorfromapp:"\(error)")
+                        else
+                        {
+                            self.web.sentlog(func_name: "Disconnected", errorfromserverorlink: "\(CBCentralManager.self)", errorfromapp:"\(error)")
+                        }
                     }
                 }
             }
@@ -6043,6 +6131,7 @@ extension FuelquantityVC: CBPeripheralDelegate {
         if((characteristicASCIIValue as String).contains("{\"relay\":\"ON\"}"))
         {
             self.web.sentlog(func_name: " BLE Response from link is \(characteristicASCIIValue)", errorfromserverorlink:"", errorfromapp: "")
+            isrelayon = true
         }
         if(characteristicASCIIValue == "Notify enabled..." || characteristicASCIIValue == "LinkBlue notify enabled..." || characteristicASCIIValue == "{\"notify\" : \"enabled\"}")
         {
@@ -6227,7 +6316,7 @@ extension FuelquantityVC: CBPeripheralDelegate {
                     if(self.gotLinkVersion == true){}
                     else{
                         self.outgoingData(inputText: "LK_COMM=info")
-                        self.cf.delay(1){
+//                        self.cf.delay(1){
                             
                             //                                        self.cf.delay(0.5){
                             self.updateIncomingData()
@@ -6239,19 +6328,25 @@ extension FuelquantityVC: CBPeripheralDelegate {
                             //                                    }
                             
                             // self.web.sentlog(func_name: " Send info command to link", errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"")
-                        }
+//                        }
                     }
                 }
-                print(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce)
-                if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1")
+                else
                 {
-                    
-                    self.sendpulsar_type()
+                    getBLEInfo()
                 }
-                outgoingData(inputText: "LK_COMM=p_type?")
-                updateIncomingData()
-                getlast10transaction()
+                //move to on stop button tapped event
+//                print(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce)
+//                if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1")
+//                {
+//                    
+//                    self.sendpulsar_type()
+//                }
+//                outgoingData(inputText: "LK_COMM=p_type?")
+//                updateIncomingData()
+                
                 delay(1){
+                    self.getlast10transaction()
                     if(self.BTMacAddress == false)
                     {
                         

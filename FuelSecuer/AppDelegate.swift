@@ -24,7 +24,8 @@ class AppDelegate: UIResponder, MessagingDelegate, UIApplicationDelegate, UNUser
     var id:Int!
    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
+        //2443
+        cf.checkVersion()
         FirebaseApp.configure()
         Messaging.messaging().delegate = self
         if #available(iOS 10.0, *) {
@@ -607,7 +608,7 @@ class AppDelegate: UIResponder, MessagingDelegate, UIApplicationDelegate, UNUser
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
         self.web.sentlog(func_name: "Application Enter In Foreground", errorfromserverorlink: " Selected Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
-     
+        cf.showUpdateWithForce()
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {

@@ -74,6 +74,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     var Firmware_Version = [String]()
     var Firmware_FileName = [String]()
     var pulsartimeadjust = [String]()
+    var GetPulserTypeFromLINK = [String]()
     var IFISBusy = [String]()
     var Is_HoseNameReplaced = [String]()
     var IFIsDefective = [String]()
@@ -328,11 +329,11 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                     for p in 0  ..< peripherals.count
                                     {
                                         print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased(), peripherals[p].name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
-                                        print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])", peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                        print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])", peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased(),self.peripherals[i],self.peripherals[p])
                                         if( "\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == peripherals[p].name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
                                         {
                                             print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(peripheral.name!)")
-                                            blePeripheral = self.peripherals[i]
+                                            blePeripheral = self.peripherals[p]
                                             connectedperipheral = (blePeripheral?.name)!
                                             defaults.set(blePeripheral?.name!, forKey: "LasttransactionSSID")
                                             //                                defaults.set("\(blePeripheral!.identifier)", forKey: "Lasttransactionidentifier")
@@ -429,11 +430,11 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                         for p in 0  ..< peripherals.count
                                         {
                                             print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased(), peripherals[p].name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
-                                            print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])", peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                            print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])", peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased(),self.peripherals[i],self.peripherals[p])
                                             if( "\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == peripherals[p].name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
                                             {
                                                 print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(peripheral.name!)")
-                                                blePeripheral = self.peripherals[i]
+                                                blePeripheral = self.peripherals[p]
                                                 connectedperipheral = (blePeripheral?.name)!
                                                 defaults.set(blePeripheral?.name!, forKey: "LasttransactionSSID")
                                                 //                                defaults.set("\(blePeripheral!.identifier)", forKey: "Lasttransactionidentifier")
@@ -562,7 +563,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                 let controller = storyboard.instantiateViewController(withIdentifier: "InitialController") as UIViewController
                 controller.modalPresentationStyle = .fullScreen
                 self.present(controller, animated: true, completion: nil)
-                self.web.sentlog(func_name: "Tapped preAuthTransaction Button", errorfromserverorlink: "", errorfromapp: "")
+                self.web.sentlog(func_name: "Starts preAuthTransaction", errorfromserverorlink: "", errorfromapp: "")
             }
         }
         alertController.addAction(action)
@@ -597,12 +598,12 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        
-       
+        wifiNameTextField.isEnabled = true
         self.progressview.progress = 0.0
         progressview.isHidden = true
         progressviewtext.isHidden = true
         Upgrade.isHidden = true
+        
         
         Activity.isHidden = true
         
@@ -648,7 +649,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         Vehicaldetails.sharedInstance.Odometerno = ""
         Vehicaldetails.sharedInstance.hours = ""
         
-        //getdatauser()
+        getdatauser()
 //        //check the downloadvehiclesforphone & DownloadPreAuthDepartmentData in mobile device.
 //        if(defaults.string(forKey: "dateof_DownloadVehiclesForphonefilename") == nil)   {
 ////            _ = web.GetVehiclesForPhone()
@@ -754,7 +755,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         let controller = storyboard.instantiateViewController(withIdentifier: "InitialController") as UIViewController
         controller.modalPresentationStyle = .fullScreen
         self.present(controller, animated: true, completion: nil)
-        self.web.sentlog(func_name: "Tapped preAuthTransaction Button", errorfromserverorlink: "", errorfromapp: "")
+        self.web.sentlog(func_name: "Starts preAuthTransaction", errorfromserverorlink: "", errorfromapp: "")
     }
     
     
@@ -1050,7 +1051,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                             Is_upgrade = []
                             Firmware_Version = []
                             File_Path = []
-                            Firmware_FileName
+                            Firmware_FileName = []
                             pulsartimeadjust = []
                             IFISBusy = []
                             Is_HoseNameReplaced = []
@@ -1064,7 +1065,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                             Bluetooth_MacAddress = []
                             Mac_Address = []
                             Communication_Type = []
-                            
+                            GetPulserTypeFromLINK = []
                             
                             
                             defaults.removeObject(forKey: "SSID")
@@ -1117,6 +1118,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                         let filepath = JsonRow["FilePath"] as! NSString as String
                                         let FirmwareVersion = JsonRow["FirmwareVersion"] as! NSString as String
                                         let FirmwareFileName = JsonRow["FirmwareFileName"] as! NSString as String
+                                        let GetPulser_TypeFromLINK = JsonRow["GetPulserTypeFromLINK"] as! NSString as String
                                         
                                         
                                         ssid.append(WifiSSId as String)
@@ -1142,6 +1144,8 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                         File_Path.append(filepath)
                                         Firmware_Version.append(FirmwareVersion)
                                         Firmware_FileName.append(FirmwareFileName)
+                                        GetPulserTypeFromLINK.append(GetPulser_TypeFromLINK)
+                                        
                                         print(Uhosenumber)
                                     }
                                     
@@ -1169,6 +1173,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                     // Vehicaldetails.sharedInstance.PreAuthDataDownloadTimeInMin = PreAuthDataDownloadTimeInMin as String
                                     // Vehicaldetails.sharedInstance.PreAuthDataDownloadTimeInHrs = PreAuthDataDownloadTimeInHrs as String
                                     Vehicaldetails.sharedInstance.PreAuthVehicleDataFilesCount = PreAuthVehicleDataFilesCount as String
+                                    
                                     
                                     var datadownloadday = ""
                                     switch PreAuthDataDownloadDay {
@@ -1463,7 +1468,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         unsync.unsyncP_typestatus()
         self.unsync.Send10trans()
        _ = self.preauthunsyncTransaction()
-        
+       
         if(Vehicaldetails.sharedInstance.Warningunsync_transaction == "True"){
             
             warningLable.text =  "Cannot connect to cloud server." + "\n" + "Please make sure your internet connection is ON as app needs to send your completed transaction to the server."
@@ -1473,41 +1478,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             
         }
         
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ssZ"
-        let strDate = dateFormatter.string(from: NSDate() as Date)
-        print(strDate)
-        if(defaults.string(forKey:"Date") == nil){
-            cf.showUpdateWithForce()
-            defaults.set(strDate,forKey: "Date")
-            now = Date()
-        }else{
-            print(defaults.string(forKey:"Date")!)
-            let savedate = defaults.string(forKey:"Date")
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ssZ"
-            //print(now)
-            
-            let currentdate = (dateFormatter.date(from: savedate!))//NSDate()
-            let x = 2
-            let calendar = Calendar.current// NSCalendar(calendarIdentifier: NSCalendar.Identifier.gregorian)
-            let dateComponent = NSDateComponents()
-            
-            dateComponent.day = x
-            if(currentdate == nil){}
-            else{
-                now = (calendar.date(byAdding: dateComponent as DateComponents, to: currentdate!))! as Date// (byAdding: dateComponent as DateComponents, to: currentdate! , options:[])! as NSDate) as Date
-            }
-        }
         
-        delay(1){
-            let soon = Date()
-//            print(self.now!,soon)
-            if(self.now! < soon){
-                self.cf.showUpdateWithForce()
-                self.defaults.set("\(soon)",forKey: "Date")
-            }
-        }
         if(self.defaults.string(forKey: "dateof_DownloadVehiclesForphonefilename") == nil)   {
             //self.showAlert(message: "Please wait we are gathering your data..")
             Upgrade.isHidden = false
@@ -1639,7 +1610,21 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                     self.go.isEnabled = true
                 }
                 else{
-                    self.web.sentlog(func_name: "Selected hose \(Vehicaldetails.sharedInstance.SSId)", errorfromserverorlink: "", errorfromapp: "")
+//                    print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced,Vehicaldetails.sharedInstance.prevSSID,Vehicaldetails.sharedInstance.OriginalNamesOfLink,Vehicaldetails.sharedInstance.BTMacAddress,Vehicaldetails.sharedInstance.FilePath,Vehicaldetails.sharedInstance.FirmwareVersion,Vehicaldetails.sharedInstance.PulserTimingAdjust,Vehicaldetails.sharedInstance.GetPulserTypeFromLINK )
+                    
+                    if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
+                    {
+                        
+                        self.web.sentlog(func_name: "Selected hose \(Vehicaldetails.sharedInstance.SSId)   UpgradeFlag true" , errorfromserverorlink: "", errorfromapp: "")
+                        
+                        if(Vehicaldetails.sharedInstance.HubLinkCommunication == "HTTP")
+                            
+                        {
+                            Vehicaldetails.sharedInstance.isUpgradeComplete = ""
+                            self.web.sentlog(func_name: "upgrade to FirmwareVersion \(Vehicaldetails.sharedInstance.FirmwareVersion)", errorfromserverorlink: "", errorfromapp: "")
+                        }
+                    }
+                    
                     //#1594
                     if(Vehicaldetails.sharedInstance.IsLinkFlagged == "True")
                     {
@@ -2061,6 +2046,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             Vehicaldetails.sharedInstance.BTMacAddress = Bluetooth_MacAddress[0]
             Vehicaldetails.sharedInstance.FilePath = File_Path[0]
             Vehicaldetails.sharedInstance.FirmwareVersion = Firmware_Version[0]
+            Vehicaldetails.sharedInstance.GetPulserTypeFromLINK = GetPulserTypeFromLINK[0]
             return ssid[row]
         }
         return ""
@@ -2112,8 +2098,9 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             Vehicaldetails.sharedInstance.BTMacAddress = Bluetooth_MacAddress[index]
             Vehicaldetails.sharedInstance.FilePath = File_Path[index]
             Vehicaldetails.sharedInstance.FirmwareVersion = Firmware_Version[index]
+            Vehicaldetails.sharedInstance.GetPulserTypeFromLINK = GetPulserTypeFromLINK[index]
             
-            print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced,Vehicaldetails.sharedInstance.prevSSID,Vehicaldetails.sharedInstance.OriginalNamesOfLink,Vehicaldetails.sharedInstance.BTMacAddress,Vehicaldetails.sharedInstance.FilePath,Vehicaldetails.sharedInstance.FirmwareVersion,Vehicaldetails.sharedInstance.PulserTimingAdjust )
+            print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced,Vehicaldetails.sharedInstance.prevSSID,Vehicaldetails.sharedInstance.OriginalNamesOfLink,Vehicaldetails.sharedInstance.BTMacAddress,Vehicaldetails.sharedInstance.FilePath,Vehicaldetails.sharedInstance.FirmwareVersion,Vehicaldetails.sharedInstance.PulserTimingAdjust,Vehicaldetails.sharedInstance.GetPulserTypeFromLINK )
             defaults.set(siteid, forKey: "SiteID")
             
             if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
@@ -2704,6 +2691,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                 
                 self.progressviewtext.text = "Done Upgrade \(Int(self.progressview.progress * 100))% \n please tap GO...."
                 _ = self.web.UpgradeCurrentVersiontoserver()
+                wifiNameTextField.isEnabled = false
                 self.web.sentlog(func_name: " Finished Upgrade Process", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 
                
@@ -2848,7 +2836,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                 
                 if(self.characteristicASCIIValue.contains("{\"upgrade\":'true'}"))
                 {
-                    //self.web.sentlog(func_name: " Response from link \(characteristicASCIIValue)", errorfromserverorlink: "" , errorfromapp:"")
+//                    self.web.sentlog(func_name: " Response from link \(characteristicASCIIValue)", errorfromserverorlink: "" , errorfromapp:"")
                     if (isdisconnected == true)
                     {
                         //                        do{
