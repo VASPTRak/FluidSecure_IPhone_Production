@@ -22,7 +22,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
     var sourcelat:Double!
     var sourcelong:Double!
     var currentlocation:CLLocation!
-    let locationManager = CLLocationManager()
+    //let locationManager = CLLocationManager()
   
     var IsOdoMeterRequire:String!
     var IsLoginRequire:String = "False"
@@ -68,7 +68,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         
         let preuuid = defaults.string(forKey: "uuid")
         if(preuuid == nil || preuuid == ""){
-           var password = KeychainService.loadPassword()
+            let password = KeychainService.loadPassword()
                        
             if(password == nil || password == "")
             {
@@ -84,7 +84,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         else
         {
             KeychainService.savePassword(token: preuuid! as NSString)
-            var password = KeychainService.loadPassword()
+            let password = KeychainService.loadPassword()
             print(password!,preuuid!)//used this paasword (uuid)
             uuid = preuuid! as String
         }
@@ -130,11 +130,11 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         print(uuid)
         _ = defaults.array(forKey: "SSID")
 
-        locationManager.delegate = self
-        locationManager.requestWhenInUseAuthorization()
-        locationManager.desiredAccuracy=kCLLocationAccuracyBest
-        locationManager.startUpdatingLocation()
-        currentlocation = locationManager.location
+//        locationManager.delegate = self
+//        locationManager.requestWhenInUseAuthorization()
+//        locationManager.desiredAccuracy=kCLLocationAccuracyBest
+//        locationManager.startUpdatingLocation()
+//        currentlocation = locationManager.location
         var reply:String!
         if(IsLoginRequire == "False")
         {

@@ -499,7 +499,7 @@ class Webservices:NSObject {
                     dateFormatter.dateFormat = "EEEE,dd/MM/yyyy"
                     dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
                     let dateofdownload: String = dateFormatter.string(from: NSDate() as Date)
-                    self.defaults.set(dateofdownload, forKey: "dateof_DownloadDepartmentsForphone")//"dateof_DownloadDepartmentsForphone")
+                    self.defaults.set(dateofdownload, forKey: "dateof_DownloadPreAuthDepartmentData")//"dateof_DownloadDepartmentsForphone")
                     print("\(dateofdownload) dateofdownload")
                 }
                 
@@ -1098,6 +1098,7 @@ class Webservices:NSObject {
         let string = uuid! + ":" + Email! + ":" + "UpdatePulserTypeOfLINK"
         let Base64 = convertStringToBase64(string: string)
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
+        print(defaults)
         let p_type = defaults.string(forKey: "UpdateSwitchTimeBounceForLink")
 
         let dateFormatter = DateFormatter()
@@ -3016,7 +3017,7 @@ class Webservices:NSObject {
         let Url:String = "http://192.168.4.1:80/client?command=info"
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string:Url)!)
         request.httpMethod = "GET"
-        request.timeoutInterval = 10
+        request.timeoutInterval = 30
         
         let semaphore = DispatchSemaphore(value: 0)
         let task =  URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in

@@ -362,7 +362,7 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
                 print ("Error: \(error.domain)")
             }
             
-            print(dept_data)
+            //print(dept_data)
             if(dept_data == nil){}
             else{
                 let ResponceMessage = dept_data!.value(forKey: "ResponceMessage") as! NSString

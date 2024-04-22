@@ -64,6 +64,11 @@
 	<string>Allow Access your Bluetooth to communicate the BLE device to Starts Fueling </string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>Allow Access your Bluetooth to communicate the BLE device to Starts Fueling </string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_bonjour._tcp</string>
+		<string>_lnp._tcp.</string>
+	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>Allow Camera Access to scan barcode</string>
 	<key>NSHumanReadableCopyright</key>

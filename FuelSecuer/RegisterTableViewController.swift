@@ -7,6 +7,7 @@
 import UIKit
 import CoreLocation
 
+
 class RegisterTableViewController: UITableViewController,CLLocationManagerDelegate,UITextFieldDelegate {
 
     @IBOutlet var itembarbutton: UIBarButtonItem!

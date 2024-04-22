@@ -390,7 +390,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     
     var isssidconnected = "false"
     
-    var islocalnetworkpermission = false
+    var lasttransactioncount = ""
     var sentDataPacket:Data!
     var bindata:Data!
     var totalbindatacount:Int!
@@ -988,22 +988,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                 }
             }
         }
-        //                if(islocalnetworkpermission == true){}
-        //                else{
-        //                getLocalNetworkAccessState { granted in
-        //                    print(granted ? "granted" : "denied")
-        //                    print(granted)
-        //                    if(granted == false)
-        //                    {
-        //                        self.GotoSettingpage(message: "Please Allow \(Vehicaldetails.sharedInstance.CompanyBarndName) to Access Local Network.")
-        //                        self.islocalnetworkpermission = false
-        //                    }
-        //                   else if(granted == true)
-        //                   {
-        //                        self.islocalnetworkpermission = true
-        //                   }
-        //                }
-        //                }
+                       
     }
     
     
@@ -1240,7 +1225,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
             
             if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1")
             {
-                print(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce,defaults.string(forKey: "UpdateSwitchTimeBounceForLink"))
+//                print(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce,defaults.string(forKey: "UpdateSwitchTimeBounceForLink"))
                 if(defaults.string(forKey: "UpdateSwitchTimeBounceForLink") != nil)
                 {
                     //                    if(defaults.string(forKey: "UpdateSwitchTimeBounceForLink") == "true")
@@ -1269,10 +1254,15 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                     //            self.updateIncomingData()
                     //            self.disconnectFromDevice()
                 }
+                
+            }
+             if(IsStopbuttontapped == true)
+            {
+                self.disconnectFromDevice()
             }
         }
-        self.unsync.unsyncTransaction()
-        unsync.unsyncP_typestatus()
+//        self.unsync.unsyncTransaction()
+//        unsync.unsyncP_typestatus()
     }
     
     override func viewDidLoad() {
@@ -1942,7 +1932,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                     }
                     else{
                         if(self.ifSubscribed == true){
-                            print(self.Last_Count)
+//                            print(self.Last_Count)
                             if(self.Last_Count == "0" || self.Last_Count == nil)
                             {
                                 let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
@@ -3034,8 +3024,10 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                     self.totalquantityinfo.text = NSLocalizedString("ThankyouMSG", comment:"")//"Thank you for using \nFluidSecure!"
                     
                     self.cf.delay(0.5){
-                        self.Transaction(fuelQuantity: self.fuelquantity)
-                        
+                        if(self.lasttransactioncount == self.Last_Count){}
+                        else{
+                            self.Transaction(fuelQuantity: self.fuelquantity)
+                        }
                         
                         if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
                         {
@@ -3431,7 +3423,9 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
             {}
             else{
                 isBTlinkDisconnect = true
-                let FuelQuan = self.cf.calculate_fuelquantity(quantitycount: Int(Last_Count as String)!)
+                let PulseRatio = Vehicaldetails.sharedInstance.PulseRatio
+                let FuelQuan = (Double(truncating: Int(Last_Count as String)! as NSNumber))/(PulseRatio as NSString).doubleValue
+                //let FuelQuan = self.cf.calculate_fuelquantity(quantitycount: Int(Last_Count as String)!)
                 Sendtransaction(fuelQuantity: "\(FuelQuan)")
                 Interrupted_TransactionFlag = "y"
                 self.web.UpdateInterruptedTransactionFlag(TransactionId: "\(Vehicaldetails.sharedInstance.TransactionId)",Flag: Interrupted_TransactionFlag)
@@ -4681,11 +4675,21 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                 
                 print(pulse)
                 //            self.delay(1){
-                self.web.sentlog(func_name: " BLE Response from link is \(pulse)", errorfromserverorlink:"", errorfromapp: "")
+               
                 
                 self.countfromlink = Int(truncating: pulse)
-                
-                self.getPulserBLE(counts:"\(pulse)")
+                print(lasttransactioncount)
+//                if(countfromlink > 0 && countfromlink == Int(lasttransactioncount))
+//                {
+//                
+//                }
+//                else
+//                {
+                if(isrelayon == true) {
+                    self.web.sentlog(func_name: " BLE Response from link is \(pulse)", errorfromserverorlink:"", errorfromapp: "")
+                    self.getPulserBLE(counts:"\(pulse)")
+                }
+//                }
                 self.displaytime.text = ""
                 //            }
             }
@@ -4878,8 +4882,10 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                             let pulse = JsonRow.value(forKey: "pulse") as! NSNumber
                             let txtn = JsonRow.value(forKey: "txtn") as! NSString
                             let vehicle = JsonRow.value(forKey: "vehicle") as! NSString
-                            let quantity = self.cf.calculate_fuelquantity(quantitycount: Int(truncating: pulse))
-                            
+                            let PulseRatio = Vehicaldetails.sharedInstance.PulseRatio
+                            let quantity = (Double(truncating: pulse))/(PulseRatio as NSString).doubleValue
+                            //self.cf.calculate_fuelquantity(quantitycount: Int(truncating: pulse))
+                            lasttransactioncount = "\(pulse)"
                             let transaction_details = Last10Transactions (Transaction_id: txtn as String, Pulses: "\(pulse)", FuelQuantity: "\(quantity)", vehicle: vehicle as String, date: date as String, dflag: "\(dflag)" )
                             
                             Vehicaldetails.sharedInstance.Last10transactions.add(transaction_details)
@@ -4992,7 +4998,9 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                     let pulses = Split[1];
                     if(pulses == "N/A"){}
                     else{
-                        let quantity = self.cf.calculate_fuelquantity(quantitycount: Int(pulses as String)!)
+                        let PulseRatio = Vehicaldetails.sharedInstance.PulseRatio
+                        let quantity = (Double(truncating: Int(pulses as String)! as NSNumber))/(PulseRatio as NSString).doubleValue
+                        //let quantity = self.cf.calculate_fuelquantity(quantitycount: Int(pulses as String)!)
                         let transaction_details = Last10Transactions(Transaction_id: transid, Pulses: pulses, FuelQuantity: "\(quantity)", vehicle: "", date: "", dflag: "")
                         Vehicaldetails.sharedInstance.Last10transactions.add(transaction_details)
                     }
@@ -5187,6 +5195,7 @@ extension FuelquantityVC: CBCentralManagerDelegate {
                 //
                 //                    }
             }
+                     
             
             if(self.characteristicASCIIValue.contains("{\"upgrade\":'true'}"))
             {
@@ -5940,44 +5949,7 @@ extension FuelquantityVC: CBCentralManagerDelegate {
 //    }
 //}
 
-class getLocalNetworkAccessState : NSObject {
-    var service: NetService
-    var denied: DispatchWorkItem?
-    var completion: ((Bool) -> Void)
-    
-    @discardableResult
-    init(completion: @escaping (Bool) -> Void) {
-        self.completion = completion
-        
-        service = NetService(domain: "local.", type:"_lnp._tcp.", name: "LocalNetworkPrivacy", port: 1100)
-        
-        super.init()
-        
-        denied = DispatchWorkItem {
-            self.completion(false)
-            self.service.stop()
-            self.denied = nil
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: denied!)
-        
-        service.delegate = self
-        self.service.publish()
-    }
-}
 
-extension getLocalNetworkAccessState : NetServiceDelegate {
-    
-    func netServiceDidPublish(_ sender: NetService) {
-        denied?.cancel()
-        denied = nil
-        
-        completion(true)
-    }
-    
-    func netService(_ sender: NetService, didNotPublish errorDict: [String : NSNumber]) {
-        print("Error: \(errorDict)")
-    }
-}
 
 //    // MARK: - Peripheral Delegate
 extension FuelquantityVC: CBPeripheralDelegate {
@@ -6316,19 +6288,19 @@ extension FuelquantityVC: CBPeripheralDelegate {
                     if(self.gotLinkVersion == true){}
                     else{
                         self.outgoingData(inputText: "LK_COMM=info")
-//                        self.cf.delay(1){
-                            
-                            //                                        self.cf.delay(0.5){
-                            self.updateIncomingData()
-                            NotificationCenter.default.removeObserver(self)
-                            //                    }
-                            //            self.updateIncomingData()
-                            //
-                            //            NotificationCenter.default.removeObserver(self)
-                            //                                    }
-                            
-                            // self.web.sentlog(func_name: " Send info command to link", errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"")
-//                        }
+                        //                        self.cf.delay(1){
+                        
+                        //                                        self.cf.delay(0.5){
+                        self.updateIncomingData()
+                        NotificationCenter.default.removeObserver(self)
+                        //                    }
+                        //            self.updateIncomingData()
+                        //
+                        //            NotificationCenter.default.removeObserver(self)
+                        //                                    }
+                        
+                        // self.web.sentlog(func_name: " Send info command to link", errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"")
+                        //                        }
                     }
                 }
                 else
@@ -6336,14 +6308,14 @@ extension FuelquantityVC: CBPeripheralDelegate {
                     getBLEInfo()
                 }
                 //move to on stop button tapped event
-//                print(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce)
-//                if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1")
-//                {
-//                    
-//                    self.sendpulsar_type()
-//                }
-//                outgoingData(inputText: "LK_COMM=p_type?")
-//                updateIncomingData()
+                //                print(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce)
+                //                if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1")
+                //                {
+                //
+                //                    self.sendpulsar_type()
+                //                }
+                //                outgoingData(inputText: "LK_COMM=p_type?")
+                //                updateIncomingData()
                 
                 delay(1){
                     self.getlast10transaction()
@@ -6484,6 +6456,10 @@ extension FuelquantityVC: CBPeripheralDelegate {
             
         }
     }
+    
+   
+   
 }
+
 
 

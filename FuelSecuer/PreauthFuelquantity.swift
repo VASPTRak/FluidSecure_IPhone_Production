@@ -4596,10 +4596,13 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
             //                let mac_address = self.sysdata.value(forKey: "mac_address") as! NSDictionary
             //                let bt = mac_address.value(forKey: "bt") as! NSString
             print(pulse)
-            self.web.sentlog(func_name: " BLE Response from link is \(pulse)", errorfromserverorlink:"", errorfromapp: "")
-            self.countfromlink = Int(pulse)
-            self.GetPulserBLE(counts:"\(pulse)")
-            self.displaytime.text = ""
+            if(isrelayon == true) {
+                self.web.sentlog(func_name: " BLE Response from link is \(pulse)", errorfromserverorlink:"", errorfromapp: "")
+                self.countfromlink = Int(pulse)
+                self.GetPulserBLE(counts:"\(pulse)")
+                
+                self.displaytime.text = ""
+            }
         }
         catch let error as NSError {
             print ("Error: \(error.domain)")
@@ -4739,7 +4742,9 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                     let pulse = JsonRow.value(forKey: "pulse") as! NSNumber
                     let txtn = JsonRow.value(forKey: "txtn") as! NSString
                     let vehicle = JsonRow.value(forKey: "vehicle") as! NSString
-                    let quantity = self.cf.calculate_fuelquantity(quantitycount: Int(pulse))
+                    let PulseRatio = Vehicaldetails.sharedInstance.PulseRatio
+                    let quantity = (Double(truncating: pulse))/(PulseRatio as NSString).doubleValue
+                    //let quantity = self.cf.calculate_fuelquantity(quantitycount: Int(pulse))
                     
                     let transaction_details = Last10Transactions (Transaction_id: txtn as String, Pulses: "\(pulse)", FuelQuantity: "\(quantity)", vehicle: vehicle as String, date: date as String, dflag: "\(dflag)" )
                     self.web.sentlog(func_name: " BLE Response from link is \(jsonText)", errorfromserverorlink:"", errorfromapp: "")
@@ -5328,220 +5333,331 @@ extension PreauthFuelquantity: CBCentralManagerDelegate {
     
     
     func startScan() {
-        print(countfromlink)
-        //            if(countfromlink > 0)
-        //            {}
-        //            else{
-        self.web.sentlog(func_name: "Start BT Scan...for \(kBLEService_UUID)", errorfromserverorlink:"", errorfromapp: "\(peripherals)")
-        self.peripherals = []
-        //            self.kCBAdvDataLocalName = []
-        let BLEService_UUID = CBUUID(string: kBLEService_UUID)
-        print("Now Scanning...")
-        self.GetPulsarstartimer.invalidate()
-        centralManager?.scanForPeripherals(withServices: [BLEService_UUID] , options: [CBCentralManagerScanOptionAllowDuplicatesKey:false])
-        
-        Timer.scheduledTimer(withTimeInterval: 10, repeats: false) {_ in
-            self.web.sentlog(func_name: "Scan Stopped...", errorfromserverorlink:"", errorfromapp: "\(self.peripherals)")
-            if(self.peripherals.count == 0)
-            {
+        if(ifSubscribed == true)
+        {
+            
+        }
+        else{
+            print(countfromlink)
+            
+            self.web.sentlog(func_name: "Start BT Scan...to search the service id \(kBLEService_UUID)", errorfromserverorlink:"", errorfromapp: "\(peripherals)")
+            self.peripherals = []
+            //        self.kCBAdvData_LocalName = []
+            let BLEService_UUID = CBUUID(string: kBLEService_UUID)
+            print("Now Scanning...")
+            self.GetPulsarstartimer.invalidate()
+            centralManager?.scanForPeripherals(withServices: [BLEService_UUID] , options: [CBCentralManagerScanOptionAllowDuplicatesKey:false])
+            
+            Timer.scheduledTimer(withTimeInterval: 10, repeats: false) {_ in
+                //            self.web.sentlog(func_name: "Scan Stopped...", errorfromserverorlink:"", errorfromapp: "\(self.peripherals)")
+                if(self.peripherals.count == 0)
+                {
+                    if(self.onFuelingScreen == true){
+                        if(self.appconnecttoUDP == true){}
+                        else{
+                            //self.cancelScan()
+                        }
+                    }
+                }
+                Vehicaldetails.sharedInstance.peripherals = self.peripherals
+                // self.cancelScan()
                 if(self.onFuelingScreen == true){
                     if(self.appconnecttoUDP == true){}
                     else{
-                        self.cancelScan()
-                    }
-                }
-            }
-            Vehicaldetails.sharedInstance.peripherals = self.peripherals
-            // self.cancelScan()
-            if(self.onFuelingScreen == true){
-                if(self.appconnecttoUDP == true){}
-                else{
-                    if(self.countfromlink > 0)
-                    {
-                        if(self.sendrename_linkname == true)
+                        if(self.countfromlink > 0)
                         {
+                            if(self.sendrename_linkname == true)
+                            {
+                                self.cancelScan()
+                            }
+                        }
+                        else{
                             self.cancelScan()
                         }
                     }
-                    else{
-                        self.cancelScan()
-                    }
                 }
-                
             }
-            
         }
-        // }
     }
     
     /*We also need to stop scanning at some point so we'll also create a function that calls "stopScan"*/
+    
     func cancelScan() {
-        //            if(countfromlink > 0)
-        //            {}
-        //            else{
-        
-        self.centralManager?.stopScan()
-        
-        self.web.sentlog(func_name: "Scan Stopped", errorfromserverorlink: "Number of Peripherals Found: \(peripherals.count)", errorfromapp: "\(peripherals)")
-        Vehicaldetails.sharedInstance.peripherals = self.peripherals
-        if (peripherals.count == 0){
-            if(IsStartbuttontapped == true){}
-            else{
-                self.countfailBLEConn = self.countfailBLEConn + 1
-                if (self.countfailBLEConn > 3){
-                    
-                    self.web.sentlog(func_name: "App Not able to Connect and Subscribed peripheral Connection. Attempt \(countfailBLEConn)", errorfromserverorlink: "", errorfromapp: "")
-                    Vehicaldetails.sharedInstance.HubLinkCommunication = "UDP"
-                    Vehicaldetails.sharedInstance.AppType = "preAuthTransaction"
-                    self.performSegue(withIdentifier: "GoUDP", sender: self)
-                    appconnecttoUDP = true
-                    
-                }
+        if(ifSubscribed == true){}
+        else{
+            self.centralManager?.stopScan()
+            
+            self.web.sentlog(func_name: "Scan Stopped", errorfromserverorlink: "Number of Peripherals Found: \(peripherals.count)", errorfromapp: "\(peripherals)")
+            Vehicaldetails.sharedInstance.peripherals = self.peripherals
+            if (peripherals.count == 0){
+                if(IsStartbuttontapped == true){}
                 else{
-                    if(ifSubscribed == true){}
+                    self.countfailBLEConn = self.countfailBLEConn + 1
+                    self.web.sentlog(func_name: "Attempt \(countfailBLEConn)", errorfromserverorlink: "", errorfromapp: "")
+                    
+                    if (self.countfailBLEConn == 5){
+                        
+                        self.web.sentlog(func_name: "App Not able to Connect BT Link and Subscribed peripheral Connection. Attempt  \(countfailBLEConn)", errorfromserverorlink: "", errorfromapp: "")
+                        
+                        self.web.sentlog(func_name: "App Switches BT to UDP...", errorfromserverorlink: "", errorfromapp: "")
+                        
+                        let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                        self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6")
+                        
+                        Vehicaldetails.sharedInstance.HubLinkCommunication = "UDP"
+                        DispatchQueue.main.async() {
+                            
+//                            self.performSegue(withIdentifier: "GoUDP", sender: self)
+                        }
+                        appconnecttoUDP = true
+                        
+                    }
+                    
                     else{
-                        self.web.sentlog(func_name: " Peripherals Found restart Scan...", errorfromserverorlink:"Number of Peripherals Found: \(peripherals.count)", errorfromapp: "\(self.peripherals)")
-                        self.startScan()
-                        if(onFuelingScreen == true){
-                            if(peripherals.count == 0)
-                            {
-                                
-                            }
-                            else
-                            {
-                                viewDidAppear(true)
+                        if(ifSubscribed == true){}
+                        else{
+                            self.web.sentlog(func_name: " Peripherals Found restart Scan...", errorfromserverorlink:"Number of Peripherals Found: \(peripherals.count)", errorfromapp: "\(self.peripherals)")
+                            //self.startScan()
+                            if(onFuelingScreen == true){
+                                if(peripherals.count == 0)
+                                {
+                                    delay(3){
+                                        self.startScan()
+                                    }
+                                }
+                                else
+                                {
+                                    viewDidAppear(true)
+                                }
                             }
                         }
                     }
+                    
+                    Vehicaldetails.sharedInstance.peripherals = self.peripherals
+                    cancel.isHidden = false
                 }
-                //                    displaytime.text = "BT link not found. please try again later."
-                Vehicaldetails.sharedInstance.peripherals = self.peripherals
-                // AppconnectedtoBLE = false
-                cancel.isHidden = false
             }
-        }
-        else
-        {
-            if(peripherals.count == 0)
+            else
             {
-                print(peripherals,peripherals.count)
-            }
-            else{
-                print(peripherals,peripherals.count)
-                for i in 0  ..< peripherals.count
+                if(peripherals.count == 0)
                 {
                     print(peripherals,peripherals.count)
-                    if(peripherals.count == 0)
+                }
+                else{
+                    print(peripherals,peripherals.count)
+                    for i in 0  ..< peripherals.count
                     {
                         print(peripherals,peripherals.count)
-                    }
-                    else{
-                        let peripheral = self.peripherals[i]
-                        // let localName = self.kCBAdvDataLocalName[i]
-                        if(peripheral.name! == "nil" || peripheral.name! == "(null)")
-                        {}
+                        if(peripherals.count == 0)
+                        {
+                            print(peripherals,peripherals.count)
+                        }
                         else{
-                            if( Vehicaldetails.sharedInstance.SSId.uppercased() == peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
-                            {
-                                blePeripheral = self.peripherals[i]
-                                connectedperipheral = (blePeripheral?.name)!
-                                connectToDevice()
-                                
-                                break
-                            }
-                            else
-                            if(Vehicaldetails.sharedInstance.SSId.uppercased() == localName.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
-                            {
-                                blePeripheral = self.peripherals[i]
-                                if(blePeripheral?.name == localName){
+                            peripheral = self.peripherals[i]
+                            
+                            
+                            if(peripheral.name! == "nil" || peripheral.name! == "(null)")
+                            {}
+                            else{
+                                if( Vehicaldetails.sharedInstance.SSId.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                {
                                     
+                                    blePeripheral = self.peripherals[i]
                                     connectedperipheral = (blePeripheral?.name)!
-                                    
+                                    defaults.set(blePeripheral?.name!, forKey: "LasttransactionSSID")
+                                    //                            defaults.set("\(blePeripheral!.identifier)", forKey: "Lasttransactionidentifier")
                                     connectToDevice()
                                     break
                                 }
-                            }
-                            
-                            else if(Vehicaldetails.sharedInstance.OriginalNamesOfLink.count > 0)
-                            {
-                                self.web.sentlog(func_name: "OriginalNamesOfLink name \(Vehicaldetails.sharedInstance.OriginalNamesOfLink).", errorfromserverorlink:"", errorfromapp: "")
-                                for ln in 0  ..< Vehicaldetails.sharedInstance.OriginalNamesOfLink.count
+                                //                        else if(Vehicaldetails.sharedInstance.SSId.trimmingCharacters(in: .whitespacesAndNewlines).uppercased().components(separatedBy: .whitespacesAndNewlines).joined() == localName.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                //                        {
+                                //                            //blePeripheral = self.peripherals[i]
+                                //                            //                            if(peripheral.name! == BLEPeripheralforlocalname){
+                                //                            blePeripheral = self.peripherals[i]
+                                //                            connectedperipheral = (blePeripheral?.name)!
+                                //
+                                //                            connectToDevice()
+                                //                            break
+                                //                            //                            }
+                                //                        }
+                                
+                                
+                                else if(Vehicaldetails.sharedInstance.OriginalNamesOfLink.count > 0)
                                 {
-                                    if(peripheral.name! == "nil" || peripheral.name! == "(null)")
-                                    {}
-                                    else
+                                    self.web.sentlog(func_name: "OriginalNamesOfLink name \(Vehicaldetails.sharedInstance.OriginalNamesOfLink).", errorfromserverorlink:"", errorfromapp: "")
+                                    for ln in 0  ..< Vehicaldetails.sharedInstance.OriginalNamesOfLink.count
                                     {
-                                        //2441
-                                        for p in 0  ..< peripherals.count
-                                        {
-                                            print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased(), peripherals[p].name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
-                                            print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])", peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased(),self.peripherals[i],self.peripherals[p])
-                                            if( "\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == peripherals[p].name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                        if(peripheral.name! == "nil" || peripheral.name! == "(null)")
+                                        {}
+                                        else{
+                                            //2441
+                                            for p in 0  ..< peripherals.count
                                             {
-                                                print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(peripheral.name!)")
-                                                blePeripheral = self.peripherals[p]
-                                                connectedperipheral = (blePeripheral?.name)!
-                                                defaults.set(blePeripheral?.name!, forKey: "LasttransactionSSID")
-                                                //                                defaults.set("\(blePeripheral!.identifier)", forKey: "Lasttransactionidentifier")
-                                                connectToDevice()
-                                                break
-                                                
+                                                print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased(), peripherals[p].name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                                print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])", peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased(),self.peripherals[i],self.peripherals[p])
+                                                if( "\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == peripherals[p].name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                                {
+                                                    self.web.sentlog(func_name: "\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]),\(self.peripherals[p])", errorfromserverorlink:"", errorfromapp: "")
+                                                    print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(peripheral.name!)")
+                                                    blePeripheral = self.peripherals[p]
+                                                    //print(blePeripheral)
+                                                    connectedperipheral = (blePeripheral?.name)!
+                                                    defaults.set(blePeripheral?.name!, forKey: "LasttransactionSSID")
+                                                    //                                defaults.set("\(blePeripheral!.identifier)", forKey: "Lasttransactionidentifier")
+                                                    connectToDevice()
+                                                    break
+                                                    
+                                                }
                                             }
+                                            //                                else if("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased().components(separatedBy: .whitespacesAndNewlines).joined() == localName.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                            //                                {
+                                            //                                    print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(localName)")
+                                            //                                    //blePeripheral = self.peripherals[i]
+                                            //                                    //                            if(peripheral.name! == BLEPeripheralforlocalname){
+                                            //                                    blePeripheral = self.peripherals[i]
+                                            //                                    connectedperipheral = (blePeripheral?.name)!
+                                            //
+                                            //                                    connectToDevice()
+                                            //                                    break
+                                            //
+                                            //                                    //                            }
+                                            //                                }
                                         }
-                                        //                                else if("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased().components(separatedBy: .whitespacesAndNewlines).joined() == localName.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
-                                        //                                {
-                                        //                                    print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(localName)")
-                                        //                                    //blePeripheral = self.peripherals[i]
-                                        //                                    //                            if(peripheral.name! == BLEPeripheralforlocalname){
-                                        //                                    blePeripheral = self.peripherals[i]
-                                        //                                    connectedperipheral = (blePeripheral?.name)!
-                                        //
-                                        //                                    connectToDevice()
-                                        //                                    break
-                                        //
-                                        //                                    //                            }
-                                        //                                }
                                     }
                                     
                                 }
+                                
+                                
                             }
+                        }
+                        if(self.AppconnectedtoBLE == true){
                             
+                            break
                         }
                     }
-                    
-                }
-                if(self.connectedperipheral == "")
-                {
-                    if(IsStartbuttontapped == true){}
-                    else{
-                        self.countfailBLEConn = self.countfailBLEConn + 1
-                        
-                        self.web.sentlog(func_name: "Attempt \(countfailBLEConn)", errorfromserverorlink: "", errorfromapp: "")
-                        
-                        if (self.countfailBLEConn == 5){
-                            
-                            self.web.sentlog(func_name: "App Not able to Connect BT Link and Subscribed peripheral Connection. Attempt  \(countfailBLEConn)", errorfromserverorlink: "", errorfromapp: "")
-                            
-                            self.web.sentlog(func_name: "App Switches BT to UDP...", errorfromserverorlink: "", errorfromapp: "")
-                            Vehicaldetails.sharedInstance.AppType = "preAuthTransaction"
-                            Vehicaldetails.sharedInstance.HubLinkCommunication = "UDP"
-                            self.performSegue(withIdentifier: "GoUDP", sender: self)
-                            appconnecttoUDP = true
-                            
-                        }
-                        else{
-                            if(ifSubscribed == true){}
+                    if(self.connectedperipheral == "")
+                    {
+                        for i in 0  ..< peripherals.count
+                        {
+                            print(peripherals,peripherals.count)
+                            if(peripherals.count == 0)
+                            {
+                                print(peripherals,peripherals.count)
+                            }
                             else{
-                                self.web.sentlog(func_name: " Peripherals Found restart Scan...", errorfromserverorlink:"Number of Peripherals Found: \(peripherals.count)", errorfromapp: "\(self.peripherals)")
-                                self.startScan()
+                                peripheral = self.peripherals[i]
+                                
+                                if(peripheral.name! == "nil" || peripheral.name! == "(null)")
+                                {}
+                                else{
+                                    if( Vehicaldetails.sharedInstance.SSId.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                    {
+                                        
+                                        blePeripheral = self.peripherals[i]
+                                        connectedperipheral = (blePeripheral?.name)!
+                                        defaults.set(blePeripheral?.name!, forKey: "LasttransactionSSID")
+                                        //                            defaults.set("\(blePeripheral!.identifier)", forKey: "Lasttransactionidentifier")
+                                        connectToDevice()
+                                        break
+                                    }
+                                    //                            else if(Vehicaldetails.sharedInstance.SSId.trimmingCharacters(in: .whitespacesAndNewlines).uppercased().components(separatedBy: .whitespacesAndNewlines).joined() == localName.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                    //                            {
+                                    //                                //blePeripheral = self.peripherals[i]
+                                    //                                //                            if(peripheral.name! == BLEPeripheralforlocalname){
+                                    //                                blePeripheral = self.peripherals[i]
+                                    //                                connectedperipheral = (blePeripheral?.name)!
+                                    //
+                                    //                                connectToDevice()
+                                    //                                break
+                                    //                                //                            }
+                                    //                            }
+                                    
+                                    
+                                    else if(Vehicaldetails.sharedInstance.OriginalNamesOfLink.count > 0)
+                                    {
+                                        self.web.sentlog(func_name: "OriginalNamesOfLink name \(Vehicaldetails.sharedInstance.OriginalNamesOfLink).", errorfromserverorlink:"", errorfromapp: "")
+                                        for ln in 0  ..< Vehicaldetails.sharedInstance.OriginalNamesOfLink.count
+                                        {
+                                            if(peripheral.name! == "nil" || peripheral.name! == "(null)")
+                                            {}
+                                            else{
+                                                //2441
+                                                for p in 0  ..< peripherals.count
+                                                {
+                                                    self.web.sentlog(func_name: "\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]),\(self.peripherals[p])", errorfromserverorlink:"", errorfromapp: "")
+                                                    
+                                                    print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])", peripheral.name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased(),self.peripherals[i],self.peripherals[p])
+                                                    if( "\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln])".trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == peripherals[p].name!.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                                                    {
+                                                        print("\(Vehicaldetails.sharedInstance.OriginalNamesOfLink[ln]), \(peripheral.name!)")
+                                                        blePeripheral = self.peripherals[p]
+                                                        //print(blePeripheral)
+                                                        connectedperipheral = (blePeripheral?.name)!
+                                                        defaults.set(blePeripheral?.name!, forKey: "LasttransactionSSID")
+                                                        //                                defaults.set("\(blePeripheral!.identifier)", forKey: "Lasttransactionidentifier")
+                                                        connectToDevice()
+                                                        break
+                                                        
+                                                    }
+                                                }
+                                                
+                                            }
+                                            
+                                        }
+                                    }
+                                    
+                                    //                    if( defaults.value(forKey: "Lasttransactionidentifier")! as! String == "\(peripheral.identifier)"){
+                                    //                                                self.web.sentlog(func_name: "\(blePeripheral!.identifier),\(defaults.value(forKey: "Lasttransactionidentifier"))! as! String,\(peripheral.identifier)", errorfromserverorlink: "", errorfromapp: "")
+                                    //                                                print("\(blePeripheral!.identifier)",defaults.value(forKey: "Lasttransactionidentifier")! as! String,"\(peripheral.identifier)")
+                                    //                                                                            blePeripheral = self.peripherals[i]
+                                    //                                                                            connectedperipheral = (blePeripheral?.name)!
+                                    //                                                                            defaults.set(blePeripheral?.name!, forKey: "LasttransactionSSID")
+                                    //                                                                            connectToDevice()
+                                    //                                                                            break
+                                    //                                                                            }
+                                }
+                            }
+                            if(self.AppconnectedtoBLE == true){
+                                
+                                break
+                            }
+                        }
+                        if(IsStartbuttontapped == true){}
+                        else{
+                            self.countfailBLEConn = self.countfailBLEConn + 1
+                            
+                            self.web.sentlog(func_name: "Attempt \(countfailBLEConn)", errorfromserverorlink: "", errorfromapp: "")
+                            
+                            if (self.countfailBLEConn == 5){
+                                
+                                
+                                self.web.sentlog(func_name: "App Not able to Connect BT Link and Subscribed peripheral Connection. Attempt  \(countfailBLEConn)", errorfromserverorlink: "", errorfromapp: "")
+                                
+                                self.web.sentlog(func_name: "App Switches BT to UDP...", errorfromserverorlink: "", errorfromapp: "")
+                                
+                                let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                                self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6")
+                                
+                                Vehicaldetails.sharedInstance.HubLinkCommunication = "UDP"
+                                DispatchQueue.main.async() {
+                                    
+                                    self.performSegue(withIdentifier: "GoUDP", sender: self)
+                                }
+                                appconnecttoUDP = true
+                                
+                            }
+                            else{
+                                if(ifSubscribed == true){}
+                                else{
+                                    self.web.sentlog(func_name: " Peripherals Found restart Scan...", errorfromserverorlink:"Number of Peripherals Found: \(peripherals.count)", errorfromapp: "\(self.peripherals)")
+                                    self.startScan()
+                                }
                             }
                         }
                     }
                 }
-                //self.viewDidAppear(true)
             }
         }
-        // }
     }
     
     
@@ -5554,6 +5670,7 @@ extension PreauthFuelquantity: CBCentralManagerDelegate {
                 if(sendrename_linkname == true)
                 {
                     startScan()
+                    self.web.sentlog(func_name: "startScan  ", errorfromserverorlink: "\(countfromlink)", errorfromapp:"")
                 }
             }
             else{
@@ -5915,19 +6032,19 @@ extension PreauthFuelquantity: CBPeripheralDelegate {
         print("Value Recieved: \((characteristicASCIIValue as String))")
         if("\(self.characteristicASCIIValue)".contains("{\"pulser_type\":1}$$"))
         {
-            defaults.set("true", forKey: "UpdateSwitchTimeBounceForLink")
+            defaults.set("1", forKey: "UpdateSwitchTimeBounceForLink")
         }
         else if("\(self.characteristicASCIIValue)".contains("{\"pulser_type\":2}$$"))
         {
-            defaults.set("true", forKey: "UpdateSwitchTimeBounceForLink")
+            defaults.set("2", forKey: "UpdateSwitchTimeBounceForLink")
         }
         else if("\(self.characteristicASCIIValue)".contains("{\"pulser_type\":3}$$"))
         {
-            defaults.set("true", forKey: "UpdateSwitchTimeBounceForLink")
+            defaults.set("3", forKey: "UpdateSwitchTimeBounceForLink")
         }
         else if("\(self.characteristicASCIIValue)".contains("{\"pulser_type\":4}$$"))
         {
-            defaults.set("true", forKey: "UpdateSwitchTimeBounceForLink")
+            defaults.set("4", forKey: "UpdateSwitchTimeBounceForLink")
         }
         NotificationCenter.default.post(name:NSNotification.Name(rawValue: "Notify"), object: self)
         

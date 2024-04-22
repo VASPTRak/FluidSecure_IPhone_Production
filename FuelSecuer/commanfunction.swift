@@ -22,7 +22,7 @@ extension UIViewController {
         var remainingdays = 0
         if((defaults.string(forKey: "updatedays")) != nil)
         {
-            var days = Int(defaults.string(forKey: "updatedays")!)
+            let days = Int(defaults.string(forKey: "updatedays")!)
             remainingdays = 3 - days!
             if(days! >= 3)
             {
@@ -30,7 +30,7 @@ extension UIViewController {
             }
         }
        
-        let bundleName = Bundle.main.infoDictionary!["CFBundleDisplayName"] as! String;
+        //let bundleName = Bundle.main.infoDictionary!["CFBundleDisplayName"] as! String;
         let alertMessage = "A new version is available, please update your App before proceeding." //"\(bundleName) Version \(Version) is available on AppStore. App needs to be updated in \(remainingdays) days. Update to the latest version?"
         let alertTitle = ""
         

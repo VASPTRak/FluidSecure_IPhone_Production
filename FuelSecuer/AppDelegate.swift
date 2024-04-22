@@ -142,7 +142,8 @@ class AppDelegate: UIResponder, MessagingDelegate, UIApplicationDelegate, UNUser
         }
         else
         {
-            Messaging.messaging().subscribe(toTopic:"\(TopicNameForFCMForIPhone)")
+            print(TopicNameForFCMForIPhone!)
+            Messaging.messaging().subscribe(toTopic:"\(TopicNameForFCMForIPhone!)")
             print("Subscribed to \(String(describing: TopicNameForFCMForIPhone)) topic")
         }
         
@@ -686,7 +687,7 @@ class AppDelegate: UIResponder, MessagingDelegate, UIApplicationDelegate, UNUser
                 datepreauthFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
                 let dtt: String = datepreauthFormatter.string(from: NSDate() as Date)
                 let Wifyssid = Vehicaldetails.sharedInstance.SSId
-                let pulser_count = Vehicaldetails.sharedInstance.pulsarCount
+                //let pulser_count = Vehicaldetails.sharedInstance.pulsarCount
                  let preauthbodyData = "{\"SiteId\":\(siteid),\"CurrentOdometer\":\(Odomtr),\"FuelQuantity\":\((fuelQuantity)),\"TransactionId\":\(TransactionId),\"FuelTypeId\":\(FuelTypeId),\"WifiSSId\":\"\(Wifyssid)\",\"TransactionDate\":\"\(dtt)\",\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"VehicleNumber\":\"\(Vehicaldetails.sharedInstance.vehicleno)\",\"ErrorCode\":\"\(Vehicaldetails.sharedInstance.Errorcode)\",\"DepartmentNumber\":\"\(Vehicaldetails.sharedInstance.deptno)\",\"Hours\":\(Hours),\"VehicleExtraOther\":\"\(Vehicaldetails.sharedInstance.ExtraOther)\",\"Other\":\"\(Vehicaldetails.sharedInstance.Other)\",\"PersonnelPIN\":\"\(Vehicaldetails.sharedInstance.Personalpinno)\",\"CurrentLng\":\"\(sourcelong)\",\"CurrentLat\":\"\(sourcelat)\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\"}"
                 print(preauthbodyData)
                 //let unsycnfileName =  dtt1 + "transaction" + "#" + Vehicaldetails.sharedInstance.siteName

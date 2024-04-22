@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -61,10 +61,10 @@
 		DA7A40A81F7633AF00D889D6 /* Transaction_id.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7A40A71F7633AF00D889D6 /* Transaction_id.swift */; };
 		DA82ACFE22EC33560084B4B3 /* OtherVehicleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA82ACFD22EC33560084B4B3 /* OtherVehicleViewController.swift */; };
 		DA9444631F7398E1006F9804 /* PreauthFuelquantity.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9444621F7398E1006F9804 /* PreauthFuelquantity.swift */; };
+		DA9F31B32BA481760060F2D4 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DA9F31B22BA481760060F2D4 /* GoogleService-Info.plist */; };
 		DA9F948A1F14F42E00BFE62B /* checkbox-checked.png in Resources */ = {isa = PBXBuildFile; fileRef = DA9F94881F14F42E00BFE62B /* checkbox-checked.png */; };
 		DA9F948B1F14F42E00BFE62B /* checkbox-unchecked.png in Resources */ = {isa = PBXBuildFile; fileRef = DA9F94891F14F42E00BFE62B /* checkbox-unchecked.png */; };
 		DA9F948D1F14FF9200BFE62B /* WiFI.png in Resources */ = {isa = PBXBuildFile; fileRef = DA9F948C1F14FF9200BFE62B /* WiFI.png */; };
-		DABA5C5C2AD7F7EA007A940F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DABA5C5B2AD7F7EA007A940F /* GoogleService-Info.plist */; };
 		DAC3E4981E1D20F60012E65F /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAC3E4971E1D20F60012E65F /* LoginViewController.swift */; };
 		DAC41CEB2136A14D00B1B9C1 /* TCPcommunication.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAC41CEA2136A14D00B1B9C1 /* TCPcommunication.swift */; };
 		DAC41CED2136CDE100B1B9C1 /* Sync_UnsyncTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAC41CEC2136CDE100B1B9C1 /* Sync_UnsyncTransaction.swift */; };
@@ -201,10 +201,10 @@
 		DA7A40A71F7633AF00D889D6 /* Transaction_id.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transaction_id.swift; sourceTree = "<group>"; };
 		DA82ACFD22EC33560084B4B3 /* OtherVehicleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherVehicleViewController.swift; sourceTree = "<group>"; };
 		DA9444621F7398E1006F9804 /* PreauthFuelquantity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreauthFuelquantity.swift; sourceTree = "<group>"; };
+		DA9F31B22BA481760060F2D4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		DA9F94881F14F42E00BFE62B /* checkbox-checked.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "checkbox-checked.png"; sourceTree = "<group>"; };
 		DA9F94891F14F42E00BFE62B /* checkbox-unchecked.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "checkbox-unchecked.png"; sourceTree = "<group>"; };
 		DA9F948C1F14FF9200BFE62B /* WiFI.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = WiFI.png; sourceTree = "<group>"; };
-		DABA5C5B2AD7F7EA007A940F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		DAC3E4971E1D20F60012E65F /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		DAC41CEA2136A14D00B1B9C1 /* TCPcommunication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPcommunication.swift; sourceTree = "<group>"; };
 		DAC41CEC2136CDE100B1B9C1 /* Sync_UnsyncTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync_UnsyncTransaction.swift; sourceTree = "<group>"; };
@@ -319,7 +319,7 @@
 				DA71DA6F1CA9078500AD06DD /* Assets.xcassets */,
 				DA71DA711CA9078500AD06DD /* LaunchScreen.storyboard */,
 				DA30D67120FF775B00DDD185 /* Info.plist */,
-				DABA5C5B2AD7F7EA007A940F /* GoogleService-Info.plist */,
+				DA9F31B22BA481760060F2D4 /* GoogleService-Info.plist */,
 				DA71DA6C1CA9078500AD06DD /* FuelSecuer.xcdatamodeld */,
 				DA5BE0371CAA4FCF003155A8 /* OdometerVC.swift */,
 				DA5BE0391CAAB578003155A8 /* Reachability.swift */,
@@ -466,13 +466,13 @@
 		DA71DA5A1CA9078500AD06DD /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1240;
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 1530;
 				ORGANIZATIONNAME = VASP;
 				TargetAttributes = {
 					DA71DA611CA9078500AD06DD = {
 						CreatedOnToolsVersion = 7.2;
-						DevelopmentTeam = LY75MT5XE6;
 						LastSwiftMigration = 0940;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
@@ -549,12 +549,12 @@
 				DA4BAF991CAD3334002A5C63 /* Table-F.png in Resources */,
 				DA71DA701CA9078500AD06DD /* Assets.xcassets in Resources */,
 				DA4BAF9B1CAD3334002A5C63 /* Table-H2.png in Resources */,
+				DA9F31B32BA481760060F2D4 /* GoogleService-Info.plist in Resources */,
 				DA4BAF971CAD3334002A5C63 /* Button-White.png in Resources */,
 				DA71DA6B1CA9078500AD06DD /* Main.storyboard in Resources */,
 				DA4BAF961CAD3334002A5C63 /* Button-Blue.png in Resources */,
 				DA4BAF9A1CAD3334002A5C63 /* Table-H1.png in Resources */,
 				DA62068E1D4235D80008344D /* _refresh.png in Resources */,
-				DABA5C5C2AD7F7EA007A940F /* GoogleService-Info.plist in Resources */,
 				DA9F948B1F14F42E00BFE62B /* checkbox-unchecked.png in Resources */,
 				DAD5CB1A221FFC3900CE163D /* iconfinder_barcode_scanner_172089.png in Resources */,
 			);
@@ -873,6 +873,7 @@
 				ENABLE_ON_DEMAND_RESOURCES = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -889,7 +890,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_PKGINFO_FILE = YES;
 				INFOPLIST_FILE = FuelSecuer/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRIVATE_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/PrivateHeaders";
@@ -941,6 +942,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_ON_DEMAND_RESOURCES = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -951,7 +953,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_PKGINFO_FILE = YES;
 				INFOPLIST_FILE = FuelSecuer/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRIVATE_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/PrivateHeaders";
 				PRODUCT_BUNDLE_IDENTIFIER = com.VASPLLP.FuelSecuer;
@@ -960,6 +962,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "XC:*";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers";
 				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -976,15 +979,18 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = LY75MT5XE6;
-				ENABLE_BITCODE = YES;
+				ENABLE_BITCODE = NO;
 				ENABLE_ON_DEMAND_RESOURCES = YES;
 				INFOPLIST_FILE = FuelSecuer/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FluidSecure;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.18.36;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.18.37;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Trakengg.Fluidsecure;
 				PRODUCT_NAME = FuelSecure;
 				PROVISIONING_PROFILE = "";
@@ -1006,15 +1012,18 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = LY75MT5XE6;
 				ENABLE_BITCODE = NO;
 				ENABLE_ON_DEMAND_RESOURCES = YES;
 				INFOPLIST_FILE = FuelSecuer/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FluidSecure;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.18.36;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.18.37;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Trakengg.Fluidsecure;
 				PRODUCT_NAME = FuelSecure;
 				PROVISIONING_PROFILE = "";
@@ -1036,7 +1045,11 @@
 				DEVELOPMENT_TEAM = 398Q9X5345;
 				INFOPLIST_FILE = FuelSecuerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.VASPLLP.FuelSecuerTests;
 				PRODUCT_NAME = FuelSecure;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1056,7 +1069,11 @@
 				DEVELOPMENT_TEAM = LY75MT5XE6;
 				INFOPLIST_FILE = FuelSecuerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.VASPLLP.FuelSecuerTests;
 				PRODUCT_NAME = FuelSecure;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1075,7 +1092,11 @@
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = FuelSecuerUITests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.VASPLLP.FuelSecuerUITests;
 				PRODUCT_NAME = FuelSecure;
 				PROVISIONING_PROFILE = "";
@@ -1096,7 +1117,11 @@
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = FuelSecuerUITests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.VASPLLP.FuelSecuerUITests;
 				PRODUCT_NAME = FuelSecure;
 				PROVISIONING_PROFILE_SPECIFIER = "";
