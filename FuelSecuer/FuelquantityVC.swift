@@ -1952,8 +1952,13 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                         }
                         else
                         {
+                            self.onFuelingScreen = false
                             let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
                             self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6")
+                            appDel.start()
+                            self.Activity.style = UIActivityIndicatorView.Style.gray;
+                            self.Activity.startAnimating()
+                            self.timerview.invalidate()
                         }
                     }
                 }
@@ -1962,6 +1967,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
             let cancelAction = UIAlertAction(title: NSLocalizedString("NO", comment:""), style: UIAlertAction.Style.cancel) { (submitn) -> Void in
                 self.Cancel_Button_tapped = false
             }
+            onFuelingScreen = false
             alert.addAction(okAction)
             alert.addAction(cancelAction)
             self.present(alert, animated: true, completion: nil)
@@ -5339,18 +5345,27 @@ extension FuelquantityVC: CBCentralManagerDelegate {
                         
                         self.web.sentlog(func_name: "App Not able to Connect BT Link and Subscribed peripheral Connection. Attempt  \(countfailBLEConn)", errorfromserverorlink: "", errorfromapp: "")
                         
-                        self.web.sentlog(func_name: "App Switches BT to UDP...", errorfromserverorlink: "", errorfromapp: "")
+                        
                         
                         let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
                         self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6")
                         
-                        Vehicaldetails.sharedInstance.HubLinkCommunication = "UDP"
-                        DispatchQueue.main.async() {
+//                        if("1.4.12".compare(Vehicaldetails.sharedInstance.CurrentFirmwareVersion, options: .numeric) == .orderedSame ||  "1.4.12".compare(Vehicaldetails.sharedInstance.CurrentFirmwareVersion, options: .numeric) == .orderedAscending)
+//                        {
+//                            
+//                        }
+//                        else
+//                        {
                             
-                            self.performSegue(withIdentifier: "GoUDP", sender: self)
-                        }
-                        appconnecttoUDP = true
-                        
+                            self.web.sentlog(func_name: "App Switches BT to UDP...", errorfromserverorlink: "", errorfromapp: "")
+                            Vehicaldetails.sharedInstance.HubLinkCommunication = "UDP"
+                            DispatchQueue.main.async() {
+                                
+                                self.performSegue(withIdentifier: "GoUDP", sender: self)
+                            }
+                            appconnecttoUDP = true
+                            
+//                        }
                     }
                     
                     else{
@@ -5573,18 +5588,25 @@ extension FuelquantityVC: CBCentralManagerDelegate {
                                 
                                 self.web.sentlog(func_name: "App Not able to Connect BT Link and Subscribed peripheral Connection. Attempt  \(countfailBLEConn)", errorfromserverorlink: "", errorfromapp: "")
                                 
-                                self.web.sentlog(func_name: "App Switches BT to UDP...", errorfromserverorlink: "", errorfromapp: "")
+                                
                                 
                                 let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
                                 self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6")
-                                
-                                Vehicaldetails.sharedInstance.HubLinkCommunication = "UDP"
-                                DispatchQueue.main.async() {
+//                                if("1.4.12".compare(Vehicaldetails.sharedInstance.CurrentFirmwareVersion, options: .numeric) == .orderedSame ||  "1.4.12".compare(Vehicaldetails.sharedInstance.CurrentFirmwareVersion, options: .numeric) == .orderedAscending)
+//                                {
+//                                    
+//                                }
+//                                else
+//                                {
                                     
-                                    self.performSegue(withIdentifier: "GoUDP", sender: self)
-                                }
-                                appconnecttoUDP = true
-                                
+                                    self.web.sentlog(func_name: "App Switches BT to UDP...", errorfromserverorlink: "", errorfromapp: "")
+                                    Vehicaldetails.sharedInstance.HubLinkCommunication = "UDP"
+                                    DispatchQueue.main.async() {
+                                        
+                                        self.performSegue(withIdentifier: "GoUDP", sender: self)
+                                    }
+                                    appconnecttoUDP = true
+//                                }
                             }
                             else{
                                 if(ifSubscribed == true){}

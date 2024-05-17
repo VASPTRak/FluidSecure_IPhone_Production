@@ -85,6 +85,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     var Bluetooth_MacAddress = [String]()
     var Mac_Address = [String]()
     var Communication_Type = [String]()
+//    var CurrentFirmwareVersion = [String]()
     //    var groupAdminCompanyListCompanyID = [String]()
     //    var groupAdminCompanyList = [String]()
     var iterationcountforupgrade = 0
@@ -510,7 +511,6 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         progressviewtext.isHidden = true
         Upgrade.isHidden = true
         
-    
         
         Activity.isHidden = true
         
@@ -657,7 +657,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         //            self.web.sentlog(func_name: "keychain service get \(password) ", errorfromserverorlink: "", errorfromapp: "")
         let preuuid = defaults.string(forKey: "uuid")
         if(preuuid == nil){
-            let password = KeychainService.loadPassword()
+            let password = ""//KeychainService.loadPassword()
             
             if(password == nil || password == "")
             {
@@ -666,8 +666,8 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             }
             else
             {
-                print(password!)//used this paasword (uuid)
-                uuid = password! as String
+                print(password)//used this paasword (uuid)
+                uuid = password as String
             }
         }
         else
@@ -783,13 +783,13 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                     let ScreenNameForDepartment = objUserData.value(forKey: "ScreenNameForDepartment") as! String
                     let TopicNameForFCMFor_IPhone = objUserData.value(forKey: "TopicNameForFCMForIPhone") as! String
                     defaults.set(TopicNameForFCMFor_IPhone, forKey: "TopicNameForFCMForIPhone")
-                    
+                    //
                     Vehicaldetails.sharedInstance.ScreenNameForVehicle = ScreenNameForVehicle
                     Vehicaldetails.sharedInstance.ScreenNameForPersonnel = ScreenNameForPersonnel
                     Vehicaldetails.sharedInstance.ScreenNameForHours = ScreenNameForHours
                     Vehicaldetails.sharedInstance.ScreenNameForOdometer = ScreenNameForOdometer
                     Vehicaldetails.sharedInstance.ScreenNameForDepartment = ScreenNameForDepartment
-                    
+                    //Vehicaldetails.sharedInstance.CurrentFirmwareVersion = CurrentFirmwareVersion
                     IsOdoMeterRequire = objUserData.value(forKey: "IsOdoMeterRequire") as! NSString as String
                     IsLoginRequire = objUserData.value(forKey: "IsLoginRequire") as! NSString as String
                     IsDepartmentRequire = objUserData.value(forKey: "IsDepartmentRequire") as! NSString as String
@@ -944,7 +944,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                         Mac_Address = []
                         Communication_Type = []
                         GetPulserTypeFromLINK = []
-                        
+//                        CurrentFirmwareVersion = []
                         
                         defaults.removeObject(forKey: "SSID")
                         let Json = systemdata.value(forKey: "SSIDDataObj") as! NSArray
@@ -997,7 +997,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                     let FirmwareVersion = JsonRow["FirmwareVersion"] as! NSString as String
                                     let FirmwareFileName = JsonRow["FirmwareFileName"] as! NSString as String
                                     let GetPulser_TypeFromLINK = JsonRow["GetPulserTypeFromLINK"] as! NSString as String
-                                    
+//                                    let Current_FirmwareVersion = JsonRow["CurrentFirmwareVersion"] as! String
                                     
                                     ssid.append(WifiSSId as String)
                                     preSSID.append(PrevWifiSSId as String)
@@ -1023,6 +1023,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                     Firmware_Version.append(FirmwareVersion)
                                     Firmware_FileName.append(FirmwareFileName)
                                     GetPulserTypeFromLINK.append(GetPulser_TypeFromLINK)
+//                                    CurrentFirmwareVersion.append(Current_FirmwareVersion)
                                     
                                     print(Uhosenumber)
                                 }
@@ -1559,7 +1560,21 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                             Vehicaldetails.sharedInstance.HubLinkCommunication = self.Communication_Type[id]
                                             Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce = self.Is_ResetSwitchTimeBounce[id]
                                             
+                                            Vehicaldetails.sharedInstance.OriginalNamesOfLink = self.OriginalNamesOfLink[id] as! NSMutableArray
+                                            Vehicaldetails.sharedInstance.IsLinkFlagged = self.IsLink_Flagged[id]
+                                            Vehicaldetails.sharedInstance.LinkFlaggedMessage = self.LinkFlagged_Message[id]
+                                            Vehicaldetails.sharedInstance.MacAddress = self.Mac_Address[id]
+                                            
+                                            //2592
+                                            Vehicaldetails.sharedInstance.BTMacAddress = self.Bluetooth_MacAddress[id]
+                                            Vehicaldetails.sharedInstance.FilePath = self.File_Path[id]
+                                            Vehicaldetails.sharedInstance.FirmwareVersion = self.Firmware_Version[id]
+                                            Vehicaldetails.sharedInstance.GetPulserTypeFromLINK = self.GetPulserTypeFromLINK[id]
+//                                            Vehicaldetails.sharedInstance.CurrentFirmwareVersion = self.CurrentFirmwareVersion[id]
+                                            
                                             print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced,Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce,self.Is_ResetSwitchTimeBounce[id])
+                                            
+                                            print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced,Vehicaldetails.sharedInstance.prevSSID,Vehicaldetails.sharedInstance.OriginalNamesOfLink,Vehicaldetails.sharedInstance.BTMacAddress,Vehicaldetails.sharedInstance.FilePath,Vehicaldetails.sharedInstance.FirmwareVersion,Vehicaldetails.sharedInstance.PulserTimingAdjust,Vehicaldetails.sharedInstance.GetPulserTypeFromLINK,Vehicaldetails.sharedInstance.CurrentFirmwareVersion)
                                         }
                                     }
                                     print(Vehicaldetails.sharedInstance.IsDefective )
@@ -1922,6 +1937,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             Vehicaldetails.sharedInstance.FilePath = File_Path[0]
             Vehicaldetails.sharedInstance.FirmwareVersion = Firmware_Version[0]
             Vehicaldetails.sharedInstance.GetPulserTypeFromLINK = GetPulserTypeFromLINK[0]
+//            Vehicaldetails.sharedInstance.CurrentFirmwareVersion = CurrentFirmwareVersion[0]
             return ssid[row]
         }
         return ""
@@ -1974,8 +1990,8 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             Vehicaldetails.sharedInstance.FilePath = File_Path[index]
             Vehicaldetails.sharedInstance.FirmwareVersion = Firmware_Version[index]
             Vehicaldetails.sharedInstance.GetPulserTypeFromLINK = GetPulserTypeFromLINK[index]
-            
-            print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced,Vehicaldetails.sharedInstance.prevSSID,Vehicaldetails.sharedInstance.OriginalNamesOfLink,Vehicaldetails.sharedInstance.BTMacAddress,Vehicaldetails.sharedInstance.FilePath,Vehicaldetails.sharedInstance.FirmwareVersion,Vehicaldetails.sharedInstance.PulserTimingAdjust,Vehicaldetails.sharedInstance.GetPulserTypeFromLINK )
+//            Vehicaldetails.sharedInstance.CurrentFirmwareVersion = CurrentFirmwareVersion[index]
+            print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced,Vehicaldetails.sharedInstance.prevSSID,Vehicaldetails.sharedInstance.OriginalNamesOfLink,Vehicaldetails.sharedInstance.BTMacAddress,Vehicaldetails.sharedInstance.FilePath,Vehicaldetails.sharedInstance.FirmwareVersion,Vehicaldetails.sharedInstance.PulserTimingAdjust,Vehicaldetails.sharedInstance.GetPulserTypeFromLINK,Vehicaldetails.sharedInstance.CurrentFirmwareVersion )
             defaults.set(siteid, forKey: "SiteID")
             
             if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")

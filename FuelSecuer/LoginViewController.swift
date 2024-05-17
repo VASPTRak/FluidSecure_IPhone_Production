@@ -68,7 +68,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         
         let preuuid = defaults.string(forKey: "uuid")
         if(preuuid == nil || preuuid == ""){
-            let password = KeychainService.loadPassword()
+            let password = ""//KeychainService.loadPassword()
                        
             if(password == nil || password == "")
             {
@@ -77,8 +77,8 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
             }
             else
             {
-                print(password!)//used this paasword (uuid)
-                uuid = password! as String
+                print(password)//used this paasword (uuid)
+                uuid = password as String
             }
         }
         else

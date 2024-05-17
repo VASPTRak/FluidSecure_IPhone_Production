@@ -5633,7 +5633,7 @@ extension PreauthFuelquantity: CBCentralManagerDelegate {
                                 
                                 self.web.sentlog(func_name: "App Not able to Connect BT Link and Subscribed peripheral Connection. Attempt  \(countfailBLEConn)", errorfromserverorlink: "", errorfromapp: "")
                                 
-                                self.web.sentlog(func_name: "App Switches BT to UDP...", errorfromserverorlink: "", errorfromapp: "")
+//                                self.web.sentlog(func_name: "App Switches BT to UDP...", errorfromserverorlink: "", errorfromapp: "")
                                 
                                 let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
                                 self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6")
@@ -5641,7 +5641,7 @@ extension PreauthFuelquantity: CBCentralManagerDelegate {
                                 Vehicaldetails.sharedInstance.HubLinkCommunication = "UDP"
                                 DispatchQueue.main.async() {
                                     
-                                    self.performSegue(withIdentifier: "GoUDP", sender: self)
+                                    //self.performSegue(withIdentifier: "GoUDP", sender: self)
                                 }
                                 appconnecttoUDP = true
                                 

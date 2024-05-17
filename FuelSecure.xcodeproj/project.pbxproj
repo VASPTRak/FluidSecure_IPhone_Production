@@ -71,6 +71,7 @@
 		DAC4594B2ABDB64900CF2716 /* ConnectBLE.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAC4594A2ABDB64900CF2716 /* ConnectBLE.swift */; };
 		DAD5CB1A221FFC3900CE163D /* iconfinder_barcode_scanner_172089.png in Resources */ = {isa = PBXBuildFile; fileRef = DAD5CB19221FFC3800CE163D /* iconfinder_barcode_scanner_172089.png */; };
 		DAD5CB1C221FFD3300CE163D /* ScanbarcodeviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD5CB1B221FFD3300CE163D /* ScanbarcodeviewController.swift */; };
+		DAD6B2242BDBE2FD0051D394 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = DADABA272BD912CF006AD0E2 /* PrivacyInfo.xcprivacy */; };
 		DAE2E4411F0678C1004A9480 /* HourViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE2E4401F0678C1004A9480 /* HourViewController.swift */; };
 		DAE2E4431F0678EC004A9480 /* DeptViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE2E4421F0678EC004A9480 /* DeptViewController.swift */; };
 		DAE2E4451F067914004A9480 /* PinViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE2E4441F067914004A9480 /* PinViewController.swift */; };
@@ -211,6 +212,7 @@
 		DAC4594A2ABDB64900CF2716 /* ConnectBLE.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectBLE.swift; sourceTree = "<group>"; };
 		DAD5CB19221FFC3800CE163D /* iconfinder_barcode_scanner_172089.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconfinder_barcode_scanner_172089.png; sourceTree = SOURCE_ROOT; };
 		DAD5CB1B221FFD3300CE163D /* ScanbarcodeviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanbarcodeviewController.swift; sourceTree = "<group>"; };
+		DADABA272BD912CF006AD0E2 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		DAE2E4401F0678C1004A9480 /* HourViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HourViewController.swift; sourceTree = "<group>"; };
 		DAE2E4421F0678EC004A9480 /* DeptViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeptViewController.swift; sourceTree = "<group>"; };
 		DAE2E4441F067914004A9480 /* PinViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PinViewController.swift; sourceTree = "<group>"; };
@@ -348,6 +350,7 @@
 				1866576F269C1BCA00F82C15 /* BLECommunication.swift */,
 				1800C29029361C1700EEE7D1 /* Preauth_othervehicle.swift */,
 				DAC4594A2ABDB64900CF2716 /* ConnectBLE.swift */,
+				DADABA272BD912CF006AD0E2 /* PrivacyInfo.xcprivacy */,
 			);
 			name = FuelSecure;
 			path = FuelSecuer;
@@ -556,6 +559,7 @@
 				DA4BAF9A1CAD3334002A5C63 /* Table-H1.png in Resources */,
 				DA62068E1D4235D80008344D /* _refresh.png in Resources */,
 				DA9F948B1F14F42E00BFE62B /* checkbox-unchecked.png in Resources */,
+				DAD6B2242BDBE2FD0051D394 /* PrivacyInfo.xcprivacy in Resources */,
 				DAD5CB1A221FFC3900CE163D /* iconfinder_barcode_scanner_172089.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -979,7 +983,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = LY75MT5XE6;
 				ENABLE_BITCODE = NO;
 				ENABLE_ON_DEMAND_RESOURCES = YES;
@@ -990,7 +994,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.18.37;
+				MARKETING_VERSION = 1.18.38;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Trakengg.Fluidsecure;
 				PRODUCT_NAME = FuelSecure;
 				PROVISIONING_PROFILE = "";
@@ -1012,7 +1016,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = LY75MT5XE6;
 				ENABLE_BITCODE = NO;
 				ENABLE_ON_DEMAND_RESOURCES = YES;
@@ -1023,7 +1027,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.18.37;
+				MARKETING_VERSION = 1.18.38;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Trakengg.Fluidsecure;
 				PRODUCT_NAME = FuelSecure;
 				PROVISIONING_PROFILE = "";

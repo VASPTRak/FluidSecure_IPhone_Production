@@ -202,7 +202,7 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
         
         let preuuid = defaults.string(forKey: "uuid")
         if(preuuid == nil){
-            let password = KeychainService.loadPassword()
+            let password = ""//KeychainService.loadPassword()
                        
             if(password == nil || password == "")
             {
@@ -211,8 +211,8 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
             }
             else
             {
-                print(password!)//used this paasword (uuid)
-                uuid = password! as String
+                print(password)//used this paasword (uuid)
+                uuid = password as String
             }
         }
         else

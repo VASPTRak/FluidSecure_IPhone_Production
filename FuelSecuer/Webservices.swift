@@ -1098,7 +1098,6 @@ class Webservices:NSObject {
         let string = uuid! + ":" + Email! + ":" + "UpdatePulserTypeOfLINK"
         let Base64 = convertStringToBase64(string: string)
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
-        print(defaults)
         let p_type = defaults.string(forKey: "UpdateSwitchTimeBounceForLink")
 
         let dateFormatter = DateFormatter()
@@ -1461,7 +1460,7 @@ class Webservices:NSObject {
                         do {
                             let url = URL(fileURLWithPath: fromPath + "/\(filename)")
                             contents = try Data(contentsOf: url)
-                            //  print(contents)
+                              print(contents)
                             
                         } catch let error as NSError {
                             print ("Error: \(error.domain)")
