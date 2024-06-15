@@ -2007,7 +2007,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                     progressviewtext.text = "Softerware update in progress \n Please wait several seconds....."
                     go.isEnabled = false
                     upgradestarttimer.invalidate()
-                    upgradestarttimer = Timer.scheduledTimer(timeInterval: (Double(2)*60), target: self, selector: #selector(ViewController.Stopupgradetimer), userInfo: nil, repeats: false)
+                    upgradestarttimer = Timer.scheduledTimer(timeInterval: (Double(5)*60), target: self, selector: #selector(ViewController.Stopupgradetimer), userInfo: nil, repeats: false)
                 }
             }
             

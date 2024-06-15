@@ -606,48 +606,53 @@ class TCPCommunication:NSObject,StreamDelegate
         }
     }
     
-//    func closestreams()
-//    {
-//        print("Closing streams.")
+    func closestreams()
+    {
+        print("Closing streams.")
+
+                inStream?.close()
+                
+                inStream?.remove(from: .current, forMode: .default)
+                inStream?.delegate = nil
+                inStream = nil
+        
+                outStream?.close()
+                outStream?.remove(from: .current, forMode: .default)
+                
+                outStream?.delegate = nil
+                
+                outStream = nil
+
+                
 //
-//                inStream?.close()
-//                outStream?.close()
-//                inStream?.remove(from: RunLoop.current, forMode: RunLoop.Mode.default)
-//                outStream?.remove(from: RunLoop.current, forMode: RunLoop.Mode.default)
-//                inStream?.delegate = nil
-//                outStream?.delegate = nil
-//                inStream = nil
-//                outStream = nil
-//
-////
-////            if let inputStr = self.inStream{
-////                            inputStr.close()
-////                inputStr.delegate = nil
-////
-////
-////
-////                inputStr.remove(from: .main, forMode: RunLoop.Mode.default)
-////            }
-////            if let outputStr = self.outStream{
-////                            outputStr.close()
-////                            outputStr.remove(from: .main, forMode: RunLoop.Mode.default)
-////
-////                outputStr.delegate = nil
-////
-////
-////            }
-////            inStream?.remove(from: .init(), forMode: RunLoop.Mode.default)
-////            outStream?.remove(from: .init(), forMode: RunLoop.Mode.default)
-////
-////            self.inStream?.close()
-////            self.outStream?.close()
-////        inStream?.delegate = nil
-////        outStream?.delegate = nil
-////        inStream = nil
-////        outStream = nil
+//            if let inputStr = self.inStream{
+//                            inputStr.close()
+//                inputStr.delegate = nil
 //
 //
-//        }
+//
+//                inputStr.remove(from: .main, forMode: RunLoop.Mode.default)
+//            }
+//            if let outputStr = self.outStream{
+//                            outputStr.close()
+//                            outputStr.remove(from: .main, forMode: RunLoop.Mode.default)
+//
+//                outputStr.delegate = nil
+//
+//
+//            }
+//            inStream?.remove(from: .init(), forMode: RunLoop.Mode.default)
+//            outStream?.remove(from: .init(), forMode: RunLoop.Mode.default)
+//
+//            self.inStream?.close()
+//            self.outStream?.close()
+//        inStream?.delegate = nil
+//        outStream?.delegate = nil
+//        inStream = nil
+//        outStream = nil
+
+
+        }
     
     
 //    func setdefault()
@@ -663,6 +668,17 @@ class TCPCommunication:NSObject,StreamDelegate
            // self.web.sentlog(func_name: "Stream", errorfromserverorlink:" " , errorfromapp: "Connction lost with the lin")
         }
         else{
+            
+            var readStream: Unmanaged<CFReadStream>?
+                   var writeStream: Unmanaged<CFWriteStream>?
+                   
+                  
+                   
+            inStream = readStream?.takeRetainedValue()
+            outStream = writeStream?.takeRetainedValue()
+                 
+                    
+            
         print("NetworkEnable")
          //buffer = [UInt8](repeating: 0, count: 4096)
         Stream.getStreamsToHost(withName: addr, port: port, inputStream: &inStream, outputStream: &outStream)
@@ -670,8 +686,8 @@ class TCPCommunication:NSObject,StreamDelegate
         inStream?.delegate = self
         outStream?.delegate = self
         
-            inStream?.schedule(in: .current, forMode: .common)//RunLoopMode.defaultRunLoopMode
-            outStream?.schedule(in: .current, forMode: .common)//RunLoopMode.defaultRunLoopMode
+            inStream?.schedule(in: .current, forMode: .default)//RunLoopMode.defaultRunLoopMode
+            outStream?.schedule(in: .current, forMode: .default)//RunLoopMode.defaultRunLoopMode
             
 //        inStream?.schedule(in: RunLoop.current, forMode: RunLoop.Mode.default)//RunLoopMode.defaultRunLoopMode
 //        outStream?.schedule(in: RunLoop.current, forMode: RunLoop.Mode.default)//RunLoopMode.defaultRunLoopMode
@@ -709,11 +725,12 @@ class TCPCommunication:NSObject,StreamDelegate
 
                         }
             print("EndEncountered")
-            inStream?.close()
-            inStream?.remove(from: RunLoop.current, forMode: RunLoop.Mode.default)//RunLoopMode.defaultRunLoopMode
-            outStream?.close()
-            print("Stop outStream currentRunLoop")
-            outStream?.remove(from: RunLoop.current, forMode: RunLoop.Mode.default)
+            closestreams()
+//            inStream?.close()
+//            inStream?.remove(from: RunLoop.current, forMode: RunLoop.Mode.default)//RunLoopMode.defaultRunLoopMode
+//            outStream?.close()
+//            print("Stop outStream currentRunLoop")
+//            outStream?.remove(from: RunLoop.current, forMode: RunLoop.Mode.default)
 //            inStream?.delegate = nil
 //            outStream?.delegate = nil
 //            inStream = nil
@@ -721,11 +738,11 @@ class TCPCommunication:NSObject,StreamDelegate
           
         case Stream.Event.errorOccurred:
             print("ErrorOccurred")
-//            closestreams()
-            inStream?.close()
-            inStream?.remove(from: RunLoop.current, forMode: RunLoop.Mode.default)
-            outStream?.close()
-            outStream?.remove(from: RunLoop.current, forMode: RunLoop.Mode.default)
+            closestreams()
+//            inStream?.close()
+//            inStream?.remove(from: RunLoop.current, forMode: RunLoop.Mode.default)
+//            outStream?.close()
+//            outStream?.remove(from: RunLoop.current, forMode: RunLoop.Mode.default)
             print("Close")
 //            inStream?.delegate = nil
 //            outStream?.delegate = nil
@@ -748,6 +765,8 @@ class TCPCommunication:NSObject,StreamDelegate
                 print(bufferStr!)
             }
             break
+            
+        
             
         case Stream.Event.hasSpaceAvailable:
             if(aStream === outStream)

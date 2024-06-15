@@ -8,96 +8,193 @@
 
 import UIKit
 import AVFoundation
+import Vision
 
 
-class ScanbarcodeviewController: UIViewController,AVCaptureMetadataOutputObjectsDelegate {
+class ScanbarcodeviewController: UIViewController,AVCaptureMetadataOutputObjectsDelegate, AVCapturePhotoCaptureDelegate {
     var captureSession: AVCaptureSession!
     private var captureDevice: AVCaptureDevice?
+    var captureOutput: AVCapturePhotoOutput?
+    var backCamera: AVCaptureDevice?
     var previewLayer: AVCaptureVideoPreviewLayer!
+    var shutterButton: UIButton!
+    
+    lazy var detectBarcodeRequest: VNDetectBarcodesRequest = {
+        return VNDetectBarcodesRequest(completionHandler: { (request, error) in
+            guard error == nil else {
+                self.showAlert(message: error!.localizedDescription)
+                return
+            }
 
+            self.processClassification(for: request)
+        })
+    }()
 //    var cf = Commanfunction()
 
     @IBOutlet var Message: UILabel!
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        checkPermissions()
+        setupCameraLiveView()
+//        delay(3){
+//            self.captureImage()
+//        }
+        addShutterButton()
+        
         view.backgroundColor = UIColor.black
+        /* starting capture session */
+           
+        
+    }
+    
+    private func setupCameraLiveView() {
+        // Set up the camera session.
         captureSession = AVCaptureSession()
-        //videoPermission = VideoPermission()
-        
-        
+        captureSession.sessionPreset = .hd1280x720
 
-        let videoCaptureDevice = AVCaptureDevice.default(for: AVMediaType.video)
         
-        let videoInput: AVCaptureDeviceInput
+        // Set up the video device.
+        let deviceDiscoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [AVCaptureDevice.DeviceType.builtInWideAngleCamera],
+                                                                      mediaType: AVMediaType.video,
+                                                                      position: .back)
+        let devices = deviceDiscoverySession.devices
+        for device in devices {
+            if device.position == AVCaptureDevice.Position.back {
+                backCamera = device
+            }
+        }
 
+        // Make sure the actually is a back camera on this particular iPhone.
+        guard let backCamera = backCamera else {
+            showAlert(withTitle: "Camera error", message: "There seems to be no camera on your device.")
+            return
+        }
+
+        // Set up the input and output stream.
         do {
-            videoInput = try AVCaptureDeviceInput(device: videoCaptureDevice!)
-            try videoCaptureDevice?.lockForConfiguration()
-            captureSession.beginConfiguration()
-            // autofocus settings and focus on middle point
-            videoCaptureDevice?.autoFocusRangeRestriction = .near
-            videoCaptureDevice?.focusMode = .continuousAutoFocus
-            videoCaptureDevice?.exposureMode = .continuousAutoExposure
-            
-            if let currentInput = captureSession.inputs.filter({$0 is AVCaptureDeviceInput}).first {
-                captureSession.removeInput(currentInput)
-            }
-            // Set the input device on the capture session.
-            
-            if videoCaptureDevice?.supportsSessionPreset(.hd1920x1080) == true {
-                captureSession.sessionPreset = .hd1920x1080
-            } else if videoCaptureDevice!.supportsSessionPreset(.high) == true {
-                captureSession.sessionPreset = .high
-            }
-            
-            
-//            captureSession = videoCaptureDevice
-            
-            
+            let captureDeviceInput = try AVCaptureDeviceInput(device: backCamera)
+            captureSession.addInput(captureDeviceInput)
         } catch {
+            showAlert(withTitle: "Camera error", message: "Your camera can't be used as an input device.")
             return
         }
 
-        if (captureSession.canAddInput(videoInput)) {
-            captureSession.addInput(videoInput)
-            captureSession.usesApplicationAudioSession = false
-            captureSession.commitConfiguration()
-            if #available(iOS 10.0, *) {
-                captureSession.automaticallyConfiguresCaptureDeviceForWideColor = true
-            } else {
-                // Fallback on earlier versions
-            }
-            if videoCaptureDevice?.isLowLightBoostSupported == true {
-                videoCaptureDevice?.automaticallyEnablesLowLightBoostWhenAvailable = true
-            }
-            videoCaptureDevice?.unlockForConfiguration()
-            captureDevice = videoCaptureDevice
-        } else {
-            failed();
-            return;
-        }
+        // Initialize the capture output and add it to the session.
+        captureOutput = AVCapturePhotoOutput()
+        captureOutput!.setPreparedPhotoSettingsArray([AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])], completionHandler: nil)
+        captureSession.addOutput(captureOutput!)
 
-        let metadataOutput = AVCaptureMetadataOutput()
+        // Add a preview layer.
+        self.previewLayer = AVCaptureVideoPreviewLayer(session: self.captureSession)
+        self.previewLayer!.videoGravity = .resizeAspectFill
+        self.previewLayer!.connection?.videoOrientation = .portrait
+        self.previewLayer?.frame = self.view.frame
+        self.view.layer.insertSublayer(self.previewLayer!, at: 0)
 
-        if (captureSession.canAddOutput(metadataOutput)) {
-            captureSession.addOutput(metadataOutput)
-
-            metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
-            
-            metadataOutput.metadataObjectTypes = [AVMetadataObject.ObjectType.ean8, AVMetadataObject.ObjectType.ean13, AVMetadataObject.ObjectType.pdf417, AVMetadataObject.ObjectType.aztec, AVMetadataObject.ObjectType.code128, AVMetadataObject.ObjectType.code39, AVMetadataObject.ObjectType.code39Mod43, AVMetadataObject.ObjectType.dataMatrix, AVMetadataObject.ObjectType.interleaved2of5,AVMetadataObject.ObjectType.face, AVMetadataObject.ObjectType.itf14, AVMetadataObject.ObjectType.code93 ]//,AVMetadataObject.ObjectType.qr ]
-        } else {
-            failed()
-            return
-        }
-
-        previewLayer = AVCaptureVideoPreviewLayer(session: captureSession);
-        previewLayer.frame = view.layer.bounds;
-        previewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill;
-        view.layer.addSublayer(previewLayer);
-
-        captureSession.startRunning();
+       
+        DispatchQueue.global(qos: .background).async {
+        
+                        self.captureSession.startRunning()
+                    }
+        // Start the capture session.
+//        captureSession.startRunning()
+    }
+    
+    private func showInfo(for payload: String) {
+        found(code: payload);
     }
 
+    
+    
+    func processClassification(for request: VNRequest) {
+        DispatchQueue.main.async {
+            if let bestResult = request.results?.first as? VNBarcodeObservation,
+                let payload = bestResult.payloadStringValue {
+                self.showInfo(for: payload)
+            } else {
+                self.showAlert(
+                               message: "Cannot extract barcode information from data.")
+            }
+        }
+    }
+    // MARK: - Helper functions
+    @objc private func openSettings() {
+        let settingsURL = URL(string: UIApplication.openSettingsURLString)!
+        UIApplication.shared.open(settingsURL) { _ in
+            self.checkPermissions()
+        }
+    }
+    
+    // MARK: - User interface
+    private func displayNotAuthorizedUI() {
+        let label = UILabel(frame: CGRect(x: 0, y: 0, width: view.frame.width * 0.8, height: 20))
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.lineBreakMode = .byWordWrapping
+        label.text = "Please grant access to the camera for scanning barcodes."
+        label.sizeToFit()
+
+        let button = UIButton(frame: CGRect(x: 0, y: label.frame.height + 8, width: view.frame.width * 0.8, height: 35))
+        button.layer.cornerRadius = 10
+        button.setTitle("Grant Access", for: .normal)
+        button.backgroundColor = UIColor(displayP3Red: 4.0/255.0, green: 92.0/255.0, blue: 198.0/255.0, alpha: 1)
+        button.setTitleColor(.white, for: .normal)
+        button.addTarget(self, action: #selector(openSettings), for: .touchUpInside)
+
+        let containerView = UIView(frame: CGRect(
+            x: view.frame.width * 0.1,
+            y: (view.frame.height - label.frame.height + 8 + button.frame.height) / 2,
+            width: view.frame.width * 0.8,
+            height: label.frame.height + 8 + button.frame.height
+            )
+        )
+        containerView.addSubview(label)
+        containerView.addSubview(button)
+        view.addSubview(containerView)
+    }
+
+    private func addShutterButton() {
+        let width: CGFloat = 75
+        let height = width
+        shutterButton = UIButton(frame: CGRect(x: (view.frame.width - width) / 2,
+                                               y: view.frame.height - height - 32,
+                                               width: width,
+                                               height: height
+            )
+        )
+        shutterButton.layer.cornerRadius = width / 2
+        shutterButton.backgroundColor = UIColor.init(displayP3Red: 1, green: 1, blue: 1, alpha: 0.8)
+        shutterButton.showsTouchWhenHighlighted = true
+        shutterButton.addTarget(self, action: #selector(captureImage), for: .touchUpInside)
+        view.addSubview(shutterButton)
+    }
+    
+    // MARK: - Camera
+    private func checkPermissions() {
+        let mediaType = AVMediaType.video
+        let status = AVCaptureDevice.authorizationStatus(for: mediaType)
+
+        switch status {
+        case .denied, .restricted:
+            displayNotAuthorizedUI()
+        case.notDetermined:
+            // Prompt the user for access.
+            AVCaptureDevice.requestAccess(for: mediaType) { granted in
+                guard granted != true else { return }
+
+                // The UI must be updated on the main thread.
+                DispatchQueue.main.async {
+                    self.displayNotAuthorizedUI()
+                }
+            }
+
+        default: break
+        }
+    }
+    
+    
+    
     func failed() {
         let ac = UIAlertController(title: "Scanning not supported", message: "Your device does not support scanning a code from an item. Please use a device with a camera.", preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "OK", style: .default))
@@ -109,7 +206,12 @@ class ScanbarcodeviewController: UIViewController,AVCaptureMetadataOutputObjects
         super.viewWillAppear(animated)
 
         if (captureSession?.isRunning == false) {
-            captureSession.startRunning();
+           
+            /* starting capture session */
+                DispatchQueue.global(qos: .background).async {
+                    self.captureSession.startRunning()
+                }
+            // captureSession.startRunning();
         }
     }
 
@@ -117,12 +219,26 @@ class ScanbarcodeviewController: UIViewController,AVCaptureMetadataOutputObjects
         super.viewWillDisappear(animated)
 
         if (captureSession?.isRunning == true) {
-            captureSession.stopRunning();
+            /* starting capture session */
+                DispatchQueue.global(qos: .background).async {
+                    self.captureSession.stopRunning()
+                }
+            //captureSession.stopRunning();
         }
     }
 
+    private func showAlert(withTitle title: String, message: String) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alertController, animated: true)
+    }
+    
     func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
-        captureSession.stopRunning()
+        /* starting capture session */
+            DispatchQueue.global(qos: .background).async {
+                self.captureSession.stopRunning()
+            }
+        //captureSession.stopRunning()
 
         if let metadataObject = metadataObjects.first {
             let readableObject = metadataObject as! AVMetadataMachineReadableCodeObject;
@@ -133,6 +249,34 @@ class ScanbarcodeviewController: UIViewController,AVCaptureMetadataOutputObjects
         }
 
        //dismiss(animated: true)
+    }
+    
+    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+        if let imageData = photo.fileDataRepresentation(),
+            let image = UIImage(data: imageData) {
+
+            // Convert image to CIImage.
+            guard let ciImage = CIImage(image: image) else {
+                fatalError("Unable to create \(CIImage.self) from \(image).")
+            }
+
+            // Perform the classification request on a background thread.
+            DispatchQueue.global(qos: .userInitiated).async {
+                let handler = VNImageRequestHandler(ciImage: ciImage, orientation: CGImagePropertyOrientation.up, options: [:])
+
+                do {
+                    try handler.perform([self.detectBarcodeRequest])
+                } catch {
+                    self.showAlert(withTitle: "Error Decoding Barcode", message: error.localizedDescription)
+                }
+            }
+        }
+    }
+    
+    @objc func captureImage() {
+        let settings = AVCapturePhotoSettings()
+        captureOutput?.capturePhoto(with: settings, delegate: self)
+
     }
     
     func found(code: String) {
