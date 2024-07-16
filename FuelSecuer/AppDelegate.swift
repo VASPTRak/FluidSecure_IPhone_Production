@@ -25,7 +25,8 @@ class AppDelegate: UIResponder, MessagingDelegate, UIApplicationDelegate, UNUser
    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         //2443
-        cf.checkVersion()
+        
+       
         FirebaseApp.configure()
         Messaging.messaging().delegate = self
         if #available(iOS 10.0, *) {
@@ -46,9 +47,11 @@ class AppDelegate: UIResponder, MessagingDelegate, UIApplicationDelegate, UNUser
         application.registerForRemoteNotifications()
         registerForPushNotifications()
    
-        UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
+//        UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
+       
 //        UIApplication.shared.setMinimumBackgroundFetchInterval(100)
-        registerBackgroundTasks()
+//        registerBackgroundTasks()
+        
         
         reachability = Reachability.init()
        
@@ -132,30 +135,33 @@ class AppDelegate: UIResponder, MessagingDelegate, UIApplicationDelegate, UNUser
 //            print("some problem in assigning root VC")
 //        }
        
-        
-
-        let TopicNameForFCMForIPhone = defaults.string(forKey: "TopicNameForFCMForIPhone")
-        //print(TopicNameForFCMForIPhone)
-        if(TopicNameForFCMForIPhone == "" || TopicNameForFCMForIPhone == nil){
-            Messaging.messaging().subscribe(toTopic:"FluidSecureAPPNotifications_Prod_IPhone")
-           print( "Subscribed to FluidSecureAPPNotifications_IPhone topic")
+        DispatchQueue.global().async {
+            self.cf.checkVersion()
+            self.registerBackgroundTasks()
+            
+            
+            let TopicNameForFCMForIPhone = self.defaults.string(forKey: "TopicNameForFCMForIPhone")
+            //print(TopicNameForFCMForIPhone)
+            if(TopicNameForFCMForIPhone == "" || TopicNameForFCMForIPhone == nil){
+                Messaging.messaging().subscribe(toTopic:"FluidSecureAPPNotifications_Prod_IPhone")
+                print( "Subscribed to FluidSecureAPPNotifications_IPhone topic")
+            }
+            else
+            {
+                print(TopicNameForFCMForIPhone!)
+                Messaging.messaging().subscribe(toTopic:"\(TopicNameForFCMForIPhone!)")
+                print("Subscribed to \(String(describing: TopicNameForFCMForIPhone)) topic")
+            }
+            
+            Messaging.messaging().token { token, error in
+                if let error = error {
+                    print("Error fetching FCM registration token: \(error)")
+                } else if let token = token {
+                    print("FCM registration token: \(token)")
+                    
+                }
+            }
         }
-        else
-        {
-            print(TopicNameForFCMForIPhone!)
-            Messaging.messaging().subscribe(toTopic:"\(TopicNameForFCMForIPhone!)")
-            print("Subscribed to \(String(describing: TopicNameForFCMForIPhone)) topic")
-        }
-        
-        Messaging.messaging().token { token, error in
-          if let error = error {
-            print("Error fetching FCM registration token: \(error)")
-          } else if let token = token {
-            print("FCM registration token: \(token)")
-
-          }
-        }
-
         return true
     }
     
@@ -310,6 +316,7 @@ class AppDelegate: UIResponder, MessagingDelegate, UIApplicationDelegate, UNUser
         }
        }
    
+    
    
     @available(iOS 13.0, *)
     func handleAppRefresh(task: BGProcessingTask) {

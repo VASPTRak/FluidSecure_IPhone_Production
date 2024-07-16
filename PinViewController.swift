@@ -303,7 +303,7 @@ class PinViewController: UIViewController
         
         // Action.
         let action =  UIAlertAction(title: NSLocalizedString("REGISTER", comment:""), style: UIAlertAction.Style.default) { action in //self.//
-            
+            self.web.sentlog(func_name: "Mobile is not registered in the system App Goes to resgistration screen ", errorfromserverorlink: "", errorfromapp: "")
             self.cf.delay(1){
                 let appDel = UIApplication.shared.delegate! as! AppDelegate
                 // Call a method on the CustomController property of the AppDelegate

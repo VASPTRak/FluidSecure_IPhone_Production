@@ -1339,12 +1339,12 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
             
             //USER IS NOT REGISTER TO SYSTEM
             else if(ResponseText == "New Registration") {
-                
-                let appDel = UIApplication.shared.delegate! as! AppDelegate
-                defaults.set(0, forKey: "Register")
-                // Call a method on the CustomController property of the AppDelegate
-                self.web.sentlog(func_name: "Preauth", errorfromserverorlink: "", errorfromapp: "")
-                appDel.preauthstart()
+//                self.web.sentlog(func_name: "Preauth Mobile is not registered in the system App Goes to resgistration screen ", errorfromserverorlink: "", errorfromapp: "")
+//                let appDel = UIApplication.shared.delegate! as! AppDelegate
+//                defaults.set(0, forKey: "Register")
+//                // Call a method on the CustomController property of the AppDelegate
+//                self.web.sentlog(func_name: "Preauth", errorfromserverorlink: "", errorfromapp: "")
+//                appDel.preauthstart()
             }
             
             else if(Message == "fail") {
@@ -1358,7 +1358,7 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                 warningLable.text = NSLocalizedString("Regisration", comment:"") + defaults.string(forKey: "address")! + NSLocalizedString("registration1", comment:"")
                 //"Your Registration request is not approved yet. It is marked Inactive in the Company Software. Please contact your company’s administrator."
             } else if(ResponseText == "New Registration") {
-                performSegue(withIdentifier: "Register", sender: self)
+//                performSegue(withIdentifier: "Register", sender: self)
             }
         }
         }

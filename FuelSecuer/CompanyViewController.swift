@@ -757,7 +757,7 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
                        else if(Message == "fail") {
 
                            if(ResponseText == "New Registration")
-                           {
+                           {self.web.sentlog(func_name: "New Registration App Goes to resgistration screen ", errorfromserverorlink: "", errorfromapp: "")
                                let appDel = UIApplication.shared.delegate! as! AppDelegate
                                // Call a method on the CustomController property of the AppDelegate
                                defaults.set(0, forKey: "Register")

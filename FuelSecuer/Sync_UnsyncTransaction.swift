@@ -93,7 +93,7 @@ class Sync_Unsynctransactions : NSObject
                     self.defaults.set(nil,forKey: "InterruptedTransactionFlag")
                     self.defaults.set(0, forKey: "reinstatingtransaction")
 //                    self.cf.DeleteReportTextFile(fileName: filename, writeText: "")
-                    self.web.sentlog(func_name: "Complete Transaction send to server", errorfromserverorlink: " Response from Server $$ \(jsonstring)!!", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                    self.web.sentlog(func_name: "Complete Transaction send to server", errorfromserverorlink: " Response from Server $$ \(self.ResponceMessageUpload),\(ResponceText),\(jsonstring)!!", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                     if(siteName == "TransactionComplete"){
                         
                       //  self.Send10trans()
@@ -587,7 +587,7 @@ class Sync_Unsynctransactions : NSObject
                     if(ResponceText == "TransactionId not found."){
                        
                     }
-                     self.cf.DeleteReportTextFile(fileName: filename, writeText: "")
+                    // self.cf.DeleteReportTextFile(fileName: filename, writeText: "")
                 }
                 if(self.ResponceMessageUpload == "success"){
                     self.defaults.set(nil, forKey: "LastCount")
@@ -596,7 +596,7 @@ class Sync_Unsynctransactions : NSObject
                     self.defaults.set(nil,forKey: "InterruptedTransactionFlag")
                     
                     self.cf.DeleteReportTextFile(fileName: filename, writeText: "")
-                    self.web.sentlog(func_name: "Complete Transaction send to server", errorfromserverorlink: " Response from Server $$ \(jsonstring)!!", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                    self.web.sentlog(func_name: "Complete Transaction send to server", errorfromserverorlink: " Response from Server $$ \(self.ResponceMessageUpload),\(ResponceText),\(jsonstring)!!", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                     if(siteName == "TransactionComplete"){
                         
                       //  self.Send10trans()

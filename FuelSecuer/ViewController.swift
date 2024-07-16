@@ -85,7 +85,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     var Bluetooth_MacAddress = [String]()
     var Mac_Address = [String]()
     var Communication_Type = [String]()
-//    var CurrentFirmwareVersion = [String]()
+    var CurrentFirmwareVersion = [String]()
     //    var groupAdminCompanyListCompanyID = [String]()
     //    var groupAdminCompanyList = [String]()
     var iterationcountforupgrade = 0
@@ -944,7 +944,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                         Mac_Address = []
                         Communication_Type = []
                         GetPulserTypeFromLINK = []
-//                        CurrentFirmwareVersion = []
+                        CurrentFirmwareVersion = []
                         
                         defaults.removeObject(forKey: "SSID")
                         let Json = systemdata.value(forKey: "SSIDDataObj") as! NSArray
@@ -997,7 +997,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                     let FirmwareVersion = JsonRow["FirmwareVersion"] as! NSString as String
                                     let FirmwareFileName = JsonRow["FirmwareFileName"] as! NSString as String
                                     let GetPulser_TypeFromLINK = JsonRow["GetPulserTypeFromLINK"] as! NSString as String
-//                                    let Current_FirmwareVersion = JsonRow["CurrentFirmwareVersion"] as! String
+                                    let Current_FirmwareVersion = JsonRow["CurrentFirmwareVersion"] as! String
                                     
                                     ssid.append(WifiSSId as String)
                                     preSSID.append(PrevWifiSSId as String)
@@ -1023,7 +1023,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                     Firmware_Version.append(FirmwareVersion)
                                     Firmware_FileName.append(FirmwareFileName)
                                     GetPulserTypeFromLINK.append(GetPulser_TypeFromLINK)
-//                                    CurrentFirmwareVersion.append(Current_FirmwareVersion)
+                                    CurrentFirmwareVersion.append(Current_FirmwareVersion)
                                     
                                     print(Uhosenumber)
                                 }
@@ -1225,6 +1225,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                     
                     if(ResponseText == "New Registration")
                     {
+                        self.web.sentlog(func_name: "New Registration App Goes to resgistration screen ", errorfromserverorlink: "", errorfromapp: "")
                         if(IsGobuttontapped == true) //2286
                         {
                             self.registerAlert(message: "Your device had been deactivated by your Manager. Please press register if you would like to have it reactivated")
@@ -1570,7 +1571,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                             Vehicaldetails.sharedInstance.FilePath = self.File_Path[id]
                                             Vehicaldetails.sharedInstance.FirmwareVersion = self.Firmware_Version[id]
                                             Vehicaldetails.sharedInstance.GetPulserTypeFromLINK = self.GetPulserTypeFromLINK[id]
-//                                            Vehicaldetails.sharedInstance.CurrentFirmwareVersion = self.CurrentFirmwareVersion[id]
+                                            Vehicaldetails.sharedInstance.CurrentFirmwareVersion = self.CurrentFirmwareVersion[id]
                                             
                                             print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced,Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce,self.Is_ResetSwitchTimeBounce[id])
                                             
@@ -1937,7 +1938,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             Vehicaldetails.sharedInstance.FilePath = File_Path[0]
             Vehicaldetails.sharedInstance.FirmwareVersion = Firmware_Version[0]
             Vehicaldetails.sharedInstance.GetPulserTypeFromLINK = GetPulserTypeFromLINK[0]
-//            Vehicaldetails.sharedInstance.CurrentFirmwareVersion = CurrentFirmwareVersion[0]
+            Vehicaldetails.sharedInstance.CurrentFirmwareVersion = CurrentFirmwareVersion[0]
             return ssid[row]
         }
         return ""
@@ -1990,7 +1991,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             Vehicaldetails.sharedInstance.FilePath = File_Path[index]
             Vehicaldetails.sharedInstance.FirmwareVersion = Firmware_Version[index]
             Vehicaldetails.sharedInstance.GetPulserTypeFromLINK = GetPulserTypeFromLINK[index]
-//            Vehicaldetails.sharedInstance.CurrentFirmwareVersion = CurrentFirmwareVersion[index]
+            Vehicaldetails.sharedInstance.CurrentFirmwareVersion = CurrentFirmwareVersion[index]
             print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced,Vehicaldetails.sharedInstance.prevSSID,Vehicaldetails.sharedInstance.OriginalNamesOfLink,Vehicaldetails.sharedInstance.BTMacAddress,Vehicaldetails.sharedInstance.FilePath,Vehicaldetails.sharedInstance.FirmwareVersion,Vehicaldetails.sharedInstance.PulserTimingAdjust,Vehicaldetails.sharedInstance.GetPulserTypeFromLINK,Vehicaldetails.sharedInstance.CurrentFirmwareVersion )
             defaults.set(siteid, forKey: "SiteID")
             
@@ -2124,7 +2125,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         
         // Action.
         let action =  UIAlertAction(title: NSLocalizedString("REGISTER", comment:""), style: UIAlertAction.Style.default) { action in //self.//
-            
+            self.web.sentlog(func_name: "Mobile is not registered in the system App Goes to resgistration screen ", errorfromserverorlink: "", errorfromapp: "")
             self.cf.delay(1){
                 let appDel = UIApplication.shared.delegate! as! AppDelegate
                 // Call a method on the CustomController property of the AppDelegate

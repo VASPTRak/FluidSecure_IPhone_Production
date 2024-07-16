@@ -178,8 +178,12 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
 
                 print(reply)
                 if(reply == "-1"){
+                    activityindicator.isHidden = true
+                    activityindicator.stopAnimating()
+                    registerButton.isEnabled = true
                     show_Alert(message: NSLocalizedString("NoInternet", comment:"") )
                     self.web.sentlog(func_name: "On Registration page No internet.", errorfromserverorlink: "", errorfromapp: "")
+                   
                 }//"Internet connection is not available.\(error)")}
                 else {
                     let data1:NSData = reply.data(using: String.Encoding.utf8)! as NSData
@@ -222,6 +226,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                     if(Message == "success") {
                         self.web.sentlog(func_name: "On Registration page register successful UUID \(uuid).,Brand \(brandname),Name \(firstNameTextField.text!),Email \(mobileNoTextField.text!), Phone \(emailTextField.text!)", errorfromserverorlink: "", errorfromapp: "")
                         showAlert(message: "\(ResponseText)" )
+                    
                         defaults.set(0, forKey: "Login")
                         defaults.set(1, forKey: "Register")
                         if(currentlocation == nil)
@@ -262,6 +267,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                     {
                         activityindicator.isHidden = true
                         activityindicator.stopAnimating()
+                        registerButton.isEnabled = true
                 showAlert(message: NSLocalizedString("Checkinternet", comment:"") )//"Please check your check your internet connection or Please contact your admin.")
             }
         }
@@ -298,10 +304,12 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
 //            }
 //        }
 //        else if(checkedstatus == false){
+        registerButton.isEnabled = false
         if(firstNameTextField.text == "" || mobileNoTextField.text == "" ||  emailTextField.text == "" || Company_Name.text == "") {
                 showAlert(message: NSLocalizedString("SelectallFields", comment:"") )//"Please Select All Fields.")
                 activityindicator.stopAnimating()
                 activityindicator.isHidden = true
+            registerButton.isEnabled = true
 
             }
             else
@@ -337,6 +345,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                             showAlert(message: NSLocalizedString("ValidPhone", comment:"") )//"Please enter valid Phone number.")
                             activityindicator.stopAnimating()
                             activityindicator.isHidden = true
+                            registerButton.isEnabled = true
                         }
 //                    }
                 }
@@ -344,6 +353,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                     showAlert(message: NSLocalizedString("checkEmail", comment:"") )//"please enter valid email.")
                     activityindicator.stopAnimating()
                     activityindicator.isHidden = true
+                    registerButton.isEnabled = true
                 }
             }
         //}

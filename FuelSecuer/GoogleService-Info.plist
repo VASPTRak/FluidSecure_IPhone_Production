@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>553973280607-u4kp010jsqrhd3sbs25r6qcefhrr37us.apps.googleusercontent.com</string>
+	<string>553973280607-cdr37set5qs6co0i0a8sqe0flfhirgee.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.553973280607-u4kp010jsqrhd3sbs25r6qcefhrr37us</string>
+	<string>com.googleusercontent.apps.553973280607-cdr37set5qs6co0i0a8sqe0flfhirgee</string>
 	<key>API_KEY</key>
 	<string>AIzaSyAqi_8T8m2et_8lI79IZmep16YTAHQMzRg</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.VASPLLP.FuelSecureTest</string>
+	<string>com.Trakengg.Fluidsecure</string>
 	<key>PROJECT_ID</key>
 	<string>fluid-fcdec</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:553973280607:ios:b8ff5ecfdb859bdeb510ea</string>
+	<string>1:553973280607:ios:b6fe7ef66ab61d18b510ea</string>
 </dict>
 </plist>

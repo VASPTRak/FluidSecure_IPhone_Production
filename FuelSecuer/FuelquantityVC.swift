@@ -1261,6 +1261,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                 self.disconnectFromDevice()
             }
         }
+        onFuelingScreen = false
 //        self.unsync.unsyncTransaction()
 //        unsync.unsyncP_typestatus()
     }
@@ -3092,6 +3093,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                         self.Warning.isHidden = true
                     }
                     self.cf.delay(10){
+                        if(self.onFuelingScreen == true){
                         //                        if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
                         //                        {
                         //                            if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
@@ -3138,6 +3140,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                         self.waitactivity.stopAnimating()
                         self.UsageInfoview.isHidden = false
                         self.Warning.isHidden = true
+                    }
                     }
                 }
                 else
@@ -5070,6 +5073,8 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     
 }
 
+
+
 // MARK: - Central Manager delegate
 
 extension FuelquantityVC: CBCentralManagerDelegate {
@@ -5350,12 +5355,12 @@ extension FuelquantityVC: CBCentralManagerDelegate {
                         let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
                         self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6")
                         
-//                        if("1.4.12".compare(Vehicaldetails.sharedInstance.CurrentFirmwareVersion, options: .numeric) == .orderedSame ||  "1.4.12".compare(Vehicaldetails.sharedInstance.CurrentFirmwareVersion, options: .numeric) == .orderedAscending)
-//                        {
-//                            
-//                        }
-//                        else
-//                        {
+                        if("1.4.12".compare(Vehicaldetails.sharedInstance.CurrentFirmwareVersion, options: .numeric) == .orderedSame ||  "1.4.12".compare(Vehicaldetails.sharedInstance.CurrentFirmwareVersion, options: .numeric) == .orderedAscending)
+                        {
+                            Alert(message: "We are unable to establish connection, please call into Support.")
+                        }
+                        else
+                        {
                             
                             self.web.sentlog(func_name: "App Switches BT to UDP...", errorfromserverorlink: "", errorfromapp: "")
                             Vehicaldetails.sharedInstance.HubLinkCommunication = "UDP"
@@ -5365,7 +5370,7 @@ extension FuelquantityVC: CBCentralManagerDelegate {
                             }
                             appconnecttoUDP = true
                             
-//                        }
+                        }
                     }
                     
                     else{
@@ -5592,12 +5597,13 @@ extension FuelquantityVC: CBCentralManagerDelegate {
                                 
                                 let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
                                 self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6")
-//                                if("1.4.12".compare(Vehicaldetails.sharedInstance.CurrentFirmwareVersion, options: .numeric) == .orderedSame ||  "1.4.12".compare(Vehicaldetails.sharedInstance.CurrentFirmwareVersion, options: .numeric) == .orderedAscending)
-//                                {
-//                                    
-//                                }
-//                                else
-//                                {
+                                
+                                if("1.4.12".compare(Vehicaldetails.sharedInstance.CurrentFirmwareVersion, options: .numeric) == .orderedSame ||  "1.4.12".compare(Vehicaldetails.sharedInstance.CurrentFirmwareVersion, options: .numeric) == .orderedAscending)
+                                {
+                                    Alert(message: "We are unable to establish connection, please call into Support.")
+                                }
+                                else
+                                {
                                     
                                     self.web.sentlog(func_name: "App Switches BT to UDP...", errorfromserverorlink: "", errorfromapp: "")
                                     Vehicaldetails.sharedInstance.HubLinkCommunication = "UDP"
@@ -5606,7 +5612,7 @@ extension FuelquantityVC: CBCentralManagerDelegate {
                                         self.performSegue(withIdentifier: "GoUDP", sender: self)
                                     }
                                     appconnecttoUDP = true
-//                                }
+                                }
                             }
                             else{
                                 if(ifSubscribed == true){}
@@ -5936,6 +5942,43 @@ extension FuelquantityVC: CBCentralManagerDelegate {
     func connectToBLE()
     {
         centralManager = CBCentralManager(delegate: self, queue: nil)
+    }
+    
+    
+    func Alert(message: String)
+    {
+        
+        let alertController = UIAlertController(title: "", message: message, preferredStyle: UIAlertController.Style.alert)
+        // Background color.
+        let backView = alertController.view.subviews.last?.subviews.last
+        backView?.layer.cornerRadius = 10.0
+        backView?.backgroundColor = UIColor.white
+        
+        let message  = message
+        var messageMutableString = NSMutableAttributedString()
+        messageMutableString = NSMutableAttributedString(string: message as String, attributes: [NSAttributedString.Key.font:UIFont(name: "Georgia", size: 25.0)!])
+        
+        alertController.setValue(messageMutableString, forKey: "attributedMessage")
+        
+        // Action.
+        let action =  UIAlertAction(title: NSLocalizedString("ok", comment:""), style: UIAlertAction.Style.default) { action in //self.//
+            
+            self.cf.delay(1){
+                let appDel = UIApplication.shared.delegate! as! AppDelegate
+                appDel.start()
+                self.stoptimer_gotostart.invalidate()
+                self.stoptimergotostart.invalidate()
+                self.timerview.invalidate()
+//                let storyboard = UIStoryboard(name: "PreauthStoryboard", bundle: nil)
+//                Vehicaldetails.sharedInstance.AppType = "preAuthTransaction"
+//                let controller = storyboard.instantiateViewController(withIdentifier: "InitialController") as UIViewController
+//                controller.modalPresentationStyle = .fullScreen
+//                self.present(controller, animated: true, completion: nil)
+//                self.web.sentlog(func_name: "Starts preAuthTransaction", errorfromserverorlink: "", errorfromapp: "")
+            }
+        }
+        alertController.addAction(action)
+        self.present(alertController, animated: true, completion: nil)
     }
     
     // MARK: - write the data
@@ -6405,7 +6448,7 @@ extension FuelquantityVC: CBPeripheralDelegate {
             
             if(self.appdisconnects_automatically == true && IsStartbuttontapped == true)
             {
-                
+                self.web.sentlog(func_name: " appdisconnects_automatically \(appdisconnects_automatically)", errorfromserverorlink: "IsStartbuttontapped \(IsStartbuttontapped)", errorfromapp: "")
                 if(self.AppconnectedtoBLE == true){
                     self.getlast10transaction()
                     self.BLErescount = 0

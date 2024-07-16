@@ -725,7 +725,7 @@ class Webservices:NSObject {
         //        let bodyData = "\(Name)#:#\(mobile)#:#\(Email)#:#\(uuid)#:#I#:#\(company)"
         print(bodyData)
         request.httpBody = bodyData.data(using: String.Encoding.utf8)
-        request.timeoutInterval = 2
+        request.timeoutInterval = 10
         
         let session = URLSession.shared
         let semaphore = DispatchSemaphore(value: 0)
