@@ -591,7 +591,7 @@ class Webservices:NSObject {
             ///Vehicaldetails.sharedInstance.Language = "en-ES"
         }
       
-        defaults.set("", forKey: "address")
+        //defaults.set("", forKey: "address")
         let Url:String = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
         var Email :String
         if(defaults.string(forKey: "address") == nil){
@@ -1530,108 +1530,112 @@ class Webservices:NSObject {
     {
         let Email = defaults.string(forKey: "address")
         let uuid = defaults.string(forKey: "uuid")
-        let string = uuid! + ":" + Email! + ":" + "SaveDiagnosticLogFile" + ":" + "iPhone"
-        let Base64 = convertStringToBase64(string: string)
-        let Url:String = FSURL
-       
-        
-        let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
-        request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
-        request.httpMethod = "POST"
-        var reportsArray: [AnyObject]!
-        let fileManager: FileManager = FileManager()
-        let readdata = cf.getDocumentsURL().appendingPathComponent("data/filedata/")
-        let fromPath: String = (readdata!.path)
-        do{
-            do
+        if(uuid == nil || uuid == ""){}
+        else
             {
-                if(!FileManager.default.fileExists(atPath: fromPath))
-            {
-                do{ try FileManager.default.createDirectory(atPath: fromPath, withIntermediateDirectories: true, attributes: nil)
-                }
-                catch{print("error")}
-                }
-            }
-            reportsArray = fileManager.subpaths(atPath: fromPath)! as [AnyObject]
-            for x in 0  ..< reportsArray.count
-            {
-               
-                let filename: String = "\(reportsArray[x])"
-                do {
-//                    let url = URL(fileURLWithPath: fromPath + "/\(filename)")
-//                    contents = try Data(contentsOf: url)
-                    //  print(contents)
-                    
-                } catch let error as NSError {
-                    print ("Error: \(error.domain)")
-                    
-                    // contents could not be loaded
-                }
-                let dateFormatter = DateFormatter()
-                                 dateFormatter.dateFormat = "ddMMyyyy"
-                                 
-                                 let predate = String(filename.prefix(10))
-                                            print(predate)
-                                 // start and end date object from string dates
-                               
-                                 let endDate = dateFormatter.date(from: predate) ?? Date()
-                                 //  print(contents)
-                                 let cal = Calendar.current
-                                 let d1 = Date()
-                                 let d2 = endDate//Date.init(timeIntervalSince1970: 1524787200) // April 27, 2018 12:00:00 AM
-                                    print(d1,d2)
-                                 let components = cal.dateComponents([.day], from: d2, to: d1)
-                                 let diff = components.day!
-                                 print(diff)
-                                 
-                                 if(diff > 60){
-                                     self.cf.DeleteFileInApp(fileName: "data/filedata/" + filename)
-                                 }
-                if(diff > 45){}
-                else{
-                
-                
-                let req = createRequest(authBase64: Base64, filename : filename, path: fromPath + "/\(filename)")
-                
-                
-                let task = URLSession.shared.dataTask(with: req as URLRequest) { data, response, error in
-                    if let data = data {
-                        //  print(String(data: data, encoding: String.Encoding.utf8)!)
-                        self.replysentlog = NSString(data: data, encoding:String.Encoding.utf8.rawValue)! as String
-                        //  print(self.replysentlog)
-                        let data1 = self.replysentlog.data(using: String.Encoding.utf8)!
-                        do{
-                            self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
-                        }catch let error as NSError {
-                            print ("Error: \(error.domain)")
+            let string = uuid! + ":" + Email! + ":" + "SaveDiagnosticLogFile" + ":" + "iPhone"
+            let Base64 = convertStringToBase64(string: string)
+            let Url:String = FSURL
+            
+            
+            let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
+            request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
+            request.httpMethod = "POST"
+            var reportsArray: [AnyObject]!
+            let fileManager: FileManager = FileManager()
+            let readdata = cf.getDocumentsURL().appendingPathComponent("data/filedata/")
+            let fromPath: String = (readdata!.path)
+            do{
+                do
+                {
+                    if(!FileManager.default.fileExists(atPath: fromPath))
+                    {
+                        do{ try FileManager.default.createDirectory(atPath: fromPath, withIntermediateDirectories: true, attributes: nil)
                         }
-                        print(self.sysdata)
-                        if(self.sysdata == nil){}
-                        else{
-                        // let ResponceText = self.sysdata.value(forKey: "ResponceText") as! NSString
-                        let ResponceMessage = (self.sysdata.value(forKey: "ResponceMessage") as! NSString) as String
-                        
-                        if(ResponceMessage == "fail"){
-                            
-                        }
-                        if(ResponceMessage == "success"){
-                            self.cf.DeleteFileInApp(fileName: "data/filedata/" + filename)
-                        }
-                        }
-                    } else {
-                        print(error!)
-                        self.replysentlog = "-1" + "#" + "\(error!)"
-                        let dateFormatter = DateFormatter()
-                        dateFormatter.dateFormat = "ddMMyyyy"
-                        dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
-                        let dtt2: String = dateFormatter.string(from: NSDate() as Date)
-                        
+                        catch{print("error")}
                     }
                 }
-                task.resume()
+                reportsArray = fileManager.subpaths(atPath: fromPath)! as [AnyObject]
+                for x in 0  ..< reportsArray.count
+                {
+                    
+                    let filename: String = "\(reportsArray[x])"
+                    do {
+                        //                    let url = URL(fileURLWithPath: fromPath + "/\(filename)")
+                        //                    contents = try Data(contentsOf: url)
+                        //  print(contents)
+                        
+                    } catch let error as NSError {
+                        print ("Error: \(error.domain)")
+                        
+                        // contents could not be loaded
+                    }
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.dateFormat = "ddMMyyyy"
+                    
+                    let predate = String(filename.prefix(10))
+                    print(predate)
+                    // start and end date object from string dates
+                    
+                    let endDate = dateFormatter.date(from: predate) ?? Date()
+                    //  print(contents)
+                    let cal = Calendar.current
+                    let d1 = Date()
+                    let d2 = endDate//Date.init(timeIntervalSince1970: 1524787200) // April 27, 2018 12:00:00 AM
+                    print(d1,d2)
+                    let components = cal.dateComponents([.day], from: d2, to: d1)
+                    let diff = components.day!
+                    print(diff)
+                    
+                    if(diff > 60){
+                        self.cf.DeleteFileInApp(fileName: "data/filedata/" + filename)
+                    }
+                    if(diff > 45){}
+                    else{
+                        
+                        
+                        let req = createRequest(authBase64: Base64, filename : filename, path: fromPath + "/\(filename)")
+                        
+                        
+                        let task = URLSession.shared.dataTask(with: req as URLRequest) { data, response, error in
+                            if let data = data {
+                                //  print(String(data: data, encoding: String.Encoding.utf8)!)
+                                self.replysentlog = NSString(data: data, encoding:String.Encoding.utf8.rawValue)! as String
+                                //  print(self.replysentlog)
+                                let data1 = self.replysentlog.data(using: String.Encoding.utf8)!
+                                do{
+                                    self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
+                                }catch let error as NSError {
+                                    print ("Error: \(error.domain)")
+                                }
+                                print(self.sysdata)
+                                if(self.sysdata == nil){}
+                                else{
+                                    // let ResponceText = self.sysdata.value(forKey: "ResponceText") as! NSString
+                                    let ResponceMessage = (self.sysdata.value(forKey: "ResponceMessage") as! NSString) as String
+                                    
+                                    if(ResponceMessage == "fail"){
+                                        
+                                    }
+                                    if(ResponceMessage == "success"){
+                                        self.cf.DeleteFileInApp(fileName: "data/filedata/" + filename)
+                                    }
+                                }
+                            } else {
+                                print(error!)
+                                self.replysentlog = "-1" + "#" + "\(error!)"
+                                let dateFormatter = DateFormatter()
+                                dateFormatter.dateFormat = "ddMMyyyy"
+                                dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
+                                let dtt2: String = dateFormatter.string(from: NSDate() as Date)
+                                
+                            }
+                        }
+                        task.resume()
+                    }
+                }
             }
-            }
-        }
+    }
     }
     
     //When ineternet is available send the Diagnostic log to server. if no internet connection then save the log into the file.

@@ -201,8 +201,8 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
         }
         
         let preuuid = defaults.string(forKey: "uuid")
-        if(preuuid == nil){
-            let password = ""//KeychainService.loadPassword()
+        if(preuuid == nil || preuuid == ""){
+            let password = KeychainService.loadPassword()
                        
             if(password == nil || password == "")
             {
@@ -211,40 +211,45 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
             }
             else
             {
-                print(password)//used this paasword (uuid)
-                uuid = password as String
+                print(password!)//used this paasword (uuid)
+                uuid = password! as String
             }
         }
         else
         {
-            KeychainService.savePassword(token: preuuid! as NSString)
-            let password = KeychainService.loadPassword()
-            print(password!,preuuid!)//used this paasword (uuid)
-            uuid = preuuid! as String
+            
+            
+                KeychainService.savePassword(token: preuuid! as NSString)
+                let password = KeychainService.loadPassword()
+                print(password!,preuuid!)//used this paasword (uuid)
+                uuid = preuuid! as String
+            
         }
-//        var password = KeychainService.loadPassword()
-//        if(password == nil || password == "")
-//        {
-//            self.web.sentlog(func_name: "keychain service get \(password) ", errorfromserverorlink: "", errorfromapp: "")
-//            let preuuid = defaults.string(forKey: "uuid")
-//            if(preuuid == nil){
-//                 uuid = UIDevice.current.identifierForVendor!.uuidString
-//                KeychainService.savePassword(token: uuid as NSString)
-//            }
-//            else
-//            {
-//                KeychainService.savePassword(token: preuuid! as NSString)
-//                password = KeychainService.loadPassword()
-//                print(password!)//used this paasword (uuid)
-//                uuid = password! as String
-//            }
-//        }
-//        else{
-////            KeychainService.savePassword(token: "0B5C5D0B-70CE-4C75-8844-9E8938586489" as NSString)
-//            //password = KeychainService.loadPassword()
-//            print(password!)//used this paasword (uuid)
-//            uuid = password! as String
-//        }
+        var password = KeychainService.loadPassword()
+        if(password == nil || password == "")
+        {
+            self.web.sentlog(func_name: "keychain service get \(password) ", errorfromserverorlink: "", errorfromapp: "")
+            let preuuid = defaults.string(forKey: "uuid")
+            if(preuuid == nil || preuuid == ""){
+                 uuid = UIDevice.current.identifierForVendor!.uuidString
+                KeychainService.savePassword(token: uuid as NSString)
+            }
+            else
+            {
+                
+                    KeychainService.savePassword(token: preuuid! as NSString)
+                    password = KeychainService.loadPassword()
+                    print(password!)//used this paasword (uuid)
+                    uuid = password! as String
+                
+            }
+        }
+        else{
+//            KeychainService.savePassword(token: "0B5C5D0B-70CE-4C75-8844-9E8938586489" as NSString)
+            //password = KeychainService.loadPassword()
+            print(password!)//used this paasword (uuid)
+            uuid = password! as String
+        }
 //             else   {
 //
 //
@@ -522,7 +527,10 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
                            defaults.set(PersonName, forKey: "firstName")
                            defaults.set(Email, forKey: "address")
                            defaults.set(PhoneNumber, forKey: "mobile")
-                           defaults.set(uuid, forKey: "uuid")
+                           if(uuid == ""){}
+                           else{
+                               defaults.set(uuid, forKey: "uuid")
+                           }
                            defaults.set(1, forKey: "Register")
                            Vehicaldetails.sharedInstance.AppType = "AuthTransaction"
                            print(IMEI_UDID,IsApproved,PhoneNumber,PersonName,Email)
@@ -566,8 +574,10 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
                        }
 
                        else if(Message == "fail"){ }
-
-                       defaults.set(uuid, forKey: "uuid")
+                       if(uuid == ""){}
+                       else{
+                           defaults.set(uuid, forKey: "uuid")
+                       }
                        if(Message == "success") {
 
                            scrollview.isHidden = false

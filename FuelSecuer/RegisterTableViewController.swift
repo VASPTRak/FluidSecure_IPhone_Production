@@ -145,22 +145,22 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
     }
 
     func register(){
-//                var uuid:String //= //UIDevice.current.identifierForVendor!.uuidString
-                var uuid = UUID().uuidString
+//                var uuid:String = UIDevice.current.identifierForVendor!.uuidString // remove the identifierForVender because it may get the message the IMEI already exits.
+                var uuid = UUID().uuidString  // create new UUID. 
                 KeychainService.savePassword(token: uuid as NSString)
                 //activityindicator.sizeToFit()
                 activityindicator.isHidden = false
                 activityindicator.startAnimating()
                 
-//                let password = KeychainService.loadPassword()
-//                if(password == nil){
-//                     uuid = UIDevice.current.identifierForVendor!.uuidString
-//                    KeychainService.savePassword(token: uuid as NSString)
-//
-//                }
-//                else{
-//                    uuid = password! as String
-//                }
+                let password = KeychainService.loadPassword()
+                if(password == nil){
+                     uuid = UIDevice.current.identifierForVendor!.uuidString
+                    KeychainService.savePassword(token: uuid as NSString)
+
+                }
+                else{
+                    uuid = password! as String
+                }
         
                 let Name = firstNameTextField.text
                 let Email = emailTextField.text
@@ -212,7 +212,11 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                     defaults.set(firstNameTextField.text, forKey: "firstName")
                     defaults.set(mobileNoTextField.text, forKey: "mobile")
                     defaults.set(emailTextField.text, forKey: "address")
-                    defaults.set(uuid, forKey: "uuid")
+                    defaults.set(Company_Name.text, forKey: "company")
+                        if(uuid == ""){}
+                        else{
+                            defaults.set(uuid, forKey: "uuid")
+                        }
                     defaults.set(uuid,forKey: "\(brandname)")
 
                     

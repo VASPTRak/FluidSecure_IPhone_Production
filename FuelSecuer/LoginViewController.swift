@@ -40,6 +40,9 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
 //var unsync = Sync_Unsynctransactions()
     
     
+    @IBOutlet weak var Info: UILabel!
+    @IBOutlet weak var Companyname: UILabel!
+    @IBOutlet weak var infoview: UIView!
     @IBOutlet var version: UILabel!
     @IBOutlet weak var version_2: UILabel!
     @IBOutlet var warning: UILabel!
@@ -48,7 +51,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
     @IBOutlet var Loginbutton: UIButton!
     @IBOutlet var PWD: UITextField!
     @IBOutlet var Username: UITextField!
-    @IBOutlet weak var preauth: UIButton!
+//    @IBOutlet weak var preauth: UIButton!
     @IBOutlet weak var Activity: UIActivityIndicatorView!
     @IBOutlet weak var Companylogo: UIImageView!
     
@@ -61,6 +64,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         if(brandname == "FluidSecure"){
             if(defaults.string(forKey: "\(brandname)") != nil) {
             uuid = defaults.string(forKey: "\(brandname)")!//UUID().uuidString
+                print(uuid)
             KeychainService.savePassword(token: uuid as NSString)
         }
             
@@ -68,7 +72,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         
         let preuuid = defaults.string(forKey: "uuid")
         if(preuuid == nil || preuuid == ""){
-            let password = ""//KeychainService.loadPassword()
+            let password = KeychainService.loadPassword()
                        
             if(password == nil || password == "")
             {
@@ -78,39 +82,43 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
             else
             {
                 print(password)//used this paasword (uuid)
-                uuid = password as String
+                uuid = password as! String
             }
         }
         else
         {
-            KeychainService.savePassword(token: preuuid! as NSString)
-            let password = KeychainService.loadPassword()
-            print(password!,preuuid!)//used this paasword (uuid)
-            uuid = preuuid! as String
+            
+                KeychainService.savePassword(token: preuuid! as NSString)
+                let password = KeychainService.loadPassword()
+                print(password!,preuuid!)//used this paasword (uuid)
+                uuid = preuuid! as String
+            
         }
-//        var password = KeychainService.loadPassword()
-//        if(password == nil || password == ""){
-//            self.web.sentlog(func_name: "keychain service get \(password) ", errorfromserverorlink: "", errorfromapp: "")
-//            let preuuid = defaults.string(forKey: "uuid")
-//            self.web.sentlog(func_name: "on log in page uuid \(preuuid)", errorfromserverorlink: "", errorfromapp: "")
-//            if(preuuid == nil || password == ""){
-//                 uuid = UIDevice.current.identifierForVendor!.uuidString
-//                KeychainService.savePassword(token: uuid as NSString)
-//            }
-//            else
-//            {
-//                KeychainService.savePassword(token: preuuid! as NSString)
-//                password = KeychainService.loadPassword()! as NSString
-//                print(password!)//used this paasword (uuid)
-//                uuid = password! as String
-//            }
-//        }
-//        else{
-////            KeychainService.savePassword(token: "0B5C5D0B-70CE-4C75-8844-9E8938586489" as NSString)
-//           // password = KeychainService.loadPassword()
-//            print(password!)//used this paasword (uuid)
-//            uuid = password! as String
-//        }
+        var password = KeychainService.loadPassword()
+        if(password == nil || password == ""){
+            self.web.sentlog(func_name: "keychain service get \(password!) ", errorfromserverorlink: "", errorfromapp: "")
+            let preuuid = defaults.string(forKey: "uuid")
+            self.web.sentlog(func_name: "on log in page uuid \(preuuid)", errorfromserverorlink: "", errorfromapp: "")
+            if(preuuid == nil || preuuid == ""){
+                 uuid = UIDevice.current.identifierForVendor!.uuidString
+                KeychainService.savePassword(token: uuid as NSString)
+            }
+            else
+            {
+                
+                    KeychainService.savePassword(token: preuuid! as NSString)
+                    password = KeychainService.loadPassword()! as NSString
+                    print(password!)//used this paasword (uuid)
+                    uuid = password! as String
+                
+            }
+        }
+        else{
+//            KeychainService.savePassword(token: "0B5C5D0B-70CE-4C75-8844-9E8938586489" as NSString)
+           // password = KeychainService.loadPassword()
+            print(password!)//used this paasword (uuid)
+            uuid = password! as String
+        }
 
         version.text = "Version \(Version)"
         version_2.text = "Version \(Version)"
@@ -317,7 +325,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
                         refresh.isHidden = true
                         Username.text = Email
                     
-                    preauth.isHidden = true
+//                    preauth.isHidden = true
                     self.navigationItem.title = "Login"
 
                     let objUserData = sysdata.value(forKey: "objUserData") as! NSDictionary
@@ -380,7 +388,10 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
                     defaults.set(PersonName, forKey: "firstName")
                     defaults.set(Email, forKey: "address")
                     defaults.set(PhoneNumber, forKey: "mobile")
-                    defaults.set(uuid, forKey: "uuid")
+                    if(uuid == ""){}
+                    else{
+                        defaults.set(uuid, forKey: "uuid")
+                    }
                     defaults.set(1, forKey: "Register")
 
                     Vehicaldetails.sharedInstance.CollectDiagnosticLogs = CollectDiagnosticLogs as String
@@ -467,10 +478,19 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
                         version.isHidden = false
                         warning.isHidden = false
                         refresh.isHidden = false
-                        preauth.isHidden = true
+//                        preauth.isHidden = true
                         self.navigationItem.title = "Thank you for registering"
-                        warning.text = NSLocalizedString("Regisration", comment:"") + " " +  defaults.string(forKey: "address")! + " " +  NSLocalizedString("registration1", comment:"")
+                        warning.text = NSLocalizedString("Regisration", comment:"")// + " " +  defaults.string(forKey: "address")! + " " +  NSLocalizedString("registration1", comment:"")
                         defaults.set(1, forKey: "Register")
+                        
+                        let PersonName = defaults.string(forKey: "firstName")
+                        let PhoneNumber = defaults.string(forKey: "mobile")
+                        let Email = defaults.string(forKey: "address")
+                        let CompanyName = defaults.string(forKey: "company")
+                        Info.text = NSLocalizedString("Name", comment:"") + ": \(PersonName!)\n" + NSLocalizedString("Mobile", comment:"") + ":\(PhoneNumber!)\n" + NSLocalizedString("Email", comment:"") +  ": \(Email!) \n" + NSLocalizedString("Company Name", comment:"") + ": \(CompanyName) \n"
+                        
+                        Companyname.text = NSLocalizedString(" Company Name", comment:"") + ": \(CompanyName)"
+                        
                     }else
                     {
                         mview.isHidden = true
@@ -481,8 +501,10 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
                         warning.text = ResponseText as String
                     }
                 }
-                defaults.set(uuid, forKey: "uuid")
-
+                if(uuid == ""){}
+                else{
+                    defaults.set(uuid, forKey: "uuid")
+                }
                 if(Message == "success") {
                     print(login)
                     print(IsLoginRequire)

@@ -772,16 +772,18 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         if(password == nil || password == ""){
             self.web.sentlog(func_name: "keychain service get \(password) ", errorfromserverorlink: "", errorfromapp: "")
             let preuuid = defaults.string(forKey: "uuid")
-            if(preuuid == nil){
+            if(preuuid == nil || preuuid == ""){
                 let uuid:String = UIDevice.current.identifierForVendor!.uuidString
                 KeychainService.savePassword(token: uuid as NSString)
             }
             else
             {
-                KeychainService.savePassword(token: preuuid! as NSString)
-                password = KeychainService.loadPassword()
-                print(password!)//used this paasword (uuid)
-                uuid = password! as String
+               
+                    KeychainService.savePassword(token: preuuid! as NSString)
+                    password = KeychainService.loadPassword()
+                    print(password!)//used this paasword (uuid)
+                    uuid = password! as String
+                
             }
         }
         else{
@@ -963,7 +965,10 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                 defaults.set(PersonName, forKey: "firstName")
                 defaults.set(Email, forKey: "address")
                 defaults.set(PhoneNumber, forKey: "mobile")
-                defaults.set(uuid, forKey: "uuid")
+                if(uuid == ""){}
+                else{
+                    defaults.set(uuid, forKey: "uuid")
+                }
                 defaults.set(1, forKey: "Register")
                 
                 print(IMEI_UDID,IsApproved,PhoneNumber,PersonName,Email)
@@ -989,9 +994,10 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
                 }
             }
             else if(Message == "fail"){ }
-            
-            defaults.set(uuid, forKey: "uuid")
-            
+               if(uuid == ""){}
+               else{
+                   defaults.set(uuid, forKey: "uuid")
+               }
             if(Message == "success") {
                 
                 scrollview.isHidden = false

@@ -147,6 +147,8 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     var replydata:NSData!
     var upgradestarttimer:Timer = Timer()
     
+    @IBOutlet weak var info_text: UILabel!
+    @IBOutlet weak var Companyname_text: UILabel!
     @IBOutlet weak var progressviewtext: UILabel!
     @IBOutlet weak var progressview: UIProgressView!
     @IBOutlet weak var Upgrade: UIView!
@@ -168,6 +170,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     @IBOutlet weak var helpbutton: UIButton!
     @IBOutlet weak var Companynamelabel: UILabel!
     @IBOutlet var wifiNameTextField: UITextField!
+    @IBOutlet weak var Infoview: UIView!
     @IBOutlet  var Companylogo: UIImageView!
     
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
@@ -510,7 +513,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         progressview.isHidden = true
         progressviewtext.isHidden = true
         Upgrade.isHidden = true
-        
+        //Infoview.isHidden = true
         
         Activity.isHidden = true
         
@@ -657,7 +660,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         //            self.web.sentlog(func_name: "keychain service get \(password) ", errorfromserverorlink: "", errorfromapp: "")
         let preuuid = defaults.string(forKey: "uuid")
         if(preuuid == nil){
-            let password = ""//KeychainService.loadPassword()
+            let password = KeychainService.loadPassword()
             
             if(password == nil || password == "")
             {
@@ -666,8 +669,8 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             }
             else
             {
-                print(password)//used this paasword (uuid)
-                uuid = password as String
+                print(password!)//used this paasword (uuid)
+                uuid = password! as String
             }
         }
         else
@@ -841,7 +844,10 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                     defaults.set(PersonName, forKey: "firstName")
                     defaults.set(Email, forKey: "address")
                     defaults.set(PhoneNumber, forKey: "mobile")
-                    defaults.set(uuid, forKey: "uuid")
+                    if(uuid == ""){}
+                    else{
+                        defaults.set(uuid, forKey: "uuid")
+                    }
                     defaults.set(1, forKey: "Register")
                     Vehicaldetails.sharedInstance.AppType = "AuthTransaction"
                     print(IMEI_UDID,IsApproved,PhoneNumber,PersonName,Email)
@@ -887,8 +893,10 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                 {
                     
                 }
-                
-                defaults.set(uuid, forKey: "uuid")
+                if(uuid == ""){}
+                else{
+                    defaults.set(uuid, forKey: "uuid")
+                }
                 if(Message == "success") {
                     
                     scrollview.isHidden = false
@@ -1111,10 +1119,12 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                                 else{
                                                     if((defaults.string(forKey: "dateof_DownloadVehiclesForphone")?.contains(todayname)) != nil)
                                                     {
-                                                        
-                                                        _ = web.GetVehiclesForPhone()
-                                                        _ = web.GetDepartmentsForPhone()
+                                                        DispatchQueue.main.async{
+                                                            _ = self.web.GetVehiclesForPhone()
+                                                            _ = self.web.GetDepartmentsForPhone()
+                                                        }
                                                         sentcalltogetdatavehicle = true
+                                                            
                                                     }
                                                 }
                                             }
@@ -1169,7 +1179,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                             }
                         }
                         
-                        if(Uhosenumber.count == 1)
+                        if(ssid.count == 1)
                         {
                             let siteid = siteID[0]
                             
@@ -1196,10 +1206,36 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                             Vehicaldetails.sharedInstance.LinkFlaggedMessage = LinkFlagged_Message[0]
                             Vehicaldetails.sharedInstance.MacAddress = Mac_Address[0]
                             Vehicaldetails.sharedInstance.BTMacAddress = Bluetooth_MacAddress[0]
+                            Vehicaldetails.sharedInstance.HubLinkCommunication = Communication_Type[0]
                             Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce = Is_ResetSwitchTimeBounce[0]
+                            
+                            Vehicaldetails.sharedInstance.FilePath = File_Path[0]
+                            Vehicaldetails.sharedInstance.FirmwareVersion = Firmware_Version[0]
+                            Vehicaldetails.sharedInstance.GetPulserTypeFromLINK = GetPulserTypeFromLINK[0]
+                            Vehicaldetails.sharedInstance.CurrentFirmwareVersion = CurrentFirmwareVersion[0]
+                            
                             print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced,Vehicaldetails.sharedInstance.MacAddress,Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce,Vehicaldetails.sharedInstance.OriginalNamesOfLink)
                             
-                            
+                            self.cf.delay(2)
+                            {
+                                
+                                if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
+                                {
+                                    if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
+                                    {
+                                        self.centralManager = CBCentralManager(delegate: self, queue: nil)
+                                        self.progressview.isHidden = false
+                                        self.progressviewtext.isHidden = false
+                                        self.Activity.startAnimating()
+                                        self.Activity.isHidden = false
+                                        self.Upgrade.isHidden = false
+                                        self.progressviewtext.text = "Softerware update in progress \n Please wait several seconds....."
+                                        self.go.isEnabled = false
+                                        self.upgradestarttimer.invalidate()
+                                        self.upgradestarttimer = Timer.scheduledTimer(timeInterval: (Double(3)*60), target: self, selector: #selector(ViewController.Stopupgradetimer), userInfo: nil, repeats: false)
+                                    }
+                                }
+                            }
                             delay(0.2){
                                 if( self.IsGobuttontapped == true){
                                     
@@ -1248,6 +1284,14 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                         preauth.isHidden = true
                         self.navigationItem.title = "Thank you for registering"
                         warningLable.text = NSLocalizedString("Regisration", comment:"")
+                        info_text.isHidden = false
+                        let PersonName = defaults.string(forKey: "firstName")
+                        let Email = defaults.string(forKey: "address")
+                        let PhoneNumber = defaults.string(forKey: "mobile")
+                        let CompanyName = defaults.string(forKey: "company")
+                        info_text.text =  NSLocalizedString("Name", comment:"") + ": \(PersonName!)\n" + NSLocalizedString("Mobile", comment:"") + ":\(PhoneNumber!)\n" + NSLocalizedString("Email", comment:"") +  ": \(Email!) \n" +  NSLocalizedString("Company Name", comment:"") + ": \(CompanyName!) \n"
+                        
+                       // Companyname_text.text = NSLocalizedString("Company Name", comment:"") + ": \(CompanyName!)"
                         //+ " " +  defaults.string(forKey: "address")! + " " +  NSLocalizedString("registration1", comment:"")
                     }else
                     {
@@ -1349,9 +1393,9 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         delay(1){
             //check the downloadvehiclesforphone & DownloadPreAuthDepartmentData in mobile device.
             if(self.defaults.string(forKey: "dateof_DownloadVehiclesForphonefilename") == nil)   {
-                
-                _ = self.web.GetVehiclesForPhone()
-                
+                DispatchQueue.main.async{
+                    _ = self.web.GetVehiclesForPhone()
+                }
                 self.sentcalltogetdatavehicle = true
             }
             else{
@@ -1361,7 +1405,9 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                 }
                 else{
                     //                _ = web.GetVehiclesForPhone()
-                    _ = self.web.GetDepartmentsForPhone()
+                    DispatchQueue.main.async{
+                        _ = self.web.GetDepartmentsForPhone()
+                    }
                     // sentcalltogetdatavehicle = true
                 }
             }
@@ -1939,7 +1985,11 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             Vehicaldetails.sharedInstance.FirmwareVersion = Firmware_Version[0]
             Vehicaldetails.sharedInstance.GetPulserTypeFromLINK = GetPulserTypeFromLINK[0]
             Vehicaldetails.sharedInstance.CurrentFirmwareVersion = CurrentFirmwareVersion[0]
+            
+            
+            
             return ssid[row]
+           
         }
         return ""
     }
@@ -2008,7 +2058,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                     progressviewtext.text = "Softerware update in progress \n Please wait several seconds....."
                     go.isEnabled = false
                     upgradestarttimer.invalidate()
-                    upgradestarttimer = Timer.scheduledTimer(timeInterval: (Double(5)*60), target: self, selector: #selector(ViewController.Stopupgradetimer), userInfo: nil, repeats: false)
+                    upgradestarttimer = Timer.scheduledTimer(timeInterval: (Double(3)*60), target: self, selector: #selector(ViewController.Stopupgradetimer), userInfo: nil, repeats: false)
                 }
             }
             

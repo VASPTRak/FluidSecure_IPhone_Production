@@ -4895,9 +4895,10 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                             let quantity = (Double(truncating: pulse))/(PulseRatio as NSString).doubleValue
                             //self.cf.calculate_fuelquantity(quantitycount: Int(truncating: pulse))
                             lasttransactioncount = "\(pulse)"
-                            let transaction_details = Last10Transactions (Transaction_id: txtn as String, Pulses: "\(pulse)", FuelQuantity: "\(quantity)", vehicle: vehicle as String, date: date as String, dflag: "\(dflag)" )
+                            self.saveTrans(lastpulsarcount: "\(pulse)",lasttransID: txtn as String)
+//                            let transaction_details = Last10Transactions (Transaction_id: txtn as String, Pulses: "\(pulse)", FuelQuantity: "\(quantity)", vehicle: vehicle as String, date: date as String, dflag: "\(dflag)" )
                             
-                            Vehicaldetails.sharedInstance.Last10transactions.add(transaction_details)
+//                            Vehicaldetails.sharedInstance.Last10transactions.add(transaction_details)
                             print(date,dflag,pulse,txtn,vehicle)
                         }
                     }
