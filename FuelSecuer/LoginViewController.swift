@@ -63,9 +63,9 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
 //        var uuid:String = ""
         if(brandname == "FluidSecure"){
             if(defaults.string(forKey: "\(brandname)") != nil) {
-            uuid = defaults.string(forKey: "\(brandname)")!//UUID().uuidString
-                print(uuid)
-            KeychainService.savePassword(token: uuid as NSString)
+//            uuid = defaults.string(forKey: "\(brandname)")!//UUID().uuidString
+//                print(uuid)
+//            KeychainService.savePassword(token: uuid as NSString)
         }
             
         }
@@ -88,7 +88,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         else
         {
             
-                KeychainService.savePassword(token: preuuid! as NSString)
+               // KeychainService.savePassword(token: preuuid! as NSString)
                 let password = KeychainService.loadPassword()
                 print(password!,preuuid!)//used this paasword (uuid)
                 uuid = preuuid! as String
@@ -98,7 +98,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         if(password == nil || password == ""){
             self.web.sentlog(func_name: "keychain service get \(password!) ", errorfromserverorlink: "", errorfromapp: "")
             let preuuid = defaults.string(forKey: "uuid")
-            self.web.sentlog(func_name: "on log in page uuid \(preuuid)", errorfromserverorlink: "", errorfromapp: "")
+            self.web.sentlog(func_name: "on log in page uuid \(preuuid!)", errorfromserverorlink: "", errorfromapp: "")
             if(preuuid == nil || preuuid == ""){
                  uuid = UIDevice.current.identifierForVendor!.uuidString
                 KeychainService.savePassword(token: uuid as NSString)
@@ -107,10 +107,15 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
             {
                 
                     KeychainService.savePassword(token: preuuid! as NSString)
-                    password = KeychainService.loadPassword()! as NSString
+                password = KeychainService.loadPassword()! as NSString
+                if(password == nil || password == "")
+                {
+                    uuid = preuuid! as String
+                }
+                else{
                     print(password!)//used this paasword (uuid)
                     uuid = password! as String
-                
+                }
             }
         }
         else{

@@ -590,7 +590,7 @@ class Webservices:NSObject {
         if(Vehicaldetails.sharedInstance.Language == ""){
             ///Vehicaldetails.sharedInstance.Language = "en-ES"
         }
-      
+      var UUID_string = uuid
         //defaults.set("", forKey: "address")
         let Url:String = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
         var Email :String
@@ -603,13 +603,22 @@ class Webservices:NSObject {
         {
             print(" UUID Get \(uuid)")
             self.sentlog(func_name: " UUID:\(uuid))", errorfromserverorlink: "", errorfromapp: "")
-            let uuid = UIDevice.current.identifierForVendor!.uuidString
-            KeychainService.savePassword(token: uuid as NSString)
-            defaults.set(uuid, forKey: "uuid")
+            let preuuid = defaults.string(forKey: "uuid")
+            if(preuuid == nil || preuuid == "")
+            {
+                 UUID_string = UIDevice.current.identifierForVendor!.uuidString
+                KeychainService.savePassword(token: UUID_string as NSString)
+                defaults.set(UUID_string, forKey: "uuid")
+            }
+            else{
+                UUID_string = preuuid! as String
+            }
+                
         }
-        else{
-        let string = uuid + ":" + Email + ":" + "Other" + ":" + "\(Vehicaldetails.sharedInstance.Language)" + ":" + "\(brandname)"
+        
+            let string = UUID_string + ":" + Email + ":" + "Other" + ":" + "\(Vehicaldetails.sharedInstance.Language)" + ":" + "\(brandname)"
             print(string)
+       
 //        let string = uuid + ":" + Email + ":" + "Other" + ":" + "\(Vehicaldetails.sharedInstance.Language)"
         let Base64 = convertStringToBase64(string: string)
         print(Base64)
@@ -664,7 +673,7 @@ class Webservices:NSObject {
         
         task.resume()
         _ = semaphore.wait(timeout: DispatchTime.distantFuture)
-        }
+       // }
         return reply
     }
     

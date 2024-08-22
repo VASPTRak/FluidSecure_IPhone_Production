@@ -113,6 +113,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
     @IBAction func registerButtonClicked(sender: AnyObject) {
         activityindicator.isHidden = false
         activityindicator.startAnimating()
+        registerButton.isEnabled = false
         self.web.sentlog(func_name: "Register button tapped.", errorfromserverorlink: "", errorfromapp: "")
         delay(1){
             self.registerUser()
@@ -145,8 +146,8 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
     }
 
     func register(){
-//                var uuid:String = UIDevice.current.identifierForVendor!.uuidString // remove the identifierForVender because it may get the message the IMEI already exits.
-                var uuid = UUID().uuidString  // create new UUID. 
+                var uuid:String = UIDevice.current.identifierForVendor!.uuidString // remove the identifierForVender because it may get the message the IMEI already exits.
+               // var uuid = UUID().uuidString  // create new UUID.
                 KeychainService.savePassword(token: uuid as NSString)
                 //activityindicator.sizeToFit()
                 activityindicator.isHidden = false
@@ -257,14 +258,23 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                         appDel.start()
                     }
                     else if(Message == "fail") {
-                        self.showAlert(message: "\(ResponseText)" )
+                       // self.showAlert(message: "\(ResponseText)" )
                         activityindicator.isHidden = true
                         activityindicator.stopAnimating()
-                        if(ResponseText == "Please enter valid company.")
+                        if(ResponseText == "IMEI already exists.")
                         {
-                            self.showAlert(message: "\(ResponseText)" )
-                            activityindicator.stopAnimating()
-                            activityindicator.isHidden = true
+                            
+                            let reply =  web.checkApprove(uuid: uuid as String,lat:"\(0)",long:"\(0)")
+                            print(reply)
+                        }
+                        else{
+                            if(ResponseText == "Please enter valid company.")
+                            {
+                                registerButton.isEnabled = true
+                                self.showAlert(message: "\(ResponseText)" )
+                                activityindicator.stopAnimating()
+                                activityindicator.isHidden = true
+                            }
                         }
                     }
                     else
@@ -308,7 +318,7 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
 //            }
 //        }
 //        else if(checkedstatus == false){
-        registerButton.isEnabled = false
+        
         if(firstNameTextField.text == "" || mobileNoTextField.text == "" ||  emailTextField.text == "" || Company_Name.text == "") {
                 showAlert(message: NSLocalizedString("SelectallFields", comment:"") )//"Please Select All Fields.")
                 activityindicator.stopAnimating()

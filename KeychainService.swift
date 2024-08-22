@@ -19,7 +19,7 @@ let userAccount = "AuthenticatedUser"
  *  User defined keys for new entry
  *  Note: add new keys for new secure item and use them in load and save methods
  */
-
+var web = Webservices()
 let passwordKey = "KeyForPassword"
 
 // Arguments for the keychain queries
@@ -78,14 +78,17 @@ public class KeychainService: NSObject {
         // Search for the keychain items
         let status: OSStatus = SecItemCopyMatching(keychainQuery, &dataTypeRef)
         var contentsOfKeychain: NSString? = nil
+       
 
         if status == errSecSuccess {
             if let retrievedData = dataTypeRef as? NSData {
                 contentsOfKeychain = NSString(data: retrievedData as Data, encoding: String.Encoding.utf8.rawValue)
+                web.sentlog(func_name:  " Status code \(status)", errorfromserverorlink: "contents Of Keychain \(contentsOfKeychain)" , errorfromapp:"")
             }
         } else {
             contentsOfKeychain = "";
             print("Nothing was retrieved from the keychain. Status code \(status)")
+            web.sentlog(func_name:  "Nothing was retrieved from the keychain. Status code \(status)", errorfromserverorlink: "" , errorfromapp:"")
         }
 
         return contentsOfKeychain
