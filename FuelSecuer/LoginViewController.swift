@@ -95,6 +95,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
             
         }
         var password = KeychainService.loadPassword()
+        
         if(password == nil || password == ""){
             self.web.sentlog(func_name: "keychain service get \(password!) ", errorfromserverorlink: "", errorfromapp: "")
             let preuuid = defaults.string(forKey: "uuid")
@@ -121,6 +122,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         else{
 //            KeychainService.savePassword(token: "0B5C5D0B-70CE-4C75-8844-9E8938586489" as NSString)
            // password = KeychainService.loadPassword()
+            web.sentlog(func_name:  "", errorfromserverorlink: "contents Of Keychain \(password)" , errorfromapp:"")
             print(password!)//used this paasword (uuid)
             uuid = password! as String
         }

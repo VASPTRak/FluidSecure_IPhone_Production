@@ -268,13 +268,13 @@ class RegisterTableViewController: UITableViewController,CLLocationManagerDelega
                             print(reply)
                         }
                         else{
-                            if(ResponseText == "Please enter valid company.")
-                            {
+//                            if(ResponseText == "Please enter valid company.")
+//                            {
                                 registerButton.isEnabled = true
                                 self.showAlert(message: "\(ResponseText)" )
                                 activityindicator.stopAnimating()
                                 activityindicator.isHidden = true
-                            }
+//                            }
                         }
                     }
                     else

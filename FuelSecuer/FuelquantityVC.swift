@@ -88,6 +88,8 @@ public enum Model : String {
          
          iPadPro129inch6thGen = "iPad Pro 12.9 inch 6th Gen",
          
+         iPadPro13inch = "iPad Pro (13-inch) (M4)",
+         
          
          
          iPhone6            = "iPhone 6",
@@ -123,6 +125,11 @@ public enum Model : String {
          iPhone14Plus       = "iPhone 14 Plus",
          iPhone14Pro        = "iPhone 14 Pro",
          iPhone14ProMax     = "iPhone 14 Pro Max",
+         
+         iPhone15           = "iPhone 15",
+         iPhone15Plus       = "iPhone 15 Plus",
+         iPhone15Pro        = "iPhone 15 Pro",
+         iPhone15ProMax     = "iPhone 15 Pro Max",
          
          
          unrecognized       = "?unrecognized?"
@@ -229,6 +236,9 @@ public extension UIDevice {
             "iPad14,4" : .iPadPro11inch4thGen,//iPad Pro 11 inch 4th Gen
             "iPad14,5" : .iPadPro129inch6thGen,//iPad Pro 12.9 inch 6th Gen
             "iPad14,6" : .iPadPro129inch6thGen,//iPad Pro 12.9 inch 6th Gen
+        
+            "iPad16,5" : .iPadPro13inch,//"iPad Pro (13-inch) (M4)"
+            "iPad16,6" : .iPadPro13inch, //"iPad Pro (13-inch) (M4)"
             
             
             "iPhone3,1" : .iPhone4,
@@ -286,7 +296,12 @@ public extension UIDevice {
             "iPhone14,8" : .iPhone14Plus,
             
             "iPhone15,2" : .iPhone14Pro,
-            "iPhone15,3" : .iPhone14ProMax
+            "iPhone15,3" : .iPhone14ProMax,
+           
+            "iPhone15,4" : .iPhone15,
+            "iPhone15,5" : .iPhone15Plus,
+            "iPhone16,1" : .iPhone15Pro,
+            "iPhone16,2" : .iPhone15ProMax
             
             
         ]
@@ -1477,69 +1492,69 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                 self.IsStartbuttontapped = false
             }else {
                 
-                print("before setSamplingtime" + cf.dateUpdated)
-                self.cf.delay(0.5){
-                    var st = ""
-                    if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
-                    {
-                        if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1")
-                        {
-                            st = self.tcpcon.setSamplingtime()  /// set Sampling time to FS link
-                            if(st.contains("200")){
-                                _ = self.web.UpdateSwitchTimeBounceForLink()
-                            }
-                        }
-                    }
-                    print("after setSamplingtime" + self.cf.dateUpdated)
-                    print(st)
+//                print("before setSamplingtime" + cf.dateUpdated)
+//                self.cf.delay(0.5){
+//                    var st = ""
+//                    if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
+//                    {
+//                        if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1")
+//                        {
+//                            st = self.tcpcon.setSamplingtime()  /// set Sampling time to FS link
+//                            if(st.contains("200")){
+//                                _ = self.web.UpdateSwitchTimeBounceForLink()
+//                            }
+//                        }
+//                    }
+//                    print("after setSamplingtime" + self.cf.dateUpdated)
+//                    print(st)
                     
-                    print("before pulsarlastquantity" + self.cf.dateUpdated)
-                    self.cf.delay(0.5){
-                        self.start.isHidden = true
-                        self.cancel.isHidden = true
-                        if(Vehicaldetails.sharedInstance.iotversion == "f7.5.7.7.6.18t4(l)"){}
-                        else{
-                            self.web.cmtxtnid10()   /// GET last 10 records from FS link
-                        }
-                        print("pulsarlastquantity" + self.cf.dateUpdated)
-                        
-                        //                                    let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
-                        //                                    self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "8")/////
-                        
-                        print("before getlastTrans_ID" + self.cf.dateUpdated)
-                        self.cf.delay(0.5){
-                            if(Vehicaldetails.sharedInstance.iotversion == "f7.5.7.7.6.18t4(l)"){
-                                self.web.pulsarlastquantity()
-                                let lasttransID = self.web.getlastTrans_ID()   /// Get the previous Transaction ID from FS link.
-                                
-                                print("getlastTrans_ID" + self.cf.dateUpdated ,Vehicaldetails.sharedInstance.FinalQuantitycount)
-                                if(Vehicaldetails.sharedInstance.FinalQuantitycount == "")
-                                {
-                                    //                                             self.savetrans(lastpulsarcount: Vehicaldetails.sharedInstance.FinalQuantitycount,lasttransID: lasttransID)
-                                }
-                                else{
-                                    if(Vehicaldetails.sharedInstance.Last_transactionformLast10 == "")
-                                    {
-                                        self.saveTrans(lastpulsarcount: Vehicaldetails.sharedInstance.FinalQuantitycount,lasttransID: lasttransID)
-                                    }
-                                    else{
-                                        if(lasttransID == Vehicaldetails.sharedInstance.Last_transactionformLast10)
-                                        {
-                                            self.saveTrans(lastpulsarcount: Vehicaldetails.sharedInstance.FinalQuantitycount,lasttransID: lasttransID)
-                                            
-                                            self.web.sentlog(func_name:" Transaction id is matched.", errorfromserverorlink: lasttransID, errorfromapp:"\(Vehicaldetails.sharedInstance.Last_transactionformLast10)")
-                                            
-                                            Vehicaldetails.sharedInstance.Last_transactionformLast10 = ""
-                                        }
-                                        else
-                                        {
-                                            self.web.sentlog(func_name:" Transaction is is not matched lasttransID with the Last_transactionformLast10 transaction id  .", errorfromserverorlink: lasttransID, errorfromapp:"\(Vehicaldetails.sharedInstance.Last_transactionformLast10)")
-                                            self.saveTrans(lastpulsarcount: Vehicaldetails.sharedInstance.FinalQuantitycount,lasttransID: lasttransID)
-                                        }
-                                    }
-                                }
-                            }
-                            
+//                    print("before pulsarlastquantity" + self.cf.dateUpdated)
+//                    self.cf.delay(0.5){
+//                        self.start.isHidden = true
+//                        self.cancel.isHidden = true
+//                        if(Vehicaldetails.sharedInstance.iotversion == "f7.5.7.7.6.18t4(l)"){}
+//                        else{
+//                            self.web.cmtxtnid10()   /// GET last 10 records from FS link
+//                        }
+//                        print("pulsarlastquantity" + self.cf.dateUpdated)
+//                        
+//                        //                                    let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+//                        //                                    self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "8")/////
+//                        
+//                        print("before getlastTrans_ID" + self.cf.dateUpdated)
+//                        self.cf.delay(0.5){
+//                            if(Vehicaldetails.sharedInstance.iotversion == "f7.5.7.7.6.18t4(l)"){
+//                                self.web.pulsarlastquantity()
+//                                let lasttransID = self.web.getlastTrans_ID()   /// Get the previous Transaction ID from FS link.
+//                                
+//                                print("getlastTrans_ID" + self.cf.dateUpdated ,Vehicaldetails.sharedInstance.FinalQuantitycount)
+//                                if(Vehicaldetails.sharedInstance.FinalQuantitycount == "")
+//                                {
+//                                    //                                             self.savetrans(lastpulsarcount: Vehicaldetails.sharedInstance.FinalQuantitycount,lasttransID: lasttransID)
+//                                }
+//                                else{
+//                                    if(Vehicaldetails.sharedInstance.Last_transactionformLast10 == "")
+//                                    {
+//                                        self.saveTrans(lastpulsarcount: Vehicaldetails.sharedInstance.FinalQuantitycount,lasttransID: lasttransID)
+//                                    }
+//                                    else{
+//                                        if(lasttransID == Vehicaldetails.sharedInstance.Last_transactionformLast10)
+//                                        {
+//                                            self.saveTrans(lastpulsarcount: Vehicaldetails.sharedInstance.FinalQuantitycount,lasttransID: lasttransID)
+//                                            
+//                                            self.web.sentlog(func_name:" Transaction id is matched.", errorfromserverorlink: lasttransID, errorfromapp:"\(Vehicaldetails.sharedInstance.Last_transactionformLast10)")
+//                                            
+//                                            Vehicaldetails.sharedInstance.Last_transactionformLast10 = ""
+//                                        }
+//                                        else
+//                                        {
+//                                            self.web.sentlog(func_name:" Transaction is is not matched lasttransID with the Last_transactionformLast10 transaction id  .", errorfromserverorlink: lasttransID, errorfromapp:"\(Vehicaldetails.sharedInstance.Last_transactionformLast10)")
+//                                            self.saveTrans(lastpulsarcount: Vehicaldetails.sharedInstance.FinalQuantitycount,lasttransID: lasttransID)
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                            
                             if(self.connectedwifi != self.cf.getSSID()) //check selected wifi and connected wifi is not same
                             {
                                 self.web.sentlog(func_name:" StartButtontapped lost Wifi connection with the link after getlastTrans_ID", errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"Connetced link \( self.cf.getSSID())")
@@ -1661,9 +1676,9 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                         }
                     }
                 }
-            }
-        }
-    }
+//            }
+//        }
+//    }
     //                else if(relayStatus == 1)
     //                {
     //                    if(self.appdisconnects_automatically == true){}
@@ -2523,6 +2538,71 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                             self.web.sentlog(func_name: "stoprelay", errorfromserverorlink: "\(error)", errorfromapp:"Error: \(error.domain)")
                                         }
                                     }else {
+                                        self.cf.delay(0.5){
+                                            var st = ""
+                                            if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
+                                            {
+                                                if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1")
+                                                {
+                                                    st = self.tcpcon.setSamplingtime()  /// set Sampling time to FS link
+                                                    if(st.contains("200")){
+                                                        _ = self.web.UpdateSwitchTimeBounceForLink()
+                                                    }
+                                                }
+                                            }
+                                            
+                                            print("after setSamplingtime" + self.cf.dateUpdated)
+                                            print(st)
+                                        }
+                                        print("before pulsarlastquantity" + self.cf.dateUpdated)
+                                        self.cf.delay(0.5){
+                                            self.start.isHidden = true
+                                            self.cancel.isHidden = true
+                                            if(Vehicaldetails.sharedInstance.iotversion == "f7.5.7.7.6.18t4(l)"){}
+                                            else{
+                                                self.web.cmtxtnid10()   /// GET last 10 records from FS link
+                                            }
+                                            print("pulsarlastquantity" + self.cf.dateUpdated)
+                                            
+                                            //                                    let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                                            //                                    self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "8")/////
+                                            
+                                            print("before getlastTrans_ID" + self.cf.dateUpdated)
+                                            self.cf.delay(0.5){
+                                                if(Vehicaldetails.sharedInstance.iotversion == "f7.5.7.7.6.18t4(l)"){
+                                                    self.web.pulsarlastquantity()
+                                                    let lasttransID = self.web.getlastTrans_ID()   /// Get the previous Transaction ID from FS link.
+                                                    
+                                                    print("getlastTrans_ID" + self.cf.dateUpdated ,Vehicaldetails.sharedInstance.FinalQuantitycount)
+                                                    if(Vehicaldetails.sharedInstance.FinalQuantitycount == "")
+                                                    {
+                                                        //                                             self.savetrans(lastpulsarcount: Vehicaldetails.sharedInstance.FinalQuantitycount,lasttransID: lasttransID)
+                                                    }
+                                                    else{
+                                                        if(Vehicaldetails.sharedInstance.Last_transactionformLast10 == "")
+                                                        {
+                                                            self.saveTrans(lastpulsarcount: Vehicaldetails.sharedInstance.FinalQuantitycount,lasttransID: lasttransID)
+                                                        }
+                                                        else{
+                                                            if(lasttransID == Vehicaldetails.sharedInstance.Last_transactionformLast10)
+                                                            {
+                                                                self.saveTrans(lastpulsarcount: Vehicaldetails.sharedInstance.FinalQuantitycount,lasttransID: lasttransID)
+                                                                
+                                                                self.web.sentlog(func_name:" Transaction id is matched.", errorfromserverorlink: lasttransID, errorfromapp:"\(Vehicaldetails.sharedInstance.Last_transactionformLast10)")
+                                                                
+                                                                Vehicaldetails.sharedInstance.Last_transactionformLast10 = ""
+                                                            }
+                                                            else
+                                                            {
+                                                                self.web.sentlog(func_name:" Transaction is is not matched lasttransID with the Last_transactionformLast10 transaction id  .", errorfromserverorlink: lasttransID, errorfromapp:"\(Vehicaldetails.sharedInstance.Last_transactionformLast10)")
+                                                                self.saveTrans(lastpulsarcount: Vehicaldetails.sharedInstance.FinalQuantitycount,lasttransID: lasttransID)
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            }
+                                        
                                         
                                         print("before get final_pulsar_request" + self.cf.dateUpdated)
                                         self.GetPulsarstartimer.invalidate()

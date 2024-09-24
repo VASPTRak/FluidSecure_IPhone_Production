@@ -1737,12 +1737,12 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                                                     else{
                                                                         
                                                                         
-                                                                        if(self.IsVehicleNumberRequire == "True"){
+//                                                                        if(self.IsVehicleNumberRequire == "True"){
                                                                             let test_transaction = self.web.Testtransaction()
                                                                             if(test_transaction.contains("success")){
                                                                                 self.performSegue(withIdentifier: "fueling", sender: self)
                                                                             }
-                                                                        }
+//                                                                        }
                                                                     }
                                                                 }
                                                                 

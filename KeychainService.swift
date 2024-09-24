@@ -83,7 +83,7 @@ public class KeychainService: NSObject {
         if status == errSecSuccess {
             if let retrievedData = dataTypeRef as? NSData {
                 contentsOfKeychain = NSString(data: retrievedData as Data, encoding: String.Encoding.utf8.rawValue)
-                web.sentlog(func_name:  " Status code \(status)", errorfromserverorlink: "contents Of Keychain \(contentsOfKeychain)" , errorfromapp:"")
+                //web.sentlog(func_name:  " Status code \(status)", errorfromserverorlink: "contents Of Keychain \(contentsOfKeychain)" , errorfromapp:"")
             }
         } else {
             contentsOfKeychain = "";

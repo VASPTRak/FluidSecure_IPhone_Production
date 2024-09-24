@@ -730,7 +730,8 @@ class Webservices:NSObject {
         
         request.httpMethod = "POST"
         request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
-        let bodyData = "\(Name)#:#\(mobile)#:#\(Email)#:#\(uuid)#:#I#:#\(company)#:#I#:#\(brandname)"
+        let bodyData = "\(Name)#:#\(mobile)#:#\(Email)#:#\(uuid)#:#I#:#\(company)#:#I#:#\(brandname)#:#\(UIDevice().type)#:#iOS \(UIDevice.current.systemVersion)"
+//        let bodyData = "\(Name)#:#\(mobile)#:#\(Email)#:#\(uuid)#:#I#:#\(company)#:#I#:#\(brandname)"
         //        let bodyData = "\(Name)#:#\(mobile)#:#\(Email)#:#\(uuid)#:#I#:#\(company)"
         print(bodyData)
         request.httpBody = bodyData.data(using: String.Encoding.utf8)
@@ -2448,7 +2449,7 @@ class Webservices:NSObject {
                 if(newString == ""){
                      Vehicaldetails.sharedInstance.Last_transactionformLast10 = ""
                 }
-                self.sentlog(func_name: "Fueling Page Get cmtxtnid10 Function", errorfromserverorlink: " Response from link \(newString)",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                self.sentlog(func_name: "Fueling Page Get Sending cmtxtnid10 command to Link (to get Last Single Txn) ", errorfromserverorlink: " Response from link \(newString)",errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 let data1:NSData = self.pulsardata.data(using: String.Encoding.utf8)! as NSData
                 do{
                     self.sysdataLast10trans = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
@@ -2475,17 +2476,17 @@ class Webservices:NSObject {
                         let txtninfo9 = objUserData.value(forKey: "9:TXTNINFO:") as! String
                         let txtninfo10 = objUserData.value(forKey: "10:TXTNINFO:") as! String
                         
-                        self.Splitedata1(trans_info: txtninfo1)
-                        self.Splitedata(trans_info: txtninfo1)
-                        self.Splitedata(trans_info: txtninfo2)
-                        self.Splitedata(trans_info: txtninfo3)
-                        self.Splitedata(trans_info: txtninfo4)
-                        self.Splitedata(trans_info: txtninfo5)
-                        self.Splitedata(trans_info: txtninfo6)
-                        self.Splitedata(trans_info: txtninfo7)
-                        self.Splitedata(trans_info: txtninfo8)
-                        self.Splitedata(trans_info: txtninfo9)
-                        self.Splitedata(trans_info: txtninfo10)
+                        self.Splitedata1(trans_info: txtninfo2)
+//                        self.Splitedata(trans_info: txtninfo1)
+//                        self.Splitedata(trans_info: txtninfo2)
+//                        self.Splitedata(trans_info: txtninfo3)
+//                        self.Splitedata(trans_info: txtninfo4)
+//                        self.Splitedata(trans_info: txtninfo5)
+//                        self.Splitedata(trans_info: txtninfo6)
+//                        self.Splitedata(trans_info: txtninfo7)
+//                        self.Splitedata(trans_info: txtninfo8)
+//                        self.Splitedata(trans_info: txtninfo9)
+//                        self.Splitedata(trans_info: txtninfo10)
                     }
                     else {
                 
@@ -2502,17 +2503,17 @@ class Webservices:NSObject {
                     let txtninfo9 = objUserData.value(forKey:"9:") as! String
                     let txtninfo10 = objUserData.value(forKey:"10:") as! String
                     
-                    self.Splitedata1(trans_info: txtninfo1)
-                    self.Splitedata(trans_info: txtninfo1)
-                    self.Splitedata(trans_info: txtninfo2)
-                    self.Splitedata(trans_info: txtninfo3)
-                    self.Splitedata(trans_info: txtninfo4)
-                    self.Splitedata(trans_info: txtninfo5)
-                    self.Splitedata(trans_info: txtninfo6)
-                    self.Splitedata(trans_info: txtninfo7)
-                    self.Splitedata(trans_info: txtninfo8)
-                    self.Splitedata(trans_info: txtninfo9)
-                    self.Splitedata(trans_info: txtninfo10)
+                    self.Splitedata1(trans_info: txtninfo2)
+//                    self.Splitedata(trans_info: txtninfo1)
+//                    self.Splitedata(trans_info: txtninfo2)
+//                    self.Splitedata(trans_info: txtninfo3)
+//                    self.Splitedata(trans_info: txtninfo4)
+//                    self.Splitedata(trans_info: txtninfo5)
+//                    self.Splitedata(trans_info: txtninfo6)
+//                    self.Splitedata(trans_info: txtninfo7)
+//                    self.Splitedata(trans_info: txtninfo8)
+//                    self.Splitedata(trans_info: txtninfo9)
+//                    self.Splitedata(trans_info: txtninfo10)
                     
                     }
                     //                    let t_count = Int(truncating: counts)
@@ -2529,6 +2530,25 @@ class Webservices:NSObject {
     }
     
     
+    func saveTrans(lastpulsarcount:String,lasttransID:String){
+        let PulseRatio = Vehicaldetails.sharedInstance.PulseRatio
+        let fuelquantity = (Double(lastpulsarcount))!/(PulseRatio as NSString).doubleValue
+        if(fuelquantity == 0.0 || lasttransID == "-1" || lasttransID == "0"){}
+        else{
+            let bodyData = "{\"TransactionId\":\(lasttransID),\"FuelQuantity\":\((fuelquantity)),\"Pulses\":\"\(lastpulsarcount)\",\"TransactionFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\",\"Transaction\":\"LastTransaction\"}"
+            
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "ddMMyyyyhhmmss"
+            dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
+            let dtt1: String = dateFormatter.string(from: NSDate() as Date)
+            let unsycnfileName =  dtt1 + "#" + "transaction" + "#" + "lasttransID" + "#" + Vehicaldetails.sharedInstance.SSId
+            if(bodyData != ""){
+                cf.SaveTextFile(fileName: unsycnfileName, writeText: bodyData)
+                self.sentlog(func_name:" Saved Last Transaction to Phone, Date\(dtt1) TransactionId:\(lasttransID),FuelQuantity:\((fuelquantity)),Pulses:\(lastpulsarcount)", errorfromserverorlink: "Selected Hose : \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"Connetced link : \( self.cf.getSSID())")
+            }
+        }
+    }
+    
     func Splitedata1(trans_info:String){
         if(trans_info.contains("--"))
         {
@@ -2538,9 +2558,10 @@ class Webservices:NSObject {
         let Split = trans_info.components(separatedBy: "-")
         
         let transid = Split[0];
-        //let pulses = Split[1];
+        let pulses = Split[1];
         
         Vehicaldetails.sharedInstance.Last_transactionformLast10 = transid
+        saveTrans(lastpulsarcount:pulses,lasttransID:transid)
         }
         
     }
