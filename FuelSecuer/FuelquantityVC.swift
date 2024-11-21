@@ -411,6 +411,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     var totalbindatacount:Int!
     var replydata:NSData!
     var subData = Data()
+    var lasttransID = ""
     
     var hostUDP = "192.168.4.1"
     var portUDP = 80
@@ -1525,7 +1526,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
 //                        self.cf.delay(0.5){
 //                            if(Vehicaldetails.sharedInstance.iotversion == "f7.5.7.7.6.18t4(l)"){
 //                                self.web.pulsarlastquantity()
-//                                let lasttransID = self.web.getlastTrans_ID()   /// Get the previous Transaction ID from FS link.
+//                                lasttransID = self.web.getlastTrans_ID()   /// Get the previous Transaction ID from FS link.
 //                                
 //                                print("getlastTrans_ID" + self.cf.dateUpdated ,Vehicaldetails.sharedInstance.FinalQuantitycount)
 //                                if(Vehicaldetails.sharedInstance.FinalQuantitycount == "")
@@ -1553,7 +1554,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
 //                                        }
 //                                    }
 //                                }
-//                            }
+//                        }
 //                            
                             if(self.connectedwifi != self.cf.getSSID()) //check selected wifi and connected wifi is not same
                             {
@@ -2558,7 +2559,9 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                         self.cf.delay(0.5){
                                             self.start.isHidden = true
                                             self.cancel.isHidden = true
-                                            if(Vehicaldetails.sharedInstance.iotversion == "f7.5.7.7.6.18t4(l)"){}
+                                            if(Vehicaldetails.sharedInstance.iotversion == "f7.5.7.7.6.18t4(l)"){
+                                                self.web.pulsarlastquantity()
+                                            }
                                             else{
                                                 self.web.cmtxtnid10()   /// GET last 10 records from FS link
                                             }
@@ -2568,39 +2571,39 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                             //                                    self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "8")/////
                                             
                                             print("before getlastTrans_ID" + self.cf.dateUpdated)
-                                            self.cf.delay(0.5){
-                                                if(Vehicaldetails.sharedInstance.iotversion == "f7.5.7.7.6.18t4(l)"){
-                                                    self.web.pulsarlastquantity()
-                                                    let lasttransID = self.web.getlastTrans_ID()   /// Get the previous Transaction ID from FS link.
-                                                    
-                                                    print("getlastTrans_ID" + self.cf.dateUpdated ,Vehicaldetails.sharedInstance.FinalQuantitycount)
-                                                    if(Vehicaldetails.sharedInstance.FinalQuantitycount == "")
-                                                    {
-                                                        //                                             self.savetrans(lastpulsarcount: Vehicaldetails.sharedInstance.FinalQuantitycount,lasttransID: lasttransID)
-                                                    }
-                                                    else{
-                                                        if(Vehicaldetails.sharedInstance.Last_transactionformLast10 == "")
-                                                        {
-                                                            self.saveTrans(lastpulsarcount: Vehicaldetails.sharedInstance.FinalQuantitycount,lasttransID: lasttransID)
-                                                        }
-                                                        else{
-                                                            if(lasttransID == Vehicaldetails.sharedInstance.Last_transactionformLast10)
-                                                            {
-                                                                self.saveTrans(lastpulsarcount: Vehicaldetails.sharedInstance.FinalQuantitycount,lasttransID: lasttransID)
-                                                                
-                                                                self.web.sentlog(func_name:" Transaction id is matched.", errorfromserverorlink: lasttransID, errorfromapp:"\(Vehicaldetails.sharedInstance.Last_transactionformLast10)")
-                                                                
-                                                                Vehicaldetails.sharedInstance.Last_transactionformLast10 = ""
-                                                            }
-                                                            else
-                                                            {
-                                                                self.web.sentlog(func_name:" Transaction is is not matched lasttransID with the Last_transactionformLast10 transaction id  .", errorfromserverorlink: lasttransID, errorfromapp:"\(Vehicaldetails.sharedInstance.Last_transactionformLast10)")
-                                                                self.saveTrans(lastpulsarcount: Vehicaldetails.sharedInstance.FinalQuantitycount,lasttransID: lasttransID)
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
+//                                            self.cf.delay(0.5){
+//                                                if(Vehicaldetails.sharedInstance.iotversion == "f7.5.7.7.6.18t4(l)"){
+//                                                    self.web.pulsarlastquantity()
+////                                                    let lasttransID = self.web.getlastTrans_ID()   /// Get the previous Transaction ID from FS link.
+//                                                    
+//                                                    print("getlastTrans_ID" + self.cf.dateUpdated ,Vehicaldetails.sharedInstance.FinalQuantitycount)
+//                                                    if(Vehicaldetails.sharedInstance.FinalQuantitycount == "")
+//                                                    {
+//                                                        //                                             self.savetrans(lastpulsarcount: Vehicaldetails.sharedInstance.FinalQuantitycount,lasttransID: lasttransID)
+//                                                    }
+//                                                    else{
+//                                                        if(Vehicaldetails.sharedInstance.Last_transactionformLast10 == "")
+//                                                        {
+//                                                            self.saveTrans(lastpulsarcount: Vehicaldetails.sharedInstance.FinalQuantitycount,lasttransID: self.lasttransID)
+//                                                        }
+//                                                        else{
+//                                                            if(self.lasttransID == Vehicaldetails.sharedInstance.Last_transactionformLast10)
+//                                                            {
+//                                                                self.saveTrans(lastpulsarcount: Vehicaldetails.sharedInstance.FinalQuantitycount,lasttransID: self.lasttransID)
+//                                                                
+//                                                                self.web.sentlog(func_name:" Transaction id is matched.", errorfromserverorlink: self.lasttransID, errorfromapp:"\(Vehicaldetails.sharedInstance.Last_transactionformLast10)")
+//                                                                
+//                                                                Vehicaldetails.sharedInstance.Last_transactionformLast10 = ""
+//                                                            }
+//                                                            else
+//                                                            {
+//                                                                self.web.sentlog(func_name:" Transaction is is not matched lasttransID with the Last_transactionformLast10 transaction id  .", errorfromserverorlink: self.lasttransID, errorfromapp:"\(Vehicaldetails.sharedInstance.Last_transactionformLast10)")
+//                                                                self.saveTrans(lastpulsarcount: Vehicaldetails.sharedInstance.FinalQuantitycount,lasttransID: self.lasttransID)
+//                                                            }
+//                                                        }
+//                                                    }
+//                                                }
+//                                            }
                                             }
                                         
                                         
@@ -3316,7 +3319,9 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                 if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
                 {
                     tcpcon.changessidname(wifissid: trimmedString)
+                    
                 }
+                self.web.SetHoseNameReplacedFlag()
             }
         }
         if(AppconnectedtoBLE == true)

@@ -2368,6 +2368,7 @@ class PreauthFuelquantity: UIViewController,UITextFieldDelegate,URLSessionDownlo
                 let trimmedString = Vehicaldetails.sharedInstance.ReplaceableHoseName.trimmingCharacters(in: .whitespacesAndNewlines)
                 tcpcon.changessidname(wifissid: trimmedString)
             }
+            self.web.SetHoseNameReplacedFlag()
             //            let trimmedString = Vehicaldetails.sharedInstance.ReplaceableHoseName.trimmingCharacters(in: .whitespacesAndNewlines)
             //            tcpcon.changessidname(wifissid: trimmedString)
         }

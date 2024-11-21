@@ -637,7 +637,7 @@ class Webservices:NSObject {
             if let data = data {
                // print(String(data: data, encoding: String.Encoding.utf8)!)
                 self.reply = NSString(data: data, encoding:String.Encoding.utf8.rawValue)!as String
-//                 print(self.reply)
+                 print(self.reply)
                 let text = self.reply
                 if text!.contains("ResponceMessage"){
                     
@@ -2441,7 +2441,7 @@ class Webservices:NSObject {
         let task = session.dataTask(with: request as URLRequest) { data, response, error in
             if let data = data {
                 self.pulsardata = NSString(data: data, encoding:String.Encoding.ascii.rawValue)! as String
-                 // print(self.pulsardata)
+                  print(self.pulsardata)
                 let text = self.pulsardata
                 let test = String((text?.filter { !" \n".contains($0) })!)
                 let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil) //"{ cmtxtnid_10_record :{ 1:TXTNINFO: : 7347954-2270 , 2:TXTNINFO: : 7344714-2191 , 3:TXTNINFO: : 7344710-92 , 4:TXTNINFO: : 7343905--41959432 , 5:TXTNINFO: : 7343510-2146926431 , 6:TXTNINFO: : 7339831--49185 , 7:TXTNINFO: : 7339485--545260097 , 8:TXTNINFO: : 7339456--67371009 , 9:TXTNINFO: : 7338746--4194305 , 10:TXTNINFO: : 7330954-N/A }}"//

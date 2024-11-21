@@ -983,7 +983,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = LY75MT5XE6;
 				ENABLE_BITCODE = NO;
 				ENABLE_ON_DEMAND_RESOURCES = YES;
@@ -994,7 +994,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.18.43;
+				MARKETING_VERSION = 1.18.45;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Trakengg.Fluidsecure;
 				PRODUCT_NAME = FuelSecure;
 				PROVISIONING_PROFILE = "";
@@ -1016,7 +1016,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: VASP Solutions LLP (398Q9X5345)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = LY75MT5XE6;
 				ENABLE_BITCODE = NO;
 				ENABLE_ON_DEMAND_RESOURCES = YES;
@@ -1027,7 +1027,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.18.43;
+				MARKETING_VERSION = 1.18.45;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Trakengg.Fluidsecure;
 				PRODUCT_NAME = FuelSecure;
 				PROVISIONING_PROFILE = "";
@@ -1048,7 +1048,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 398Q9X5345;
 				INFOPLIST_FILE = FuelSecuerTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1072,7 +1072,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = LY75MT5XE6;
 				INFOPLIST_FILE = FuelSecuerTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1095,7 +1095,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = FuelSecuerUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1120,7 +1120,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = FuelSecuerUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
