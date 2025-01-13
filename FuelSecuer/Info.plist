@@ -47,6 +47,11 @@
 	<string>Yes</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>Information Property List</key>
+	<dict>
+		<key>Minimum system version</key>
+		<string>13.0.0</string>
+	</dict>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSGetAppDiedEvents</key>
@@ -118,10 +123,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>Information Property List</key>
-	<dict>
-		<key>Minimum system version</key>
-		<string>13.0.0</string>
-	</dict>
 </dict>
 </plist>

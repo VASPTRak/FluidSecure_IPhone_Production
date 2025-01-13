@@ -52,6 +52,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
     @IBOutlet var PWD: UITextField!
     @IBOutlet var Username: UITextField!
 //    @IBOutlet weak var preauth: UIButton!
+    @IBOutlet weak var itembarbutton: UIBarButtonItem!
     @IBOutlet weak var Activity: UIActivityIndicatorView!
     @IBOutlet weak var Companylogo: UIImageView!
     
@@ -69,6 +70,13 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         }
             
         }
+        
+        if(Vehicaldetails.sharedInstance.Language == "es-ES"){
+            itembarbutton.title = "English"
+        }else  if(Vehicaldetails.sharedInstance.Language == ""){
+            itembarbutton.title = "Spanish"
+        }
+        
         
         let preuuid = defaults.string(forKey: "uuid")
         if(preuuid == nil || preuuid == ""){
@@ -494,9 +502,20 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
                         let PhoneNumber = defaults.string(forKey: "mobile")
                         let Email = defaults.string(forKey: "address")
                         let CompanyName = defaults.string(forKey: "company")
-                        Info.text = NSLocalizedString("Name", comment:"") + ": \(PersonName!)\n" + NSLocalizedString("Mobile", comment:"") + ":\(PhoneNumber!)\n" + NSLocalizedString("Email", comment:"") +  ": \(Email!) \n" + NSLocalizedString("Company Name", comment:"") + ": \(CompanyName) \n"
                         
-                        Companyname.text = NSLocalizedString(" Company Name", comment:"") + ": \(CompanyName)"
+                        if(CompanyName == nil)
+                        {
+                            Info.text = NSLocalizedString("Name", comment:"") + ": \(PersonName)\n" + NSLocalizedString("Mobile", comment:"") + ":\(PhoneNumber)\n" + NSLocalizedString("Email", comment:"") +  ": \(Email) \n" + NSLocalizedString("CompanyName", comment:"") + ": \(CompanyName) \n"
+                            
+                            Companyname.text = NSLocalizedString(" CompanyName", comment:"") + ": \(CompanyName)"
+                        }
+                        else{
+                            Info.text = NSLocalizedString("Name", comment:"") + ": \(PersonName!)\n" + NSLocalizedString("Mobile", comment:"") + ":\(PhoneNumber!)\n" + NSLocalizedString("Email", comment:"") +  ": \(Email!) \n" + NSLocalizedString("CompanyName", comment:"") + ": \(CompanyName!) \n"
+                            
+                            Companyname.text = NSLocalizedString(" CompanyName", comment:"") + ": \(CompanyName!)"
+                        }
+                        
+                        
                         
                     }else
                     {
@@ -533,22 +552,31 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
                         appDel.start()
                     }
                 }
+                else{
+                    mview.isHidden = true
+                    version.isHidden = false
+                    warning.isHidden = false
+                    refresh.isHidden = false
+                    let appDel = UIApplication.shared.delegate! as! AppDelegate
+                    // Call a method on the CustomController property of the AppDelegate
+                    appDel.start()
+                }
             }
         }
         
-        if(defaults.string(forKey: "Language") == "es"){
-            Bundle.setLanguage("es")
-            Vehicaldetails.sharedInstance.Language = "es-ES"
-            let appDel = UIApplication.shared.delegate! as! AppDelegate
-            appDel.start()
-        }
-        else if(defaults.string(forKey: "Language") == "en"){
-
-            Bundle.setLanguage("en")
-            Vehicaldetails.sharedInstance.Language = "en-US"
-            let appDel = UIApplication.shared.delegate! as! AppDelegate
-            appDel.start()
-        }
+//        if(defaults.string(forKey: "Language") == "es"){
+//            Bundle.setLanguage("es")
+//            Vehicaldetails.sharedInstance.Language = "es-ES"
+////            let appDel = UIApplication.shared.delegate! as! AppDelegate
+////            appDel.start()
+//        }
+//        else if(defaults.string(forKey: "Language") == "en"){
+//
+//            Bundle.setLanguage("en")
+//            Vehicaldetails.sharedInstance.Language = "en-US"
+////            let appDel = UIApplication.shared.delegate! as! AppDelegate
+////            appDel.start()
+//        }
        
     }
     
@@ -667,7 +695,31 @@ class LoginViewController: UIViewController,UITextFieldDelegate,CLLocationManage
         Alert(message: "You currently have no cellular service and will be performing an Offline Transaction. After finishing, please leave app open until you regain service.")
 
     }
-
+    @IBAction func spanish(_ sender: Any) {
+        if(itembarbutton.title == "English"){
+            Vehicaldetails.sharedInstance.Language = ""
+            Bundle.setLanguage("en")
+            defaults.set("en", forKey: "Language")
+            //IsrefreshButtontapped = true
+             viewDidLoad()
+            //viewDidAppear(true)
+            //getdatauser()
+//            let appDel = UIApplication.shared.delegate! as! AppDelegate
+//            appDel.start()
+        }else if(itembarbutton.title == "Spanish"){
+            Bundle.setLanguage("es")
+            defaults.set("es", forKey: "Language")
+            Vehicaldetails.sharedInstance.Language = "es-ES"
+            //IsrefreshButtontapped = true
+             viewDidLoad()
+            //viewDidAppear(true)
+            //getdatauser()
+//            let appDel = UIApplication.shared.delegate! as! AppDelegate
+//            appDel.start()
+        }
+        
+    }
+    
     func Alert(message: String)
     {
         

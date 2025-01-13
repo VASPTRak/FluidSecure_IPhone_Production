@@ -12,7 +12,7 @@
 "2b7-WQ-hc2.title" = "Espalda";
 
 /* Class = "UIButton"; normalTitle = "GO"; ObjectID = "3EQ-cf-hHe"; */
-"3EQ-cf-hHe.normalTitle" = "Listo";
+"3EQ-cf-hHe.normalTitle" = "IR";
 
 /* Class = "UITableViewController"; title = "Register"; ObjectID = "3yL-aV-pxg"; */
 "3yL-aV-pxg.title" = "Registro";
@@ -21,7 +21,7 @@
 "5kN-bx-ShP.placeholder" = "Número Móvil";
 
 /* Class = "UIButton"; normalTitle = "GO"; ObjectID = "6GF-lJ-66n"; */
-"6GF-lJ-66n.normalTitle" = "Listo";
+"6GF-lJ-66n.normalTitle" = "IR";
 
 /* Class = "UILabel"; text = "0.0"; ObjectID = "6tN-iq-bQN"; */
 "6tN-iq-bQN.text" = "0,0";
@@ -60,7 +60,7 @@
 "G0z-to-5pL.placeholder" = "Dirección de Correo Electrónico";
 
 /* Class = "UIButton"; normalTitle = "GO"; ObjectID = "Hns-mf-f9H"; */
-"Hns-mf-f9H.normalTitle" = "Listo";
+"Hns-mf-f9H.normalTitle" = "IR";
 
 /* Class = "UIBarButtonItem"; title = "Back"; ObjectID = "HoK-Hf-XB8"; */
 "HoK-Hf-XB8.title" = "Espalda";
@@ -117,7 +117,7 @@
 "TF2-d5-X3r.normalTitle" = "Cancele";
 
 /* Class = "UIButton"; normalTitle = "GO"; ObjectID = "UDr-NJ-6hy"; */
-"UDr-NJ-6hy.normalTitle" = "Listo";
+"UDr-NJ-6hy.normalTitle" = "IR";
 
 /* Class = "UITextField"; placeholder = "Enter Department"; ObjectID = "UZt-rx-wKg"; */
 "UZt-rx-wKg.placeholder" = "Ingresar departamento";
@@ -175,7 +175,7 @@
 "gWy-tI-iBk.placeholder" = "Ingrese PIN personal";
 
 /* Class = "UIButton"; normalTitle = "GO"; ObjectID = "gfC-BQ-V5X"; */
-"gfC-BQ-V5X.normalTitle" = "Listo";
+"gfC-BQ-V5X.normalTitle" = "IR";
 
 /* Class = "UILabel"; text = " Version 1.15.17"; ObjectID = "h0f-KN-znz"; */
 //"h0f-KN-znz.text" = " Versión 1.15.17";
@@ -196,7 +196,7 @@
 "kq7-tk-J7N.text" = "Ingrese Horas";
 
 /* Class = "UIButton"; normalTitle = "GO"; ObjectID = "lhK-Mz-ui4"; */
-"lhK-Mz-ui4.normalTitle" = "Listo";
+"lhK-Mz-ui4.normalTitle" = "IR";
 
 /* Class = "UINavigationItem"; title = "FluidSecure"; ObjectID = "mMY-ma-OUv"; */
 "mMY-ma-OUv.title" = "FluidSecure";
@@ -204,10 +204,10 @@
 /* Class = "UIBarButtonItem"; title = "Back"; ObjectID = "mWq-Mr-X9k"; */
 "mWq-Mr-X9k.title" = "Espalda";
 
-"1zu-Kl-e2O.normalTitle" = "Listo";
+"1zu-Kl-e2O.normalTitle" = "IR";
 
 /* Class = "UIButton"; normalTitle = "GO"; ObjectID = "mbr-lW-KO7"; */
-"mbr-lW-KO7.normalTitle" = "Listo";
+"mbr-lW-KO7.normalTitle" = "IR";
 
 /* Class = "UIButton"; normalTitle = "Login"; ObjectID = "nSi-I4-OPh"; */
 "nSi-I4-OPh.normalTitle" = "Iniciar sesión";
@@ -244,6 +244,15 @@
 
 /* Class = "UIButton"; normalTitle = "Refresh"; ObjectID = "ufS-mn-laM"; */
 "ufS-mn-laM.normalTitle" = "Refrescar";
+
+
+/* Class = "UIButton"; normalTitle = "Refresh"; ObjectID = "Zd6-5R-fcw"; */
+"Zd6-5R-fcw.normalTitle" = "Refrescar";
+
+/* Class = "UIButton"; normalTitle = "Refresh"; ObjectID = "aLf-fv-WAk"; */
+"aLf-fv-WAk.normalTitle" = "Refrescar";
+
+
 
 /* Class = "UITextField"; placeholder = "Password"; ObjectID = "wbr-EM-9YG"; */
 "wbr-EM-9YG.placeholder" = "Contraseña";

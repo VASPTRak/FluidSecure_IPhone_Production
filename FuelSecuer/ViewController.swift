@@ -682,7 +682,14 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         }
         
         var myMutableStringTitle = NSMutableAttributedString()
-        let Name = "Select Hose to Use"// PlaceHolderText
+        var Name = ""// PlaceHolderText
+        print(Vehicaldetails.sharedInstance.Language)
+        if(Vehicaldetails.sharedInstance.Language == "es-ES"){
+             Name = "Seleccionar"// PlaceHolderText
+        }else  if(Vehicaldetails.sharedInstance.Language == ""){
+             Name = "Select Hose to Use"// PlaceHolderText
+        }
+        
         myMutableStringTitle = NSMutableAttributedString(string:Name, attributes: [NSAttributedString.Key.font:UIFont(name: "Arial", size: 25.0)!]) // Font
         myMutableStringTitle.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white, range:NSRange(location:0,length:Name.count))    // Color
         wifiNameTextField.attributedPlaceholder = myMutableStringTitle
@@ -825,9 +832,9 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                         
                     }
                     
-                    infotext.text =  NSLocalizedString("Name", comment:"") + ": \(PersonName)\n" + NSLocalizedString("Mobile", comment:"") + ":\(PhoneNumber)\n" + NSLocalizedString("Email", comment:"") +  ": \(Email) \n"
+                    infotext.text =  NSLocalizedString("Name", comment:"") + ": \(PersonName)\n" + NSLocalizedString("Mobile", comment:"") + ":\(PhoneNumber)\n" + NSLocalizedString("Email", comment:"") +  ": \(Email) \n" + NSLocalizedString("CompanyName", comment:"") + ": \(CompanyName)"
                     
-                    Companynamelabel.text = NSLocalizedString("Company Name", comment:"") + ": \(CompanyName)"
+                    Companynamelabel.text = NSLocalizedString("CompanyName", comment:"") + ": \(CompanyName)"
                     Companynamelabel.lineBreakMode = .byWordWrapping
                     infotext.lineBreakMode = .byWordWrapping
                     
@@ -844,6 +851,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                     defaults.set(PersonName, forKey: "firstName")
                     defaults.set(Email, forKey: "address")
                     defaults.set(PhoneNumber, forKey: "mobile")
+                    defaults.set(CompanyName, forKey: "company")
                     if(uuid == ""){}
                     else{
                         defaults.set(uuid, forKey: "uuid")
@@ -906,7 +914,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                     preauth.isHidden = true
                     
                     supportinfo.text = "\(Vehicaldetails.sharedInstance.SupportEmail) or " + "\(Vehicaldetails.sharedInstance.SupportPhonenumber)"
-                    self.wifiNameTextField.placeholder = NSLocalizedString("Select Hose to Use", comment:"")
+                    self.wifiNameTextField.placeholder = NSLocalizedString("selectHose", comment:"")
                     
                     self.wifiNameTextField.textColor = UIColor.white
                     self.wifiNameTextField.inputView = pickerViewLocation
@@ -1289,9 +1297,9 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                         let Email = defaults.string(forKey: "address")
                         let PhoneNumber = defaults.string(forKey: "mobile")
                         let CompanyName = defaults.string(forKey: "company")
-                        info_text.text =  NSLocalizedString("Name", comment:"") + ": \(PersonName!)\n" + NSLocalizedString("Mobile", comment:"") + ":\(PhoneNumber!)\n" + NSLocalizedString("Email", comment:"") +  ": \(Email!) \n" +  NSLocalizedString("Company Name", comment:"") + ": \(CompanyName!) \n"
+                        info_text.text =  NSLocalizedString("Name", comment:"") + ": \(PersonName!)\n" + NSLocalizedString("Mobile", comment:"") + ":\(PhoneNumber!)\n" + NSLocalizedString("Email", comment:"") +  ": \(Email!) \n" +  NSLocalizedString("CompanyName", comment:"") + ": \(CompanyName!) \n"
                         
-                       // Companyname_text.text = NSLocalizedString("Company Name", comment:"") + ": \(CompanyName!)"
+                        Companyname_text.text = NSLocalizedString("CompanyName", comment:"") + ": \(CompanyName!)"
                         //+ " " +  defaults.string(forKey: "address")! + " " +  NSLocalizedString("registration1", comment:"")
                     }else
                     {
@@ -1484,13 +1492,20 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             Vehicaldetails.sharedInstance.Language = ""
             Bundle.setLanguage("en")
             defaults.set("en", forKey: "Language")
+            IsrefreshButtontapped = true
+            // viewDidLoad()
+            //viewDidAppear(true)
+            getdatauser()
             let appDel = UIApplication.shared.delegate! as! AppDelegate
             appDel.start()
         }else if(itembarbutton.title == "Spanish"){
             Bundle.setLanguage("es")
             defaults.set("es", forKey: "Language")
             Vehicaldetails.sharedInstance.Language = "es-ES"
-            
+            IsrefreshButtontapped = true
+            // viewDidLoad()
+            //viewDidAppear(true)
+            getdatauser()
             let appDel = UIApplication.shared.delegate! as! AppDelegate
             appDel.start()
         }

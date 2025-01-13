@@ -5,18 +5,19 @@
   Created by VASP on 5/29/18.
   Copyright © 2018 VASP. All rights reserved.
 */
-"Select Hose to use" = "Seleccionar Mavga Para Utilzar";//"Seleccione manguera para usar";
+"Select Hose to use" = "Seleccionar";//"Seleccione manguera para usar";
 "Date_Fueling" = "";
 "Name" = "Nombre";
 "Mobile" = "Móvil";
-"Email" = "Email";
+"Email" = "Electrónico";
+"CompanyName" = "Empresa";
 "Enter" = "Entrar";
 "MessageFueling" = "Por Favor Inserte La Manga Enel Tanque, Luego Oprima Listo";//"Inserta la boquilla en el tanque \ n Luego toca iniciar";
 "MessageFueling1" = "Por Favor de Espenrar Hasta Que Su Conecciun Sea Esta Milizada Con Ez FluidSecure Enlase.";//Espere mientras se establece su conexión Con el enlace FS";
 "LostWifi" = "Coneccion WiFi perdida en su Móvil.";
 "Touch to select Site" = "Toque aquí para seleccionar la manguera";
 "Touch to select Company" = "Toque aquí para seleccionar la empresa";
-"Regisration" = "Su solicitud de registro aún no está aprobada";
+"Regisration" = "Se ha enviado su solicitud de registro. El administrador de su empresa recibirá un correo electrónico con instrucciones sobre cómo aprobar su solicitud. Cierre la aplicación y vuelva a abrirla una vez que se haya aprobado o para recibir actualizaciones sobre el registro.";
 "registration1" = "Está marcado como Inactivo en el Software de la Compañía. Póngase en contacto con el administrador de su empresa.";
 //"Regisration" = "Su solicitud de registro aún no ha sido aprobada. Está marcado como Inactivo en el Software de la Compañía. Por favor, póngase en contacto con el administrador de su empresa.";
 "HelptextSelectedCompany" = "Seleccione Compañía y luego Continúe";
@@ -53,7 +54,7 @@
 "wificonnection" = "Su Conneccion Se Perdio ";
 "wificonnection1" = " Por Favor Seleccione  ";
 "CheckFSunit" = "Verifique su unidad FS y apague la alimentación y vuelva a encenderla.";//Please check your FS unit, and switch off power and back on.";
-"ThankyouMSG" = "Gracias Por Usar \nFluidSecure.";
+"ThankyouMSG" = "Gracias Por Usar \n FluidSecure.";
 "NoQuantity" = "Sin cantidad recibida. Transacción finalizada";//"No Quantity received. Transaction ended.";
 "ZeroQuantity" = "La cantidad es cero. Transacción está detenida.";//"Quantity is zero. Transaction is stopped.";
 "Notify" = "Su transacción se completa con éxito en";//"Your Transaction is Successfully Completed at ";
@@ -79,7 +80,7 @@
 "NO" = "No";
 "YES" = "Si";
 "Confirm" = "Confirmar";
-"selectHose" = "Seleccionar Mavga Para Utilzar";
+"selectHose" = "Seleccionar";
 "selectCompany" = "Seleccionar empresa para usar";
 "No_Pre-auth_transaction" = "transacciones pre autorizadas disponibles - ";
 "BacktoHome" = "Pagina Principal";
@@ -87,7 +88,7 @@
 "Warningfueling" =
 "Precaución: ¡NO abandone esta pantalla mientras está cargando combustible, la bomba puede apagarse!";
 "Pulsardisconnected" = "Pulsar disconnected";
-
+"SwitchoffyourWiFi" = "Apague el wifi antes de continuar. \n Para apagar el wifi, puede usar el acceso directo. Si tiene un iPhone con Touch ID, deslice el dedo hacia arriba desde la parte inferior de la pantalla. Si tiene un iPhone con Face ID, deslice el dedo hacia abajo desde la esquina superior derecha. Luego, toque el ícono de wifi para apagarlo.";
 "warningOdoHour" = "Ha ingresado una lectura que se ingresó anteriormente. Verifique e intente nuevamente. Si el problema persiste, comuníquese con su Gerente.";
 
 "preauthwaringMsg" = "No tienes suficiente cobertura celular para realizar esta transacción. Vuelva a donde tiene cobertura y vuelva a abrir la aplicación durante al menos dos minutos. Durante este tiempo, se cargará una base de datos fuera de línea en su dispositivo donde podrá regresar para realizar su(s) transacción(es). La(s) transacción(es) se cargarán en la nube una vez que regrese nuevamente a donde tiene cobertura celular. Si tiene alguna pregunta, comuníquese con Soporte.";

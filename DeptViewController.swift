@@ -32,18 +32,25 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
         Dept.delegate = self
         Dept.font = UIFont(name: Dept.font!.fontName, size: 40)
         Dept.text =  Vehicaldetails.sharedInstance.deptno
-        Deptlabel.text = "Enter " + "\(Vehicaldetails.sharedInstance.ScreenNameForDepartment)"
+        if(Vehicaldetails.sharedInstance.Language == "es-ES")
+        {
+            Deptlabel.text = "Ingresar" + "\(Vehicaldetails.sharedInstance.ScreenNameForDepartment)"
+        }
+        else{
+            Deptlabel.text = "Enter " + "\(Vehicaldetails.sharedInstance.ScreenNameForDepartment)"
+        }
+        
         var myMutableStringTitle = NSMutableAttributedString()
         
         if(Vehicaldetails.sharedInstance.Language == "es-ES")
         {
-            Dept.text = "Ingresar " + "\(Vehicaldetails.sharedInstance.ScreenNameForDepartment)"
+//            Dept.text = "Ingresar " + "\(Vehicaldetails.sharedInstance.ScreenNameForDepartment)"
         }
         else{
 //            Dept.text = "Enter " + "\(Vehicaldetails.sharedInstance.ScreenNameForDepartment)"
         }
        
-         var Name = "Enter " + "\(Vehicaldetails.sharedInstance.ScreenNameForDepartment)"
+         var Name = ""//Enter " + "\(Vehicaldetails.sharedInstance.ScreenNameForDepartment)"
         if(Vehicaldetails.sharedInstance.Language == "es-ES")
         {
              Name = "Ingresar" + "\(Vehicaldetails.sharedInstance.ScreenNameForDepartment)"

@@ -54,7 +54,7 @@
 "9ao-aJ-08m.text" = "Cantidad:";
 
 /* Class = "UIButton"; normalTitle = "GO"; ObjectID = "AB4-Ce-gQh"; */
-"AB4-Ce-gQh.normalTitle" = "Listo";
+"AB4-Ce-gQh.normalTitle" = "IR";
 
 /* Class = "UIBarButtonItem"; title = "Back"; ObjectID = "ACd-cr-uep"; */
 "ACd-cr-uep.title" = "Espalda";
@@ -93,7 +93,7 @@
 "NGy-nU-GHG.text" = "Ingrese Numero de Vehiculo ";
 
 /* Class = "UIButton"; normalTitle = "GO"; ObjectID = "NiI-za-sDz"; */
-"NiI-za-sDz.normalTitle" = "Listo";
+"NiI-za-sDz.normalTitle" = "IR";
 
 /* Class = "UINavigationItem"; title = "FluidSecure"; ObjectID = "PwP-Wx-yzG"; */
 "PwP-Wx-yzG.title" = "FluidSecure";
@@ -102,13 +102,13 @@
 "QOv-8m-hXp.text" = "Label";
 
 /* Class = "UIButton"; normalTitle = "GO"; ObjectID = "Qgc-Jb-aBF"; */
-"Qgc-Jb-aBF.normalTitle" = "Listo";
+"Qgc-Jb-aBF.normalTitle" = "IR";
 
 /* Class = "UILabel"; text = "Enter Hours"; ObjectID = "Sap-YS-Fup"; */
 "Sap-YS-Fup.text" = "Ingrese Horas";
 
 /* Class = "UIButton"; normalTitle = "GO"; ObjectID = "Tlt-MO-xgk"; */
-"Tlt-MO-xgk.normalTitle" = "Listo";
+"Tlt-MO-xgk.normalTitle" = "IR";
 
 /* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "TqV-6I-hvZ"; */
 "TqV-6I-hvZ.normalTitle" = "Cancele";
@@ -141,7 +141,7 @@
 "bmi-fg-Wre.title" = "Espalda";
 
 /* Class = "UIButton"; normalTitle = "GO"; ObjectID = "cJo-OY-19Z"; */
-"cJo-OY-19Z.normalTitle" = "Listo";
+"cJo-OY-19Z.normalTitle" = "IR";
 
 /* Class = "UILabel"; text = "Label"; ObjectID = "cic-mx-u2Z"; */
 "cic-mx-u2Z.text" = "Label";
@@ -183,7 +183,7 @@
 "iwq-Zq-HmO.title" = "Registro";
 
 /* Class = "UIButton"; normalTitle = "GO"; ObjectID = "jEN-UE-Ewr"; */
-"jEN-UE-Ewr.normalTitle" = "Listo";
+"jEN-UE-Ewr.normalTitle" = "IR";
 
 /* Class = "UINavigationItem"; title = "FluidSecure"; ObjectID = "jad-YZ-EJW"; */
 "jad-YZ-EJW.title" = "FluidSecure";
@@ -204,7 +204,7 @@
 "n22-GI-gDE.text" = "Vehículo:";
 
 /* Class = "UIButton"; normalTitle = "GO"; ObjectID = "nMB-1B-hvn"; */
-"nMB-1B-hvn.normalTitle" = "Listo";
+"nMB-1B-hvn.normalTitle" = "IR";
 
 /* Class = "UINavigationItem"; title = "FluidSecure"; ObjectID = "nND-I6-JSB"; */
 "nND-I6-JSB.title" = "FluidSecure";

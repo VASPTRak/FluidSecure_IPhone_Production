@@ -794,7 +794,13 @@ class PreauthVC: UIViewController,CLLocationManagerDelegate,UITextFieldDelegate,
         }
         
         var myMutableStringTitle = NSMutableAttributedString()
-        let Name  = "Select Hose to Use" //"Enter Title"// PlaceHolderText
+        var Name = ""// PlaceHolderText
+        if(Vehicaldetails.sharedInstance.Language == "es-ES"){
+             Name = "Seleccionar"// PlaceHolderText
+        }else  if(Vehicaldetails.sharedInstance.Language == ""){
+             Name = "Select Hose to Use"// PlaceHolderText
+        }
+        //let Name  = "Select Hose to Use" //"Enter Title"// PlaceHolderText
         
         myMutableStringTitle = NSMutableAttributedString(string:Name, attributes: [NSAttributedString.Key.font:UIFont(name: "Georgia", size: 30.0)!]) // Font
         myMutableStringTitle.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white, range:NSRange(location:0,length:Name.count))    // Color

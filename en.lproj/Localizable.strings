@@ -10,6 +10,7 @@
 "Name" = "Name";
 "Mobile" = "Mobile";
 "Email" = "Email";
+"CompanyName" = "Company Name";
 "Enter" = "Enter";
 "MessageFueling" = "Please insert the nozzle into the tank \n Then tap start";
 "MessageFueling1" = "Please wait while your connection is being established";
@@ -54,7 +55,7 @@
 "wificonnection" = "Your Connection with";
 "wificonnection1" = " is lost. Please select ";
 "CheckFSunit" = "Please check your FS unit, and switch off power and back on.";
-"ThankyouMSG" = "Thank you for using \nFluidSecure.";
+"ThankyouMSG" = "Thank you for using \n FluidSecure.";
 "NoQuantity" = "No Quantity is Received"; //as Your Connection with Link is Lost";//"No Quantity received. Transaction ended.";
 "ZeroQuantity" = "Quantity is zero. Transaction is stopped.";
 "Notify" = "Your Transaction is Successfully Completed at ";

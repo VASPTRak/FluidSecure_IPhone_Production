@@ -334,6 +334,7 @@ var reply :String!
 let defaults = UserDefaults.standard
 var audio:AVPlayer!
 
+
 class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDelegate, UIDocumentInteractionControllerDelegate, UITextViewDelegate//,CBCentralManagerDelegate, CBPeripheralDelegate
 {
     
@@ -381,6 +382,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     var connectedservice:String = ""
     var isupgradeBLE = false
     var isrelayon = false
+    var BLEAddressSelectedLink = ""
     
     private var consoleAsciiText:NSAttributedString? = NSAttributedString(string: "")
     var BLErescount = 0
@@ -2081,6 +2083,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                 if error?.localizedDescription == "already associated."
                                 {
                                     print("Connected")
+                                    self.showstart = "true"
                                     self.isssidconnected = "true"
                                 }
                                 if(self.isssidconnected == "true"){}
@@ -2411,6 +2414,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
             if(Vehicaldetails.sharedInstance.checkSSIDwithLink == "true"){
                 Vehicaldetails.sharedInstance.checkSSIDwithLink = "false"
             }
+            self.web.getinfo()
             print("stopButtontapped" + cf.dateUpdated)
             string = ""
             cf.delay(0.5){
@@ -2897,6 +2901,12 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                 updateIncomingData()
                 
             }
+            else  if(Vehicaldetails.sharedInstance.PulserTimingAdjust == "5")
+            {
+                outgoingData(inputText: "LK_COMM=p_type:" + "\(Vehicaldetails.sharedInstance.PulserTimingAdjust)")
+                updateIncomingData()
+                
+            }
         }
     }
     //
@@ -3321,7 +3331,15 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                     tcpcon.changessidname(wifissid: trimmedString)
                     
                 }
+                
                 self.web.SetHoseNameReplacedFlag()
+//                if(Vehicaldetails.sharedInstance.iotversion == "f7.5.7.7.6.18t4(l)"){
+//                    self.web.pulsarlastquantity()
+//                }
+//                else{}
+                self.delay(1){
+                    self.web.cmtxtnid10()   /// GET last 10 records from FS link
+                }
             }
         }
         if(AppconnectedtoBLE == true)
@@ -5157,6 +5175,104 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
         self.present(alertController, animated: true, completion: nil)
     }
     
+    func get_the_valid_BLEMacAddress()
+    {
+        if(Vehicaldetails.sharedInstance.SSId.contains("FSBT-"))
+        {
+            
+            let Split = Vehicaldetails.sharedInstance.SSId.components(separatedBy: "-")
+            let address = Split[1]
+           
+           
+
+            for (index, char) in address.enumerated() {
+                BLEAddressSelectedLink.append(char)
+                
+                // Add a colon after every 2 characters, but avoid adding it after the last character
+                if (index + 1) % 2 == 0 && index != address.count - 1 {
+                    BLEAddressSelectedLink.append(":")
+                }
+                                
+            }
+            print(BLEAddressSelectedLink,Vehicaldetails.sharedInstance.BTMacAddress.uppercased())
+            if(Vehicaldetails.sharedInstance.BTMacAddress == ""){}
+            else{
+                if(BLEAddressSelectedLink == Vehicaldetails.sharedInstance.BTMacAddress.uppercased())
+                {
+                    self.web.sentlog(func_name: " BLE Mac Address from server \(Vehicaldetails.sharedInstance.BTMacAddress), MacAddress \(BLEAddressSelectedLink) ", errorfromserverorlink:"", errorfromapp: "")
+                    BTMacAddress = false
+                }
+                else
+                {
+                    //self.web.sentlog(func_name: "There is a MAC address error BLE Mac Address from server \(Vehicaldetails.sharedInstance.BTMacAddress), MacAddressfromlink \(Vehicaldetails.sharedInstance.MacAddressfromlink) ", errorfromserverorlink:"", errorfromapp: "")
+//                    BTMacAddress = true
+//                    getBLEInfo()
+                    self.outgoingData(inputText: "LK_COMM=info")
+                    //                        self.cf.delay(1){
+                    
+                    //                                        self.cf.delay(0.5){
+                    self.updateIncomingData()
+                    NotificationCenter.default.removeObserver(self)
+                    
+                }
+            }
+        }
+        else
+        {
+            if(Vehicaldetails.sharedInstance.BTMacAddress == "")
+            {
+                if(Vehicaldetails.sharedInstance.MacAddressfromlink == "")
+                {}
+                else{
+                    
+                    if(self.isUpdateMACAddress == false){
+                        let response = self.web.UpdateMACAddress()
+                        let data1:Data = response.data(using: String.Encoding.utf8)!
+                        do{
+                            //print(self.sysdata)
+                            self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
+                            // print(self.sysdata)
+                            let ResponceMessage = self.sysdata.value(forKey: "ResponceMessage") as! NSString
+                            let ResponceText = self.sysdata.value(forKey: "ResponceText") as! NSString
+                            print(ResponceMessage,ResponceText)
+                            if(ResponceMessage == "success")
+                            {
+                                self.isUpdateMACAddress = true
+                                self.showstart = "true"
+                            }
+                            else
+                            if(ResponceMessage == "fail")
+                            {
+                                self.showstart = "false"
+                                gotLinkVersion = true
+                                self.gotostartBLE()
+                                self.error400(message: ResponceText as String)
+                            }
+                            
+                        }
+                        catch let error as NSError {
+                            print ("Error: \(error.domain)")
+                            let text = error.localizedDescription //+ error.debugDescription
+                            let test = String((text.filter { !" \n".contains($0) }))
+                            let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                            print(newString)
+                            
+                        }
+                    }
+                }
+            }
+            else{
+                //getBLEInfo()
+                self.outgoingData(inputText: "LK_COMM=info")
+                //                        self.cf.delay(1){
+                
+                //                                        self.cf.delay(0.5){
+                self.updateIncomingData()
+                NotificationCenter.default.removeObserver(self)
+            }
+        }
+    }
+    
 }
 
 
@@ -6330,6 +6446,10 @@ extension FuelquantityVC: CBPeripheralDelegate {
         {
             defaults.set("4", forKey: "UpdateSwitchTimeBounceForLink")
         }
+        else if("\(self.characteristicASCIIValue)".contains("{\"pulser_type\":5}$$"))
+        {
+            defaults.set("5", forKey: "UpdateSwitchTimeBounceForLink")
+        }
         
         NotificationCenter.default.post(name:NSNotification.Name(rawValue: "Notify"), object: self)
         
@@ -6438,12 +6558,14 @@ extension FuelquantityVC: CBPeripheralDelegate {
                     self.newAsciiText.mutableString.replaceOccurrences(of: "\n\n", with: "\n", options: [], range: NSMakeRange(0, self.newAsciiText.length))
                     if(self.gotLinkVersion == true){}
                     else{
-                        self.outgoingData(inputText: "LK_COMM=info")
-                        //                        self.cf.delay(1){
-                        
-                        //                                        self.cf.delay(0.5){
-                        self.updateIncomingData()
-                        NotificationCenter.default.removeObserver(self)
+                        BLEAddressSelectedLink = ""
+                        get_the_valid_BLEMacAddress()
+//                        self.outgoingData(inputText: "LK_COMM=info")
+//                        //                        self.cf.delay(1){
+//                        
+//                        //                                        self.cf.delay(0.5){
+//                        self.updateIncomingData()
+//                        NotificationCenter.default.removeObserver(self)
                         //                    }
                         //            self.updateIncomingData()
                         //

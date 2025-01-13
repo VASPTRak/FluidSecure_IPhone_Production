@@ -680,7 +680,7 @@ class Webservices:NSObject {
     
     func Login(_ Username:String,PWD:String,uuid:String)->String {
         let Url:String = Vehicaldetails.sharedInstance.URL + "LoginHandler.ashx"
-        let string = uuid + ":" + Username + ":" + PWD
+        let string = uuid + ":" + Username + ":" + PWD + ":" + "\(Vehicaldetails.sharedInstance.Language)"
         let Base64 = convertStringToBase64(string: string)
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
         
@@ -1163,7 +1163,7 @@ class Webservices:NSObject {
         let Url:String = FSURL
         let Email = defaults.string(forKey: "address")
         let uuid = defaults.string(forKey: "uuid")
-        let string = uuid! + ":" + Email! + ":" + "UpdateSwitchTimeBounceForLink"
+        let string = uuid! + ":" + Email! + ":" + "UpdateSwitchTimeBounceForLink" + ":" + "\(Vehicaldetails.sharedInstance.Language)"
         let Base64 = convertStringToBase64(string: string)
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)
         
@@ -1923,7 +1923,7 @@ class Webservices:NSObject {
             let Email = defaults.string(forKey: "address")
             let uuid = defaults.string(forKey: "uuid")
             let Url:String = FSURL
-            let string = uuid! + ":" + Email! + ":" + "SetIMEIToSelectedCompany"
+            let string = uuid! + ":" + Email! + ":" + "SetIMEIToSelectedCompany" + ":" + "\(Vehicaldetails.sharedInstance.Language)"
             let Base64 = convertStringToBase64(string: string)
             let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
             
@@ -1969,7 +1969,7 @@ class Webservices:NSObject {
             let Email = defaults.string(forKey: "address")
             let uuid = defaults.string(forKey: "uuid")
             let Url:String = FSURL
-            let string = uuid! + ":" + Email! + ":" + "UpdateInterruptedTransactionFlag"
+            let string = uuid! + ":" + Email! + ":" + "UpdateInterruptedTransactionFlag" + ":" + "\(Vehicaldetails.sharedInstance.Language)"
             let Base64 = convertStringToBase64(string: string)
             let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
             print(Vehicaldetails.sharedInstance.TransactionId)
@@ -2532,19 +2532,22 @@ class Webservices:NSObject {
     
     func saveTrans(lastpulsarcount:String,lasttransID:String){
         let PulseRatio = Vehicaldetails.sharedInstance.PulseRatio
-        let fuelquantity = (Double(lastpulsarcount))!/(PulseRatio as NSString).doubleValue
-        if(fuelquantity == 0.0 || lasttransID == "-1" || lasttransID == "0"){}
+        if(lastpulsarcount == "N/A"){}
         else{
-            let bodyData = "{\"TransactionId\":\(lasttransID),\"FuelQuantity\":\((fuelquantity)),\"Pulses\":\"\(lastpulsarcount)\",\"TransactionFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\",\"Transaction\":\"LastTransaction\"}"
-            
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "ddMMyyyyhhmmss"
-            dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
-            let dtt1: String = dateFormatter.string(from: NSDate() as Date)
-            let unsycnfileName =  dtt1 + "#" + "transaction" + "#" + "lasttransID" + "#" + Vehicaldetails.sharedInstance.SSId
-            if(bodyData != ""){
-                cf.SaveTextFile(fileName: unsycnfileName, writeText: bodyData)
-                self.sentlog(func_name:" Saved Last Transaction to Phone, Date\(dtt1) TransactionId:\(lasttransID),FuelQuantity:\((fuelquantity)),Pulses:\(lastpulsarcount)", errorfromserverorlink: "Selected Hose : \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"Connetced link : \( self.cf.getSSID())")
+            let fuelquantity = (Double(lastpulsarcount))!/(PulseRatio as NSString).doubleValue
+            if(fuelquantity == 0.0 || lasttransID == "-1" || lasttransID == "0"){}
+            else{
+                let bodyData = "{\"TransactionId\":\(lasttransID),\"FuelQuantity\":\((fuelquantity)),\"Pulses\":\"\(lastpulsarcount)\",\"TransactionFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\",\"Transaction\":\"LastTransaction\"}"
+                
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "ddMMyyyyhhmmss"
+                dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
+                let dtt1: String = dateFormatter.string(from: NSDate() as Date)
+                let unsycnfileName =  dtt1 + "#" + "transaction" + "#" + "lasttransID" + "#" + Vehicaldetails.sharedInstance.SSId
+                if(bodyData != ""){
+                    cf.SaveTextFile(fileName: unsycnfileName, writeText: bodyData)
+                    self.sentlog(func_name:" Saved Last Transaction to Phone, Date\(dtt1) TransactionId:\(lasttransID),FuelQuantity:\((fuelquantity)),Pulses:\(lastpulsarcount)", errorfromserverorlink: "Selected Hose : \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"Connetced link : \( self.cf.getSSID())")
+                }
             }
         }
     }
@@ -2788,7 +2791,7 @@ class Webservices:NSObject {
         print("\(Vehicaldetails.sharedInstance.siteID)")
         let Url:String = FSURL
 
-        let string = uuid! + ":" + Email! + ":" + "UpdateMACAddress"
+        let string = uuid! + ":" + Email! + ":" + "UpdateMACAddress" + ":" + "\(Vehicaldetails.sharedInstance.Language)"
         let Base64 = convertStringToBase64(string: string)
        // print(Barcodescanvalue,uuid!,vehicle_no,FOBNumber,wifiSSID,siteid)
         let request: NSMutableURLRequest = NSMutableURLRequest(url:URL(string: Url)!)

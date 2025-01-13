@@ -493,7 +493,7 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
 
                            infotext.text =  NSLocalizedString("Name", comment:"") + ": \(PersonName)\n" + NSLocalizedString("Mobile", comment:"") + ":\(PhoneNumber)\n" + NSLocalizedString("Email", comment:"") +  ": \(Email) \n"
                            
-                           Companynamelabel.text = NSLocalizedString("Company Name", comment:"") + ": \(CompanyName)"
+                           Companynamelabel.text = NSLocalizedString("CompanyName", comment:"") + ": \(CompanyName)"
                            Companynamelabel.lineBreakMode = .byWordWrapping
                            infotext.lineBreakMode = .byWordWrapping
                            
