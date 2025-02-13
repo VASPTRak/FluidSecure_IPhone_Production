@@ -56,6 +56,7 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
     var isother = Vehicaldetails.sharedInstance.IsOtherRequire
     var stoptimergotostart:Timer = Timer()
     var IsUseBarcode:String = ""
+    var UseBarcodeScanOfVehicleOnly:String = ""
     var appisonVehicle = true
     var button = UIButton(type: UIButton.ButtonType.custom)
 
@@ -89,15 +90,23 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
                    Vehicleno.attributedPlaceholder = myMutableStringTitle
         Vehicleno.delegate = self
         Activity.isHidden = true
-        if(IsUseBarcode == "False")
-        {
-            barcodeimage.isHidden = true;
-            Barcodevalue.isHidden = true;
-        }
-        else if(IsUseBarcode == "True"){
-            barcodeimage.isHidden = false;
-            Barcodevalue.isHidden = false;
-        }
+        
+//        if(IsUseBarcode == "False")
+//        {
+//            barcodeimage.isHidden = true;
+//            Barcodevalue.isHidden = true;
+//        }
+//        else if(IsUseBarcode == "True"){
+//            barcodeimage.isHidden = false;
+//            Barcodevalue.isHidden = false;
+//                        if(self.UseBarcodeScanOfVehicleOnly == "True"){
+//                            self.performSegue(withIdentifier: "barcodescan", sender: self)
+//                            barcodeimage.isHidden = true;
+//                            Barcodevalue.isHidden = true;
+//                        }
+//            
+//        }
+        
         if(scanvehicle == ""){}
         else
         {
@@ -120,6 +129,28 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+//        if(IsUseBarcode == "True"){
+//            if(self.UseBarcodeScanOfVehicleOnly == ""){
+//                self.performSegue(withIdentifier: "barcodescan", sender: self)
+//            }
+//        }
+        
+        if(IsUseBarcode == "False")
+        {
+            barcodeimage.isHidden = true;
+            Barcodevalue.isHidden = true;
+        }
+        else if(IsUseBarcode == "True"){
+            barcodeimage.isHidden = false;
+            Barcodevalue.isHidden = false;
+                        if(self.UseBarcodeScanOfVehicleOnly == "True"){
+                            self.performSegue(withIdentifier: "barcodescan", sender: self)
+                            barcodeimage.isHidden = true;
+                            Barcodevalue.isHidden = true;
+                        }
+            
+        }
+        
         IsScanBarcode = false
         Vehicleno.becomeFirstResponder()
 //        UIKeyboardType.default

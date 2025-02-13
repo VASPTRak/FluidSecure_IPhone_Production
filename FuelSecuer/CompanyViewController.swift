@@ -88,6 +88,7 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
     @IBOutlet var refreshButton: UIButton!
     @IBOutlet var infotext: UILabel!
     
+    @IBOutlet weak var info_text: UILabel!
     @IBOutlet weak var Companynamelabel: UILabel!
     @IBOutlet var wifiNameTextField: UITextField!
     @IBOutlet  var Companylogo: UIImageView!
@@ -790,6 +791,22 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
                                    preauth.isHidden = true
                                    self.navigationItem.title = "Thank you for registering"
                                    warningLable.text = NSLocalizedString("Regisration", comment:"")
+                               let PersonName = defaults.string(forKey: "firstName")
+                               let Email = defaults.string(forKey: "address")
+                               let PhoneNumber = defaults.string(forKey: "mobile")
+                               let CompanyName = defaults.string(forKey: "company")
+                               
+                               if(CompanyName == nil)
+                               {
+                                   info_text.text = NSLocalizedString("Name", comment:"") + ": \(PersonName) \n" + NSLocalizedString("Mobile", comment:"") + ":\(PhoneNumber) \n" + NSLocalizedString("Email", comment:"") +  ": \(Email) \n" + NSLocalizedString("CompanyName", comment:"") + ": \(CompanyName) \n"
+                                   
+       //                            Companyname_text.text = NSLocalizedString(" CompanyName", comment:"") + ": \(CompanyName)"
+                               }
+                               else{
+                                   info_text.text = NSLocalizedString("Name", comment:"") + ": \(PersonName!) \n" + NSLocalizedString("Mobile", comment:"") + ":\(PhoneNumber!) \n" + NSLocalizedString("Email", comment:"") +  ": \(Email!) \n" + NSLocalizedString("CompanyName", comment:"") + ": \(CompanyName!) \n"
+                                   
+       //                            Companyname_text.text = NSLocalizedString("CompanyName", comment:"") + ": \(CompanyName!)"
+                               }
                                
                                     //+ " " +  defaults.string(forKey: "address")! + " " +  NSLocalizedString("registration1", comment:"")
                                }else

@@ -691,7 +691,7 @@ class Sync_Unsynctransactions : NSObject
         FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
         let Email = defaults.string(forKey: "address")
         let uuid = defaults.string(forKey: "uuid")
-        if (uuid == nil)
+        if (uuid == nil || Email == nil )
         {
             
         }

@@ -43,6 +43,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     let defaults = UserDefaults.standard
     var IsDepartmentRequire:String!
     var IsUseBarcode:String!
+    var UseBarcodeScanOfVehicleOnly:String!
     var IsPersonnelPINRequire:String!
     var IsOtherRequire:String!
     var OtherLabel:String!
@@ -646,18 +647,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     func getdatauser()
     {
         var uuid:String = ""
-        //        if(brandname == "FluidSecure"){
-        //
-        //            if(defaults.string(forKey: "\(brandname)") != nil) {
-        //                uuid = defaults.string(forKey: "\(brandname)")!//UUID().uuidString
-        //                KeychainService.savePassword(token: uuid as NSString)
-        //            }
-        //        }
-        //        print(defaults.string(forKey: "Register"))
-        //        var password = KeychainService.loadPassword()
-        //        if(password == nil || password == "")
-        //        {
-        //            self.web.sentlog(func_name: "keychain service get \(password) ", errorfromserverorlink: "", errorfromapp: "")
+        
         let preuuid = defaults.string(forKey: "uuid")
         if(preuuid == nil){
             let password = KeychainService.loadPassword()
@@ -808,7 +798,8 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                     OtherLabel = objUserData.value(forKey:"OtherLabel") as!NSString as String
                     timeout = objUserData.value(forKey:"TimeOut") as!NSString as String
                     IsUseBarcode = objUserData.value(forKey: "UseBarcode") as! NSString as String?
-                    //                        print(IsUseBarcode)
+                    UseBarcodeScanOfVehicleOnly = objUserData.value(forKey: "UseBarcodeScanOfVehicleOnly") as! NSString as String?
+                                        print(IsUseBarcode,UseBarcodeScanOfVehicleOnly)
                     Vehicaldetails.sharedInstance.CompanyBarndName = (objUserData.value(forKey: "CompanyBrandName") as! NSString) as String
                     
                     Vehicaldetails.sharedInstance.CompanyBrandLogoLink = (objUserData.value(forKey: "CompanyBrandLogoLink") as! NSString) as String
@@ -1293,15 +1284,59 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                         self.navigationItem.title = "Thank you for registering"
                         warningLable.text = NSLocalizedString("Regisration", comment:"")
                         info_text.isHidden = false
-                        let PersonName = defaults.string(forKey: "firstName")
-                        let Email = defaults.string(forKey: "address")
-                        let PhoneNumber = defaults.string(forKey: "mobile")
-                        let CompanyName = defaults.string(forKey: "company")
-                        info_text.text =  NSLocalizedString("Name", comment:"") + ": \(PersonName!)\n" + NSLocalizedString("Mobile", comment:"") + ":\(PhoneNumber!)\n" + NSLocalizedString("Email", comment:"") +  ": \(Email!) \n" +  NSLocalizedString("CompanyName", comment:"") + ": \(CompanyName!) \n"
+                        var PersonName = defaults.string(forKey: "firstName")
+                        var Email = defaults.string(forKey: "address")
+                        var PhoneNumber = defaults.string(forKey: "mobile")
+                        var CompanyName = defaults.string(forKey: "company")
                         
-                        Companyname_text.text = NSLocalizedString("CompanyName", comment:"") + ": \(CompanyName!)"
-                        //+ " " +  defaults.string(forKey: "address")! + " " +  NSLocalizedString("registration1", comment:"")
-                    }else
+                       
+                       if(CompanyName == nil || PersonName == nil)
+                        {
+                           let person_data =  web.GetPersonDetailsByIMEI()
+                            print(data)
+                            let data1:Data = person_data.data(using: String.Encoding.utf8)!
+                            do{
+                                self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
+                            }catch let error as NSError {
+                                print ("Error: \(error.domain)")
+                            }
+                             print(self.sysdata)
+                            if(self.sysdata == nil){}
+                            else{
+                                let ResponceMessage = self.sysdata.value(forKey: "ResponseMessage") as! String
+                                
+                                if(ResponceMessage == "success")
+                                {
+                                    let PersonName = self.sysdata.value(forKey: "PersonName") as! String
+                                    let PhoneNumber = self.sysdata.value(forKey: "PhoneNumber") as! String
+                                    let PersonEmail = self.sysdata.value(forKey: "PersonEmail") as! String
+                                    let CompanyName = self.sysdata.value(forKey: "CompanyName") as! String
+                                    
+                                    
+                                    
+                                    info_text.text = NSLocalizedString("Name", comment:"") + ": \(PersonName)\n" + NSLocalizedString("Mobile", comment:"") + ":\(PhoneNumber)\n" + NSLocalizedString("Email", comment:"") +  ": \(PersonEmail) \n" + NSLocalizedString("CompanyName", comment:"") + ": \(CompanyName) \n"
+                                    
+                                    
+                                    defaults.set(PersonName, forKey: "firstName")
+                                    defaults.set(PhoneNumber, forKey: "mobile")
+                                    defaults.set(PersonEmail, forKey: "address")
+                                    defaults.set(CompanyName, forKey: "company")
+                                    
+                                }
+                            }
+                            
+                            
+
+                        }
+                        else{
+                            
+                            info_text.text = NSLocalizedString("Name", comment:"") + ": \(PersonName!)\n" + NSLocalizedString("Mobile", comment:"") + ":\(PhoneNumber!)\n" + NSLocalizedString("Email", comment:"") +  ": \(Email!) \n" + NSLocalizedString("CompanyName", comment:"") + ": \(CompanyName!) \n"
+                            
+                         
+                        }
+
+                    }
+                    else
                     {
                         scrollview.isHidden = true
                         version.isHidden = false
@@ -1323,12 +1358,13 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         dateFormatter.dateFormat = "HH:mm MMM dd, yyyy"
         let strDate = dateFormatter.string(from: NSDate() as Date)
         datetime.text = strDate
-        
+
     }
     
     
     
     override func viewWillAppear(_ animated: Bool) {
+        getdatauser()
         go.isEnabled = true
         if #available(iOS 13.0, *) {
             let appearance = UINavigationBarAppearance()
@@ -1363,7 +1399,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
    
     override func viewDidAppear(_ animated: Bool)     {
         
-        getdatauser()
+//        getdatauser()
         if( self.cf.getSSID() != "" ) {
             print("SSID: \(self.cf.getSSID())")
             if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT"){}
@@ -1516,6 +1552,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         {
             if let vc = segue.destination as? VehiclenoVC {
                 vc.IsUseBarcode = IsUseBarcode!
+                vc.UseBarcodeScanOfVehicleOnly = UseBarcodeScanOfVehicleOnly!
             }
         }
         
@@ -1538,6 +1575,8 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             unsync.unsyncP_typestatus()
             self.unsync.Send10trans()
             _ = preauthunsyncTransaction()
+            
+          
             
             self.Activity.startAnimating()
             self.Activity.isHidden = false
@@ -1724,6 +1763,59 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                                                     //2437
                                                                     if(Vehicaldetails.sharedInstance.selectedCompanybyGA.contains("Demo-") || Vehicaldetails.sharedInstance.GACompany.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == Vehicaldetails.sharedInstance.selectedCompanybyGA.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
                                                                     {
+                                                                        //if(self.IsUseBarcode == "True"){
+                                                                                    if(self.UseBarcodeScanOfVehicleOnly == "True"){
+                                                                                        self.performSegue(withIdentifier: "barcodescan", sender: self)
+                                                                                    }
+                                                                                
+                                                                        else{
+                                                                            
+                                                                            if(self.IsVehicleNumberRequire == "True"){
+                                                                                
+                                                                                self.performSegue(withIdentifier: "GO", sender: self)
+                                                                                
+                                                                            }
+                                                                            else{
+                                                                                if(self.IsDepartmentRequire == "True"){
+                                                                                    self.performSegue(withIdentifier: "dept", sender: self)
+                                                                                }
+                                                                                else{
+                                                                                    if(self.IsPersonnelPINRequire == "True"){
+                                                                                        self.performSegue(withIdentifier: "pin", sender: self)
+                                                                                    }
+                                                                                    else{
+                                                                                        if(self.IsOtherRequire == "True"){
+                                                                                            self.performSegue(withIdentifier: "other", sender: self)
+                                                                                        }
+                                                                                        else{
+                                                                                            self.senddata(deptno: self.IsDepartmentRequire,ppin:self.IsPersonnelPINRequire,other:self.IsOtherRequire)
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                    else{
+                                                                        
+                                                                        
+//                                                                        if(self.IsVehicleNumberRequire == "True"){
+                                                                            let test_transaction = self.web.Testtransaction()
+                                                                            if(test_transaction.contains("success")){
+                                                                                self.performSegue(withIdentifier: "fueling", sender: self)
+                                                                            }
+//                                                                        }
+                                                                    }
+                                                                }
+                                                                
+                                                                else
+                                                                {
+//                                                                    if(self.IsUseBarcode == "True"){
+                                                                        if(self.UseBarcodeScanOfVehicleOnly == "True"){
+                                                                            self.performSegue(withIdentifier: "barcodescan", sender: self)
+//                                                                        }
+                                                                    }
+                                                                    else{
+                                                                        
                                                                         
                                                                         if(self.IsVehicleNumberRequire == "True"){
                                                                             
@@ -1749,43 +1841,6 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                                                             }
                                                                         }
                                                                     }
-                                                                    else{
-                                                                        
-                                                                        
-//                                                                        if(self.IsVehicleNumberRequire == "True"){
-                                                                            let test_transaction = self.web.Testtransaction()
-                                                                            if(test_transaction.contains("success")){
-                                                                                self.performSegue(withIdentifier: "fueling", sender: self)
-                                                                            }
-//                                                                        }
-                                                                    }
-                                                                }
-                                                                
-                                                                else
-                                                                {
-                                                                    if(self.IsVehicleNumberRequire == "True"){
-                                                                        
-                                                                        self.performSegue(withIdentifier: "GO", sender: self)
-                                                                        
-                                                                    }
-                                                                    else{
-                                                                        if(self.IsDepartmentRequire == "True"){
-                                                                            self.performSegue(withIdentifier: "dept", sender: self)
-                                                                        }
-                                                                        else{
-                                                                            if(self.IsPersonnelPINRequire == "True"){
-                                                                                self.performSegue(withIdentifier: "pin", sender: self)
-                                                                            }
-                                                                            else{
-                                                                                if(self.IsOtherRequire == "True"){
-                                                                                    self.performSegue(withIdentifier: "other", sender: self)
-                                                                                }
-                                                                                else{
-                                                                                    self.senddata(deptno: self.IsDepartmentRequire,ppin:self.IsPersonnelPINRequire,other:self.IsOtherRequire)
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -1805,6 +1860,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                 }
             }
         }
+       
     }
     
     func senddata(deptno:String,ppin:String,other:String)

@@ -767,10 +767,11 @@ class Webservices:NSObject {
         FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
         let Email = defaults.string(forKey: "address")
         let uuid = defaults.string(forKey: "uuid")
-        if (uuid == nil)
+        if(uuid == nil || uuid == "" || Email == nil || Email == "")
         {
             
         }
+        
         else{
             let string = uuid! + ":" + Email! + ":" + "UpgradeTransactionStatus"
             let Base64 = convertStringToBase64(string: string)
@@ -1012,6 +1013,138 @@ class Webservices:NSObject {
 //        return reply //+ "#" + ""
 //    }
     
+    
+    func GetPersonDetailsByIMEI() -> String
+    {
+        FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
+        
+        
+        
+        //Add this change on 11Aug on testing
+        var TransactionId:String!
+        let ppin = ""
+        var Email = defaults.string(forKey: "address")
+        if(Email == nil)
+        {
+            Email = ""
+        }
+        let uuid = defaults.string(forKey: "uuid")
+        let wifiSSID:String = Vehicaldetails.sharedInstance.SSId
+        let siteid = Vehicaldetails.sharedInstance.siteID
+        var Errorcode = Vehicaldetails.sharedInstance.Errorcode;
+        if(Errorcode == "")
+        {
+            Errorcode = "0"
+        }
+        print("\(Vehicaldetails.sharedInstance.siteID)")
+        let Url:String = FSURL
+        let string = uuid! + ":" + Email! + ":" + "GetPersonDetailsByIMEI"
+        let Base64 = convertStringToBase64(string: string)
+        let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
+        
+        request.httpMethod = "POST"
+        
+        request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
+        
+        let bodyData = try! JSONSerialization.data(withJSONObject: [
+            "IMEI_UDID":uuid!,
+            
+                                                                
+            
+        ],options: [])
+        
+        //        "{\"IMEIUDID\":\"\(uuid!)\",\"IsVehicleNumberRequire\":\"\(Vehicaldetails.sharedInstance.IsVehicleNumberRequire)\",\"VehicleNumber\":\"\(vehicle_no)\",\"OdoMeter\":\"\(Odometer)\",\"WifiSSId\":\"\(wifiSSID)\",\"SiteId\":\"\(siteid)\",\"DepartmentNumber\":\"\(isdept)\",\"PersonnelPIN\":\"\(isPPin)\",\"Other\":\"\(isother)\",\"Hours\":\"\(hour)\",\"CurrentLat\":\"\(Vehicaldetails.sharedInstance.Lat)\",\"CurrentLng\":\"\(Vehicaldetails.sharedInstance.Long)\",\"RequestFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\"}"
+        print(bodyData)
+        request.httpBody = bodyData//.data(using: String.Encoding.utf8)
+        request.timeoutInterval = 20
+        
+        let semaphore = DispatchSemaphore(value: 0)
+        let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
+            if let data = data {
+                
+                self.reply = NSString(data: data, encoding:String.Encoding.utf8.rawValue)! as String
+                print(self.reply!)
+                let text = self.reply
+                let test = String((text?.filter { !" \n".contains($0) })!)
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+               // self.sentlog(func_name: "AuthorizationSequence Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: " Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                let data1:Data = self.reply.data(using: String.Encoding.utf8)!
+                do{
+                    self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
+                }catch let error as NSError {
+                    print ("Error: \(error.domain)")
+                }
+                // print(self.sysdata)
+                if(self.sysdata == nil){}
+                else{
+//                    let ResponceMessage = self.sysdata.value(forKey: "ResponceMessage") as! String
+                    
+//                    if(ResponceMessage == "success")
+//                    {
+//                        self.defaults.setValue("0", forKey: "previouspulsedata")
+//                        let ResponceData = self.sysdata.value(forKey: "ResponceData") as! NSDictionary
+//                        let MinLimit = ResponceData.value(forKey: "MinLimit") as! NSNumber
+//                        let PulseRatio = ResponceData.value(forKey: "PulseRatio") as! NSNumber
+//                        let VehicleId = ResponceData.value(forKey: "VehicleId") as! NSNumber
+//                        let FuelTypeId = ResponceData.value(forKey: "FuelTypeId") as! NSNumber
+//                        let PersonId = ResponceData.value(forKey: "PersonId") as! NSNumber
+//                        let PhoneNumber = ResponceData.value(forKey: "PhoneNumber") as! NSString
+//                        let PulserStopTime = ResponceData.value(forKey: "PulserStopTime") as! NSString
+//                        let ServerDate = ResponceData.value(forKey: "ServerDate") as! String
+//                        let pumpoff_time = ResponceData.value(forKey: "PumpOffTime") as! String
+//                        let pumpon_time = ResponceData.value(forKey: "PumpOnTime") as! String
+//                        let LimitReachedMessage = ResponceData.value(forKey: "LimitReachedMessage") as! String
+//                        let IsFirstTimeUse  = ResponceData.value(forKey: "IsFirstTimeUse") as! String
+//                        
+//                        let FilePath = ResponceData.value(forKey: "FilePath") as! NSString
+//                        let FirmwawareVersion = ResponceData.value(forKey: "FirmwareVersion") as! NSString
+//                        if(ResponceData.value(forKey: "TransactionId") == nil){}
+//                        else{
+//                            TransactionId = ResponceData.value(forKey: "TransactionId") as! NSString as String
+//                            Vehicaldetails.sharedInstance.TransactionId = Int(TransactionId as String)!
+//                            Vehicaldetails.sharedInstance.pulsarCount = ""
+//                        }
+//                        
+//                        print(MinLimit,PersonId,PhoneNumber,FuelTypeId,VehicleId,PulseRatio,FilePath)
+//                        
+//                        Vehicaldetails.sharedInstance.FirmwareVersion = FirmwawareVersion as String
+//                        Vehicaldetails.sharedInstance.FilePath = FilePath as String
+//                        Vehicaldetails.sharedInstance.MinLimit = "\(MinLimit)"
+//                        Vehicaldetails.sharedInstance.PulseRatio = "\(PulseRatio)"
+//                        Vehicaldetails.sharedInstance.VehicleId = "\(VehicleId)"
+//                        Vehicaldetails.sharedInstance.FuelTypeId = "\(FuelTypeId)"
+//                        Vehicaldetails.sharedInstance.PersonId = "\(PersonId)"
+//                        Vehicaldetails.sharedInstance.PhoneNumber = "\(PhoneNumber)"
+//                        Vehicaldetails.sharedInstance.PulserStopTime = "\(PulserStopTime)"
+//                        Vehicaldetails.sharedInstance.date = "\(ServerDate)"
+//                        Vehicaldetails.sharedInstance.pumpoff_time = "\(pumpoff_time)" //Send pump off time to pulsar off time.
+//                        Vehicaldetails.sharedInstance.pumpon_time = "\(pumpon_time)" //Send pump off time to pulsar off time.
+//                        Vehicaldetails.sharedInstance.LimitReachedMessage = "\(LimitReachedMessage)"
+//                        Vehicaldetails.sharedInstance.IsFirstTimeUse = "\(IsFirstTimeUse)"
+//                        self.sentlog(func_name: "Fuel limit \(Vehicaldetails.sharedInstance.MinLimit).", errorfromserverorlink:"", errorfromapp: "")
+//                    }
+                    
+                    
+                }
+            } else {
+                
+                self.reply = "-1" + "#" + "\(error!)"
+                let text = (error?.localizedDescription)! //+ error.debugDescription
+                let test = String((text.filter { !" \n".contains($0) }))
+                let newString = test.replacingOccurrences(of: "\"", with: " ", options: .literal, range: nil)
+                print(newString)
+                self.sentlog(func_name: "AuthorizationsequenceForTestTransaction Service Function", errorfromserverorlink: " Response from Server $$ \(newString)!!", errorfromapp: "Selected Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                
+            }
+            semaphore.signal()
+        }
+        task.resume()
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
+        return reply// + "#" + ""
+        
+    
+    }
     
     
     func UpgradeCurrentVersiontoserver() -> String {
@@ -1439,12 +1572,16 @@ class Webservices:NSObject {
             }
         }
        
-            else if( Vehicaldetails.sharedInstance.CollectDiagnosticLogs == "True"){
-                
-                file()
-                
+        else if( Vehicaldetails.sharedInstance.CollectDiagnosticLogs == "True"){
+            
+            file()
+           
                 let Email = defaults.string(forKey: "address")
                 let uuid = defaults.string(forKey: "uuid")
+            if(uuid == nil || uuid == "" || Email == nil || Email == ""){}
+            else
+            {
+            
                 let string = uuid! + ":" + Email! + ":" + "SaveDiagnosticLogs" + ":" + "iPhone"
                 let Base64 = convertStringToBase64(string: string)
                 let Url:String = FSURL
@@ -1457,11 +1594,11 @@ class Webservices:NSObject {
                 let fromPath: String = (readdata!.path)
                 do{
                     do{ if(!FileManager.default.fileExists(atPath: fromPath))
-                    {
+                        {
                         do{ try FileManager.default.createDirectory(atPath: fromPath, withIntermediateDirectories: true, attributes: nil)
                         }
                         catch{print("error")}
-                        }
+                    }
                     }
                     reportsArray = fileManager.subpaths(atPath: fromPath)! as [AnyObject]
                     for x in 0  ..< reportsArray.count
@@ -1470,7 +1607,7 @@ class Webservices:NSObject {
                         do {
                             let url = URL(fileURLWithPath: fromPath + "/\(filename)")
                             contents = try Data(contentsOf: url)
-                              print(contents)
+                            print(contents)
                             
                         } catch let error as NSError {
                             print ("Error: \(error.domain)")
@@ -1496,35 +1633,35 @@ class Webservices:NSObject {
                         let task = URLSession.shared.dataTask(with: request as URLRequest) { data, response, error in
                             if let data = data {
                                 //  print(String(data: data, encoding: String.Encoding.utf8)!)
-                               // print(self.replysentlog)
+                                // print(self.replysentlog)
                                 self.replysentlog = NSString(data: data, encoding:String.Encoding.utf8.rawValue)! as String
-                                 // print(self.replysentlog)
+                                // print(self.replysentlog)
                                 let data1 = self.replysentlog.data(using: String.Encoding.utf8)!
                                 do{
                                     self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
                                 }catch let error as NSError {
                                     print ("Error: \(error.domain)")
                                 }
-                               // print(self.sysdata)
+                                // print(self.sysdata)
                                 if(self.sysdata == nil){}
                                 else{
-                                let ResponceText = self.sysdata.value(forKey: "ResponceText") as! NSString
-                                let ResponceMessage = (self.sysdata.value(forKey: "ResponceMessage") as! NSString) as String
-                                
-                                if(ResponceMessage == "fail"){
+                                    let ResponceText = self.sysdata.value(forKey: "ResponceText") as! NSString
+                                    let ResponceMessage = (self.sysdata.value(forKey: "ResponceMessage") as! NSString) as String
                                     
+                                    if(ResponceMessage == "fail"){
+                                        
+                                    }
+                                    if(ResponceMessage == "success"){
+                                        self.cf.DeleteFileInApp(fileName: "data/unsyncdata/" + filename)
+                                    }
                                 }
-                                if(ResponceMessage == "success"){
-                                    self.cf.DeleteFileInApp(fileName: "data/unsyncdata/" + filename)
-                                }
-                            }
                             } else {
                                 print(error!)
                                 //self.replysentlog = "-1" + "#" + "\(error!)"
-//                                let dateFormatter = DateFormatter()
-//                                dateFormatter.dateFormat = "ddMMyyyy"
-//                                dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
-//                                let dtt2: String = dateFormatter.string(from: NSDate() as Date)
+                                //                                let dateFormatter = DateFormatter()
+                                //                                dateFormatter.dateFormat = "ddMMyyyy"
+                                //                                dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
+                                //                                let dtt2: String = dateFormatter.string(from: NSDate() as Date)
                                 
                             }
                         }
@@ -1532,6 +1669,7 @@ class Webservices:NSObject {
                     }
                 }
             }
+        }
         
     }
     
@@ -1540,111 +1678,113 @@ class Webservices:NSObject {
     {
         let Email = defaults.string(forKey: "address")
         let uuid = defaults.string(forKey: "uuid")
-        if(uuid == nil || uuid == ""){}
+        if(uuid == nil || uuid == "" || Email == nil || Email == ""){}
         else
             {
-            let string = uuid! + ":" + Email! + ":" + "SaveDiagnosticLogFile" + ":" + "iPhone"
-            let Base64 = convertStringToBase64(string: string)
-            let Url:String = FSURL
-            
-            
-            let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
-            request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
-            request.httpMethod = "POST"
-            var reportsArray: [AnyObject]!
-            let fileManager: FileManager = FileManager()
-            let readdata = cf.getDocumentsURL().appendingPathComponent("data/filedata/")
-            let fromPath: String = (readdata!.path)
-            do{
-                do
-                {
-                    if(!FileManager.default.fileExists(atPath: fromPath))
+           
+                let string = uuid! + ":" + Email! + ":" + "SaveDiagnosticLogFile" + ":" + "iPhone"
+                let Base64 = convertStringToBase64(string: string)
+                let Url:String = FSURL
+                
+                
+                let request: NSMutableURLRequest = NSMutableURLRequest(url:NSURL(string: Url)! as URL)
+                request.setValue("Basic " + "\(Base64)" , forHTTPHeaderField: "Authorization")
+                request.httpMethod = "POST"
+                var reportsArray: [AnyObject]!
+                let fileManager: FileManager = FileManager()
+                let readdata = cf.getDocumentsURL().appendingPathComponent("data/filedata/")
+                let fromPath: String = (readdata!.path)
+                do{
+                    do
                     {
-                        do{ try FileManager.default.createDirectory(atPath: fromPath, withIntermediateDirectories: true, attributes: nil)
-                        }
-                        catch{print("error")}
-                    }
-                }
-                reportsArray = fileManager.subpaths(atPath: fromPath)! as [AnyObject]
-                for x in 0  ..< reportsArray.count
-                {
-                    
-                    let filename: String = "\(reportsArray[x])"
-                    do {
-                        //                    let url = URL(fileURLWithPath: fromPath + "/\(filename)")
-                        //                    contents = try Data(contentsOf: url)
-                        //  print(contents)
-                        
-                    } catch let error as NSError {
-                        print ("Error: \(error.domain)")
-                        
-                        // contents could not be loaded
-                    }
-                    let dateFormatter = DateFormatter()
-                    dateFormatter.dateFormat = "ddMMyyyy"
-                    
-                    let predate = String(filename.prefix(10))
-                    print(predate)
-                    // start and end date object from string dates
-                    
-                    let endDate = dateFormatter.date(from: predate) ?? Date()
-                    //  print(contents)
-                    let cal = Calendar.current
-                    let d1 = Date()
-                    let d2 = endDate//Date.init(timeIntervalSince1970: 1524787200) // April 27, 2018 12:00:00 AM
-                    print(d1,d2)
-                    let components = cal.dateComponents([.day], from: d2, to: d1)
-                    let diff = components.day!
-                    print(diff)
-                    
-                    if(diff > 60){
-                        self.cf.DeleteFileInApp(fileName: "data/filedata/" + filename)
-                    }
-                    if(diff > 45){}
-                    else{
-                        
-                        
-                        let req = createRequest(authBase64: Base64, filename : filename, path: fromPath + "/\(filename)")
-                        
-                        
-                        let task = URLSession.shared.dataTask(with: req as URLRequest) { data, response, error in
-                            if let data = data {
-                                //  print(String(data: data, encoding: String.Encoding.utf8)!)
-                                self.replysentlog = NSString(data: data, encoding:String.Encoding.utf8.rawValue)! as String
-                                //  print(self.replysentlog)
-                                let data1 = self.replysentlog.data(using: String.Encoding.utf8)!
-                                do{
-                                    self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
-                                }catch let error as NSError {
-                                    print ("Error: \(error.domain)")
-                                }
-                                print(self.sysdata)
-                                if(self.sysdata == nil){}
-                                else{
-                                    // let ResponceText = self.sysdata.value(forKey: "ResponceText") as! NSString
-                                    let ResponceMessage = (self.sysdata.value(forKey: "ResponceMessage") as! NSString) as String
-                                    
-                                    if(ResponceMessage == "fail"){
-                                        
-                                    }
-                                    if(ResponceMessage == "success"){
-                                        self.cf.DeleteFileInApp(fileName: "data/filedata/" + filename)
-                                    }
-                                }
-                            } else {
-                                print(error!)
-                                self.replysentlog = "-1" + "#" + "\(error!)"
-                                let dateFormatter = DateFormatter()
-                                dateFormatter.dateFormat = "ddMMyyyy"
-                                dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
-                                let dtt2: String = dateFormatter.string(from: NSDate() as Date)
-                                
+                        if(!FileManager.default.fileExists(atPath: fromPath))
+                        {
+                            do{ try FileManager.default.createDirectory(atPath: fromPath, withIntermediateDirectories: true, attributes: nil)
                             }
+                            catch{print("error")}
                         }
-                        task.resume()
+                    }
+                    reportsArray = fileManager.subpaths(atPath: fromPath)! as [AnyObject]
+                    for x in 0  ..< reportsArray.count
+                    {
+                        
+                        let filename: String = "\(reportsArray[x])"
+                        do {
+                            //                    let url = URL(fileURLWithPath: fromPath + "/\(filename)")
+                            //                    contents = try Data(contentsOf: url)
+                            //  print(contents)
+                            
+                        } catch let error as NSError {
+                            print ("Error: \(error.domain)")
+                            
+                            // contents could not be loaded
+                        }
+                        let dateFormatter = DateFormatter()
+                        dateFormatter.dateFormat = "ddMMyyyy"
+                        
+                        let predate = String(filename.prefix(10))
+                        print(predate)
+                        // start and end date object from string dates
+                        
+                        let endDate = dateFormatter.date(from: predate) ?? Date()
+                        //  print(contents)
+                        let cal = Calendar.current
+                        let d1 = Date()
+                        let d2 = endDate//Date.init(timeIntervalSince1970: 1524787200) // April 27, 2018 12:00:00 AM
+                        print(d1,d2)
+                        let components = cal.dateComponents([.day], from: d2, to: d1)
+                        let diff = components.day!
+                        print(diff)
+                        
+                        if(diff > 60){
+                            self.cf.DeleteFileInApp(fileName: "data/filedata/" + filename)
+                        }
+                        if(diff > 45){}
+                        else{
+                            
+                            
+                            let req = createRequest(authBase64: Base64, filename : filename, path: fromPath + "/\(filename)")
+                            
+                            
+                            let task = URLSession.shared.dataTask(with: req as URLRequest) { data, response, error in
+                                if let data = data {
+                                    //  print(String(data: data, encoding: String.Encoding.utf8)!)
+                                    self.replysentlog = NSString(data: data, encoding:String.Encoding.utf8.rawValue)! as String
+                                    //  print(self.replysentlog)
+                                    let data1 = self.replysentlog.data(using: String.Encoding.utf8)!
+                                    do{
+                                        self.sysdata = try JSONSerialization.jsonObject(with: data1, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
+                                    }catch let error as NSError {
+                                        print ("Error: \(error.domain)")
+                                    }
+                                    print(self.sysdata)
+                                    if(self.sysdata == nil){}
+                                    else{
+                                        // let ResponceText = self.sysdata.value(forKey: "ResponceText") as! NSString
+                                        let ResponceMessage = (self.sysdata.value(forKey: "ResponceMessage") as! NSString) as String
+                                        
+                                        if(ResponceMessage == "fail"){
+                                            
+                                        }
+                                        if(ResponceMessage == "success"){
+                                            self.cf.DeleteFileInApp(fileName: "data/filedata/" + filename)
+                                        }
+                                    }
+                                } else {
+                                    print(error!)
+                                    self.replysentlog = "-1" + "#" + "\(error!)"
+                                    let dateFormatter = DateFormatter()
+                                    dateFormatter.dateFormat = "ddMMyyyy"
+                                    dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
+                                    let dtt2: String = dateFormatter.string(from: NSDate() as Date)
+                                    
+                                }
+                            }
+                            task.resume()
+                        }
                     }
                 }
-            }
+            
     }
     }
     
