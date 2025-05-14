@@ -68,8 +68,8 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
     var IsGobuttontapped : Bool = false
     var now:Date!
     
-      var ResponceMessageUpload:String = ""
-     var sysdata1:NSDictionary!
+    var ResponceMessageUpload:String = ""
+    var sysdata1:NSDictionary!
     var reply :String!
 
     @IBOutlet var supportinfo: UILabel!
@@ -1393,39 +1393,39 @@ class CompanyViewController: UIViewController,CLLocationManagerDelegate,UITextFi
             
         }
         
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ssZ"
-        let strDate = dateFormatter.string(from: NSDate() as Date)
-        print(strDate)
-        if(defaults.string(forKey:"Date") == nil){
-            cf.showUpdateWithForce()
-            defaults.set(strDate,forKey: "Date")
-            now = Date()
-        }else{
-            print(defaults.string(forKey:"Date")!)
-            let savedate = defaults.string(forKey:"Date")
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ssZ"
-            //print(now)
-            
-            let currentdate = (dateFormatter.date(from: savedate!))//NSDate()
-            let x = 2
-            let calendar = NSCalendar(calendarIdentifier: NSCalendar.Identifier.gregorian)
-            let dateComponent = NSDateComponents()
-            
-            dateComponent.day = x
-            now = (calendar!.date(byAdding: dateComponent as DateComponents, to: currentdate! , options:[])! as NSDate) as Date
-            //print(now)
-        }
-
-            delay(1){
-            let soon = Date()
-            print(self.now!,soon)
-            if(self.now! < soon){
-                self.cf.showUpdateWithForce()
-                self.defaults.set("\(soon)",forKey: "Date")
-            }
-        }
+//        let dateFormatter = DateFormatter()
+//        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ssZ"
+//        let strDate = dateFormatter.string(from: NSDate() as Date)
+//        print(strDate)
+//        if(defaults.string(forKey:"Date") == nil){
+//            cf.showUpdateWithForce()
+//            defaults.set(strDate,forKey: "Date")
+//            now = Date()
+//        }else{
+//            print(defaults.string(forKey:"Date")!)
+//            let savedate = defaults.string(forKey:"Date")
+//            let dateFormatter = DateFormatter()
+//            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ssZ"
+//            //print(now)
+//            
+//            let currentdate = (dateFormatter.date(from: savedate!))//NSDate()
+//            let x = 2
+//            let calendar = NSCalendar(calendarIdentifier: NSCalendar.Identifier.gregorian)
+//            let dateComponent = NSDateComponents()
+//            
+//            dateComponent.day = x
+//            now = (calendar!.date(byAdding: dateComponent as DateComponents, to: currentdate! , options:[])! as NSDate) as Date
+//            //print(now)
+//        }
+//
+//            delay(1){
+//            let soon = Date()
+//            print(self.now!,soon)
+//            if(self.now! < soon){
+//                self.cf.showUpdateWithForce()
+//                self.defaults.set("\(soon)",forKey: "Date")
+//            }
+//        }
     }
     
     override func didReceiveMemoryWarning() {

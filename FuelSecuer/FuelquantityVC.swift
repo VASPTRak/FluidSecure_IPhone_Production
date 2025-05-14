@@ -2292,6 +2292,9 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     
     @objc func stopButtontapped()
     {
+        self.Stop.isEnabled = false
+        self.Stop.isEnabled = false
+        self.Stop.isEnabled = false
         print(Last_Count)
         if(self.Last_Count == "0.0" || Last_Count == "0")
         {
@@ -2742,7 +2745,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                                                                                                                 self.web.sentlog(func_name: "StopButtonTapped Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                                                                                                                                 if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
                                                                                                                                 {
-                                                                                                                                    Reconnect.isHidden = false;                                                                                   self.Reconnect.text = "Software update in progress.\nPlease wait several seconds.";                                                                                        self.tcpcon.getuser()
+                                                                                                                                    Reconnect.isHidden = false;                                                                                   self.Reconnect.text = "Software update in progress \n Please standby...";                                                                                        self.tcpcon.getuser()
                                                                                                                                 }
                                                                                                                             }
                                                                                                                             //                            Vehicaldetails.sharedInstance.IsUpgrade = "N"
@@ -3062,7 +3065,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                         if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
                         {
                             Reconnect.isHidden = false
-                            self.Reconnect.text = "Software update in progress.\nPlease wait several seconds.";
+                            self.Reconnect.text = "Software update in progress \n Please standby...";
                             
                             
                             self.tcpcon.getuser()
@@ -3105,6 +3108,11 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                         self.stoptimergotostart.invalidate()
                         self.timerview.invalidate()
                         
+                    }
+                    else
+                    {
+                        let appDel = UIApplication.shared.delegate! as! AppDelegate
+                        appDel.start()
                     }
                 }
             }
@@ -3456,39 +3464,42 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "ddMMyyyyhhmmss"
-        
-        print(Wifyssid)
-        print(Odomtr)
-        let bodyData = "{\"TransactionId\":\(TransactionId),\"FuelQuantity\":\((fuelQuantity)),\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\",\"IsFuelingStop\":0,\"Transaction\":\"Current_Transaction\"}"
-        
-        let reply = web.Transaction_details(bodyData: bodyData)
-        if (reply == "-1")
-        {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "ddMMyyyyhhmmss"
-            dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
-            let dtt1: String = dateFormatter.string(from: NSDate() as Date)
+        if(TransactionId == 0 ){
             
-            let unsycnfileName =  dtt1 + "#" + "\(TransactionId)" + "#" + "\(fuelQuantity)" + "#" + Vehicaldetails.sharedInstance.SSId //
-            if(bodyData != ""){
-                cf.SaveTextFile(fileName: unsycnfileName, writeText: bodyData)
-                self.characteristicASCIIValue = ""
-                if(TransactionId == 0){}
-                else{
-                    self.web.sentlog(func_name: " Saved Current Transaction to Phone, Date\(dtt1) TransactionId:\(TransactionId),FuelQuantity:\((fuelQuantity)),Pulses:\(pusercount)",errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"Connetced link \( self.cf.getSSID())")
+        }else {
+            print(Wifyssid)
+            print(Odomtr)
+            let bodyData = "{\"TransactionId\":\(TransactionId),\"FuelQuantity\":\((fuelQuantity)),\"Pulses\":\(pusercount),\"TransactionFrom\":\"I\",\"versionno\":\"\(Version)\",\"Device Type\":\"\(UIDevice().type)\",\"iOS\": \"\(UIDevice.current.systemVersion)\",\"IsFuelingStop\":0,\"Transaction\":\"Current_Transaction\"}"
+            
+            let reply = web.Transaction_details(bodyData: bodyData)
+            if (reply == "-1")
+            {
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "ddMMyyyyhhmmss"
+                dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale?
+                let dtt1: String = dateFormatter.string(from: NSDate() as Date)
+                
+                let unsycnfileName =  dtt1 + "#" + "\(TransactionId)" + "#" + "\(fuelQuantity)" + "#" + Vehicaldetails.sharedInstance.SSId //
+                if(bodyData != ""){
+                    cf.SaveTextFile(fileName: unsycnfileName, writeText: bodyData)
+                    self.characteristicASCIIValue = ""
+                    if(TransactionId == 0){}
+                    else{
+                        self.web.sentlog(func_name: " Saved Current Transaction to Phone, Date\(dtt1) TransactionId:\(TransactionId),FuelQuantity:\((fuelQuantity)),Pulses:\(pusercount)",errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"Connetced link \( self.cf.getSSID())")
+                    }
                 }
             }
-        }
-        else{
-            Warning.isHidden = true
-            let data1:NSData = reply.data(using: String.Encoding.utf8)! as NSData
-            do{
-                sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
-            }catch let error as NSError {
-                print ("Error: \(error.domain)")
+            else{
+                Warning.isHidden = true
+                let data1:NSData = reply.data(using: String.Encoding.utf8)! as NSData
+                do{
+                    sysdata = try JSONSerialization.jsonObject(with: data1 as Data, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSDictionary
+                }catch let error as NSError {
+                    print ("Error: \(error.domain)")
+                }
+                //  print(sysdata)
+                //            self.notify(site: Vehicaldetails.sharedInstance.SSId)
             }
-            //  print(sysdata)
-            //            self.notify(site: Vehicaldetails.sharedInstance.SSId)
         }
     }
     
@@ -4889,6 +4900,8 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                         print(Linkversion,bt)
                         Vehicaldetails.sharedInstance.MacAddressfromlink = bt as String
                         Vehicaldetails.sharedInstance.iotversion = Linkversion as String
+                        print(Vehicaldetails.sharedInstance.BTMacAddress,Vehicaldetails.sharedInstance.MacAddressfromlink)
+                        
                         if(Vehicaldetails.sharedInstance.BTMacAddress == "")
                         {
                             if(Vehicaldetails.sharedInstance.MacAddressfromlink == "")
@@ -5183,46 +5196,94 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
             let Split = Vehicaldetails.sharedInstance.SSId.components(separatedBy: "-")
             let address = Split[1]
            
-           
-
-            for (index, char) in address.enumerated() {
-                BLEAddressSelectedLink.append(char)
+            
                 
-                // Add a colon after every 2 characters, but avoid adding it after the last character
-                if (index + 1) % 2 == 0 && index != address.count - 1 {
-                    BLEAddressSelectedLink.append(":")
+                for (index, char) in address.enumerated() {
+                    BLEAddressSelectedLink.append(char)
+                    
+                    // Add a colon after every 2 characters, but avoid adding it after the last character
+                    if (index + 1) % 2 == 0 && index != address.count - 1 {
+                        BLEAddressSelectedLink.append(":")
+                    }
+                    
                 }
-                                
-            }
-            print(BLEAddressSelectedLink,Vehicaldetails.sharedInstance.BTMacAddress.uppercased())
-            if(Vehicaldetails.sharedInstance.BTMacAddress == ""){}
+            
+            print(BLEAddressSelectedLink,Vehicaldetails.sharedInstance.BTMacAddress.uppercased(),address.count,Vehicaldetails.sharedInstance.BTMacAddress)
+            if(Vehicaldetails.sharedInstance.BTMacAddress != "") && (address.count != 12)
+            {}
             else{
                 if(BLEAddressSelectedLink == Vehicaldetails.sharedInstance.BTMacAddress.uppercased())
                 {
                     self.web.sentlog(func_name: " BLE Mac Address from server \(Vehicaldetails.sharedInstance.BTMacAddress), MacAddress \(BLEAddressSelectedLink) ", errorfromserverorlink:"", errorfromapp: "")
                     BTMacAddress = false
-                }
-                else
-                {
+                    //                }
+                    //                else
+                    //                {
                     //self.web.sentlog(func_name: "There is a MAC address error BLE Mac Address from server \(Vehicaldetails.sharedInstance.BTMacAddress), MacAddressfromlink \(Vehicaldetails.sharedInstance.MacAddressfromlink) ", errorfromserverorlink:"", errorfromapp: "")
-//                    BTMacAddress = true
-//                    getBLEInfo()
-                    self.outgoingData(inputText: "LK_COMM=info")
-                    //                        self.cf.delay(1){
+                    //                    BTMacAddress = true
+                    //                    getBLEInfo()
+                    //                    self.outgoingData(inputText: "LK_COMM=info")
+                    //                    //                        self.cf.delay(1){
+                    //
+                    //                    //                                        self.cf.delay(0.5){
+                    //                    self.updateIncomingData()
+                    //                    NotificationCenter.default.removeObserver(self)
                     
-                    //                                        self.cf.delay(0.5){
-                    self.updateIncomingData()
-                    NotificationCenter.default.removeObserver(self)
-                    
+                    if(self.defaults.string(forKey: "Companyname") == "Company2")
+                    {
+                        //#2437
+                        if(Vehicaldetails.sharedInstance.selectedCompanybyGA.contains("Demo-") || Vehicaldetails.sharedInstance.GACompany.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == Vehicaldetails.sharedInstance.selectedCompanybyGA.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                        {
+                            
+                            self.start.isEnabled = true
+                            self.start.isHidden = false
+                            self.cancel.isHidden = false
+                            self.Pwait.isHidden = true
+                            self.Activity.stopAnimating()
+                            self.displaytime.text = NSLocalizedString("MessageFueling", comment:"")
+                            
+                            
+                        }
+                        else{
+                            
+                            self.start.isEnabled = true
+                            self.start.isHidden = false
+                            self.Pwait.isHidden = true
+                            self.Activity.stopAnimating()
+                            self.displaytime.text = NSLocalizedString("MessageFueling", comment:"")
+                        }
+                    }
+                    else{
+                        self.start.isEnabled = true
+                        self.start.isHidden = false
+                        self.cancel.isHidden = false
+                        self.Pwait.isHidden = true
+                        self.Activity.stopAnimating()
+                        self.displaytime.text = NSLocalizedString("MessageFueling", comment:"")
+                    }
                 }
             }
         }
         else
         {
+            print(Vehicaldetails.sharedInstance.BTMacAddress,Vehicaldetails.sharedInstance.MacAddressfromlink)
             if(Vehicaldetails.sharedInstance.BTMacAddress == "")
             {
                 if(Vehicaldetails.sharedInstance.MacAddressfromlink == "")
-                {}
+                {
+//                    self.outgoingData(inputText: "LK_COMM=info")
+//                    //                        self.cf.delay(1){
+//                    
+//                    //                                        self.cf.delay(0.5){
+//                    self.updateIncomingData()
+//                    NotificationCenter.default.removeObserver(self)
+//                    self.start.isEnabled = true
+//                    self.start.isHidden = false
+//                    self.cancel.isHidden = false
+//                    self.Pwait.isHidden = true
+//                    self.Activity.stopAnimating()
+//                    self.displaytime.text = NSLocalizedString("MessageFueling", comment:"")
+                }
                 else{
                     
                     if(self.isUpdateMACAddress == false){
@@ -5239,6 +5300,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                             {
                                 self.isUpdateMACAddress = true
                                 self.showstart = "true"
+                                
                             }
                             else
                             if(ResponceMessage == "fail")
@@ -5260,15 +5322,50 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                         }
                     }
                 }
+                self.start.isEnabled = true
+                self.start.isHidden = false
+                self.cancel.isHidden = false
+                self.Pwait.isHidden = true
+                self.Activity.stopAnimating()
+                self.displaytime.text = NSLocalizedString("MessageFueling", comment:"")
             }
-            else{
-                //getBLEInfo()
-                self.outgoingData(inputText: "LK_COMM=info")
-                //                        self.cf.delay(1){
+            else if(Vehicaldetails.sharedInstance.BTMacAddress != ""){
+                print(Vehicaldetails.sharedInstance.BTMacAddress,Vehicaldetails.sharedInstance.MacAddressfromlink)
+                if(Vehicaldetails.sharedInstance.BTMacAddress == Vehicaldetails.sharedInstance.MacAddressfromlink as String)
+                {
+                    self.start.isEnabled = true
+                    self.start.isHidden = false
+                    self.cancel.isHidden = false
+                    self.Pwait.isHidden = true
+                    self.Activity.stopAnimating()
+                    self.displaytime.text = NSLocalizedString("MessageFueling", comment:"")
+                    self.web.sentlog(func_name: " BLE Mac Address from server \(Vehicaldetails.sharedInstance.BTMacAddress), MacAddressfromlink \(Vehicaldetails.sharedInstance.MacAddressfromlink) ", errorfromserverorlink:"", errorfromapp: "")
+                    BTMacAddress = false
+                }
+                else
+                {
+                    self.web.sentlog(func_name: "There is a MAC address error BLE Mac Address from server \(Vehicaldetails.sharedInstance.BTMacAddress), MacAddressfromlink \(Vehicaldetails.sharedInstance.MacAddressfromlink) ", errorfromserverorlink:"", errorfromapp: "")
+                   
+                    self.showAlert(message: "There is a MAC address error. Please contact Support")
+                    self.cf.delay(6)
+                    {
+                        // self.outgoingData(inputText: "LK_COMM=relay:12345=OFF")
+                        //  self.updateIncomingData()
+                        let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                        self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6")
+                        self.disconnectFromDevice()
+                        self.goto_Start()
+                    }
+                }
                 
-                //                                        self.cf.delay(0.5){
-                self.updateIncomingData()
-                NotificationCenter.default.removeObserver(self)
+                gotLinkVersion = true
+                //getBLEInfo()
+//                self.outgoingData(inputText: "LK_COMM=info")
+//                //                        self.cf.delay(1){
+//                
+//                //                                        self.cf.delay(0.5){
+//                self.updateIncomingData()
+//                NotificationCenter.default.removeObserver(self)
             }
         }
     }
@@ -5548,7 +5645,7 @@ extension FuelquantityVC: CBCentralManagerDelegate {
                     self.countfailBLEConn = self.countfailBLEConn + 1
                     self.web.sentlog(func_name: "Attempt \(countfailBLEConn)", errorfromserverorlink: "", errorfromapp: "")
                     
-                    if (self.countfailBLEConn == 5){
+                    if (self.countfailBLEConn == 15){
                         
                         self.web.sentlog(func_name: "App Not able to Connect BT Link and Subscribed peripheral Connection. Attempt  \(countfailBLEConn)", errorfromserverorlink: "", errorfromapp: "")
                         
@@ -6559,7 +6656,15 @@ extension FuelquantityVC: CBPeripheralDelegate {
                     if(self.gotLinkVersion == true){}
                     else{
                         BLEAddressSelectedLink = ""
-                        get_the_valid_BLEMacAddress()
+                        Vehicaldetails.sharedInstance.MacAddressfromlink = ""
+                        
+                        self.outgoingData(inputText: "LK_COMM=info")
+                                                //                        self.cf.delay(1){
+                        self.updateIncomingData()
+                        NotificationCenter.default.removeObserver(self)
+                        self.cf.delay(0.5){
+                            self.get_the_valid_BLEMacAddress()
+                        }
 //                        self.outgoingData(inputText: "LK_COMM=info")
 //                        //                        self.cf.delay(1){
 //                        
@@ -6579,45 +6684,45 @@ extension FuelquantityVC: CBPeripheralDelegate {
                 else
                 {
                     getBLEInfo()
-                }
-                //move to on stop button tapped event
-                //                print(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce)
-                //                if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1")
-                //                {
-                //
-                //                    self.sendpulsar_type()
-                //                }
-                //                outgoingData(inputText: "LK_COMM=p_type?")
-                //                updateIncomingData()
-                
-                delay(1){
-                    self.getlast10transaction()
-                    if(self.BTMacAddress == false)
-                    {
-                        
-                        self.start.isEnabled = true
-                        self.start.isHidden = false
-                        self.cancel.isHidden = false
-                        self.Pwait.isHidden = true
-                        self.Activity.stopAnimating()
-                        self.displaytime.text = NSLocalizedString("MessageFueling", comment:"")
-                    }
-                    else if(self.BTMacAddress == true)
-                    {
-                        self.showAlert(message: "There is a MAC address error. Please contact Support")
-                        self.cf.delay(6)
+                    //                }
+                    //move to on stop button tapped event
+                    //                print(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce)
+                    //                if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1")
+                    //                {
+                    //
+                    //                    self.sendpulsar_type()
+                    //                }
+                    //                outgoingData(inputText: "LK_COMM=p_type?")
+                    //                updateIncomingData()
+                    
+                    delay(5){
+                        self.getlast10transaction()
+                        if(self.BTMacAddress == false)
                         {
-                            // self.outgoingData(inputText: "LK_COMM=relay:12345=OFF")
-                            //  self.updateIncomingData()
-                            let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
-                            self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6")
-                            self.disconnectFromDevice()
-                            self.goto_Start()
+                            
+                            self.start.isEnabled = true
+                            self.start.isHidden = false
+                            self.cancel.isHidden = false
+                            self.Pwait.isHidden = true
+                            self.Activity.stopAnimating()
+                            self.displaytime.text = NSLocalizedString("MessageFueling", comment:"")
                         }
-                        //self.showAlert(message: "Macaddress is not matched \(Vehicaldetails.sharedInstance.BTMacAddress)" )
+                        else if(self.BTMacAddress == true)
+                        {
+                            self.showAlert(message: "There is a MAC address error. Please contact Support")
+                            self.cf.delay(6)
+                            {
+                                // self.outgoingData(inputText: "LK_COMM=relay:12345=OFF")
+                                //  self.updateIncomingData()
+                                let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                                self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6")
+                                self.disconnectFromDevice()
+                                self.goto_Start()
+                            }
+                            //self.showAlert(message: "Macaddress is not matched \(Vehicaldetails.sharedInstance.BTMacAddress)" )
+                        }
                     }
                 }
-                
             }
             //#2350 allow BLE transaction with out click start button
             if(self.defaults.string(forKey: "Companyname") == "Company2")
@@ -6628,24 +6733,27 @@ extension FuelquantityVC: CBPeripheralDelegate {
                 else{
                     if(self.AppconnectedtoBLE == true){
                         // #2403
+                        
+                        self.start.isHidden = true
+                        self.cancel.isHidden = true
+                        self.Stop.isHidden = false
+                        self.Pwait.isHidden = true
                         self.stoptimergotostart.invalidate()
                         self.stoptimer_gotostart.invalidate()
                         self.getlast10transaction()
                         self.BLErescount = 0
                         self.baseTextView = ""
+
                         
-                        self.updateIncomingData()
+                         self.cf.delay(2){
+                        //self.updateIncomingData()
                         self.web.sentlog(func_name: "Sent Relay On Command to BT link LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
                         self.outgoingData(inputText: "LK_COMM=relay:12345=ON")
                         NotificationCenter.default.removeObserver(self)
-                        self.updateIncomingData ()
+                        self.updateIncomingData()
                         
-                        self.cf.delay(0.1){
-                            self.start.isHidden = true
-                            self.cancel.isHidden = true
-                            self.Stop.isHidden = false
-                            //                                self.displaytime.text = NSLocalizedString("Fueling", comment:"")
-                            //self.displaytime.textColor = UIColor.black
+                       
+
                             self.FDcheckBLEtimer.invalidate()
                             self.FDcheckBLEtimer = Timer.scheduledTimer(timeInterval: 4, target: self, selector: #selector(self.fdCheckBLE), userInfo: nil, repeats: true)
                         }
@@ -6666,7 +6774,7 @@ extension FuelquantityVC: CBPeripheralDelegate {
                     NotificationCenter.default.removeObserver(self)
                     self.updateIncomingData ()
                     
-                    self.cf.delay(0.1){
+//                    self.cf.delay(0.1){
                         self.start.isHidden = true
                         self.cancel.isHidden = true
                         self.Stop.isHidden = false
@@ -6674,7 +6782,7 @@ extension FuelquantityVC: CBPeripheralDelegate {
                         //self.displaytime.textColor = UIColor.black
                         self.FDcheckBLEtimer.invalidate()
                         self.FDcheckBLEtimer = Timer.scheduledTimer(timeInterval: 4, target: self, selector: #selector(self.fdCheckBLE), userInfo: nil, repeats: true)
-                    }
+//                    }
                 }
             }
         }

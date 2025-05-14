@@ -50,7 +50,7 @@ class AppDelegate: UIResponder, MessagingDelegate, UIApplicationDelegate, UNUser
 //        UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
        
 //        UIApplication.shared.setMinimumBackgroundFetchInterval(100)
-//        registerBackgroundTasks()
+       // registerBackgroundTasks()
         
         
         reachability = Reachability.init()
@@ -425,7 +425,7 @@ class AppDelegate: UIResponder, MessagingDelegate, UIApplicationDelegate, UNUser
                try BGTaskScheduler.shared.submit(request)
                print("background refresh scheduled \(request)")
            } catch {
-               print("Could not schedule image fetch: (error)")
+               print("Could not schedule ")
            }
        }
     

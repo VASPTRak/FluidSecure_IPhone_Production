@@ -57,7 +57,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     var systemdata:NSDictionary!
     
     var pickerViewLocation: UIPickerView = UIPickerView()
-    
+    var RSSIholder: NSNumber = 0
     var ssid = [String]()
     var preSSID = [String]()
     var OriginalNamesOfLink = [NSArray]()
@@ -1228,7 +1228,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                         self.Activity.startAnimating()
                                         self.Activity.isHidden = false
                                         self.Upgrade.isHidden = false
-                                        self.progressviewtext.text = "Softerware update in progress \n Please wait several seconds....."
+                                        self.progressviewtext.text = "Software update in progress \n Please standby..."
                                         self.go.isEnabled = false
                                         self.upgradestarttimer.invalidate()
                                         self.upgradestarttimer = Timer.scheduledTimer(timeInterval: (Double(3)*60), target: self, selector: #selector(ViewController.Stopupgradetimer), userInfo: nil, repeats: false)
@@ -1565,7 +1565,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     }
     
     //MARK:Go Button tapped
-    @IBAction func goButtontapped(sender: AnyObject) {
+    @IBAction func goButtontapped(sender: Any) {
         Task { @MainActor in
             checkLocationpermission()
             
@@ -2126,7 +2126,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                     self.Activity.startAnimating()
                     self.Activity.isHidden = false
                     Upgrade.isHidden = false
-                    progressviewtext.text = "Softerware update in progress \n Please wait several seconds....."
+                    progressviewtext.text = "Software update in progress \n Please standby..."
                     go.isEnabled = false
                     upgradestarttimer.invalidate()
                     upgradestarttimer = Timer.scheduledTimer(timeInterval: (Double(3)*60), target: self, selector: #selector(ViewController.Stopupgradetimer), userInfo: nil, repeats: false)
@@ -2668,6 +2668,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     {
         upgradestarttimer.invalidate()
         Upgrade.isHidden = true
+        self.progressview.progress = 0.0
         self.Activity.stopAnimating()
         self.Activity.isHidden = true
         disconnectFromDevice()
@@ -2715,7 +2716,9 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                 wifiNameTextField.isEnabled = false
                 self.web.sentlog(func_name: " Finished Upgrade Process", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
                 
-                
+                defaults.set(nil, forKey: "downloadFileData")
+                defaults.set(nil, forKey: "FirmwareVersion")
+                self.web.sentlog(func_name: " File remove from device.", errorfromserverorlink:"", errorfromapp: "")
                 go.isEnabled = true
                 delay(3)
                 {
@@ -2735,7 +2738,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             print(iteration,Float(Double(onepercentoffile)))
             iterationcountforupgrade = iterationcountforupgrade + 1
             self.progressview.progress += Float(Double(onepercentoffile))
-            self.progressviewtext.text = "Softerware update in progress \(Int(self.progressview.progress * 100))%"
+            self.progressviewtext.text = "Software update in progress \(Int(self.progressview.progress * 100))%"
             
             var range:Range<Data.Index>
             // Create a range based on the length of data to return
@@ -2762,26 +2765,52 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
     
     func uploadbinfile(){
         //Download new link from Server using getbinfile and upload/Flash the file to FS link.
-        //            DispatchQueue.main.async(execute: {
+                   // DispatchQueue.main.async(execute: {
         //                self.web.beginBackgroundUpdateTask()
         //                if(self.bindata == nil){
         
-        isupload_file = true
-        self.bindata = self.getbinfile() as Data
+                        self.isupload_file = true
+        
+       
+        if(defaults.data(forKey: "downloadFileData") == nil) && (defaults.string(forKey: "FirmwareVersion") == nil)
+        {
+            self.bindata = self.getbinfile() as Data
+            defaults.set(bindata, forKey: "downloadFileData")
+            defaults.set(Vehicaldetails.sharedInstance.FirmwareVersion, forKey: "FirmwareVersion")
+            self.web.sentlog(func_name: " File save successfully on device.", errorfromserverorlink:"", errorfromapp: "")
+            self.totalbindatacount = self.bindata!.count
+        }
+        
+        else if(defaults.data(forKey: "downloadFileData") != nil) && (defaults.string(forKey: "FirmwareVersion")! == Vehicaldetails.sharedInstance.FirmwareVersion)
+        {
+            print(defaults.string(forKey: "FirmwareVersion")!, Vehicaldetails.sharedInstance.FirmwareVersion)
+            self.bindata = defaults.data(forKey: "downloadFileData")
+            
+            self.totalbindatacount = self.bindata!.count
+        }
+        else if(defaults.data(forKey: "downloadFileData") != nil) && (defaults.string(forKey: "FirmwareVersion")! != Vehicaldetails.sharedInstance.FirmwareVersion)
+        {
+            self.bindata = self.getbinfile() as Data
+            defaults.set(bindata, forKey: "downloadFileData")
+            defaults.set(Vehicaldetails.sharedInstance.FirmwareVersion, forKey: "FirmwareVersion")
+            self.totalbindatacount = self.bindata!.count
+        }
         //                }
         //                else{
-        self.totalbindatacount = self.bindata!.count
-        print(self.bindata!.count)
-        self.outgoingData(inputText: "LK_COMM=upgrade \(self.bindata!.count)")
-        self.web.sentlog(func_name: " Send LK_COMM=upgrade \(self.bindata!.count) to link", errorfromserverorlink: "" , errorfromapp:"")
-        NotificationCenter.default.removeObserver(self)
-        self.updateIncomingData()
+                        //self.delay(4){
+            //self.totalbindatacount = self.bindata!.count
+            print(self.bindata!.count)
+            self.outgoingData(inputText: "LK_COMM=upgrade \(self.bindata!.count)")
+            self.web.sentlog(func_name: " Send LK_COMM=upgrade \(self.bindata!.count) to link", errorfromserverorlink: "" , errorfromapp:"")
+            NotificationCenter.default.removeObserver(self)
+            self.updateIncomingData()
+        //}
         //                }
         
         // End the background task.
         
         //                self.web.endBackgroundUpdateTask()
-        //            })
+                //    })
         
     }
     
@@ -2800,8 +2829,10 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             if let data = data {
                 
                 self.replydata = data as NSData
+                self.web.sentlog(func_name: " File downloaded successfully", errorfromserverorlink:"", errorfromapp: "")
             } else {
                 print(error!)
+                self.web.sentlog(func_name: " File not downloaded getting error \(error)", errorfromserverorlink:"", errorfromapp: "")
             }
             semaphore.signal()
         }
@@ -2976,8 +3007,36 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             
         }
     }
+    
+    func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?)
+    {
+        self.web.sentlog(func_name: "Disconnected", errorfromserverorlink: "\(CBCentralManager.self)", errorfromapp:"\(error)")
+        
+        //self.progressviewtext.text = "App Disconnected with the Hose. \n please tap GO...."
+        
+        self.goButtontapped(sender:(Any).self)
+            
+    }
+    
+    @objc func readRSSI(){
+        if (self.peripheral != nil){
+            self.peripheral.delegate = self
+            self.peripheral.readRSSI()
+        } else {
+            print("peripheral = nil")
+        }
+        if (Int(truncating: self.RSSIholder) < -90) {
+            //let openValue = "1".dataUsingEncoding(NSUTF8StringEncoding)!
+            print(RSSIholder)
+            self.web.sentlog(func_name: " RSSI value \(RSSIholder) < -90 this signal is extremely weak.", errorfromserverorlink: "", errorfromapp:"")
+            
+        }
+    }
+    
 }
     
+
+
 
 
 @available(iOS 14.0, *)
