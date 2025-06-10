@@ -117,12 +117,20 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
             odo = Vehicaldetails.sharedInstance.odometerreq
             print(odo , Vehicaldetails.sharedInstance.odometerreq)
             
-            self.getodometer()
+            //self.getodometer()
             Vehicleno.text = Vehicaldetails.sharedInstance.vehicleno
             if(Vehicleno.text == ""){}
             else{
                 IsScanBarcode = true
                 
+            }
+            //#2898
+            if(defaults.bool(forKey: "IsNonValidateVehicle") == true)
+            {
+                Vehicleno.text = "\(Barcodescanvalue)"
+            }
+            else{
+                self.getodometer()
             }
         }
         self.navigationItem.title = "\(Vehicaldetails.sharedInstance.SSId)"
@@ -272,8 +280,10 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
                 showAlert(message: NSLocalizedString("CheckyourInternet", comment:""))
 
             }else{
-                
-                self.senddata(deptno: deptno,ppin:ppin,other:other)
+                self.showToast(message: "Caution: Do NOT leave this app while fueling")
+                self.delay(3){
+                    self.senddata(deptno: deptno,ppin:ppin,other:other)
+                }
             }
         }
         else
@@ -556,7 +566,10 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
                                         Vehicaldetails.sharedInstance.Other = ""
                                         Vehicaldetails.sharedInstance.Odometerno = "0"
                                         stoptimergotostart.invalidate()
-                                        self.senddata(deptno: deptno,ppin:ppin,other:other)
+                                        self.showToast(message: "Caution: Do NOT leave this app while fueling")
+                                        self.delay(4){
+                                            self.senddata(deptno: deptno,ppin:ppin,other:other)
+                                        }
                                     }
                                 }
                             }
@@ -596,7 +609,7 @@ class VehiclenoVC: UIViewController,UITextFieldDelegate {
     }
     
     @IBAction func saveBtntapped(sender: AnyObject) {
-        
+        view.endEditing(true)
         if(self.cf.getSSID() != "" && Vehicaldetails.sharedInstance.SSId != self.cf.getSSID() && Vehicaldetails.sharedInstance.HubLinkCommunication == "HTTP") {
             print("SSID: \(self.cf.getSSID())")
             self.showAlert(message:NSLocalizedString("SwitchoffyourWiFi", comment:""))

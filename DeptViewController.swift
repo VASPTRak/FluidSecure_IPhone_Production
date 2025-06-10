@@ -169,7 +169,9 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
                 self.Activity.isHidden = true
                 showAlert(message: NSLocalizedString("CheckyourInternet", comment:""))
             }else{
-                self.senddata(ppin:ppin,other:other)
+                
+                    self.senddata(ppin:ppin,other:other)
+               
             }
             Deptstoptimergotostart.invalidate()
             viewWillAppear(true)
@@ -388,6 +390,7 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
 
 
     @IBAction func saveButtontapped(sender: AnyObject) {
+        view.endEditing(true)
         if(self.cf.getSSID() != "" && Vehicaldetails.sharedInstance.SSId != self.cf.getSSID() && Vehicaldetails.sharedInstance.HubLinkCommunication == "HTTP") {
             print("SSID: \(self.cf.getSSID())")
             self.showAlert(message:NSLocalizedString("SwitchoffyourWiFi", comment:""))
@@ -453,7 +456,10 @@ class DeptViewController: UIViewController,UITextFieldDelegate {
                                 let other = ""
                                 Vehicaldetails.sharedInstance.Personalpinno = ""
                                 Vehicaldetails.sharedInstance.Other = ""
-                                self.senddata(ppin: ppin,other:other)
+                                self.showToast(message: "Caution: Do NOT leave this app while fueling")
+                                self.delay(3){
+                                    self.senddata(ppin: ppin,other:other)
+                                }
                             }
                         }
                     }

@@ -153,7 +153,9 @@ class PinViewController: UIViewController
             {
                 showAlert(message: NSLocalizedString("CheckyourInternet", comment:""))
             }else{
-                self.senddata(other:other)
+                
+                    self.senddata(other:other)
+              
             }
             Pinstoptimergotostart.invalidate()
             viewWillAppear(true)
@@ -327,6 +329,7 @@ class PinViewController: UIViewController
     }
     
     @IBAction func saveButtontapped(sender: AnyObject) {
+        view.endEditing(true)
         if(self.cf.getSSID() != "" && Vehicaldetails.sharedInstance.SSId != self.cf.getSSID() && Vehicaldetails.sharedInstance.HubLinkCommunication == "HTTP") {
             print("SSID: \(self.cf.getSSID())")
             self.showAlert(message:NSLocalizedString("SwitchoffyourWiFi", comment:""))
@@ -385,7 +388,10 @@ class PinViewController: UIViewController
                     else{
                         let other = ""
                         Vehicaldetails.sharedInstance.Other = ""
-                        self.senddata(other: other)
+                        self.showToast(message: "Caution: Do NOT leave this app while fueling")
+                        self.delay(3){
+                            self.senddata(other: other)
+                        }
                     }
                 }
             }

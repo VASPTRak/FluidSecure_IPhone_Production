@@ -155,8 +155,9 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
             {
                 showAlert(message: NSLocalizedString("CheckyourInternet", comment:""))//"Please wait momentarily check your internet connection & try again.")//"\(error) \n Please try again later")
             }else{
-
-                self.senddata()
+               
+                    self.senddata()
+               
             }
             otherstoptimergotostart.invalidate()
             viewWillAppear(true)
@@ -347,6 +348,8 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
     }
 
     @IBAction func saveButtontapped(sender: AnyObject) {
+        view.endEditing(true)
+        
         if(self.cf.getSSID() != "" && Vehicaldetails.sharedInstance.SSId != self.cf.getSSID() && Vehicaldetails.sharedInstance.HubLinkCommunication == "HTTP") {
             print("SSID: \(self.cf.getSSID())")
             self.showAlert(message:NSLocalizedString("SwitchoffyourWiFi", comment:""))//"Please switch off your wifi before proceeding. \n To switch off the wifi you can use the shortcut.  If you have an iPhone with Touch ID, swipe up from the bottom of the screen. If you have an iPhone with Face ID, swipe down from the upper right. Then tap on the wifi icon to switch it off.")
@@ -382,7 +385,10 @@ class OtherViewController: UIViewController,UITextFieldDelegate{
                         self.web.sentlog(func_name: "\(Vehicaldetails.sharedInstance.Otherlable) Entered : \(Vehicaldetails.sharedInstance.Other)", errorfromserverorlink: " Hose: \(Vehicaldetails.sharedInstance.SSId)", errorfromapp: " Connected wifi: \(self.cf.getSSID())")
                     }
                     self.Other.text = Vehicaldetails.sharedInstance.Other
-                    self.senddata()
+                    self.showToast(message: "Caution: Do NOT leave this app while fueling")
+                    self.delay(3){
+                        self.senddata()
+                    }
                 }
             }
         }

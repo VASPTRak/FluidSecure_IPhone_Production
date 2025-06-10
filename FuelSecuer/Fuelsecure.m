@@ -20,7 +20,7 @@
 //const NSString *URL = @"http://103.8.126.241:89/App.txt";
 //const NSString *FSURL = @"\(Vehicaldetails.sharedInstance.URL)/HandlerTrak.ashx";
 
-const NSString *Version = @"1.18.53(2)";
+const NSString *Version = @"1.18.54(1)";
 const NSString *brandname = @"FluidSecure";
 //@"http://103.8.126.241:89/HandlerTrak.ashx";
 //const NSString *LogURL =  @"http://103.8.126.241:89/LoginHandler.ashx";

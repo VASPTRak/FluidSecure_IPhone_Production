@@ -1797,13 +1797,15 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                                                                     }
                                                                     else{
                                                                         
-                                                                        
-//                                                                        if(self.IsVehicleNumberRequire == "True"){
+                                                                        self.showToast(message: "Caution: Do NOT leave this app while fueling")
+                                                                        self.delay(4){
+                                                                            //                                                                        if(self.IsVehicleNumberRequire == "True"){
                                                                             let test_transaction = self.web.Testtransaction()
                                                                             if(test_transaction.contains("success")){
                                                                                 self.performSegue(withIdentifier: "fueling", sender: self)
                                                                             }
-//                                                                        }
+                                                                            //                                                                        }
+                                                                        }
                                                                     }
                                                                 }
                                                                 
@@ -2113,7 +2115,8 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
             Vehicaldetails.sharedInstance.FirmwareVersion = Firmware_Version[index]
             Vehicaldetails.sharedInstance.GetPulserTypeFromLINK = GetPulserTypeFromLINK[index]
             Vehicaldetails.sharedInstance.CurrentFirmwareVersion = CurrentFirmwareVersion[index]
-            print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced,Vehicaldetails.sharedInstance.prevSSID,Vehicaldetails.sharedInstance.OriginalNamesOfLink,Vehicaldetails.sharedInstance.BTMacAddress,Vehicaldetails.sharedInstance.FilePath,Vehicaldetails.sharedInstance.FirmwareVersion,Vehicaldetails.sharedInstance.PulserTimingAdjust,Vehicaldetails.sharedInstance.GetPulserTypeFromLINK,Vehicaldetails.sharedInstance.CurrentFirmwareVersion )
+            Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce = self.Is_ResetSwitchTimeBounce[index]
+            print(Vehicaldetails.sharedInstance.IsUpgrade,Vehicaldetails.sharedInstance.password,Vehicaldetails.sharedInstance.HoseID,Vehicaldetails.sharedInstance.SSId,Vehicaldetails.sharedInstance.siteID,Vehicaldetails.sharedInstance.IsHoseNameReplaced,Vehicaldetails.sharedInstance.prevSSID,Vehicaldetails.sharedInstance.OriginalNamesOfLink,Vehicaldetails.sharedInstance.BTMacAddress,Vehicaldetails.sharedInstance.FilePath,Vehicaldetails.sharedInstance.FirmwareVersion,Vehicaldetails.sharedInstance.PulserTimingAdjust,Vehicaldetails.sharedInstance.GetPulserTypeFromLINK,Vehicaldetails.sharedInstance.CurrentFirmwareVersion,Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce)
             defaults.set(siteid, forKey: "SiteID")
             
             if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
@@ -2132,6 +2135,23 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                     upgradestarttimer = Timer.scheduledTimer(timeInterval: (Double(3)*60), target: self, selector: #selector(ViewController.Stopupgradetimer), userInfo: nil, repeats: false)
                 }
             }
+            
+            //#2847
+            print(Vehicaldetails.sharedInstance.PulserTimingAdjust,Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce)
+            if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1"){
+                self.centralManager = CBCentralManager(delegate: self, queue: nil)
+//                progressview.isHidden = false
+                progressviewtext.isHidden = false
+                self.Activity.startAnimating()
+                self.Activity.isHidden = false
+                Upgrade.isHidden = false
+                progressviewtext.text = "Please standby..."
+                go.isEnabled = false
+                
+                
+            }
+            
+            
             
             let Json = systemdata.value(forKey: "SSIDDataObj") as! NSArray
             let rowCount = Json.count
@@ -2520,6 +2540,10 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
         {
             defaults.set("4", forKey: "UpdateSwitchTimeBounceForLink")
         }
+        else if("\(self.characteristicASCIIValue)".contains("{\"pulser_type\":5}$$"))
+        {
+            defaults.set("5", forKey: "UpdateSwitchTimeBounceForLink")
+        }
         
         NotificationCenter.default.post(name:NSNotification.Name(rawValue: "Notify"), object: self)
         
@@ -2605,12 +2629,65 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                     }
                 }
             }
+            
+            print(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce)
+            if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1")
+            {
+                //self.centralManager = CBCentralManager(delegate: self, queue: nil)
+                self.sendpulsar_type()
+            }
+            if(Vehicaldetails.sharedInstance.GetPulserTypeFromLINK == "True"){
+                outgoingData(inputText: "LK_COMM=p_type?")
+                updateIncomingData()
+            }
         }
         else
         {
             ifSubscribed = false
         }
     }
+    
+    
+    
+    //#2177
+    func sendpulsar_type()
+    {
+        if(ifSubscribed == true ){
+            
+            if(Vehicaldetails.sharedInstance.PulserTimingAdjust == "1")
+            {
+                outgoingData(inputText: "LK_COMM=p_type:" + "\(Vehicaldetails.sharedInstance.PulserTimingAdjust)")
+                updateIncomingData()
+                
+            }
+            else  if(Vehicaldetails.sharedInstance.PulserTimingAdjust == "2")
+            {
+                outgoingData(inputText: "LK_COMM=p_type:" + "\(Vehicaldetails.sharedInstance.PulserTimingAdjust)")
+                updateIncomingData()
+                
+            }
+            else  if(Vehicaldetails.sharedInstance.PulserTimingAdjust == "3")
+            {
+                outgoingData(inputText: "LK_COMM=p_type:" + "\(Vehicaldetails.sharedInstance.PulserTimingAdjust)")
+                updateIncomingData()
+                
+            }
+            else  if(Vehicaldetails.sharedInstance.PulserTimingAdjust == "4")
+            {
+                outgoingData(inputText: "LK_COMM=p_type:" + "\(Vehicaldetails.sharedInstance.PulserTimingAdjust)")
+                updateIncomingData()
+                
+            }
+            else  if(Vehicaldetails.sharedInstance.PulserTimingAdjust == "5")
+            {
+                outgoingData(inputText: "LK_COMM=p_type:" + "\(Vehicaldetails.sharedInstance.PulserTimingAdjust)")
+                updateIncomingData()
+                
+            }
+        }
+    }
+    
+    
     
     func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
         guard error == nil else {
@@ -3093,5 +3170,47 @@ extension LocalNetworkAuthorization : NetServiceDelegate {
         Vehicaldetails.sharedInstance.islocalnetworkpermission = true
         print("Local network permission has been granted")
         completion?(true)
+    }
+}
+
+extension UIViewController {
+    func showToast(message: String, duration: Double = 2.0) {
+        let toastLabel = UILabel()
+        toastLabel.text = message
+        toastLabel.textColor = UIColor.white
+        toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        toastLabel.textAlignment = .center
+        toastLabel.font = UIFont.systemFont(ofSize: 14)
+        toastLabel.numberOfLines = 0
+
+        let padding: CGFloat = 16
+        let maxWidthPercentage: CGFloat = 0.8
+        let maxSizeTitle = CGSize(width: self.view.bounds.size.width * maxWidthPercentage, height: self.view.bounds.size.height)
+        var expectedSizeTitle = toastLabel.sizeThatFits(maxSizeTitle)
+        expectedSizeTitle.width += padding * 2
+        expectedSizeTitle.height += padding
+        
+
+        toastLabel.frame = CGRect(
+            x: (self.view.frame.size.width - expectedSizeTitle.width) / 2,
+            y: self.view.frame.size.height - expectedSizeTitle.height - 80,
+            width: expectedSizeTitle.width,
+            height: expectedSizeTitle.height
+        )
+        toastLabel.alpha = 0.0
+        toastLabel.layer.cornerRadius = 10
+        toastLabel.clipsToBounds = true
+
+        self.view.addSubview(toastLabel)
+
+        UIView.animate(withDuration: 0.5, animations: {
+            toastLabel.alpha = 1.0
+        }) { _ in
+            UIView.animate(withDuration: 0.5, delay: duration, options: .curveEaseOut, animations: {
+                toastLabel.alpha = 0.0
+            }) { (_) in
+                toastLabel.removeFromSuperview()
+            }
+        }
     }
 }

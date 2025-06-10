@@ -335,7 +335,7 @@ let defaults = UserDefaults.standard
 var audio:AVPlayer!
 
 
-class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDelegate, UIDocumentInteractionControllerDelegate, UITextViewDelegate//,CBCentralManagerDelegate, CBPeripheralDelegate
+class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDelegate, UIDocumentInteractionControllerDelegate, UITextViewDelegate,UISceneDelegate//,CBCentralManagerDelegate, CBPeripheralDelegate
 {
     
     func urlSession(_ session: URLSession,
@@ -533,9 +533,24 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     //@IBOutlet weak var progressviewtext: UILabel!
     //    @IBOutlet weak var progressview: UIProgressView!
     
+    @objc func handleBackground() {
+        print("App went to background (via NotificationCenter)")
+        
+    }
+    
     
     ///view did Appear every time we visit this page and we see this page below fuction is called.
     override func viewDidAppear(_ animated: Bool) {
+        
+        if(Vehicaldetails.sharedInstance.isAppgoesToBackground == true)
+               {
+            self.web.sentlog(func_name:"App goes in background before connecting to BT device. , device_name: UIDevice.current.name, Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+//                                   if(ifSubscribed == true){}
+//                                   else{
+                       goto_Start()
+//                                   }
+               }
+       
         stoptimergotostart.invalidate()
         self.timerview.invalidate()
         
@@ -1009,7 +1024,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                        
     }
     
-    
+
     
     
     @objc func gotoStart(){
@@ -1153,6 +1168,15 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     
     
     override func viewWillAppear(_ animated: Bool) {
+        
+        if(Vehicaldetails.sharedInstance.isAppgoesToBackground == true)
+        {
+            self.web.sentlog(func_name:"App goes in background before connecting to BT device. , device_name: \(UIDevice.current.name), Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+//            if(ifSubscribed == true){}
+//            else{
+                goto_Start()
+//            }
+        }
         disconnectFromDevice()
         self.peripherals = []
         //        self.kCBAdvData_LocalName = []
@@ -1285,7 +1309,16 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     }
     
     override func viewDidLoad() {
-        
+   
+//        print(Vehicaldetails.sharedInstance.isAppgoesToBackground )
+        if(Vehicaldetails.sharedInstance.isAppgoesToBackground == true)
+        {
+//            if(ifSubscribed == true){}
+//            else{
+            self.web.sentlog(func_name:"App goes in background before connecting to BT device. , device_name: UIDevice.current.name, Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+                goto_Start()
+//            }
+        }
         self.Activity.startAnimating()
         stoptimergotostart.invalidate()
         onFuelingScreen = true
@@ -2295,6 +2328,8 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
         self.Stop.isEnabled = false
         self.Stop.isEnabled = false
         self.Stop.isEnabled = false
+        self.start.isEnabled = false
+        self.start.isHidden = true
         print(Last_Count)
         if(self.Last_Count == "0.0" || Last_Count == "0")
         {
@@ -2316,16 +2351,16 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
             }
         }
         if(AppconnectedtoBLE == true ){
-            print(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce)
-                            if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1")
-                            {
-            
-                                self.sendpulsar_type()
-                            }
-            if(Vehicaldetails.sharedInstance.GetPulserTypeFromLINK == "True"){
-                outgoingData(inputText: "LK_COMM=p_type?")
-                updateIncomingData()
-            }
+//            print(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce)
+//                            if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1")
+//                            {
+//            
+//                                self.sendpulsar_type()
+//                            }
+//            if(Vehicaldetails.sharedInstance.GetPulserTypeFromLINK == "True"){
+//                outgoingData(inputText: "LK_COMM=p_type?")
+//                updateIncomingData()
+//            }
             //self.settransactionid()  //set transaction id
             if(self.connectedservice == "725e0bc8-6f00-4d2d-a4af-96138ce599b9")
             {
@@ -5231,6 +5266,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                     
                     if(self.defaults.string(forKey: "Companyname") == "Company2")
                     {
+                        
                         //#2437
                         if(Vehicaldetails.sharedInstance.selectedCompanybyGA.contains("Demo-") || Vehicaldetails.sharedInstance.GACompany.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == Vehicaldetails.sharedInstance.selectedCompanybyGA.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
                         {
@@ -6603,194 +6639,207 @@ extension FuelquantityVC: CBPeripheralDelegate {
     
     func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
         print("*******************************************************")
-        
-        if (error != nil) {
-            print("Error changing notification state:\(String(describing: error?.localizedDescription))")
-            ifSubscribed = false
+        if(Vehicaldetails.sharedInstance.isAppgoesToBackground == true)
+               {
             
-        } else {
-            print("Characteristic's value subscribed")
-        }
+                           if(ifSubscribed == true){}
+                           else{
+                               self.web.sentlog(func_name:"App goes in background before connecting to BT device. , device_name: UIDevice.current.name, Device type - (\(UIDevice().type),iOS \(UIDevice.current.systemVersion)", errorfromserverorlink: "", errorfromapp: "")
+                       goto_Start()
+                           }
+               }
         
-        if (characteristic.isNotifying) {
-            ifSubscribed = true
-            web.sentlog(func_name: "Connected to BT link, Subscribed. Set Notify enabled... to true in BLE transaction for ID:", errorfromserverorlink: "\(characteristic.uuid)", errorfromapp: ""); print("Subscribed. Notification has begun for: \(characteristic.uuid)")
-            if(IsStartbuttontapped == false)
-            {
-                //                if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
-                //                {
-                //                    if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
-                //                    {
-                //                        if(isupload_file == true){}
-                //                        else{
-                //                            self.uploadbinfile()
-                //
-                ////                            _ = self.firmwareUpdateDemo()
-                ////                            self.sendData()
-                ////                            _ = self.web.UpgradeCurrentiotVersiontoserver()
-                //                            self.web.sentlog(func_name: "Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-                //                        }
-                //
-                //                    }
-                //                    else
-                //                    {
-                //                        self.web.sentlog(func_name: " Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
-                //                        if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
-                //                        {
-                //                            self.tcpcon.getuser()
-                //                        }
-                //                    }
-                //                    //                            Vehicaldetails.sharedInstance.IsUpgrade = "N"
-                //                }
-                //                else{
-                //        delay(1){
-                if(self.connectedservice == "725e0bc8-6f00-4d2d-a4af-96138ce599b9")
-                {
-                    self.consoleAsciiText = NSAttributedString(string: "")
-                    self.newAsciiText = NSMutableAttributedString()
-                    if(self.observationToken == nil){}
-                    else{
-                        NotificationCenter.default.removeObserver(self.observationToken!)
-                    }
-                    self.newAsciiText.mutableString.replaceOccurrences(of: "\n\n", with: "\n", options: [], range: NSMakeRange(0, self.newAsciiText.length))
-                    if(self.gotLinkVersion == true){}
-                    else{
-                        BLEAddressSelectedLink = ""
-                        Vehicaldetails.sharedInstance.MacAddressfromlink = ""
-                        
-                        self.outgoingData(inputText: "LK_COMM=info")
-                                                //                        self.cf.delay(1){
-                        self.updateIncomingData()
-                        NotificationCenter.default.removeObserver(self)
-                        self.cf.delay(0.5){
-                            self.get_the_valid_BLEMacAddress()
-                        }
-//                        self.outgoingData(inputText: "LK_COMM=info")
-//                        //                        self.cf.delay(1){
-//                        
-//                        //                                        self.cf.delay(0.5){
-//                        self.updateIncomingData()
-//                        NotificationCenter.default.removeObserver(self)
-                        //                    }
-                        //            self.updateIncomingData()
-                        //
-                        //            NotificationCenter.default.removeObserver(self)
-                        //                                    }
-                        
-                        // self.web.sentlog(func_name: " Send info command to link", errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"")
-                        //                        }
-                    }
-                }
-                else
-                {
-                    getBLEInfo()
-                    //                }
-                    //move to on stop button tapped event
-                    //                print(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce)
-                    //                if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1")
-                    //                {
-                    //
-                    //                    self.sendpulsar_type()
-                    //                }
-                    //                outgoingData(inputText: "LK_COMM=p_type?")
-                    //                updateIncomingData()
-                    
-                    delay(5){
-                        self.getlast10transaction()
-                        if(self.BTMacAddress == false)
-                        {
-                            
-                            self.start.isEnabled = true
-                            self.start.isHidden = false
-                            self.cancel.isHidden = false
-                            self.Pwait.isHidden = true
-                            self.Activity.stopAnimating()
-                            self.displaytime.text = NSLocalizedString("MessageFueling", comment:"")
-                        }
-                        else if(self.BTMacAddress == true)
-                        {
-                            self.showAlert(message: "There is a MAC address error. Please contact Support")
-                            self.cf.delay(6)
-                            {
-                                // self.outgoingData(inputText: "LK_COMM=relay:12345=OFF")
-                                //  self.updateIncomingData()
-                                let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
-                                self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6")
-                                self.disconnectFromDevice()
-                                self.goto_Start()
-                            }
-                            //self.showAlert(message: "Macaddress is not matched \(Vehicaldetails.sharedInstance.BTMacAddress)" )
-                        }
-                    }
-                }
+        else {
+            if (error != nil) {
+                print("Error changing notification state:\(String(describing: error?.localizedDescription))")
+                ifSubscribed = false
+                
+            } else {
+                print("Characteristic's value subscribed")
             }
-            //#2350 allow BLE transaction with out click start button
-            if(self.defaults.string(forKey: "Companyname") == "Company2")
-            {
-                //#2437
-                if(Vehicaldetails.sharedInstance.selectedCompanybyGA.contains("Demo-") || Vehicaldetails.sharedInstance.GACompany.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == Vehicaldetails.sharedInstance.selectedCompanybyGA.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
-                {}
-                else{
-                    if(self.AppconnectedtoBLE == true){
-                        // #2403
+            
+            if (characteristic.isNotifying) {
+                ifSubscribed = true
+                web.sentlog(func_name: "Connected to BT link, Subscribed. Set Notify enabled... to true in BLE transaction for ID:", errorfromserverorlink: "\(characteristic.uuid)", errorfromapp: ""); print("Subscribed. Notification has begun for: \(characteristic.uuid)")
+                if(IsStartbuttontapped == false)
+                {
+                    //                if(Vehicaldetails.sharedInstance.IsUpgrade == "Y")
+                    //                {
+                    //                    if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
+                    //                    {
+                    //                        if(isupload_file == true){}
+                    //                        else{
+                    //                            self.uploadbinfile()
+                    //
+                    ////                            _ = self.firmwareUpdateDemo()
+                    ////                            self.sendData()
+                    ////                            _ = self.web.UpgradeCurrentiotVersiontoserver()
+                    //                            self.web.sentlog(func_name: "Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                    //                        }
+                    //
+                    //                    }
+                    //                    else
+                    //                    {
+                    //                        self.web.sentlog(func_name: " Start Upgrade Function", errorfromserverorlink: "", errorfromapp: " Hose :\(Vehicaldetails.sharedInstance.SSId)" + " Connected link : \(self.cf.getSSID())")
+                    //                        if(Vehicaldetails.sharedInstance.SSId == self.cf.getSSID())
+                    //                        {
+                    //                            self.tcpcon.getuser()
+                    //                        }
+                    //                    }
+                    //                    //                            Vehicaldetails.sharedInstance.IsUpgrade = "N"
+                    //                }
+                    //                else{
+                    //        delay(1){
+                    if(self.connectedservice == "725e0bc8-6f00-4d2d-a4af-96138ce599b9")
+                    {
+                        self.consoleAsciiText = NSAttributedString(string: "")
+                        self.newAsciiText = NSMutableAttributedString()
+                        if(self.observationToken == nil){}
+                        else{
+                            NotificationCenter.default.removeObserver(self.observationToken!)
+                        }
+                        self.newAsciiText.mutableString.replaceOccurrences(of: "\n\n", with: "\n", options: [], range: NSMakeRange(0, self.newAsciiText.length))
+                        if(self.gotLinkVersion == true){}
+                        else{
+                            BLEAddressSelectedLink = ""
+                            Vehicaldetails.sharedInstance.MacAddressfromlink = ""
+                            
+                            self.outgoingData(inputText: "LK_COMM=info")
+                            //                        self.cf.delay(1){
+                            self.updateIncomingData()
+                            NotificationCenter.default.removeObserver(self)
+                            self.cf.delay(0.5){
+                                self.get_the_valid_BLEMacAddress()
+                            }
+                            //                        self.outgoingData(inputText: "LK_COMM=info")
+                            //                        //                        self.cf.delay(1){
+                            //
+                            //                        //                                        self.cf.delay(0.5){
+                            //                        self.updateIncomingData()
+                            //                        NotificationCenter.default.removeObserver(self)
+                            //                    }
+                            //            self.updateIncomingData()
+                            //
+                            //            NotificationCenter.default.removeObserver(self)
+                            //                                    }
+                            
+                            // self.web.sentlog(func_name: " Send info command to link", errorfromserverorlink: "Selected Hose \(Vehicaldetails.sharedInstance.SSId)" , errorfromapp:"")
+                            //                        }
+                        }
+                    }
+                    else
+                    {
+                        getBLEInfo()
+                        //                }
+                        //move to on stop button tapped event
+                        //                print(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce)
+                        //                if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1")
+                        //                {
+                        //
+                        //                    self.sendpulsar_type()
+                        //                }
+                        //                outgoingData(inputText: "LK_COMM=p_type?")
+                        //                updateIncomingData()
                         
-                        self.start.isHidden = true
-                        self.cancel.isHidden = true
-                        self.Stop.isHidden = false
-                        self.Pwait.isHidden = true
-                        self.stoptimergotostart.invalidate()
-                        self.stoptimer_gotostart.invalidate()
-                        self.getlast10transaction()
-                        self.BLErescount = 0
-                        self.baseTextView = ""
-
-                        
-                         self.cf.delay(2){
-                        //self.updateIncomingData()
-                        self.web.sentlog(func_name: "Sent Relay On Command to BT link LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
-                        self.outgoingData(inputText: "LK_COMM=relay:12345=ON")
-                        NotificationCenter.default.removeObserver(self)
-                        self.updateIncomingData()
-                        
-                       
-
+                        delay(5){
+                            self.getlast10transaction()
+                            if(self.BTMacAddress == false)
+                            {
+                                
+                                self.start.isEnabled = true
+                                self.start.isHidden = false
+                                self.cancel.isHidden = false
+                                self.Pwait.isHidden = true
+                                self.Activity.stopAnimating()
+                                self.displaytime.text = NSLocalizedString("MessageFueling", comment:"")
+                            }
+                            else if(self.BTMacAddress == true)
+                            {
+                                self.showAlert(message: "There is a MAC address error. Please contact Support")
+                                self.cf.delay(6)
+                                {
+                                    // self.outgoingData(inputText: "LK_COMM=relay:12345=OFF")
+                                    //  self.updateIncomingData()
+                                    let Transaction_id = Vehicaldetails.sharedInstance.TransactionId
+                                    self.web.UpgradeTransactionStatus(Transaction_id:"\(Transaction_id)", Status: "6")
+                                    self.disconnectFromDevice()
+                                    self.goto_Start()
+                                }
+                                //self.showAlert(message: "Macaddress is not matched \(Vehicaldetails.sharedInstance.BTMacAddress)" )
+                            }
+                        }
+                    }
+                }
+                //#2350 allow BLE transaction with out click start button
+                if(self.defaults.string(forKey: "Companyname") == "Company2")
+                {
+                    
+                    
+                    //                else {
+                    //#2437
+                    if(Vehicaldetails.sharedInstance.selectedCompanybyGA.contains("Demo-") || Vehicaldetails.sharedInstance.GACompany.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == Vehicaldetails.sharedInstance.selectedCompanybyGA.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+                    {}
+                    else{
+                        if(self.AppconnectedtoBLE == true){
+                            // #2403
+                            
+                            self.start.isHidden = true
+                            self.cancel.isHidden = true
+                            self.Stop.isHidden = false
+                            self.Pwait.isHidden = true
+                            self.stoptimergotostart.invalidate()
+                            self.stoptimer_gotostart.invalidate()
+                            self.getlast10transaction()
+                            self.BLErescount = 0
+                            self.baseTextView = ""
+                            
+                            
+                            self.cf.delay(2){
+                                //self.updateIncomingData()
+                                self.web.sentlog(func_name: "Sent Relay On Command to BT link LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
+                                self.outgoingData(inputText: "LK_COMM=relay:12345=ON")
+                                NotificationCenter.default.removeObserver(self)
+                                self.updateIncomingData()
+                                
+                                
+                                
+                                self.FDcheckBLEtimer.invalidate()
+                                self.FDcheckBLEtimer = Timer.scheduledTimer(timeInterval: 4, target: self, selector: #selector(self.fdCheckBLE), userInfo: nil, repeats: true)
+                            }
+                        }
+                    }
+                    //            }
+                    //if(self.appdisconnects_automatically == true)//#2344
+                    
+                    if(self.appdisconnects_automatically == true && IsStartbuttontapped == true)
+                    {
+                        self.web.sentlog(func_name: " appdisconnects_automatically \(appdisconnects_automatically)", errorfromserverorlink: "IsStartbuttontapped \(IsStartbuttontapped)", errorfromapp: "")
+                        if(self.AppconnectedtoBLE == true){
+                            self.getlast10transaction()
+                            self.BLErescount = 0
+                            self.baseTextView = ""
+                            self.web.sentlog(func_name: "Sent Relay On Command to BT link LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
+                            self.outgoingData(inputText: "LK_COMM=relay:12345=ON")
+                            NotificationCenter.default.removeObserver(self)
+                            self.updateIncomingData ()
+                            
+                            //                    self.cf.delay(0.1){
+                            self.start.isHidden = true
+                            self.cancel.isHidden = true
+                            self.Stop.isHidden = false
+                            //                                self.displaytime.text = NSLocalizedString("Fueling", comment:"")
+                            //self.displaytime.textColor = UIColor.black
                             self.FDcheckBLEtimer.invalidate()
                             self.FDcheckBLEtimer = Timer.scheduledTimer(timeInterval: 4, target: self, selector: #selector(self.fdCheckBLE), userInfo: nil, repeats: true)
                         }
                     }
                 }
             }
-            //if(self.appdisconnects_automatically == true)//#2344
-            
-            if(self.appdisconnects_automatically == true && IsStartbuttontapped == true)
+            else
             {
-                self.web.sentlog(func_name: " appdisconnects_automatically \(appdisconnects_automatically)", errorfromserverorlink: "IsStartbuttontapped \(IsStartbuttontapped)", errorfromapp: "")
-                if(self.AppconnectedtoBLE == true){
-                    self.getlast10transaction()
-                    self.BLErescount = 0
-                    self.baseTextView = ""
-                    self.web.sentlog(func_name: "Sent Relay On Command to BT link LK_COMM=relay:12345=ON" , errorfromserverorlink: "", errorfromapp: "")
-                    self.outgoingData(inputText: "LK_COMM=relay:12345=ON")
-                    NotificationCenter.default.removeObserver(self)
-                    self.updateIncomingData ()
-                    
-//                    self.cf.delay(0.1){
-                        self.start.isHidden = true
-                        self.cancel.isHidden = true
-                        self.Stop.isHidden = false
-                        //                                self.displaytime.text = NSLocalizedString("Fueling", comment:"")
-                        //self.displaytime.textColor = UIColor.black
-                        self.FDcheckBLEtimer.invalidate()
-                        self.FDcheckBLEtimer = Timer.scheduledTimer(timeInterval: 4, target: self, selector: #selector(self.fdCheckBLE), userInfo: nil, repeats: true)
-//                    }
-                }
+                ifSubscribed = false
             }
         }
-        else
-        {
-            ifSubscribed = false
-        }
-        
     }
     
     func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {

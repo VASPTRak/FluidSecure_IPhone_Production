@@ -6047,6 +6047,10 @@ extension PreauthFuelquantity: CBPeripheralDelegate {
         {
             defaults.set("4", forKey: "UpdateSwitchTimeBounceForLink")
         }
+        else if("\(self.characteristicASCIIValue)".contains("{\"pulser_type\":5}$$"))
+        {
+            defaults.set("5", forKey: "UpdateSwitchTimeBounceForLink")
+        }
         NotificationCenter.default.post(name:NSNotification.Name(rawValue: "Notify"), object: self)
         
         

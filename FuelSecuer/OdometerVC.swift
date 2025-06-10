@@ -204,7 +204,10 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
             {
                 showAlert(message: NSLocalizedString("CheckyourInternet", comment:""))
             }else{
-                self.senddata(deptno: deptno,ppin:ppin,other:other)
+//                self.showToast(message: "Caution: Do NOT leave this app while fueling")
+//                self.delay(3){
+//                    self.senddata(deptno: deptno,ppin:ppin,other:other)
+//                }
             }
         }
         else
@@ -398,7 +401,11 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
                         Vehicaldetails.sharedInstance.deptno = ""
                         Vehicaldetails.sharedInstance.Personalpinno = ""
                         Vehicaldetails.sharedInstance.Other = ""
-                        self.senddata(deptno: deptno,ppin:ppin,other:other)
+                        self.showToast(message: "Caution: Do NOT leave this app while fueling")
+                         self.delay(3){
+                                            self.senddata(deptno: deptno,ppin:ppin,other:other)
+                                        }
+                        //self.senddata(deptno: deptno,ppin:ppin,other:other)
                     }
                 }
             }
@@ -406,7 +413,7 @@ class OdometerVC: UIViewController,UITextFieldDelegate //
     }
     
     @IBAction func saveButtontapped(sender: UIButton) {
-        
+        view.endEditing(true)
         if(self.cf.getSSID() != "" && Vehicaldetails.sharedInstance.SSId != self.cf.getSSID() && Vehicaldetails.sharedInstance.HubLinkCommunication == "HTTP") {
             print("SSID: \(self.cf.getSSID())")
             self.showAlert(message:NSLocalizedString("SwitchoffyourWiFi", comment:""))

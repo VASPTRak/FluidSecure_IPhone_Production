@@ -133,8 +133,10 @@ class OtherVehicleViewController: UIViewController,UITextFieldDelegate {
                 self.Activity.isHidden = true
                 showAlert(message: NSLocalizedString("CheckyourInternet", comment:"") )
             }else{
-
-                self.senddata(deptno: deptno,ppin:ppin,other:other)
+                self.showToast(message: "Caution: Do NOT leave this app while fueling")
+                self.delay(3){
+                    self.senddata(deptno: deptno,ppin:ppin,other:other)
+                }
             }
         }
         else
@@ -279,6 +281,7 @@ class OtherVehicleViewController: UIViewController,UITextFieldDelegate {
     
     
     @IBAction func saveButtontapped(sender: AnyObject) {
+        view.endEditing(true)
         Activity.startAnimating()
         Activity.isHidden = false
         Go.isEnabled = false
