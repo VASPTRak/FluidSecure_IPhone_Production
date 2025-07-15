@@ -404,6 +404,7 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
     var sendrename_linkname = false
     var isUpdateMACAddress = false
     var isBTlinkDisconnect = false
+    var getSucessfromServer = false
     
     var isssidconnected = "false"
     
@@ -3894,8 +3895,14 @@ class FuelquantityVC: UIViewController,UITextFieldDelegate,URLSessionDownloadDel
                                             pulsedata = "0"
                                         }
                                         //                                else{
-                                        Interrupted_TransactionFlag = "n"
-                                        self.web.UpdateInterruptedTransactionFlag(TransactionId: "\(Vehicaldetails.sharedInstance.TransactionId)",Flag: "n")
+                                        if(getSucessfromServer == false){
+                                            Interrupted_TransactionFlag = "n"
+                                            let replyfromsever = self.web.UpdateInterruptedTransactionFlag(TransactionId: "\(Vehicaldetails.sharedInstance.TransactionId)",Flag: "n")
+                                            if(replyfromsever.contains("success"))
+                                            {
+                                                getSucessfromServer = true
+                                            }
+                                        }
                                         print("pulsedata:\( pulsedata!),Counts: \(counts),LastCount: \( Last_Count)")
                                         var totalpulsecount = Int(pulsedata! as String)! + Int(counts as String)!
                                         print("pulsedata: \( pulsedata!),Counts:\(counts),totalpulsecount: \(totalpulsecount)")

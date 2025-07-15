@@ -2103,7 +2103,7 @@ class Webservices:NSObject {
     }
     
     
-    func UpdateInterruptedTransactionFlag(TransactionId:String,Flag: String)
+    func UpdateInterruptedTransactionFlag(TransactionId:String,Flag: String) -> String
     {
             FSURL = Vehicaldetails.sharedInstance.URL + "HandlerTrak.ashx"
             let Email = defaults.string(forKey: "address")
@@ -2144,7 +2144,7 @@ class Webservices:NSObject {
             task.resume()
             _ = semaphore.wait(timeout: DispatchTime.distantFuture)
            
-        
+        return reply
         
     }
     

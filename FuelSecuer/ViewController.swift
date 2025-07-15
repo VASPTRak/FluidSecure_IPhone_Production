@@ -2136,21 +2136,24 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UITextFieldDele
                 }
             }
             
-            //#2847
-            print(Vehicaldetails.sharedInstance.PulserTimingAdjust,Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce)
-            if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1"){
-                self.centralManager = CBCentralManager(delegate: self, queue: nil)
-//                progressview.isHidden = false
-                progressviewtext.isHidden = false
-                self.Activity.startAnimating()
-                self.Activity.isHidden = false
-                Upgrade.isHidden = false
-                progressviewtext.text = "Please standby..."
-                go.isEnabled = false
-                
-                
-            }
             
+            if(Vehicaldetails.sharedInstance.HubLinkCommunication == "BT")
+            {
+                //#2847
+                print(Vehicaldetails.sharedInstance.PulserTimingAdjust,Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce)
+                if(Vehicaldetails.sharedInstance.IsResetSwitchTimeBounce == "1"){
+                    self.centralManager = CBCentralManager(delegate: self, queue: nil)
+                    //                progressview.isHidden = false
+                    progressviewtext.isHidden = false
+                    self.Activity.startAnimating()
+                    self.Activity.isHidden = false
+                    Upgrade.isHidden = false
+                    progressviewtext.text = "Please standby..."
+                    go.isEnabled = false
+                    
+                    
+                }
+            }
             
             
             let Json = systemdata.value(forKey: "SSIDDataObj") as! NSArray

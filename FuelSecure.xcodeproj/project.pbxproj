@@ -994,7 +994,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.18.54;
+				MARKETING_VERSION = 1.18.55;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Trakengg.Fluidsecure;
 				PRODUCT_NAME = FuelSecure;
 				PROVISIONING_PROFILE = "";
@@ -1027,7 +1027,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.18.54;
+				MARKETING_VERSION = 1.18.55;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Trakengg.Fluidsecure;
 				PRODUCT_NAME = FuelSecure;
 				PROVISIONING_PROFILE = "";

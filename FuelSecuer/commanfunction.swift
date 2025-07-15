@@ -392,6 +392,30 @@ class Commanfunction {
             } else if appStoreAppVersion!.compare(currentVersion!, options: .numeric) == .orderedDescending //orderedAscending for testing perpose //.orderedDescending  true
             {
                 print("needs update")
+                
+//                print("Update available")
+//
+//                            DispatchQueue.main.async {
+//                                guard let window = UIApplication.shared.windows.first,
+//                                      let topController = window.rootViewController else {
+//                                    print("Could not get top view controller")
+//                                    return
+//                                }
+//
+//                                let tappedUpdateNow = defaults.string(forKey: "tappedupdatenow") ?? "false"
+//                                if tappedUpdateNow == "true" {
+//                                    topController.UpdateshowAlert(AppURL: appInfo.trackViewUrl)
+//                                } else {
+//                                    topController.showAppUpdateAlert(
+//                                        Version: appStoreAppVersion,
+//                                        Force: false,
+//                                        AppURL: appInfo.trackViewUrl
+//                                    )
+//                                }
+//                            }
+                
+                
+                
                 DispatchQueue.main.async {
                     let topController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
                     if((defaults.string(forKey: "tappedupdatenow")) != nil)
